@@ -20,9 +20,6 @@ correlator::correlator(NucleotideDisplay* g)
 	textureBuffer = NULL;
 }
 
-
-
-
 void correlator::display_color_overview()
 {	
 	int disp_width = width / color_size;	

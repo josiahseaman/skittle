@@ -27,23 +27,16 @@ public:
 	int display_size;
 	int color_size;
 	
-	correlator(NucleotideDisplay* g);	
-	int check_height();	
-	vector<color> color_compress(vector<color> sample, int squish_factor);
-	vector<color> color_max(vector<color> sample);
-		
+
+	correlator(NucleotideDisplay* g);
+
 	void display_color_overview();
-	void color_overview();
-	
-	void display_freq();
+
 	void dump_values();
+
 	void displayAlignment();
+
 	void loadAlignment();
-	vector<color> colorByAlignment();
-	void color_overview_freq();
-	void color_overview_freq(vector<color>& img, int Width);
-	double correlate(vector<color>& img, int beginA, int beginB, int Vote_Size);
-	double correlate(vector<color>& A, vector<color>& B, int Vote_Size);
 
 private:
 	TextureCanvas* textureBuffer;
@@ -51,3 +44,5 @@ private:
 
 };
 #endif
+
+

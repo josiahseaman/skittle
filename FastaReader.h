@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <fstream>
 #include <string>
+#include <algorithm>
 #include <vector>
 #include <QObject>
 

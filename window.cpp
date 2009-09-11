@@ -40,7 +40,6 @@
 
 #include "glwidget.h"
 #include "window.h"
-#include "Controller.h"
 
 
 Window::Window()
