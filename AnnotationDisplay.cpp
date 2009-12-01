@@ -66,7 +66,7 @@ GLuint AnnotationDisplay::render()
 
 void AnnotationDisplay::displayTrack(const vector<track_entry>& track)
 {
-	max_width = 0;
+	max_width = 1;
 	int pix_start = ui->startDial->value();
 	int width = ui->widthDial->value();
 	int pix_stop = pix_start + width;
@@ -118,7 +118,7 @@ void AnnotationDisplay::displayTrack(const vector<track_entry>& track)
 				c = activeTracks[x].col;
 				
 			glPushName( activeTracks[x].index );
-			paint_square( point(-2-x,row,0), c );
+			paint_square( point(x,row,0), c );
 			glPopName();
 			if(x+1 > max_width)
 				max_width = x+1;
@@ -147,7 +147,7 @@ void AnnotationDisplay::mouseClick(point2D pt)
 	//range check
 	//if( pt.x <= width() )
 	//{
-		ui->print("-------------");
+		//ui->print("-------------");
 		int start = ui->startDial->value() + pt.y * ui->widthDial->value() + pt.x;
 		int stop = start + ui->widthDial->value();
 		if(!gtfTrack.empty())

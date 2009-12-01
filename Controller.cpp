@@ -23,7 +23,8 @@ Controller::Controller(Window* win)
     connect(window, SIGNAL(newFileOpen(QString)), fastaReader, SLOT(readFile(QString)));
     connect(fastaReader, SIGNAL(newFileRead(const string&)), glWidget, SLOT(displayString(const string&)));
     connect(fastaReader, SIGNAL(fileNameChanged(string)), win, SLOT(changeWindowName(string)));
-    
+    connect(fastaReader, SIGNAL(fileNameChanged(string)), trackReader, SLOT(storeChrName(string)));
+	    
     connect(window, SIGNAL(newFileOpen(QString)), trackReader, SLOT(determineOutputFile(QString)));
 
 	connect(ui->actionOpenGTF, SIGNAL(triggered()), window, SLOT(openGtf()));

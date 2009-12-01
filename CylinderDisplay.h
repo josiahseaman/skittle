@@ -44,7 +44,6 @@ private:
 	float max_width;
 	GLuint display_object;
 	GLuint square;
-	vector<color> nucleotide_colors;
 	vector<float> width_list;
 	NucleotideLinker* ntLinker;
 	float turnCylinder;

@@ -34,8 +34,21 @@ AlignmentDisplay::AlignmentDisplay(Ui_SkittleGUI* gui)
 	//packSequence is called by setSequence()
 }
 
+/*void AlignmentDisplay::changeScale(int s)
+{
+	ui->print("Scale change");
+	s = max(4, (s / 4) * 4);//enforces scale is a multiple of 4
+	if(scale != s)
+	{
+		scale = s;
+		ui->scaleDial->setValue(scale);
+		upToDate = false;
+	}
+}*/
+
 void AlignmentDisplay::display()
 {
+	/*TODO: glwidget handles the case where scale is not a multiple of 4*/
 	checkVariables();
     glPushMatrix();
 	glScaled(1,-1,1);
@@ -49,11 +62,6 @@ void AlignmentDisplay::display()
 
 void AlignmentDisplay::loadTexture()
 {
-	ui->print("Load Texture");	
-	scale = max(4, (scale / 4) * 4);//enforces scale is a multiple of 4
-	ui->scaleDial->setValue(scale);
-	//return if changed?
-
 	vector<color> alignment_colors;
 	int end = max(1, (nucleotide_start + display_size) - 251);
 	for(int i = nucleotide_start; i < end; i+=scale)

@@ -162,22 +162,22 @@ void setupUi(QMainWindow *SkittleGUI)
     
     cylinderButton = new QPushButton(scrollAreaWidgetContents);
     cylinderButton->setObjectName(QString::fromUtf8("cylinderButton"));
-    cylinderButton->setMinimumSize(QSize(91, 23));
+    cylinderButton->setMinimumSize(QSize(100, 23));
     sidebar->addWidget(cylinderButton, BorderLayout::North);
     
     nucButton = new QPushButton(scrollAreaWidgetContents);
     nucButton->setObjectName(QString::fromUtf8("nucButton"));
-    nucButton->setMinimumSize(QSize(91, 23));
+    nucButton->setMinimumSize(QSize(100, 23));
     sidebar->addWidget(nucButton, BorderLayout::North);
     
     alignButton = new QPushButton(scrollAreaWidgetContents);
     alignButton->setObjectName(QString::fromUtf8("alignButton"));
-    alignButton->setMinimumSize(QSize(91, 23));
+    alignButton->setMinimumSize(QSize(100, 23));
     sidebar->addWidget(alignButton, BorderLayout::North);
     
     freqButton = new QPushButton(scrollAreaWidgetContents);
     freqButton->setObjectName(QString::fromUtf8("freqButton"));
-    freqButton->setMinimumSize(QSize(91, 23));
+    freqButton->setMinimumSize(QSize(100, 23));
     sidebar->addWidget(freqButton, BorderLayout::North);
     
     QFont font;
@@ -385,8 +385,8 @@ void retranslateUi(QMainWindow *SkittleGUI)
     zoomBox->setTitle(QApplication::translate("SkittleGUI", "Zoom", 0, QApplication::UnicodeUTF8));
     scaleBox->setTitle(QApplication::translate("SkittleGUI", "Scale", 0, QApplication::UnicodeUTF8));
     nucButton->setText(QApplication::translate("SkittleGUI", "Nucleotide", 0, QApplication::UnicodeUTF8));
-    freqButton->setText(QApplication::translate("SkittleGUI", "Frequency Map", 0, QApplication::UnicodeUTF8));
-    alignButton->setText(QApplication::translate("SkittleGUI", "Local Alignment", 0, QApplication::UnicodeUTF8));
+    freqButton->setText(QApplication::translate("SkittleGUI", "Repeat Map", 0, QApplication::UnicodeUTF8));
+    alignButton->setText(QApplication::translate("SkittleGUI", "Repeat Overview", 0, QApplication::UnicodeUTF8));
     cylinderButton->setText(QApplication::translate("SkittleGUI", "Alignment Cylinder", 0, QApplication::UnicodeUTF8));
     sizeBox->setTitle(QApplication::translate("SkittleGUI", "Display Length", 0, QApplication::UnicodeUTF8));
     sizeDial->setSuffix(QApplication::translate("SkittleGUI", " bp", 0, QApplication::UnicodeUTF8));

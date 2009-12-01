@@ -59,6 +59,7 @@ public:
 
 public slots:
 	void open();
+	void open(QString fileName);
 	void openGtf();
 	void changeWindowName(string);
 

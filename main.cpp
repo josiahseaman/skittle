@@ -44,6 +44,12 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     Window window;
     window.show();
-    window.open();
+    if(argc > 1)
+    {
+		window.open(QString(argv[1]));
+	}
+	else{
+		window.open();
+	}	
     return app.exec();
 }

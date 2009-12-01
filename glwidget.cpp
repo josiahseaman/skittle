@@ -58,7 +58,7 @@ GLWidget::GLWidget(Ui_SkittleGUI* gui, QWidget *parent)
 	frame = 0;
 	
 	setupColorTable();
-    disp = new NucleotideDisplay(ui);
+    nuc = new NucleotideDisplay(ui);
     freq = new FrequencyMap(ui);
     gtfTrack = new AnnotationDisplay(ui);
     cylinder = new CylinderDisplay(ui);
@@ -78,11 +78,11 @@ GLWidget::GLWidget(Ui_SkittleGUI* gui, QWidget *parent)
 	//connect( ui->zoomDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
 
 //	connect( freq, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
-	connect( disp, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
+	connect( nuc, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
 //	connect( cylinder, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
-	connect( disp, SIGNAL(sizeChanged(int)), this, SLOT(setPageSize()) );
+	connect( nuc, SIGNAL(sizeChanged(int)), this, SLOT(setPageSize()) );
 	
-    disp->createConnections();
+    nuc->createConnections();
     freq->createConnections();
     cylinder->createConnections();
    	
@@ -116,12 +116,12 @@ double GLWidget::getZoom()
 
 void GLWidget::setTotalDisplayWidth()
 {	
-	if( disp && freq && ui)
+	if( nuc && freq && ui)
 	{
 		double z = getZoom();
 		int total_width = border
 			+ (!gtfTrack->hidden) * 6 
-			+ (!disp->hidden) * (disp->width() + border) 
+			+ (!nuc->hidden) * (nuc->width() + border) 
 			+ (!freq->hidden) * (freq->width() + border)
 			+ (!align->hidden) * (align->width() + border)
 			+ (!cylinder->hidden) * ((int)(cylinder->maxWidth()*2) + border);
@@ -140,13 +140,13 @@ void GLWidget::changeZoom(int z)
 
 void GLWidget::displayString(const string& seq)
 {
-	disp->sequence= &seq;
+	nuc->sequence= &seq;
 	align->setSequence(&seq);
 	freq->sequence = &seq;
 	cylinder->sequence = &seq;
 	
 	ui->verticalScrollBar->setMaximum( max(0, (int)(seq.size()- ui->sizeDial->value()*.2) ) );
-	ui->startDial->setValue(2);//bit of a cludge
+	ui->startDial->setValue(2);//TODO: bit of a cludge
 	ui->startDial->setValue(1);
 }
 
@@ -167,8 +167,8 @@ void GLWidget::on_resizeButton_clicked()
 
 void GLWidget::setPageSize()
 {
-	ui->verticalScrollBar->setMaximum( max(0, (int)(disp->sequence->size()- ui->sizeDial->value()*.2) ) );
-    ui->verticalScrollBar->setPageStep(disp->max_display_size);
+	ui->verticalScrollBar->setMaximum( max(0, (int)(nuc->sequence->size()- ui->sizeDial->value()*.2) ) );
+    ui->verticalScrollBar->setPageStep(nuc->max_display_size);
 }
 	
 void GLWidget::setTool(int tool)
@@ -223,7 +223,7 @@ void GLWidget::updateDisplaySize()
 
 void GLWidget::newAnnotation(const vector<track_entry>& track)
 {
-	ui->print("Track Received");
+	ui->print("Annotations Received: ", track.size());
 	gtfTrack->newTrack( &track );
 }
 
@@ -316,11 +316,11 @@ void GLWidget::finalizeCalculations()
 {
 	gtfTrack->display();
 	cylinder->display();
-	disp->display();
+	nuc->display();
 	int scale = ui->scaleDial->value();
 	if(scale > 1){
 		int displayWidth = ui->widthDial->value() / scale; 
-		freq->calculate(disp->nucleotide_colors, displayWidth);
+		freq->calculate(nuc->nucleotide_colors, displayWidth);
 	}
 	freq->display();
 	
@@ -328,8 +328,16 @@ void GLWidget::finalizeCalculations()
 
 void GLWidget::paintGL()
 {
+	if(!align->hidden)//TODO: move this inside AlignmentDisplay
+	{
+		int scale = ui->scaleDial->value();
+		scale = max(4, (scale / 4) * 4);//enforces scale is a multiple of 4
+		if(scale != ui->scaleDial->value())
+		{
+			ui->scaleDial->setValue(scale);
+		}
+	}
 	//finalizeCalculations();
-
 	//ui->print("Frame: ", ++frame);
     glMatrixMode(GL_MODELVIEW);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -337,15 +345,14 @@ void GLWidget::paintGL()
     glPushMatrix();
 	    glTranslated(-xPosition, 0, 0);
 	    double zoom = getZoom();
-	    glScaled(zoom, zoom, zoom);
+		glScaled(zoom, zoom, zoom);
 	    glTranslated(border,0,0);//to get zoom working right
 	    if( tool() == SELECT_TOOL)
 			glCallList(marker);//possibly replace this with a blinking cursor
 		if( !gtfTrack->hidden )
 		{
-			glTranslated(3, 0 , 0);
 			gtfTrack->display();
-			glTranslated(3, 0 , 0);
+			glTranslated(gtfTrack->width()+ border, 0 , 0);
 		}
 	    if(!cylinder->hidden)
 		{
@@ -354,27 +361,13 @@ void GLWidget::paintGL()
 			cylinder->display();
 		    glTranslated(cylinderSize + border, 0 , 0);
 		}
-	    if(!disp->hidden)
+	    if(!nuc->hidden)
 		{
-			disp->display();
-		    glTranslated(disp->width() + border, 0 , 0);
+			nuc->display();
+		    glTranslated(nuc->width() + border, 0 , 0);
 		}
-		else{
-			disp->load_nucleotide();
-		}
-
-		int scale = ui->scaleDial->value();
-		freq->checkVariables();
-		if((scale > 1) && ( !freq->upToDate ) && ( !align->hidden || !freq->hidden))
-		{
-			int displayWidth = ui->widthDial->value() / scale; 
-			freq->calculate(disp->nucleotide_colors, displayWidth);
-		}
-
 		if(!align->hidden)
 		{
-			vector<point> matches = freq->bestMatches();
-			align->VLRcheck(matches);//pass to alignment
 			align->display();
 
 			glPushMatrix();
@@ -387,11 +380,38 @@ void GLWidget::paintGL()
 		}
 		if(!freq->hidden)
 		{
+			freq->checkVariables();
+			if((ui->scaleDial->value() > 1) && ( !freq->upToDate ))
+			{
+				if(!nuc->upToDate)
+				{
+					nuc->load_nucleotide();
+				}
+				int displayWidth = ui->widthDial->value() / ui->scaleDial->value(); 
+				freq->calculate(nuc->nucleotide_colors, displayWidth);
+			}
 		    freq->display();
 	        glTranslated(freq->width() + border, 0 , 0);
 		}
     glPopMatrix();
+}
 
+void GLWidget::displayGraph(int graphMode)
+{
+    glMatrixMode(GL_MODELVIEW);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
+    glPushMatrix();
+	    glTranslated(-xPosition, 0, 0);
+	    double zoom = getZoom();
+	    glScaled(zoom, zoom, zoom);
+	    glTranslated(border,0,0);//to get zoom working right
+	    if( tool() == SELECT_TOOL)
+			glCallList(marker);//TODO: possibly replace this with a blinking cursor
+			
+		//presets->display(graphMode);
+		
+    glPopMatrix();	
 }
 
 void GLWidget::resizeGL(int width, int height)
@@ -441,10 +461,10 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 		{
 			oglCoords.x -= ((int)cylinder->maxWidth()) * 2 + border;	
 		}
-		if(!disp->hidden)
+		if(!nuc->hidden)
 		{
-			disp->mouseClick(oglCoords);
-			oglCoords.x -= disp->width() + border;
+			nuc->mouseClick(oglCoords);
+			oglCoords.x -= nuc->width() + border;
 		}
 		if(!align->hidden)
 		{
@@ -512,7 +532,7 @@ void GLWidget::placeMarker(QPoint pixelCoords)
     glDeleteLists(marker, 1);	
 	marker = glGenLists(1);
     glNewList(marker, GL_COMPILE);
-		disp->paint_square(point(x+1, -y, 0), color(255,255,0));
+		nuc->paint_square(point(x+1, -y, 0), color(255,255,0));
 	glEndList();
 
     redraw();
@@ -586,44 +606,44 @@ color GLWidget::spectrum(double i)
 	double r = 0.0;
 	double g = 0.0;
 	double b = 0.0;
-	double fifth = 1/5.0;
+	double fourth = 1/4.0;
 		
-	if(i <= 1*fifth)//All blue, rising red - pink (purple)
+	if(i <= 1*fourth)//falling blue, rising red - pink (purple)
 	{
-		r = (i-0*fifth) / fifth;
-		b = 1.0 - (i-0*fifth) / fifth;
+		r = (i-0*fourth) / fourth;
+		b = 1.0 - (i-0*fourth) / fourth;
 		i = 1.0;
 	}
-	/*else if(i <= 2*fifth)//All red, falling blue - red
+	/*else if(i <= 2*fourth)//All red, falling blue - red
 	{
 		r = 1.0;
-		b = 1.0 - (i-1*fifth) / fifth;
+		b = 1.0 - (i-1*fourth) / fourth;
 		i = 1.0;
 	}*/
-	else if(i <= 2*fifth)//All Red, rising green - yellow
+	else if(i <= 2*fourth)//All Red, rising green - yellow
 	{
 		r = 1.0;
-		g = (i-1*fifth) / fifth;
+		g = (i-1*fourth) / fourth;
 		i = 1.0;
 	}
-	else if(i <= 3*fifth)//All green, falling red - green
+	else if(i <= 3*fourth)//All green, falling red - green
 	{
-		r = 1.0 - (i-2*fifth) / fifth;
+		r = 1.0 - (i-2*fourth) / fourth;
 		g = 1.0;
 		i = 1.0;
 	}
-	else if(i <= 4*fifth)//All green, rising blue - cyan
+	else if(i <= 4*fourth)//All green, rising blue - cyan
 	{
 		g = 1.0;
-		b = (i-3*fifth) / fifth;
+		b = (i-3*fourth) / fourth;
 		i = 1.0;
-	}
-	else if(i <= 5*fifth)//All blue, falling green - blue
+	}/*
+	else if(i <= 5*fourth)//All blue, falling green - blue
 	{
-		g = 1.0 - (i-4*fifth) / fifth;
+		g = 1.0 - (i-4*fourth) / fourth;
 		b = 1.0;
 		i = 1.0;
-	}
+	}*/
 	
 //	shift from (-1 to 1) over to (0 to 1)
 	int red =   static_cast<int>((r)* 255 + .5);

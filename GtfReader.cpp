@@ -60,7 +60,7 @@ void GtfReader::addBookmark()//int start, int end)
 	std::stringstream ss2;
 	ss2 << ui->startDial->value() + ui->sizeDial->value();
 	dialog.end->setText( QString(ss2.str().c_str() ) );
-	
+	dialog.sequence->setText( QString(chrName.c_str()) );
 	
 	parent.show();
 	int result = parent.exec();
@@ -99,6 +99,13 @@ void GtfReader::determineOutputFile(QString file)
 	outputFilename.append("-skittle_notes.gtf");
 }
 
+void GtfReader::storeChrName(string seqName)
+{
+	chrName = seqName;
+}
+
+/*PRIVATE FUNCTIONS*/
+
 void GtfReader::readFile(QString filename)
 {
 	inputFilename = filename.toStdString();
@@ -114,36 +121,40 @@ void GtfReader::readFile(QString filename)
 	while( getline(file, line) )
 	{
 		stringstream lineStr( line );
-		int end = 0;
-		int begin = 0;
-		string repClass;
+		int start = 0;
+		int stop = 0;
+		//string repClass;
 		
-		lineStr.ignore(10000, '\t');//seqname
-		lineStr.ignore(10000, '\t');//source
-		getline(lineStr, repClass, '\t');//repClass - type
-		lineStr >> begin >> end;//genoStart	//genoEnd	
-		color c = color_entry(repClass);
+		lineStr.ignore(10000, '\t');//1
+		lineStr.ignore(10000, '\t');//2
+		lineStr.ignore(10000, '\t');//3
+		lineStr.ignore(10000, '\t');//4
+		lineStr.ignore(10000, '\t');//5
+		lineStr.ignore(10000, '\t');//6
+		//getline(lineStr, repClass, '\t');//repClass - type
+		lineStr >> start >> stop;//genoStart	//genoEnd	
+		color c = color_entry();//repClass);
 		if(!lineStr.fail())
 		{
-			annotation_track.push_back( track_entry(begin, end, c, line) );
-			int end = annotation_track.size() -1;
-			annotation_track[end].index = end;
+			annotation_track.push_back( track_entry(start, stop, c, line) );
+			int last_entry = annotation_track.size() -1;
+			annotation_track[last_entry].index = last_entry;
 		}
 	}	
 	file.close();	
 	emit newGtfFileRead( tracks() );
 	
-	/***********OUTPUT ANNOTATED SEQUENCE**************/
+	/***********OUTPUT ANNOTATED SEQUENCE************** /
 	const string* seq = ui->glWidget->disp->sequence;
 	ofstream fout("clipped.fa");
 	for(int i = 0; i < annotation_track.size(); i++)
 	{
 		fout << seq->substr(annotation_track[i].start, annotation_track[i].stop - annotation_track[i].start);
 	}
-	fout.close();
+	fout.close();*/
 }
 	
-color GtfReader::color_entry(string repClass)
+color GtfReader::color_entry()//string repClass)
 {
 	volatile int r = (int)(((float)rand() / RAND_MAX)* 255);
 	volatile int g = (int)(((float)rand() / RAND_MAX)* 255);

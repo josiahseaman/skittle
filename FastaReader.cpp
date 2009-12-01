@@ -28,7 +28,7 @@ bool FastaReader::initFile(string file)
 	wordfile.open (file.c_str(), ifstream::in | ifstream::binary);
 	if(wordfile.fail())
 	{
-		ErrorBox msg("Could not read the file.");
+		ErrorBox msg("Could not read the file.  Either Skittle doesn't have file permissions or the file does not exist.");
 		return false;
 	}
 	int begin = wordfile.tellg();
@@ -187,7 +187,7 @@ int FastaReader::readBlock3(int &start)
 	for( int i = 0; i < tempSize; ++i) 
 	{
 		curr = temp[i];
-		if( curr != '\n')//!isspace(curr))// != '\n')//check speed
+		if( !(curr == '\n' || curr == '\r') )//!isspace(curr))// != '\n')//check speed
 			buffer.push_back(curr);
 	}
 	
@@ -197,7 +197,9 @@ int FastaReader::readBlock3(int &start)
 
 void FastaReader::storeChrName(string path)
 {
-	int startI = path.find_last_of('/');
+	int startI = path.find_last_of('\\');
+	if(startI == path.size())
+		startI = path.find_last_of('/');
 	int endI = path.find_last_of('.');
 	int sizeI = endI - startI;
 	string name = path.substr(startI+1, sizeI-1);

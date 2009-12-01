@@ -41,7 +41,7 @@ class GLWidget : public QGLWidget
     Q_OBJECT
 
 public:
-	NucleotideDisplay* disp;//make this private
+	NucleotideDisplay* nuc;//make this private
 	
 	
     GLWidget(Ui_SkittleGUI* gui, QWidget *parent = 0);
@@ -80,6 +80,9 @@ protected:
 	QPointF pixelToGlCoords(QPoint pCoords, double z = 0);
     void initializeGL();
     void paintGL();
+    
+    void displayGraph(int graphMode);
+    
     void resizeGL(int width, int height);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
@@ -111,7 +114,10 @@ private:
 	int frame;
 };
 //! [3]
-
+/* Alu Consensus Sequence 290bp
+GGCCGGGCGCGGTGGCTCACGCCTGTAATCCCAGCACTTTGGGAGGCCGAGGCGGGCGGATCACCTGAGGTCAGGAGTTCGAGACCAGCCTGGCCAACAT
+GGTGAAACCCCGTCTCTACTAAAAATACAAAAATTAGCCGGGCGTGGTGGCGCGCGCCTGTAATCCCAGCTACTCGGGAGGCTGAGGCAGGAGAATCGCT
+TGAACCCGGGAGGCGGAGGTTGCAGTGAGCCGAGATCGCGCCACTGCACTCCAGCCTGGGCGACAGAGCGAGACTCCGTCTCAAAAAAAA */
 #define MOVE_TOOL 1
 #define RESIZE_TOOL 2
 #define SELECT_TOOL 3

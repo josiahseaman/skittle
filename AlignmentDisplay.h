@@ -2,6 +2,7 @@
 #ifndef ALIGNMENT_DISP
 #define ALIGNMENT_DISP
 
+#include <QGLWidget>
 #include <vector>
 #include "BasicTypes.h"
 #include "SkittleUi.h"
@@ -42,6 +43,7 @@ public:
 	int width() const{ 
 		return Width / scale; 
 	}
+	
 	
 private:	
 	unsigned int charPerIndex;

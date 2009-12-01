@@ -209,7 +209,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Project]
-UnitCount=38
+UnitCount=36
 FileName=SkittleToo.dev
 Name=SkittleToo
 Type=0
@@ -277,26 +277,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit24]
-FileName=correlator.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit25]
-FileName=correlator.cpp
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit26]
 FileName=AlignmentDisplay.cpp
 CompileCpp=0
 Folder=
@@ -306,7 +286,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit27]
+[Unit25]
 FileName=AlignmentDisplay.h
 CompileCpp=0
 Folder=
@@ -316,17 +296,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit29]
-FileName=TextRender.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit28]
+[Unit26]
 FileName=TextRender.cpp
 CompileCpp=0
 Folder=
@@ -336,8 +306,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit30]
-FileName=GtfReader.cpp
+[Unit27]
+FileName=TextRender.h
 CompileCpp=0
 Folder=
 Compile=1
@@ -346,7 +316,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit31]
+[Unit29]
 FileName=GtfReader.h
 CompileCpp=0
 Folder=
@@ -356,7 +326,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit32]
+[Unit28]
+FileName=GtfReader.cpp
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit30]
 FileName=AnnotationDisplay.h
 CompileCpp=0
 Folder=
@@ -366,7 +346,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit33]
+[Unit31]
 FileName=AnnotationDisplay.cpp
 CompileCpp=0
 Folder=
@@ -376,7 +356,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit34]
+[Unit32]
 FileName=CylinderDisplay.cpp
 CompileCpp=0
 Folder=
@@ -386,7 +366,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit35]
+[Unit33]
 FileName=CylinderDisplay.h
 CompileCpp=0
 Folder=
@@ -396,8 +376,28 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit36]
+[Unit34]
 FileName=NucleotideLinker.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit35]
+FileName=NucleotideLinker.cpp
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit36]
+FileName=NucleotideLink.h
 CompileCpp=0
 Folder=
 Compile=1
