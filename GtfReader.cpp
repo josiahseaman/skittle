@@ -128,9 +128,10 @@ void GtfReader::readFile(QString filename)
 		lineStr.ignore(10000, '\t');//1
 		lineStr.ignore(10000, '\t');//2
 		lineStr.ignore(10000, '\t');//3
+		/*
 		lineStr.ignore(10000, '\t');//4
 		lineStr.ignore(10000, '\t');//5
-		lineStr.ignore(10000, '\t');//6
+		lineStr.ignore(10000, '\t');//6*/
 		//getline(lineStr, repClass, '\t');//repClass - type
 		lineStr >> start >> stop;//genoStart	//genoEnd	
 		color c = color_entry();//repClass);

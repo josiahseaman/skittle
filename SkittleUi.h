@@ -162,22 +162,22 @@ void setupUi(QMainWindow *SkittleGUI)
     
     cylinderButton = new QPushButton(scrollAreaWidgetContents);
     cylinderButton->setObjectName(QString::fromUtf8("cylinderButton"));
-    cylinderButton->setMinimumSize(QSize(100, 23));
+    cylinderButton->setMinimumSize(QSize(110, 23));
     sidebar->addWidget(cylinderButton, BorderLayout::North);
     
     nucButton = new QPushButton(scrollAreaWidgetContents);
     nucButton->setObjectName(QString::fromUtf8("nucButton"));
-    nucButton->setMinimumSize(QSize(100, 23));
+    nucButton->setMinimumSize(QSize(110, 23));
     sidebar->addWidget(nucButton, BorderLayout::North);
     
     alignButton = new QPushButton(scrollAreaWidgetContents);
     alignButton->setObjectName(QString::fromUtf8("alignButton"));
-    alignButton->setMinimumSize(QSize(100, 23));
+    alignButton->setMinimumSize(QSize(110, 23));
     sidebar->addWidget(alignButton, BorderLayout::North);
     
     freqButton = new QPushButton(scrollAreaWidgetContents);
     freqButton->setObjectName(QString::fromUtf8("freqButton"));
-    freqButton->setMinimumSize(QSize(100, 23));
+    freqButton->setMinimumSize(QSize(110, 23));
     sidebar->addWidget(freqButton, BorderLayout::North);
     
     QFont font;
