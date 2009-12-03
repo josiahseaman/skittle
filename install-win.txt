@@ -1,0 +1,31 @@
+In order to compile Skittle Genome Visualizer on Windows you will need the following libraries:
+gcc
+Qt4.1 or higher
+OpenGL
+GLUT
+
+1. Download Qt Development Libraries from the web: http://qt.nokia.com/downloads
+
+2. Unpack the source files into the directory you want to work in.
+
+3. Open up a DOS prompt in the Qt directory and use the Qt batch file to ensure all your environment variables are set:
+Qt\bin\qtvars.bat
+
+4. Navigate to the source code directory for Skittle and use qmake to build a Makefile.
+qmake SkittleToo.pro
+
+4. qmake often puts the OpenGL flags in the wrong order.  Open up Makefile.Release and Makefile.Debug and verify that your LIBS flags are in this order:
+-lqtmain -lQtOpenGL -lglut32 -lglu32 -lopengl32 -lQtGui
+Don't remove any other flags, just ensure that the flags present are in the correct order.
+
+5.  Remove references to -mthreads to break the mingwm10.dll dependency like so (this is optional):
+CXXFLAGS      = -O3 -frtti -fexceptions -Wall $(DEFINES)
+	....
+LFLAGS        =        -enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc -Wl,-s -Wl -Wl,-subsystem,windows
+
+6. 'make release' to compile the project.
+
+7. Execute SkittleToo using 'release/SkittleToo chrY-sample.fa'
+
+
+I used gcc on Windows XP and Windows 7 using 32-bit and 64-bit systems.
