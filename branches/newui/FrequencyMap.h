@@ -10,7 +10,7 @@
 #include <QGLWidget>
 #include "BasicTypes.h"
 #include "AbstractGraph.h"
-#include "SkittleUi.h"
+#include "UiVariables.h"
 #include "TextureCanvas.h"
 
 using namespace std;
@@ -23,7 +23,7 @@ public:
 	
 	bool texture_optimization;
 	
-	FrequencyMap(Ui_SkittleGUI* gui);
+	FrequencyMap(UiVariables* gui, GLWidget* gl);
 	~FrequencyMap();
 	void createConnections();
 	void checkVariables();

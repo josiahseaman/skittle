@@ -2,10 +2,11 @@
 #include <sstream>
 #include "AlignmentDisplay.h"
 #include "TextRender.h"
-#include "TextureCanvas.h"
+#include "glwidget.h"
 
-AlignmentDisplay::AlignmentDisplay(Ui_SkittleGUI* gui)
-{
+AlignmentDisplay::AlignmentDisplay(UiVariables* gui, GLWidget* gl)
+{	
+	glWidget = gl;
 	string* seq = new string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");	
 	sequence = seq;
 
@@ -28,27 +29,13 @@ AlignmentDisplay::AlignmentDisplay(Ui_SkittleGUI* gui)
 	Width = ui->widthDial->value();
 	scale = ui->scaleDial->value();
 //	checkVariables();
-	connect( ui->alignButton, SIGNAL(clicked()), this, SLOT(toggleVisibility()));
 	
 	calcMatchTable();
 	//packSequence is called by setSequence()
 }
 
-/*void AlignmentDisplay::changeScale(int s)
-{
-	ui->print("Scale change");
-	s = max(4, (s / 4) * 4);//enforces scale is a multiple of 4
-	if(scale != s)
-	{
-		scale = s;
-		ui->scaleDial->setValue(scale);
-		upToDate = false;
-	}
-}*/
-
 void AlignmentDisplay::display()
 {
-	/*TODO: glwidget handles the case where scale is not a multiple of 4*/
 	checkVariables();
     glPushMatrix();
 	glScaled(1,-1,1);
@@ -62,6 +49,11 @@ void AlignmentDisplay::display()
 
 void AlignmentDisplay::loadTexture()
 {
+	glWidget->print("Load Texture");	
+	scale = max(4, (scale / 4) * 4);//enforces scale is a multiple of 4
+	ui->scaleDial->setValue(scale);
+	//return if changed?
+
 	vector<color> alignment_colors;
 	int end = max(1, (nucleotide_start + display_size) - 251);
 	for(int i = nucleotide_start; i < end; i+=scale)
@@ -174,7 +166,7 @@ void AlignmentDisplay::display_spectrum()
 
 color AlignmentDisplay::alignment_color(int score, int frequency)
 {
-	color c = ui->glWidget->spectrum((double)(frequency) / 250.0);//
+	color c = glWidget->spectrum((double)(frequency) / 250.0);//
 	color black = color(0,0,0);
 	c = interpolate(black, c, score / float(scale));
 	

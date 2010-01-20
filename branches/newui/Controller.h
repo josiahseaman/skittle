@@ -2,7 +2,7 @@
 #define Controller_H
 
 #include <QWidget>
-#include "SkittleUi.h"
+#include "MainWindow.h"
 #include "BorderLayout.h"
 
 QT_BEGIN_NAMESPACE
@@ -21,7 +21,7 @@ class Controller : public QObject
 
 public:
     Controller(Window* win);
-	Ui_SkittleGUI* ui;
+	UiVariables* ui;
 
 public slots:
 	void changeScale(int newScale);
@@ -34,8 +34,6 @@ signals:
 private:
 	Window* window;
     GLWidget* glWidget;
-    FastaReader* fastaReader;
-    GtfReader* trackReader;
     int scale;
 };
 

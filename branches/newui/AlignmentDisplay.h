@@ -2,10 +2,9 @@
 #ifndef ALIGNMENT_DISP
 #define ALIGNMENT_DISP
 
-#include <QGLWidget>
 #include <vector>
 #include "BasicTypes.h"
-#include "SkittleUi.h"
+#include "UiVariables.h"
 #include "AbstractGraph.h"
 #include "TextureCanvas.h"
 
@@ -15,7 +14,7 @@ class AlignmentDisplay : public AbstractGraph
 {
 public:
 	
-	AlignmentDisplay(Ui_SkittleGUI*);
+	AlignmentDisplay(UiVariables*, GLWidget* gl);
 	void display();//calls render
 	void loadTexture();//calls simple alignment
 	GLuint render();//creates display list using loadTexture

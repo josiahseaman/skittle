@@ -25,27 +25,34 @@
 #include <QKeyEvent>
 #include <string>
 #include "BasicTypes.h"
+#include "UiVariables.h"
+#include "NucleotideDisplay.h"
+#include "FrequencyMap.h"
+#include "AnnotationDisplay.h"
+#include "CylinderDisplay.h"
+#include "AlignmentDisplay.h"
 
 
 using namespace std;
 
-class FrequencyMap; 
-class NucleotideDisplay;
-class AnnotationDisplay;
-class CylinderDisplay;
-class AlignmentDisplay;
-class Ui_SkittleGUI;
+class MainWindow;
 
 class GLWidget : public QGLWidget
 {
     Q_OBJECT
 
 public:
+	UiVariables ui;
+	string chromosomeName;
 	NucleotideDisplay* nuc;//make this private
+	FrequencyMap* freq;
+	AnnotationDisplay* gtfTrack;
+	CylinderDisplay* cylinder;
+   	AlignmentDisplay* align;
 	
-	
-    GLWidget(Ui_SkittleGUI* gui, QWidget *parent = 0);
+    GLWidget(UiVariables gui, QWidget *parent = 0);
     ~GLWidget();
+	void createConnections();
 
     QSize minimumSizeHint() const;
     QSize sizeHint() const;
@@ -57,6 +64,13 @@ public:
     color colors(char nucleotide);
 	void setupColorTable();
     color spectrum(double i);
+    
+    void print(const char* s);
+	void print(std::string s);
+	void printHtml(std::string s);
+	void print(const char* s, int num);
+	void print(int num1, int num2);
+
 
 public slots:
     void changeZoom(int z);
@@ -73,6 +87,8 @@ public slots:
     
 signals:
 	void xOffsetChange(int);
+	void printText(QString);
+	void printHtml(QString);
 
 protected:
 	void displayTrack(const vector<track_entry>& track);
@@ -91,13 +107,7 @@ protected:
     void placeMarker(QPoint);
     void redraw();
 
-
 private:
-	Ui_SkittleGUI* ui;
-	FrequencyMap* freq;
-	AnnotationDisplay* gtfTrack;
-	CylinderDisplay* cylinder;
-   	AlignmentDisplay* align;
 	vector<color> colorTable;
     GLuint object;
     GLuint marker;
@@ -118,6 +128,7 @@ private:
 GGCCGGGCGCGGTGGCTCACGCCTGTAATCCCAGCACTTTGGGAGGCCGAGGCGGGCGGATCACCTGAGGTCAGGAGTTCGAGACCAGCCTGGCCAACAT
 GGTGAAACCCCGTCTCTACTAAAAATACAAAAATTAGCCGGGCGTGGTGGCGCGCGCCTGTAATCCCAGCTACTCGGGAGGCTGAGGCAGGAGAATCGCT
 TGAACCCGGGAGGCGGAGGTTGCAGTGAGCCGAGATCGCGCCACTGCACTCCAGCCTGGGCGACAGAGCGAGACTCCGTCTCAAAAAAAA */
+
 #define MOVE_TOOL 1
 #define RESIZE_TOOL 2
 #define SELECT_TOOL 3

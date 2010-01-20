@@ -1,8 +1,10 @@
 #include "FrequencyMap.h"
+#include "glwidget.h"
 #include <sstream>
 
-FrequencyMap::FrequencyMap(Ui_SkittleGUI* gui)
+FrequencyMap::FrequencyMap(UiVariables* gui, GLWidget* gl)
 {	
+	glWidget = gl;
 	ui = gui;
 	//seq shouldn't be necessary
 	string* seq = new string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");	
@@ -48,8 +50,7 @@ void FrequencyMap::createConnections()
 	
 	connect( ui->sizeDial, SIGNAL(valueChanged(int)), this, SLOT(changeSize(int)));
 	connect( this, SIGNAL(sizeChanged(int)), ui->sizeDial, SLOT(setValue(int)));
-	
-	connect( ui->freqButton, SIGNAL(clicked()), this, SLOT(toggleVisibility()));
+
 }
 
 void FrequencyMap::checkVariables()
@@ -149,7 +150,7 @@ void FrequencyMap::freq_map()
 		return;
 	}
 	check_height();
-	//ui->print("Freq_map: ", ++freq_map_count);
+	//glWidget->print("Freq_map: ", ++freq_map_count);
 	const char* genome = sequence->c_str() + nucleotide_start;
 	for( int h = 0; h < F_height; h++)
 	{
@@ -205,7 +206,7 @@ void FrequencyMap::mouseClick(point2D pt)
 		stringstream ss;
 		ss << "Offset: "<<pt.x<<" #" << index << " compared with #" << index2 << "  \n"
 			<< sequence->substr(index, w) << "\n <----> \n" << sequence->substr(index2, w);
-		ui->print(ss.str());
+		glWidget->print(ss.str());
 		
 		//ui->widthDial->setValue( pt.x);
 	}
@@ -218,7 +219,7 @@ vector<point> FrequencyMap::bestMatches()
 		
 	vector<point> best_matches;
 	check_height();
-	//ui->print("Height: ", F_height);
+	//glWidget->print("Height: ", F_height);
 	for(int h =0; h < F_height; h++)
 	{
 		float best_score = 0;
@@ -245,7 +246,7 @@ void FrequencyMap::calculate(vector<color>& img, int pixelsPerSample)//construct
 {
 	//display_size = img.size();
 	checkVariables();
-	//ui->print("Calculate(): ", ++calculate_count);
+	//glWidget->print("Calculate(): ", ++calculate_count);
 	check_height();
 	for( int h = 0; h < F_height; h++)
 	{

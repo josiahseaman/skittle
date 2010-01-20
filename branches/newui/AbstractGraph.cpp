@@ -1,5 +1,5 @@
 #include "AbstractGraph.h"
-#include "SkittleUi.h"
+#include "MainWindow.h"
 #include <math.h>
 
 
@@ -59,9 +59,9 @@ bool AbstractGraph::updateInt(int& subject, int& value)
 }
 bool AbstractGraph::useTextureOptimization()
 {
-	if(ui)
+	/*if(ui)
 		return ui->textureCheckBox->isChecked();
-	else
+	else*/
 		return true;
 }
 

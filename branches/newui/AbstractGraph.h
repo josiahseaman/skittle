@@ -4,12 +4,14 @@
 #include <QGLWidget>
 #include <string>
 #include "BasicTypes.h"
+#include "UiVariables.h"
 /**
 *  This is the base class for all Grapher objects.  The constructor requires
 *  a Ui reference so that it can 'connect' to controls in the Ui.
 */
 
-class Ui_SkittleGUI;
+class MainWindow;
+class GLWidget;
 
 using namespace std;
 
@@ -21,7 +23,8 @@ protected:
 	int Width;
 
 public:
-	Ui_SkittleGUI* ui;	
+	GLWidget* glWidget;
+	UiVariables* ui;	
 	const string* sequence;
 	
 	bool hidden;

@@ -2,7 +2,7 @@
 #include "GtfReader.h"
 #include "NucleotideDisplay.h"
 #include "BasicTypes.h"
-#include "SkittleUi.h"
+#include "MainWindow.h"
 #include "ui_BookmarkDialog.h"
 
 #include <QDebug>
@@ -20,7 +20,7 @@
 using namespace QtConcurrent;
 using namespace std;
 
-GtfReader::GtfReader(Ui_SkittleGUI* gui)
+GtfReader::GtfReader(UiVariables gui)
 {	
 	ui = gui;
 	inputFilename = string("blank.fa");
@@ -55,10 +55,10 @@ void GtfReader::addBookmark()//int start, int end)
 	dialog.setupUi(&parent);
 	
 	std::stringstream ss;
-	ss << ui->startDial->value();
+	ss << ui.startDial->value();
 	dialog.start->setText( QString( ss.str().c_str() ) );
 	std::stringstream ss2;
-	ss2 << ui->startDial->value() + ui->sizeDial->value();
+	ss2 << ui.startDial->value() + ui.sizeDial->value();
 	dialog.end->setText( QString(ss2.str().c_str() ) );
 	dialog.sequence->setText( QString(chrName.c_str()) );
 	
@@ -146,7 +146,7 @@ void GtfReader::readFile(QString filename)
 	emit newGtfFileRead( tracks() );
 	
 	/***********OUTPUT ANNOTATED SEQUENCE************** /
-	const string* seq = ui->glWidget->disp->sequence;
+	const string* seq = glWidget->nuc->sequence;
 	ofstream fout("clipped.fa");
 	for(int i = 0; i < annotation_track.size(); i++)
 	{
@@ -155,31 +155,12 @@ void GtfReader::readFile(QString filename)
 	fout.close();*/
 }
 	
-color GtfReader::color_entry()//string repClass)
+color GtfReader::color_entry()
 {
 	volatile int r = (int)(((float)rand() / RAND_MAX)* 255);
 	volatile int g = (int)(((float)rand() / RAND_MAX)* 255);
 	volatile int b = (int)(((float)rand() / RAND_MAX)* 255);
 	color c = color(r, g, b);
-	//rand();
-	/*
-	short int rC=0;
-	if( eq(repClass, "LINE") )//it is a LINE
-		c = color(0,0,255);
-	else if( eq(repClass, "LTR") )//it is a LTR	
-		c = color(255,0,0);
-	else if( eq(repClass, "SINE") )//it is a SINE		
-		c = color(0,255,0);
-	else
-	{
-		rC = (short int)repClass[0];
-		if(rC > 90) rC-= 32; 
-		rC -= 64;//drop it to 0-26
-		//rC = rC;//invert
-		rC *= 36;//drop it to 0-234 range
-		c = color(rC, 0, 0);//spectrum(rC);
-		//c = c * .4;
-	}*/
 	return c;
 }
 

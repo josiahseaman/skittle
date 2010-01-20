@@ -43,26 +43,23 @@
 #include <vector>
 
 #include "glwidget.h"
-#include "NucleotideDisplay.h"
-#include "FrequencyMap.h"
-#include "AnnotationDisplay.h"
-#include "CylinderDisplay.h"
-#include "AlignmentDisplay.h"
-#include "SkittleUi.h"
+#include "MainWindow.h"
 //! [0]
-GLWidget::GLWidget(Ui_SkittleGUI* gui, QWidget *parent)
+GLWidget::GLWidget(UiVariables gui, QWidget *parent)
     : QGLWidget(parent)
 {
 	ui = gui;
 	setMouseTracking(true);
+	setMinimumWidth(800);
+	setMinimumHeight(600);
 	frame = 0;
 	
 	setupColorTable();
-    nuc = new NucleotideDisplay(ui);
-    freq = new FrequencyMap(ui);
-    gtfTrack = new AnnotationDisplay(ui);
-    cylinder = new CylinderDisplay(ui);
-   	align = new AlignmentDisplay(ui);
+    nuc = new NucleotideDisplay(&ui, this);
+    freq = new FrequencyMap(&ui, this);
+    gtfTrack = new AnnotationDisplay(&ui, this);
+    cylinder = new CylinderDisplay(&ui, this);
+   	align = new AlignmentDisplay(&ui, this);
     marker = 0;
 
 	border = 10;    
@@ -72,14 +69,10 @@ GLWidget::GLWidget(Ui_SkittleGUI* gui, QWidget *parent)
     canvasWidth = 1;
 	canvasHeight = 1;
 	setTool(RESIZE_TOOL);
-	connect( ui->widthDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
-//	connect( ui->scaleDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
+	/*connect( ui->widthDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
     connect(ui->zoomDial, SIGNAL(valueChanged(int)), this, SLOT(changeZoom(int)));
-	//connect( ui->zoomDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
 
-//	connect( freq, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
 	connect( nuc, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
-//	connect( cylinder, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
 	connect( nuc, SIGNAL(sizeChanged(int)), this, SLOT(setPageSize()) );
 	
     nuc->createConnections();
@@ -88,10 +81,13 @@ GLWidget::GLWidget(Ui_SkittleGUI* gui, QWidget *parent)
    	
 	connect( ui->alignButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));
 	connect( ui->freqButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));
-	connect( ui->cylinderButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));
+	connect( ui->cylinderButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));*/
 	   
 	setPageSize();
-   	
+	
+    setMouseTracking(true);
+    setFocusPolicy(Qt::ClickFocus);
+   	createConnections();
 }
 
 GLWidget::~GLWidget()
@@ -99,14 +95,24 @@ GLWidget::~GLWidget()
     makeCurrent();
 }
 
+void GLWidget::createConnections()
+{
+	connect(nuc, SIGNAL(displayChanged()), this, SLOT(updateDisplay()));
+	connect( freq, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
+	connect( cylinder, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
+	connect( align, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
+	
+	connect(nuc, SIGNAL(sizeChanged(int)), this, SLOT(setPageSize()) );
+}
+
 QSize GLWidget::minimumSizeHint() const
 {
-    return QSize(50, 50);
+    return QSize(800, 600);
 }
 
 QSize GLWidget::sizeHint() const
 {
-    return QSize(400, 400);
+    return QSize(800, 600);
 }
 
 double GLWidget::getZoom()
@@ -116,7 +122,7 @@ double GLWidget::getZoom()
 
 void GLWidget::setTotalDisplayWidth()
 {	
-	if( nuc && freq && ui)
+	if( nuc && freq)
 	{
 		double z = getZoom();
 		int total_width = border
@@ -125,7 +131,8 @@ void GLWidget::setTotalDisplayWidth()
 			+ (!freq->hidden) * (freq->width() + border)
 			+ (!align->hidden) * (align->width() + border)
 			+ (!cylinder->hidden) * ((int)(cylinder->maxWidth()*2) + border);
-		ui->horizontalScrollBar->setMaximum( (int)max(0.0, (double)(total_width)*z - canvasWidth ) );
+		setMinimumWidth((double)(total_width)*z*6);
+		//ui.horizontalScrollBar->setMaximum( (int)max(0.0, (double)(total_width)*z - canvasWidth ) );
 	}
 }
 //***********SLOTS*******************
@@ -145,9 +152,9 @@ void GLWidget::displayString(const string& seq)
 	freq->sequence = &seq;
 	cylinder->sequence = &seq;
 	
-	ui->verticalScrollBar->setMaximum( max(0, (int)(seq.size()- ui->sizeDial->value()*.2) ) );
-	ui->startDial->setValue(2);//TODO: bit of a cludge
-	ui->startDial->setValue(1);
+	ui.verticalScrollBar->setMaximum( max(0, (int)(seq.size()- ui.sizeDial->value()*.2) ) );
+	ui.startDial->setValue(2);//TODO: bit of a cludge
+	ui.startDial->setValue(1);
 }
 
 void GLWidget::on_moveButton_clicked()
@@ -167,8 +174,8 @@ void GLWidget::on_resizeButton_clicked()
 
 void GLWidget::setPageSize()
 {
-	ui->verticalScrollBar->setMaximum( max(0, (int)(nuc->sequence->size()- ui->sizeDial->value()*.2) ) );
-    ui->verticalScrollBar->setPageStep(nuc->max_display_size);
+	ui.verticalScrollBar->setMaximum( max(0, (int)(nuc->sequence->size()- ui.sizeDial->value()*.2) ) );
+    ui.verticalScrollBar->setPageStep(nuc->max_display_size);
 }
 	
 void GLWidget::setTool(int tool)
@@ -188,7 +195,7 @@ void GLWidget::setTool(int tool)
 			changeCursor(Qt::CrossCursor);
 			break;
 		default:
-			ui->print("Error: Tool ID unrecognized.", tool);
+			print("Error: Tool ID unrecognized.", tool);
 	}
 }
 
@@ -205,25 +212,25 @@ void GLWidget::slideHorizontal(int x)
 void GLWidget::updateDisplay()
 {
 	setTotalDisplayWidth();
-	//ui->print("UpdateGL");
+	//print("UpdateGL");
 	redraw();
 }
 
 void GLWidget::updateDisplaySize()
 {	
-	int w = ui->widthDial->value();
-	double zoom = 100.0 / ui->zoomDial->value();
+	int w = ui.widthDial->value();
+	double zoom = 100.0 / ui.zoomDial->value();
 	int display_lines = static_cast<int>(200 * zoom + 0.5);
 	
-	ui->sizeDial->setSingleStep(w * 10);
-	ui->sizeDial->setValue( w * display_lines );
-	if(ui->sizeDial->value() !=  w * display_lines )
+	ui.sizeDial->setSingleStep(w * 10);
+	ui.sizeDial->setValue( w * display_lines );
+	if(ui.sizeDial->value() !=  w * display_lines )
 		updateDisplay();
 }
 
 void GLWidget::newAnnotation(const vector<track_entry>& track)
 {
-	ui->print("Annotations Received: ", track.size());
+	print("Annotations Received: ", track.size());
 	gtfTrack->newTrack( &track );
 }
 
@@ -243,23 +250,23 @@ void GLWidget::keyPressEvent( QKeyEvent *event )
 	if( keyboardModifiers() == Qt::ShiftModifier )
 		step = 1;
 	*/
-	int tenLines = ui->widthDial->value() * step;
+	int tenLines = ui.widthDial->value() * step;
     switch ( event->key() )//the keys should be passed directly to the widgets
     {
 		case Qt::Key_Down:
-			ui->startDial->setValue(ui->startDial->value() + tenLines);
+			ui.startDial->setValue(ui.startDial->value() + tenLines);
 			break;
 
 		case Qt::Key_Up:
-			ui->startDial->setValue(ui->startDial->value() - tenLines);
+			ui.startDial->setValue(ui.startDial->value() - tenLines);
 			break;
 
 		case Qt::Key_Right:
-			ui->widthDial->setValue(ui->widthDial->value() + ui->scaleDial->value());
+			ui.widthDial->setValue(ui.widthDial->value() + ui.scaleDial->value());
 			break;
 
 		case Qt::Key_Left:
-			ui->widthDial->setValue(ui->widthDial->value() - ui->scaleDial->value());
+			ui.widthDial->setValue(ui.widthDial->value() - ui.scaleDial->value());
 			break;
 
 		default:
@@ -317,9 +324,9 @@ void GLWidget::finalizeCalculations()
 	gtfTrack->display();
 	cylinder->display();
 	nuc->display();
-	int scale = ui->scaleDial->value();
+	int scale = ui.scaleDial->value();
 	if(scale > 1){
-		int displayWidth = ui->widthDial->value() / scale; 
+		int displayWidth = ui.widthDial->value() / scale; 
 		freq->calculate(nuc->nucleotide_colors, displayWidth);
 	}
 	freq->display();
@@ -338,19 +345,21 @@ void GLWidget::paintGL()
 		}
 	}
 	//finalizeCalculations();
-	//ui->print("Frame: ", ++frame);
+
+	//print("Frame: ", ++frame);
     glMatrixMode(GL_MODELVIEW);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     glPushMatrix();
 	    glTranslated(-xPosition, 0, 0);
 	    double zoom = getZoom();
-		glScaled(zoom, zoom, zoom);
+	    glScaled(zoom, zoom, zoom);
 	    glTranslated(border,0,0);//to get zoom working right
 	    if( tool() == SELECT_TOOL)
 			glCallList(marker);//possibly replace this with a blinking cursor
 		if( !gtfTrack->hidden )
 		{
+			glTranslated(3, 0 , 0);
 			gtfTrack->display();
 			glTranslated(gtfTrack->width()+ border, 0 , 0);
 		}
@@ -497,8 +506,8 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 		if(tool() == RESIZE_TOOL)
 		{
 			translate(0, dy * zoom);//still scroll up/down
-			int value = static_cast<int>(dx * zoom * ui->scaleDial->value()*2.0 + ui->widthDial->value() + 0.5);
-			ui->widthDial->setValue(value);
+			int value = static_cast<int>(dx * zoom * ui.scaleDial->value()*2.0 + ui.widthDial->value() + 0.5);
+			ui.widthDial->setValue(value);
 		}
     } 
     lastPos = event->pos();
@@ -511,9 +520,9 @@ void GLWidget::translate(float dx, float dy)
 	if(dy != 0.0)
 	{
 		int sign = (int)(dy / fabs(dy));
-		int move = -1* static_cast<int>(dy  + (sign*0.5)) * ui->widthDial->value() * 2;
-		int current = ui->startDial->value();
-		ui->startDial->setValue( max(1, current+move) );
+		int move = -1* static_cast<int>(dy  + (sign*0.5)) * ui.widthDial->value() * 2;
+		int current = ui.startDial->value();
+		ui.startDial->setValue( max(1, current+move) );
 	}
 	
     redraw();
@@ -652,3 +661,38 @@ color GLWidget::spectrum(double i)
 
 	return color(red, green, blue);
 }
+
+/**********Print Functions**********/
+void GLWidget::print(const char* s)
+{
+	emit printText(QString(s));	
+}
+
+void GLWidget::print(std::string s)
+{
+	emit printText(QString(s.c_str()));	
+}
+
+void GLWidget::printHtml(std::string s)
+{
+	//QTextCursor cursor = textArea->textCursor();
+	//cursor.movePosition(QTextCursor::End);
+	emit printHtml(QString(s.c_str()));
+}
+
+void GLWidget::print(const char* s, int num)
+{
+	stringstream ss1;
+	ss1 << s << num;
+
+	emit printText(QString( ss1.str().c_str() ));	
+}
+
+void GLWidget::print(int num1, int num2)
+{
+	stringstream ss1;
+	ss1 << num1 << ", " << num2;
+
+	emit printText(QString( ss1.str().c_str() ));	
+}
+

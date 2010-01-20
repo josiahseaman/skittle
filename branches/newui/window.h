@@ -39,7 +39,7 @@
 #define WINDOW_H
 
 #include <QWidget>
-#include "SkittleUi.h"
+#include "MainWindow.h"
 #include "Controller.h"
 
 QT_BEGIN_NAMESPACE

@@ -10,7 +10,7 @@
 #include <QGLWidget>
 #include "BasicTypes.h"
 #include "AbstractGraph.h"
-#include "SkittleUi.h"
+#include "MainWindow.h"
 #include "TextureCanvas.h"
 #include "AlignmentDisplay.h"
 
@@ -29,7 +29,7 @@ public:
 	bool A;
 	bool T;	
 	
-	NucleotideDisplay(Ui_SkittleGUI* gui);
+	NucleotideDisplay(UiVariables* gui, GLWidget* gl);
 	~NucleotideDisplay();
 	void createConnections();
 	void display();

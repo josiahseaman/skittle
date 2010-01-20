@@ -15,7 +15,6 @@
 
 using namespace std;
 
-class Ui_SkittleGUI;
 
 struct to_upper {
   int operator() ( int ch )
@@ -30,7 +29,7 @@ class FastaReader : public QObject
 	
 public:
 	
-	FastaReader(Ui_SkittleGUI* ui);
+	FastaReader(GLWidget* gl);
 	const string& seq();
 	
 
@@ -51,7 +50,6 @@ private:
 	int readBlock3(int &start);
 	void storeChrName(string n);
 
-	Ui_SkittleGUI* ui;
 	ifstream wordfile;
 	string sequence;
 	vector<char> buffer;

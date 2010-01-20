@@ -209,7 +209,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Project]
-UnitCount=36
+UnitCount=40
 FileName=SkittleToo.dev
 Name=SkittleToo
 Type=0
@@ -406,8 +406,28 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit38]
+FileName=MainWindow.cpp
+CompileCpp=0
+Folder=SkittleToo
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit39]
+FileName=MainWindow.h
+CompileCpp=0
+Folder=SkittleToo
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit37]
-FileName=NucleotideLinker.cpp
+FileName=UiVariables.h
 CompileCpp=0
 Folder=
 Compile=1
@@ -416,8 +436,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit38]
-FileName=NucleotideLink.h
+[Unit40]
+FileName=MainPanel.cpp
 CompileCpp=0
 Folder=
 Compile=1

@@ -9,7 +9,7 @@
 
 #include "BasicTypes.h"
 #include "AbstractGraph.h"
-#include "SkittleUi.h"
+#include "MainWindow.h"
 
 using namespace std;
 
@@ -19,9 +19,8 @@ class AnnotationDisplay : public AbstractGraph
     
 public:
 	
-	AnnotationDisplay(Ui_SkittleGUI* gui);
+	AnnotationDisplay(UiVariables* gui, GLWidget* gl);
 	~AnnotationDisplay();
-	void createConnections();
 	void display();
 	GLuint render();
 	void displayTrack(const vector<track_entry>& track);
@@ -37,6 +36,7 @@ public slots:
 signals:
 
 private:
+	GLWidget* glWidget;
 	unsigned int max_width;
 	GLuint display_object;
 	vector<track_entry> gtfTrack;

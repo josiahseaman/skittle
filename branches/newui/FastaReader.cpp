@@ -1,7 +1,7 @@
 #include <QtGui>
 #include "FastaReader.h"
 #include "BasicTypes.h"
-#include "SkittleUi.h"
+#include "MainWindow.h"
 
 #include <string>
 #include <cctype>
@@ -13,9 +13,9 @@
 
 using namespace QtConcurrent;
 
-FastaReader::FastaReader(Ui_SkittleGUI* gui)
+FastaReader::FastaReader( GLWidget* gl)
 {	
-	ui = gui;
+	glWidget = gl;
 	sequence = string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");	
 	bytesInFile = 0;
 	blockSize = 5000000;
@@ -203,7 +203,7 @@ void FastaReader::storeChrName(string path)
 	int endI = path.find_last_of('.');
 	int sizeI = endI - startI;
 	string name = path.substr(startI+1, sizeI-1);
-	ui->chromosomeName = name;
+	glWidget->chromosomeName = name;
 	emit fileNameChanged(name);
 }
 

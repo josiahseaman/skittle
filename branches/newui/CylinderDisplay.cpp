@@ -1,8 +1,10 @@
 #include "CylinderDisplay.h"
+#include "glwidget.h"
 #include <sstream>
 
-CylinderDisplay::CylinderDisplay(Ui_SkittleGUI* gui)
+CylinderDisplay::CylinderDisplay(UiVariables* gui, GLWidget* gl)
 {	
+	glWidget = gl;
 	ui = gui;
 	string* seq = new string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");	
 	sequence = seq;
@@ -37,7 +39,6 @@ void CylinderDisplay::createConnections()
 	
 	connect( ui->scaleDial, SIGNAL(valueChanged(int)), this, SLOT(changeScale(int)));
 	
-	connect( ui->cylinderButton, SIGNAL(clicked()), this, SLOT(toggleVisibility()));
 }
 
 void CylinderDisplay::createSquare()
@@ -82,7 +83,7 @@ GLuint CylinderDisplay::render()
 		createSquare();
 	glEndList();
 
-	//ui->print("Cylinder calculated");
+	//glWidget->print("Cylinder calculated");
 	//width_list = vector<float>(max_display_size, (float)Width);
 	ntLinker->calculate(sequence->substr(nucleotide_start, display_size), Width);
 	width_list = ntLinker->smooth(Width, 80);
@@ -119,7 +120,7 @@ GLuint CylinderDisplay::render()
 				y += 1.0 / local_width;
 				angle += 1.0 / local_width * 360.0;
 
-				color c1 = ui->glWidget->colors( genome[i] );//TODO: Optimize pointer function call
+				color c1 = glWidget->colors( genome[i] );//TODO: Optimize pointer function call
 
 				glPushMatrix();
 					glRotated(angle, 0,1,0);//rotate cylinder around Y
@@ -149,5 +150,5 @@ float CylinderDisplay::maxWidth()
 /******SLOTS*****/
 void CylinderDisplay::saySomething()
 {
-	ui->print("I see you");
+	glWidget->print("I see you");
 }

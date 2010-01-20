@@ -37,12 +37,12 @@
 
 #include <QApplication>
 
-#include "window.h"
+#include "MainWindow.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    Window window;
+    MainWindow window;
     window.show();
     if(argc > 1)
     {

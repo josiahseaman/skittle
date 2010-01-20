@@ -16,24 +16,22 @@ HEADERS += AbstractGraph.h \
            BasicTypes.h \
            ui_BookmarkDialog.h \
            BorderLayout.h \
-           Controller.h \
            CylinderDisplay.h \
-           NucleotideLinker.h \
-           NucleotideLink.h \
            FastaReader.h \
            FrequencyMap.h \
            glwidget.h \
            GtfReader.h \
+		   MainWindow.h \
            NucleotideDisplay.h \
-           SkittleUi.h \
+           NucleotideLinker.h \
+           NucleotideLink.h \
            TextRender.h \
            TextureCanvas.h \
-           window.h 
+           UiVariables.h
 SOURCES += AbstractGraph.cpp \
            AlignmentDisplay.cpp \
            AnnotationDisplay.cpp \
            BorderLayout.cpp \
-           Controller.cpp \
            CylinderDisplay.cpp \
            NucleotideLinker.cpp \
            FastaReader.cpp \
@@ -41,7 +39,7 @@ SOURCES += AbstractGraph.cpp \
            glwidget.cpp \
            GtfReader.cpp \
            main.cpp \
+           MainWindow.cpp \
            NucleotideDisplay.cpp \
            TextRender.cpp \
-           TextureCanvas.cpp \
-           window.cpp
+           TextureCanvas.cpp 

@@ -1,9 +1,11 @@
 #include "AnnotationDisplay.h"
+#include "glwidget.h"
 #include <sstream>
 #include <algorithm>
 
-AnnotationDisplay::AnnotationDisplay(Ui_SkittleGUI* gui)
+AnnotationDisplay::AnnotationDisplay(UiVariables* gui, GLWidget* gl)
 {	
+	glWidget = gl;
 	ui = gui;
 	hidden = true;
 
@@ -15,11 +17,6 @@ AnnotationDisplay::AnnotationDisplay(Ui_SkittleGUI* gui)
 AnnotationDisplay::~AnnotationDisplay()
 {
     glDeleteLists(display_object, 1);
-}
-
-void AnnotationDisplay::createConnections()
-{
-
 }
 
 bool trackCompare(const track_entry& a, const track_entry& b)
@@ -73,7 +70,7 @@ void AnnotationDisplay::displayTrack(const vector<track_entry>& track)
 	int display_size = ui->sizeDial->value();
 	int next_spot = 0;
 	
-	//ui->print("--------------------");
+	//glWidget->print("--------------------");
 	if(track.empty()) 
 		return;
 	vector<track_entry> activeTracks = vector<track_entry>();
@@ -158,7 +155,7 @@ void AnnotationDisplay::mouseClick(point2D pt)
 				    || (gtfTrack[i].stop >= start && gtfTrack[i].stop <= stop)//end in range
 					|| (gtfTrack[i].start < start && gtfTrack[i].stop > stop)) )//in the middle
 				{
-					ui->print(gtfTrack[i].toString());
+					glWidget->print(gtfTrack[i].toString());
 				}
 			}
 		}

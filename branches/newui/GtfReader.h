@@ -7,11 +7,12 @@
 #include <vector>
 #include <QObject>
 #include "BasicTypes.h"
+#include "UiVariables.h"
 
 using namespace std;
 
 class QProgressDialog;
-class Ui_SkittleGUI;
+class MainWindow;
 
 class GtfReader : public QObject
 {
@@ -21,7 +22,7 @@ public:
 	string inputFilename;
 	string chrName;
 	
-	GtfReader(Ui_SkittleGUI* ui);
+	GtfReader(UiVariables ui);
 	const vector<track_entry>& tracks();
 	
 
@@ -37,7 +38,7 @@ signals:
 	
 private:
 	bool initFile(string fileName);
-	color color_entry();//string repClass);
+	color color_entry();
 	bool eq(string& str1, const char* str2);
 
 	Ui_SkittleGUI* ui;

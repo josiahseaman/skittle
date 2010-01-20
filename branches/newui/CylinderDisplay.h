@@ -10,7 +10,7 @@
 #include <QGLWidget>
 #include "BasicTypes.h"
 #include "AbstractGraph.h"
-#include "SkittleUi.h"
+#include "MainWindow.h"
 #include "NucleotideLinker.h"
 
 using namespace std;
@@ -20,7 +20,7 @@ class CylinderDisplay : public AbstractGraph
 	Q_OBJECT
 
 public:
-	CylinderDisplay(Ui_SkittleGUI* gui);
+	CylinderDisplay(UiVariables* gui, GLWidget* gl);
 	~CylinderDisplay();
 	void createConnections();
 	void createSquare();
