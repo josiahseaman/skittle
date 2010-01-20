@@ -1,0 +1,30 @@
+In order to compile Skittle Genome Visualizer on Mac you will need:
+Xcode
+Qt4.1 or higher
+OpenGL
+GLUT
+
+All of these are freely available for download.
+
+Compiling on Mac:
+1. Unpack the source files into the directory you want to work in.
+2. Open up a terminal in that directory and use:
+
+qmake -spec macx-xcode SkittleToo.pro
+
+3. Open the new xcode project file.
+
+4. Use Find/Replace to replace all instances of "GL/glut.h" to "GLUT/glut.h".  
+
+5. Add the following frameworks:
+Glut.framework
+Opengl.framework
+QTcore.fraemework
+QTgui.framework
+QTGL.framework
+
+6. Build project.
+
+#7. After building the project, you can statically link for distribution with:
+
+macdeployqt SkittleToo.app -dmg
