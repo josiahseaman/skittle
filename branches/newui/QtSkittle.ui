@@ -1,0 +1,733 @@
+<ui version="4.0" >
+ <class>SkittleGUI</class>
+ <widget class="QMainWindow" name="SkittleGUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>936</width>
+    <height>610</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Skittle</string>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <property name="sizeIncrement" >
+    <size>
+     <width>100</width>
+     <height>100</height>
+    </size>
+   </property>
+   <layout class="QGridLayout" name="gridLayout" >
+    <item row="0" column="0" >
+     <widget class="QGroupBox" name="groupBox" >
+      <property name="minimumSize" >
+       <size>
+        <width>80</width>
+        <height>400</height>
+       </size>
+      </property>
+      <property name="maximumSize" >
+       <size>
+        <width>80</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="title" >
+       <string>Tools</string>
+      </property>
+      <widget class="QToolButton" name="moveButton" >
+       <property name="geometry" >
+        <rect>
+         <x>18</x>
+         <y>45</y>
+         <width>41</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text" >
+        <string>Move</string>
+       </property>
+      </widget>
+      <widget class="QToolButton" name="selectButton" >
+       <property name="geometry" >
+        <rect>
+         <x>18</x>
+         <y>145</y>
+         <width>41</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text" >
+        <string>Select</string>
+       </property>
+      </widget>
+      <widget class="QToolButton" name="resizeButton" >
+       <property name="geometry" >
+        <rect>
+         <x>18</x>
+         <y>95</y>
+         <width>44</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text" >
+        <string>Resize</string>
+       </property>
+      </widget>
+      <widget class="QToolButton" name="toolButton_5" >
+       <property name="geometry" >
+        <rect>
+         <x>18</x>
+         <y>195</y>
+         <width>25</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text" >
+        <string>...</string>
+       </property>
+      </widget>
+      <widget class="QToolButton" name="toolButton_6" >
+       <property name="geometry" >
+        <rect>
+         <x>18</x>
+         <y>245</y>
+         <width>25</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text" >
+        <string>...</string>
+       </property>
+      </widget>
+      <widget class="QToolButton" name="toolButton_7" >
+       <property name="geometry" >
+        <rect>
+         <x>18</x>
+         <y>295</y>
+         <width>25</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text" >
+        <string>...</string>
+       </property>
+      </widget>
+     </widget>
+    </item>
+    <item row="0" column="1" colspan="2" >
+     <widget class="GLWidget" native="1" name="glWidget" >
+      <property name="enabled" >
+       <bool>true</bool>
+      </property>
+      <property name="minimumSize" >
+       <size>
+        <width>400</width>
+        <height>400</height>
+       </size>
+      </property>
+      <property name="sizeIncrement" >
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="cursor" >
+       <cursorShape>SizeAllCursor</cursorShape>
+      </property>
+      <property name="mouseTracking" >
+       <bool>true</bool>
+      </property>
+      <property name="focusPolicy" >
+       <enum>Qt::ClickFocus</enum>
+      </property>
+      <property name="autoFillBackground" >
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="3" >
+     <widget class="QGroupBox" name="zoomBox" >
+      <property name="minimumSize" >
+       <size>
+        <width>140</width>
+        <height>70</height>
+       </size>
+      </property>
+      <property name="maximumSize" >
+       <size>
+        <width>16777215</width>
+        <height>70</height>
+       </size>
+      </property>
+      <property name="title" >
+       <string>Zoom</string>
+      </property>
+      <widget class="QSlider" name="zoomSlider" >
+       <property name="geometry" >
+        <rect>
+         <x>10</x>
+         <y>50</y>
+         <width>512</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="minimum" >
+        <number>1</number>
+       </property>
+       <property name="maximum" >
+        <number>200</number>
+       </property>
+       <property name="value" >
+        <number>100</number>
+       </property>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="invertedAppearance" >
+        <bool>false</bool>
+       </property>
+       <property name="tickPosition" >
+        <enum>QSlider::TicksAbove</enum>
+       </property>
+       <property name="tickInterval" >
+        <number>5</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label" >
+       <property name="geometry" >
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>501</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text" >
+        <string>1                                                                             100                                                                           200</string>
+       </property>
+      </widget>
+     </widget>
+    </item>
+    <item rowspan="2" row="0" column="4" >
+     <widget class="QScrollArea" name="scrollArea" >
+      <property name="minimumSize" >
+       <size>
+        <width>120</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize" >
+       <size>
+        <width>120</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="widgetResizable" >
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents" >
+       <property name="geometry" >
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>118</width>
+         <height>474</height>
+        </rect>
+       </property>
+       <widget class="QPushButton" name="pushButton" >
+        <property name="geometry" >
+         <rect>
+          <x>10</x>
+          <y>40</y>
+          <width>91</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text" >
+         <string>Nucleotide</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton_2" >
+        <property name="geometry" >
+         <rect>
+          <x>10</x>
+          <y>80</y>
+          <width>91</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text" >
+         <string>Frequency Map</string>
+        </property>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_2" >
+        <property name="geometry" >
+         <rect>
+          <x>10</x>
+          <y>433</y>
+          <width>101</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="title" >
+         <string>Display Length</string>
+        </property>
+        <widget class="QSpinBox" name="sizeDial" >
+         <property name="geometry" >
+          <rect>
+           <x>11</x>
+           <y>15</y>
+           <width>81</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="font" >
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="accessibleName" >
+          <string comment="Width" >Display Width</string>
+         </property>
+         <property name="suffix" >
+          <string/>
+         </property>
+         <property name="minimum" >
+          <number>1</number>
+         </property>
+         <property name="maximum" >
+          <number>100000</number>
+         </property>
+         <property name="singleStep" >
+          <number>1000</number>
+         </property>
+         <property name="value" >
+          <number>40000</number>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_3" >
+        <property name="geometry" >
+         <rect>
+          <x>10</x>
+          <y>390</y>
+          <width>107</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="title" >
+         <string>Display Width</string>
+        </property>
+        <widget class="QSpinBox" name="widthDial" >
+         <property name="geometry" >
+          <rect>
+           <x>2</x>
+           <y>15</y>
+           <width>81</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="font" >
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="accessibleName" >
+          <string comment="Width" >Display Width</string>
+         </property>
+         <property name="suffix" >
+          <string/>
+         </property>
+         <property name="minimum" >
+          <number>1</number>
+         </property>
+         <property name="maximum" >
+          <number>40000</number>
+         </property>
+         <property name="value" >
+          <number>200</number>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_3" >
+         <property name="geometry" >
+          <rect>
+           <x>86</x>
+           <y>9</y>
+           <width>18</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text" >
+          <string>+</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_4" >
+         <property name="geometry" >
+          <rect>
+           <x>86</x>
+           <y>25</y>
+           <width>18</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text" >
+          <string>-</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_4" >
+        <property name="geometry" >
+         <rect>
+          <x>10</x>
+          <y>348</y>
+          <width>101</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="title" >
+         <string>Start Position</string>
+        </property>
+        <widget class="QSpinBox" name="startDial" >
+         <property name="geometry" >
+          <rect>
+           <x>3</x>
+           <y>15</y>
+           <width>81</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="font" >
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="accessibleName" >
+          <string comment="Width" >Display Width</string>
+         </property>
+         <property name="suffix" >
+          <string/>
+         </property>
+         <property name="minimum" >
+          <number>1</number>
+         </property>
+         <property name="maximum" >
+          <number>400000000</number>
+         </property>
+         <property name="value" >
+          <number>1</number>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="zoomBox_2" >
+        <property name="geometry" >
+         <rect>
+          <x>10</x>
+          <y>477</y>
+          <width>101</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="title" >
+         <string>Zoom</string>
+        </property>
+        <widget class="QSpinBox" name="zoomDial" >
+         <property name="geometry" >
+          <rect>
+           <x>11</x>
+           <y>15</y>
+           <width>81</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="font" >
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="accessibleName" >
+          <string comment="Width" >Display Width</string>
+         </property>
+         <property name="suffix" >
+          <string/>
+         </property>
+         <property name="minimum" >
+          <number>1</number>
+         </property>
+         <property name="maximum" >
+          <number>100000</number>
+         </property>
+         <property name="singleStep" >
+          <number>1000</number>
+         </property>
+         <property name="value" >
+          <number>100</number>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QCheckBox" name="textureCheckBox" >
+        <property name="geometry" >
+         <rect>
+          <x>6</x>
+          <y>318</y>
+          <width>104</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text" >
+         <string>Texture Optimization</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="invertCheckBox" >
+        <property name="geometry" >
+         <rect>
+          <x>8</x>
+          <y>294</y>
+          <width>110</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text" >
+         <string>Minus Strand</string>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="5" >
+     <widget class="QTextBrowser" name="textBrowser" />
+    </item>
+    <item row="0" column="3" >
+     <widget class="QScrollBar" name="verticalScrollBar" >
+      <property name="minimumSize" >
+       <size>
+        <width>7</width>
+        <height>20</height>
+       </size>
+      </property>
+      <property name="maximum" >
+       <number>10000</number>
+      </property>
+      <property name="singleStep" >
+       <number>100</number>
+      </property>
+      <property name="pageStep" >
+       <number>1000</number>
+      </property>
+      <property name="orientation" >
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>936</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile" >
+    <property name="title" >
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen" />
+    <addaction name="actionExit" />
+   </widget>
+   <widget class="QMenu" name="menuView" >
+    <property name="title" >
+     <string>View</string>
+    </property>
+    <addaction name="actionReset_View" />
+   </widget>
+   <widget class="QMenu" name="menuWindows" >
+    <property name="title" >
+     <string>Windows</string>
+    </property>
+    <addaction name="actionNucleotide_Display" />
+    <addaction name="actionFrequency_Map" />
+   </widget>
+   <widget class="QMenu" name="menuHelp" >
+    <property name="title" >
+     <string>Help</string>
+    </property>
+    <addaction name="actionSkittle_Website" />
+   </widget>
+   <addaction name="menuFile" />
+   <addaction name="menuView" />
+   <addaction name="menuWindows" />
+   <addaction name="menuHelp" />
+  </widget>
+  <widget class="QStatusBar" name="statusbar" />
+  <action name="actionNucleotide_Display" >
+   <property name="text" >
+    <string>Nucleotide Display</string>
+   </property>
+  </action>
+  <action name="actionFrequency_Map" >
+   <property name="text" >
+    <string>Frequency Map</string>
+   </property>
+  </action>
+  <action name="actionSkittle_Website" >
+   <property name="text" >
+    <string>Skittle Website</string>
+   </property>
+  </action>
+  <action name="actionReset_View" >
+   <property name="text" >
+    <string>Reset View</string>
+   </property>
+  </action>
+  <action name="actionOpen" >
+   <property name="text" >
+    <string>Open...</string>
+   </property>
+  </action>
+  <action name="actionExit" >
+   <property name="text" >
+    <string>Exit</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GLWidget</class>
+   <extends>QWidget</extends>
+   <header>glwidget.h</header>
+   <container>1</container>
+   <slots>
+    <slot>changeWidth(int)</slot>
+    <slot>changeLength(int)</slot>
+    <slot>changeStart(int)</slot>
+    <signal>lengthChanged(int)</signal>
+    <signal>startChanged(int)</signal>
+    <signal>widthChanged(int)</signal>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>sizeDial</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>glWidget</receiver>
+   <slot>changeLength(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>687</x>
+     <y>567</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>482</x>
+     <y>380</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widthDial</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>glWidget</receiver>
+   <slot>changeWidth(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>676</x>
+     <y>513</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>536</x>
+     <y>397</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>startDial</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>glWidget</receiver>
+   <slot>changeStart(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>653</x>
+     <y>469</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>548</x>
+     <y>469</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>glWidget</sender>
+   <signal>startChanged(int)</signal>
+   <receiver>startDial</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>504</x>
+     <y>340</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>621</x>
+     <y>473</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>glWidget</sender>
+   <signal>widthChanged(int)</signal>
+   <receiver>widthDial</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>425</x>
+     <y>396</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>656</x>
+     <y>519</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>glWidget</sender>
+   <signal>lengthChanged(int)</signal>
+   <receiver>sizeDial</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>448</x>
+     <y>486</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>629</x>
+     <y>559</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <designerdata>
+  <property name="gridDeltaX" >
+   <number>10</number>
+  </property>
+  <property name="gridDeltaY" >
+   <number>9</number>
+  </property>
+  <property name="gridSnapX" >
+   <bool>false</bool>
+  </property>
+  <property name="gridSnapY" >
+   <bool>false</bool>
+  </property>
+  <property name="gridVisible" >
+   <bool>true</bool>
+  </property>
+ </designerdata>
+</ui>
