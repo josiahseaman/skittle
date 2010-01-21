@@ -12,9 +12,11 @@
 #include <QRunnable>
 #include <qtconcurrentrun.h>
 #include <QApplication>
+#include "glwidget.h"
 
 using namespace std;
 
+class GLWidget;
 
 struct to_upper {
   int operator() ( int ch )
@@ -42,6 +44,7 @@ signals:
 	void progressValueChanged(int start);
 	
 private:
+	GLWidget* glWidget;
 	char upperCase(char& c);
 	bool initFile(string file);
 	void loadingProgress();

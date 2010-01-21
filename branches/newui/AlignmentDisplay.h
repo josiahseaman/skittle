@@ -54,6 +54,7 @@ private:
 
 	GLuint display_object;
 	TextureCanvas* textureBuffer;
+	GLWidget* glWidget;
 	
 };
 

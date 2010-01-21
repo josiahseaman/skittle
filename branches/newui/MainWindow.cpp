@@ -355,6 +355,13 @@ void MainWindow::open()
     if (!fileName.isEmpty()) 
 		 emit newFileOpen(fileName);
 }
+
+void MainWindow::open(QString fileName)
+{
+    if (!fileName.isEmpty()) 
+		 emit newFileOpen(fileName);
+}
+
 void MainWindow::changeWindowName(std::string name)
 {
 	string title = "Skittle - ";

@@ -70,7 +70,7 @@ GLWidget::GLWidget(UiVariables gui, QWidget *parent)
 	canvasHeight = 1;
 	setTool(RESIZE_TOOL);
 	/*connect( ui->widthDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
-    connect(ui->zoomDial, SIGNAL(valueChanged(int)), this, SLOT(changeZoom(int)));
+    connect(ui.zoomDial, SIGNAL(valueChanged(int)), this, SLOT(changeZoom(int)));
 
 	connect( nuc, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
 	connect( nuc, SIGNAL(sizeChanged(int)), this, SLOT(setPageSize()) );
@@ -79,9 +79,9 @@ GLWidget::GLWidget(UiVariables gui, QWidget *parent)
     freq->createConnections();
     cylinder->createConnections();
    	
-	connect( ui->alignButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));
-	connect( ui->freqButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));
-	connect( ui->cylinderButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));*/
+	connect( ui.alignButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));
+	connect( ui.freqButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));
+	connect( ui.cylinderButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));*/
 	   
 	setPageSize();
 	
@@ -337,11 +337,11 @@ void GLWidget::paintGL()
 {
 	if(!align->hidden)//TODO: move this inside AlignmentDisplay
 	{
-		int scale = ui->scaleDial->value();
+		int scale = ui.scaleDial->value();
 		scale = max(4, (scale / 4) * 4);//enforces scale is a multiple of 4
-		if(scale != ui->scaleDial->value())
+		if(scale != ui.scaleDial->value())
 		{
-			ui->scaleDial->setValue(scale);
+			ui.scaleDial->setValue(scale);
 		}
 	}
 	//finalizeCalculations();
@@ -390,13 +390,13 @@ void GLWidget::paintGL()
 		if(!freq->hidden)
 		{
 			freq->checkVariables();
-			if((ui->scaleDial->value() > 1) && ( !freq->upToDate ))
+			if((ui.scaleDial->value() > 1) && ( !freq->upToDate ))
 			{
 				if(!nuc->upToDate)
 				{
 					nuc->load_nucleotide();
 				}
-				int displayWidth = ui->widthDial->value() / ui->scaleDial->value(); 
+				int displayWidth = ui.widthDial->value() / ui.scaleDial->value(); 
 				freq->calculate(nuc->nucleotide_colors, displayWidth);
 			}
 		    freq->display();

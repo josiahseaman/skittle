@@ -39,6 +39,7 @@ signals:
 	
 public slots:
 	void open();
+	void open(QString fileName);
 	void updateProgress(int);
 	void updateState(QString);
 	void updateStatus(QString);

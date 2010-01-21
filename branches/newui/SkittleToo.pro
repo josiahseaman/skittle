@@ -21,7 +21,7 @@ HEADERS += AbstractGraph.h \
            FrequencyMap.h \
            glwidget.h \
            GtfReader.h \
-		   MainWindow.h \
+           MainWindow.h \
            NucleotideDisplay.h \
            NucleotideLinker.h \
            NucleotideLink.h \

@@ -41,7 +41,7 @@ private:
 	color color_entry();
 	bool eq(string& str1, const char* str2);
 
-	Ui_SkittleGUI* ui;
+	UiVariables ui;
 	string outputFilename;
 	ifstream file;
 	vector<track_entry> annotation_track;
