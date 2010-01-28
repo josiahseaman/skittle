@@ -49,7 +49,6 @@ void AlignmentDisplay::display()
 
 void AlignmentDisplay::loadTexture()
 {
-	glWidget->print("Load Texture");	
 	scale = max(4, (scale / 4) * 4);//enforces scale is a multiple of 4
 	ui->scaleDial->setValue(scale);
 	//return if changed?

@@ -147,6 +147,7 @@ void GLWidget::changeZoom(int z)
 
 void GLWidget::displayString(const string& seq)
 {
+	print("GLWidget:: string received.  Size:", seq.size());
 	nuc->sequence= &seq;
 	align->setSequence(&seq);
 	freq->sequence = &seq;

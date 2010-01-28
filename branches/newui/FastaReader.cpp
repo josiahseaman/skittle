@@ -43,6 +43,7 @@ bool FastaReader::initFile(string file)
 void FastaReader::readFile(QString fileName)
 {
 	string file = fileName.toStdString();
+	glWidget->print(file);
 	if( file.empty() )
 		return;
 	storeChrName(file);	
@@ -80,6 +81,7 @@ void FastaReader::readFile(QString fileName)
 			progressBar = NULL;
 		}
 		buffer.clear();
+		glWidget->print("Done reading file.");
 		emit newFileRead( seq() );
 	}
 }
