@@ -49,10 +49,10 @@ Window::Window()
 
 void Window::open()
 {
-	QStringList filters;
+/*	QStringList filters;
 	filters << "Image files (*.png *.xpm *.jpg)"
          << "Text files (*.txt)"
-         << "Any files (*)";
+         << "Any files (*)";*/
 
 	QFileDialog dialog(this);
 	//dialog.setNameFilters(filters);

@@ -12,6 +12,7 @@ INPUT(
 ./release\GtfReader.o
 ./release\main.o
 ./release\NucleotideDisplay.o
+./release\Oligomers.o
 ./release\TextRender.o
 ./release\TextureCanvas.o
 ./release\window.o
@@ -24,5 +25,6 @@ INPUT(
 ./release\moc_glwidget.o
 ./release\moc_GtfReader.o
 ./release\moc_NucleotideDisplay.o
+./release\moc_Oligomers.o
 ./release\moc_window.o
 );

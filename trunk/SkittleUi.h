@@ -68,6 +68,7 @@ public:
     QPushButton *nucButton;
     QPushButton *alignButton;
     QPushButton *freqButton;
+    QPushButton *oligButton;
     
     QGroupBox *sizeBox;
     QSpinBox *sizeDial;
@@ -79,6 +80,8 @@ public:
     QSpinBox *startDial;
     QGroupBox *scaleBox;
     QSpinBox *scaleDial;    
+    QGroupBox *oligBox;
+    QSpinBox *oligDial;    
     QGroupBox *zoomBox;
     QSpinBox *zoomDial;
     
@@ -170,6 +173,12 @@ void setupUi(QMainWindow *SkittleGUI)
     nucButton->setMinimumSize(QSize(110, 23));
     sidebar->addWidget(nucButton, BorderLayout::North);
     
+    oligButton = new QPushButton(scrollAreaWidgetContents);
+    oligButton->setObjectName(QString::fromUtf8("oligButton"));
+    oligButton->setMinimumSize(QSize(110, 23));
+    //oligButton->setVisible(false);
+    sidebar->addWidget(oligButton, BorderLayout::North);
+    
     alignButton = new QPushButton(scrollAreaWidgetContents);
     alignButton->setObjectName(QString::fromUtf8("alignButton"));
     alignButton->setMinimumSize(QSize(110, 23));
@@ -222,7 +231,7 @@ void setupUi(QMainWindow *SkittleGUI)
     zoomDial->setObjectName(QString::fromUtf8("zoomDial"));
     zoomDial->setGeometry(QRect(11, 15, 81, 20));
     zoomDial->setFont(font);
-    zoomDial->setMinimum(1);
+    zoomDial->setMinimum(10);
     zoomDial->setMaximum(100000);
     zoomDial->setSingleStep(10);
     zoomDial->setValue(100);
@@ -268,6 +277,18 @@ void setupUi(QMainWindow *SkittleGUI)
     
     sidebar->addWidget(widthBox, BorderLayout::South);
     
+    oligBox = new QGroupBox(scrollAreaWidgetContents);
+    oligBox->setObjectName(QString::fromUtf8("oligBox"));
+    oligBox->setMinimumSize(QSize(101, 41));
+    oligDial = new QSpinBox(oligBox);
+    oligDial->setObjectName(QString::fromUtf8("oligDial"));
+    oligDial->setGeometry(QRect(11, 15, 81, 20));
+    oligDial->setFont(font);
+    oligDial->setMinimum(1);
+    oligDial->setMaximum(5);
+    oligDial->setValue(3);
+    sidebar->addWidget(oligBox, BorderLayout::South);
+    //oligBox->hide();
     
     textureCheckBox = new QCheckBox(scrollAreaWidgetContents);
     textureCheckBox->setObjectName(QString::fromUtf8("textureCheckBox"));
@@ -384,8 +405,10 @@ void retranslateUi(QMainWindow *SkittleGUI)
     
     zoomBox->setTitle(QApplication::translate("SkittleGUI", "Zoom", 0, QApplication::UnicodeUTF8));
     scaleBox->setTitle(QApplication::translate("SkittleGUI", "Scale", 0, QApplication::UnicodeUTF8));
+    oligBox->setTitle(QApplication::translate("SkittleGUI", "Oligomer Size", 0, QApplication::UnicodeUTF8));
     nucButton->setText(QApplication::translate("SkittleGUI", "Nucleotide", 0, QApplication::UnicodeUTF8));
     freqButton->setText(QApplication::translate("SkittleGUI", "Repeat Map", 0, QApplication::UnicodeUTF8));
+    oligButton->setText(QApplication::translate("SkittleGUI", "Oligomer Usage", 0, QApplication::UnicodeUTF8));
     alignButton->setText(QApplication::translate("SkittleGUI", "Repeat Overview", 0, QApplication::UnicodeUTF8));
     cylinderButton->setText(QApplication::translate("SkittleGUI", "Alignment Cylinder", 0, QApplication::UnicodeUTF8));
     sizeBox->setTitle(QApplication::translate("SkittleGUI", "Display Length", 0, QApplication::UnicodeUTF8));

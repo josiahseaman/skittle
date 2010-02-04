@@ -25,6 +25,7 @@ HEADERS += AbstractGraph.h \
            glwidget.h \
            GtfReader.h \
            NucleotideDisplay.h \
+           Oligomers.h \
            SkittleUi.h \
            TextRender.h \
            TextureCanvas.h \
@@ -42,6 +43,7 @@ SOURCES += AbstractGraph.cpp \
            GtfReader.cpp \
            main.cpp \
            NucleotideDisplay.cpp \
+           Oligomers.cpp \
            TextRender.cpp \
            TextureCanvas.cpp \
            window.cpp

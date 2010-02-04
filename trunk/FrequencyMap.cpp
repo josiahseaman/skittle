@@ -105,35 +105,17 @@ void FrequencyMap::load_canvas()
 GLuint FrequencyMap::render()
 {
 	if(! upToDate )
+	{
 		freq_map();	
+		load_canvas();
+	}
 
 	GLuint list = glGenLists(1);
     glNewList(list, GL_COMPILE);
 	glPushMatrix();
 	glScaled(1,-1,1);
-		
-	if(useTextureOptimization())
-	{//in the optimization, the display list is just a wrapper for the texture square.
-		if(!upToDate)
-			load_canvas();
-	
-		textureBuffer->display();
-	}
-	else
-	{
 
-		check_height();
-		for( int h = 0; h < F_height; h++)
-		{		
-			//calculate across widths 
-			for(int w = 1; w <= F_width; w++)
-			{
-				int grey = static_cast<int>(  freq[h][w] * 255 );
-				color c = color(grey, grey, grey);//white to grey							
-				paint_square(point(w-1, h, 0) , c);					
-			}
-		}	
-	}
+	textureBuffer->display();
 	
 	glPopMatrix();
     glEndList();

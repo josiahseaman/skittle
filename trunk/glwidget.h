@@ -30,6 +30,7 @@
 using namespace std;
 
 class FrequencyMap; 
+class Oligomers; 
 class NucleotideDisplay;
 class AnnotationDisplay;
 class CylinderDisplay;
@@ -95,6 +96,7 @@ protected:
 private:
 	Ui_SkittleGUI* ui;
 	FrequencyMap* freq;
+	Oligomers* olig;
 	AnnotationDisplay* gtfTrack;
 	CylinderDisplay* cylinder;
    	AlignmentDisplay* align;

@@ -45,6 +45,7 @@
 #include "glwidget.h"
 #include "NucleotideDisplay.h"
 #include "FrequencyMap.h"
+#include "Oligomers.h"
 #include "AnnotationDisplay.h"
 #include "CylinderDisplay.h"
 #include "AlignmentDisplay.h"
@@ -60,6 +61,7 @@ GLWidget::GLWidget(Ui_SkittleGUI* gui, QWidget *parent)
 	setupColorTable();
     nuc = new NucleotideDisplay(ui);
     freq = new FrequencyMap(ui);
+    olig = new Oligomers(ui);
     gtfTrack = new AnnotationDisplay(ui);
     cylinder = new CylinderDisplay(ui);
    	align = new AlignmentDisplay(ui);
@@ -79,15 +81,19 @@ GLWidget::GLWidget(Ui_SkittleGUI* gui, QWidget *parent)
 
 //	connect( freq, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
 	connect( nuc, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
-//	connect( cylinder, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
+/*For some reason, adding more than one call to updateDisplay() causes the program to crash on start
+//	connect( olig, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
+//	connect( olig, SIGNAL(wordLengthChanged(int)), this, SLOT(updateDisplay()) );  */
 	connect( nuc, SIGNAL(sizeChanged(int)), this, SLOT(setPageSize()) );
 	
     nuc->createConnections();
     freq->createConnections();
+    olig->createConnections();
     cylinder->createConnections();
    	
 	connect( ui->alignButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));
 	connect( ui->freqButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));
+	connect( ui->oligButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));
 	connect( ui->cylinderButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));
 	   
 	setPageSize();
@@ -116,13 +122,14 @@ double GLWidget::getZoom()
 
 void GLWidget::setTotalDisplayWidth()
 {	
-	if( nuc && freq && ui)
+	if( nuc && freq && ui && olig)
 	{
 		double z = getZoom();
 		int total_width = border
 			+ (!gtfTrack->hidden) * 6 
 			+ (!nuc->hidden) * (nuc->width() + border) 
 			+ (!freq->hidden) * (freq->width() + border)
+			+ (!olig->hidden) * (olig->width() + border)
 			+ (!align->hidden) * (align->width() + border)
 			+ (!cylinder->hidden) * ((int)(cylinder->maxWidth()*2) + border);
 		ui->horizontalScrollBar->setMaximum( (int)max(0.0, (double)(total_width)*z - canvasWidth ) );
@@ -143,6 +150,7 @@ void GLWidget::displayString(const string& seq)
 	nuc->sequence= &seq;
 	align->setSequence(&seq);
 	freq->sequence = &seq;
+	olig->sequence = &seq;
 	cylinder->sequence = &seq;
 	
 	ui->verticalScrollBar->setMaximum( max(0, (int)(seq.size()- ui->sizeDial->value()*.2) ) );
@@ -366,6 +374,12 @@ void GLWidget::paintGL()
 			nuc->display();
 		    glTranslated(nuc->width() + border, 0 , 0);
 		}
+		if(!olig->hidden)
+		{
+			olig->checkVariables();
+		    olig->display();
+	        glTranslated(olig->width() + border, 0 , 0);
+		}
 		if(!align->hidden)
 		{
 			align->display();
@@ -465,6 +479,11 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 		{
 			nuc->mouseClick(oglCoords);
 			oglCoords.x -= nuc->width() + border;
+		}
+		if(!olig->hidden)
+		{
+			olig->mouseClick(oglCoords);//pass click event
+			oglCoords.x -= olig->width() + border;
 		}
 		if(!align->hidden)
 		{

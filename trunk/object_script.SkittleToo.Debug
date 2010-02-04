@@ -12,6 +12,7 @@ INPUT(
 ./debug\GtfReader.o
 ./debug\main.o
 ./debug\NucleotideDisplay.o
+./debug\Oligomers.o
 ./debug\TextRender.o
 ./debug\TextureCanvas.o
 ./debug\window.o
@@ -24,5 +25,6 @@ INPUT(
 ./debug\moc_glwidget.o
 ./debug\moc_GtfReader.o
 ./debug\moc_NucleotideDisplay.o
+./debug\moc_Oligomers.o
 ./debug\moc_window.o
 );
