@@ -7,10 +7,11 @@
 #include "FastaReader.h"
 #include "GtfReader.h"
 #include "glwidget.h"
+#include <iostream>
 
 MainWindow::MainWindow()
 {
-	scrollArea = new QScrollArea;//(this)
+	scrollArea = new QFrame;//QScrollArea;//QScrollArea;//(this)
 	scrollArea->setBackgroundRole(QPalette::Dark);
 	
 	setDockOptions(QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks);
@@ -21,15 +22,22 @@ MainWindow::MainWindow()
 	createStatusBar();
 	oldScale = 1;
 	
-	
+	verticalScrollBar = new QScrollBar();
+	verticalScrollBar->setMaximum( 100 );
 	glWidget = new GLWidget(getDisplayVariables(), this);
+	
+	QHBoxLayout* cLayout = new QHBoxLayout;	
+	cLayout->addWidget(glWidget);//setWidget
+	cLayout->addWidget(verticalScrollBar);
+	scrollArea->setLayout(cLayout);
+	//scrollArea->setWidgetResizable(true);
+	setCentralWidget(scrollArea);
+  
 	fastaReader = new FastaReader(glWidget);
 	trackReader = new GtfReader(getDisplayVariables());
-	scrollArea->setWidget(glWidget);
-	scrollArea->setWidgetResizable(true);
- 
-	setCentralWidget(scrollArea);
+
 	createConnections();
+	readSettings();
 }
 
 void MainWindow::createActions()
@@ -211,6 +219,7 @@ void MainWindow::createDocks()
 	toolBarMenu->addAction(infoDock->toggleViewAction());
 	infoDock->setAllowedAreas(Qt::AllDockWidgetAreas);
 	textArea = new QTextEdit();
+	textArea->setMinimumSize(20, 20);
 	infoDock->setWidget(textArea);
 	addDockWidget(Qt::BottomDockWidgetArea, infoDock);
 	
@@ -292,8 +301,8 @@ void MainWindow::createConnections()
 	connect( doubleDisplayWidth, SIGNAL(clicked()), this, SLOT(doubleWidth()));
 	connect( halveDisplayWidth, SIGNAL(clicked()), this, SLOT(halveWidth()));
 	
-	connect(scrollArea->verticalScrollBar(), SIGNAL(valueChanged(int)), startOffset, SLOT(setValue(int)));
-	connect(startOffset, SIGNAL(valueChanged(int)), scrollArea->verticalScrollBar(), SLOT(setValue(int)));
+	connect(verticalScrollBar, SIGNAL(valueChanged(int)), startOffset, SLOT(setValue(int)));
+	connect(startOffset, SIGNAL(valueChanged(int)), verticalScrollBar, SLOT(setValue(int)));
 	
 	
 	/****GRAPH MODE TOGGLES*******/
@@ -328,9 +337,9 @@ void MainWindow::createConnections()
 
 UiVariables MainWindow::getDisplayVariables()
 {
-	UiVariables var;
+	UiVariables var = UiVariables();
 
-	var.verticalScrollBar = scrollArea->verticalScrollBar();
+	var.verticalScrollBar = verticalScrollBar;
 	var.sizeDial = displayLength;
     var.widthDial = widthDial;
     var.startDial = startOffset;
@@ -416,4 +425,31 @@ void MainWindow::updateState(QString state){
 }
 void MainWindow::updateStatus(QString tip){
 	statusBar()->showMessage(tip);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+	writeSettings();
+	event->accept();
+//	QMainWindow::closeEvent(event);
+}
+
+void MainWindow::readSettings()
+{
+	glWidget->print("Reading Settings");
+	QSettings settings("Skittle", "Preferences");
+	settings.beginGroup("mainWindow");
+	restoreGeometry(settings.value("geometry").toByteArray());
+	restoreState(settings.value("state").toByteArray());
+	settings.endGroup();
+}
+
+void MainWindow::writeSettings()
+{
+	glWidget->print("Writing Settings");
+	QSettings settings("Skittle", "Preferences");
+	settings.beginGroup("mainWindow");
+	settings. setValue("geometry", saveGeometry());
+	settings.setValue("state", saveState());
+	settings.endGroup();
 }

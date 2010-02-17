@@ -51,8 +51,8 @@ void NucleotideDisplay::createConnections()
 
 void NucleotideDisplay::display()
 {
-	//checkVariables();
-	if( !upToDate )
+	checkVariables();
+	//if( !upToDate )
 	{
     	glDeleteLists(display_object, 1);
 		display_object = render();
@@ -66,28 +66,9 @@ GLuint NucleotideDisplay::render()
     glNewList(list, GL_COMPILE);
     glPushMatrix();
 	glScaled(1,-1,1);
-	
-	if(useTextureOptimization())
-	{//in the optimization, the display list is just a wrapper for the texture square.
-		if(!upToDate)
+		//if(!upToDate)
 			load_nucleotide();
-	
 		textureBuffer->display();
-	}
-	else
-	{
-		char c;
-		color grey = color(200,200,200);
-		for(int i = 0; i < display_size && i + nucleotide_start < (int)sequence->size(); i++)
-		{
-			c = (*sequence)[i + nucleotide_start];
-			point p1 = get_position( i );//index -> x,y point
-			color c1 = glWidget->colors( c );//TODO: Optimize pointer function call
-			paint_square(p1, c1);
-		}
-		glEnd();
-	}
-	
 	glPopMatrix();
     glEndList();
     upToDate = true;

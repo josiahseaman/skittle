@@ -10,7 +10,7 @@
 #include <QGLWidget>
 #include "BasicTypes.h"
 #include "AbstractGraph.h"
-#include "MainWindow.h"
+#include "UiVariables.h"
 #include "NucleotideLinker.h"
 
 using namespace std;

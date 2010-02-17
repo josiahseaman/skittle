@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'BookmarkDialog.ui'
 **
-** Created: Tue Oct 27 12:52:32 2009
+** Created: Wed Feb 17 11:16:02 2010
 **      by: Qt User Interface Compiler version 4.4.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!

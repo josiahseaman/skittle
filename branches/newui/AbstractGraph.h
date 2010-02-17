@@ -10,7 +10,6 @@
 *  a Ui reference so that it can 'connect' to controls in the Ui.
 */
 
-class MainWindow;
 class GLWidget;
 
 using namespace std;

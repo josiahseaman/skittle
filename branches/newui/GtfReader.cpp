@@ -2,7 +2,7 @@
 #include "GtfReader.h"
 #include "NucleotideDisplay.h"
 #include "BasicTypes.h"
-#include "MainWindow.h"
+#include "UiVariables.h"
 #include "ui_BookmarkDialog.h"
 
 #include <QDebug>

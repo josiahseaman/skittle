@@ -4,8 +4,9 @@
 #include <QtGui/QSpinBox>
 #include <QtGui/QScrollBar>
 
-struct UiVariables
+class UiVariables
 {
+public:
 	QScrollBar* verticalScrollBar;
     QSpinBox* sizeDial;
     QSpinBox* widthDial;
@@ -16,6 +17,7 @@ struct UiVariables
 
 UiVariables()
 {
+	verticalScrollBar = NULL;
     sizeDial = NULL;
     widthDial = NULL;
     startDial = NULL;

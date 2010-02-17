@@ -12,7 +12,6 @@
 using namespace std;
 
 class QProgressDialog;
-class MainWindow;
 
 class GtfReader : public QObject
 {

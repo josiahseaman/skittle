@@ -1,7 +1,7 @@
 #include <QtGui>
 #include "FastaReader.h"
 #include "BasicTypes.h"
-#include "MainWindow.h"
+#include "UiVariables.h"
 
 #include <string>
 #include <cctype>

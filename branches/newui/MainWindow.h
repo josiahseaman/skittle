@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <string>
 #include "UiVariables.h"
+//#include "MainPanel.h"
 
 class QAction;
 class QLabel;
@@ -19,6 +20,8 @@ class FastaReader;
 class GtfReader;
 class GLWidget;
 class QScrollArea;
+class QScrollBar;
+class QFrame;
 
 class MainWindow : public QMainWindow
 {
@@ -27,6 +30,7 @@ public:
     GLWidget* glWidget;
     FastaReader* fastaReader;
     GtfReader* trackReader;
+	QScrollBar* verticalScrollBar;
 	MainWindow();
 
 
@@ -34,8 +38,8 @@ signals:
 	void newFileOpen(QString name);
 	void newGtfFileOpen(QString name);
 	
-//protected:
-	//void closeEvent(QCloseEvent *event);
+protected:
+	void closeEvent(QCloseEvent *event);
 	
 public slots:
 	void open();
@@ -56,11 +60,13 @@ private:
 	void createContextMenus();
 	void createToolbars();
 	void createStatusBar();
-	void MainWindow::createConnections();
-	bool loadfile(const QString &filename);
+	void createConnections();
 	UiVariables getDisplayVariables();
+	bool loadfile(const QString &filename);
+	void readSettings();
+	void writeSettings();
 	
-	QScrollArea* scrollArea;
+	QFrame* scrollArea;//QScrollArea
 	QMenu *annotationMenu;
 	QMenu *fileMenu;
 	QMenu *presetMenu;

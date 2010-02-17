@@ -2,7 +2,6 @@ INPUT(
 ./release\AbstractGraph.o
 ./release\AlignmentDisplay.o
 ./release\AnnotationDisplay.o
-./release\BorderLayout.o
 ./release\CylinderDisplay.o
 ./release\NucleotideLinker.o
 ./release\FastaReader.o

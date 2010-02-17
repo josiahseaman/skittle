@@ -1,5 +1,5 @@
 #include "AbstractGraph.h"
-#include "MainWindow.h"
+#include "UiVariables.h"
 #include <math.h>
 
 

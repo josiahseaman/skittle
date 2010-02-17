@@ -43,15 +43,15 @@
 #include <vector>
 
 #include "glwidget.h"
-#include "MainWindow.h"
+#include "UiVariables.h"
 //! [0]
 GLWidget::GLWidget(UiVariables gui, QWidget *parent)
     : QGLWidget(parent)
 {
 	ui = gui;
 	setMouseTracking(true);
-	setMinimumWidth(800);
-	setMinimumHeight(600);
+	setMinimumWidth(80);
+	setMinimumHeight(300);
 	frame = 0;
 	
 	setupColorTable();
@@ -107,12 +107,12 @@ void GLWidget::createConnections()
 
 QSize GLWidget::minimumSizeHint() const
 {
-    return QSize(800, 600);
+    return QSize(80, 60);
 }
 
 QSize GLWidget::sizeHint() const
 {
-    return QSize(800, 600);
+    return QSize(80, 60);
 }
 
 double GLWidget::getZoom()
@@ -131,7 +131,7 @@ void GLWidget::setTotalDisplayWidth()
 			+ (!freq->hidden) * (freq->width() + border)
 			+ (!align->hidden) * (align->width() + border)
 			+ (!cylinder->hidden) * ((int)(cylinder->maxWidth()*2) + border);
-		setMinimumWidth((double)(total_width)*z*6);
+		//setMinimumWidth((double)(total_width)*z*6);
 		//ui.horizontalScrollBar->setMaximum( (int)max(0.0, (double)(total_width)*z - canvasWidth ) );
 	}
 }
@@ -147,13 +147,13 @@ void GLWidget::changeZoom(int z)
 
 void GLWidget::displayString(const string& seq)
 {
-	print("GLWidget:: string received.  Size:", seq.size());
+	print("New sequence received.  Size:", seq.size());
 	nuc->sequence= &seq;
 	align->setSequence(&seq);
 	freq->sequence = &seq;
 	cylinder->sequence = &seq;
 	
-	ui.verticalScrollBar->setMaximum( max(0, (int)(seq.size()- ui.sizeDial->value()*.2) ) );
+	setPageSize();
 	ui.startDial->setValue(2);//TODO: bit of a cludge
 	ui.startDial->setValue(1);
 }
@@ -175,8 +175,8 @@ void GLWidget::on_resizeButton_clicked()
 
 void GLWidget::setPageSize()
 {
-	ui.verticalScrollBar->setMaximum( max(0, (int)(nuc->sequence->size()- ui.sizeDial->value()*.2) ) );
-    ui.verticalScrollBar->setPageStep(nuc->max_display_size);
+	ui.verticalScrollBar->setMaximum( max(0, (int)(nuc->sequence->size() - ui.widthDial->value()) ) );//- ui.sizeDial->value()*.2
+	ui.verticalScrollBar->setPageStep(nuc->max_display_size);
 }
 	
 void GLWidget::setTool(int tool)
@@ -218,10 +218,12 @@ void GLWidget::updateDisplay()
 }
 
 void GLWidget::updateDisplaySize()
-{	
+{
+	QSize dimensions = size();
+	double pixelHeight = dimensions.height();
 	int w = ui.widthDial->value();
 	double zoom = 100.0 / ui.zoomDial->value();
-	int display_lines = static_cast<int>(200 * zoom + 0.5);
+	int display_lines = static_cast<int>(pixelHeight / 3.0 * zoom + 0.5);
 	
 	ui.sizeDial->setSingleStep(w * 10);
 	ui.sizeDial->setValue( w * display_lines );

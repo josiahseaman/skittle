@@ -35,8 +35,6 @@
 
 using namespace std;
 
-class MainWindow;
-
 class GLWidget : public QGLWidget
 {
     Q_OBJECT

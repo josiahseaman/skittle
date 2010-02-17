@@ -9,7 +9,7 @@
 
 #include "BasicTypes.h"
 #include "AbstractGraph.h"
-#include "MainWindow.h"
+#include "UiVariables.h"
 
 using namespace std;
 
