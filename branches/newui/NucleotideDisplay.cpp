@@ -23,6 +23,10 @@ NucleotideDisplay::NucleotideDisplay(UiVariables* gui, GLWidget* gl)
 	G = true;
 	A = true;
 	T = true;
+	
+	actionLabel = string("Nucleotide Display");
+	actionTooltip = string("Nucleotides as Colors");
+	actionData = actionLabel; 
 }
 
 NucleotideDisplay::~NucleotideDisplay(){

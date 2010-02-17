@@ -42,6 +42,7 @@ protected:
 	void closeEvent(QCloseEvent *event);
 	
 public slots:
+	void addDisplayAction(AbstractGraph* display);
 	void open();
 	void open(QString fileName);
 	void updateProgress(int);

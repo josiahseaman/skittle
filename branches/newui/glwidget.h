@@ -87,6 +87,7 @@ signals:
 	void xOffsetChange(int);
 	void printText(QString);
 	void printHtml(QString);
+	void addGraphMode(AbstractGraph*);
 
 protected:
 	void displayTrack(const vector<track_entry>& track);

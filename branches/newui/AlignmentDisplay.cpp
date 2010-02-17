@@ -32,6 +32,10 @@ AlignmentDisplay::AlignmentDisplay(UiVariables* gui, GLWidget* gl)
 	
 	calcMatchTable();
 	//packSequence is called by setSequence()
+	
+	actionLabel = string("Repeat Overview");
+	actionTooltip = string("Color by the best alignment");
+	actionData = actionLabel; 
 }
 
 void AlignmentDisplay::display()

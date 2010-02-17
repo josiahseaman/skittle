@@ -7,6 +7,7 @@
 #include "FastaReader.h"
 #include "GtfReader.h"
 #include "glwidget.h"
+#include "AbstractGraph.h"
 #include <iostream>
 
 MainWindow::MainWindow()
@@ -40,6 +41,24 @@ MainWindow::MainWindow()
 	readSettings();
 }
 
+void MainWindow::addDisplayAction(AbstractGraph* display)
+{
+	if(display->actionLabel.size() > 0)
+	{
+		QAction* presetAction = new QAction(QString(display->actionLabel.c_str()),this);
+		presetAction->setStatusTip(QString(display->actionTooltip.c_str()));
+		presetAction->setData(QString(display->actionData.c_str()));
+		connect(presetAction,SIGNAL(triggered()),display, SLOT(toggleVisibility()));
+	
+		presetMenu->addAction(presetAction);
+		presetToolBar->addAction(presetAction);
+	}
+	else
+	{
+		glWidget->print("Tried to add display mode with no label, aborting...");
+	}
+}
+
 void MainWindow::createActions()
 {
 	moveAction = new QAction("Move",this);	
@@ -64,24 +83,24 @@ void MainWindow::createActions()
 	hilightResultsAction = new QAction("Highlight Results",this);
 	hilightResultsAction->setStatusTip("Highlight All copies of Current Sequence");
 	hilightResultsAction->setCheckable(true);
-	
-	presetCylinderAction = new QAction("Cylinder View",this);
-	presetCylinderAction->setStatusTip("View Nucleotide Correlations as Cylinder");
-	presetCylinderAction->setData("Cylinder");
-	presetNucleotideAction = new QAction("Nucleotide View",this);
-	presetNucleotideAction->setStatusTip("View Basic Nucleotide Sequence");
-	presetNucleotideAction->setData("Nucleotide");
-	presetLocalAlignmentAction = new QAction("Local Alignment View",this);
-	presetLocalAlignmentAction->setData("Local Alignment");
-	presetLocalAlignmentAction->setStatusTip("Display Local Alignment");
-		
-	presetFrequencyMapAction = new QAction("Frequency Map View",this);
-	presetFrequencyMapAction->setData("Frequency Map");
-	presetFrequencyMapAction->setStatusTip("Display Frequency Graph");
-	
-	presetBiasFrequencyAction = new QAction("Nucl. Bias/Freq. Map View",this);
-	presetBiasFrequencyAction->setData("Bias/Freq");
-	presetBiasFrequencyAction->setStatusTip("Display Composite Nucleotide Bias / Frequency Map View");
+	//~ 
+	//~ presetCylinderAction = new QAction("Cylinder View",this);
+	//~ presetCylinderAction->setStatusTip("View Nucleotide Correlations as Cylinder");
+	//~ presetCylinderAction->setData("Cylinder");
+	//~ presetNucleotideAction = new QAction("Nucleotide View",this);
+	//~ presetNucleotideAction->setStatusTip("View Basic Nucleotide Sequence");
+	//~ presetNucleotideAction->setData("Nucleotide");
+	//~ presetLocalAlignmentAction = new QAction("Local Alignment View",this);
+	//~ presetLocalAlignmentAction->setData("Local Alignment");
+	//~ presetLocalAlignmentAction->setStatusTip("Display Local Alignment");
+		//~ 
+	//~ presetFrequencyMapAction = new QAction("Frequency Map View",this);
+	//~ presetFrequencyMapAction->setData("Frequency Map");
+	//~ presetFrequencyMapAction->setStatusTip("Display Frequency Graph");
+	//~ 
+	//~ presetBiasFrequencyAction = new QAction("Nucl. Bias/Freq. Map View",this);
+	//~ presetBiasFrequencyAction->setData("Bias/Freq");
+	//~ presetBiasFrequencyAction->setStatusTip("Display Composite Nucleotide Bias / Frequency Map View");
 	
 	
 	openAction = new QAction("&Open",this);
@@ -109,11 +128,13 @@ void MainWindow::createMenus()
 	viewMenu = menuBar()->addMenu("&View");
 	toolBarMenu = viewMenu->addMenu("ToolBar");
 	presetMenu = viewMenu->addMenu("Presets");
-	presetMenu->addAction(presetCylinderAction);
-	presetMenu->addAction(presetNucleotideAction);
-	presetMenu->addAction(presetLocalAlignmentAction);
-	presetMenu->addAction(presetFrequencyMapAction);
-	presetMenu->addAction(presetBiasFrequencyAction);
+	
+	//~ presetMenu->addAction(presetCylinderAction);
+	//~ presetMenu->addAction(presetNucleotideAction);
+	//~ presetMenu->addAction(presetLocalAlignmentAction);
+	//~ presetMenu->addAction(presetFrequencyMapAction);
+	//~ presetMenu->addAction(presetBiasFrequencyAction);
+	
 	annotationMenu = menuBar()->addMenu("&Annotations");
 	annotationMenu->addAction(addAnnotationAction);
 	annotationMenu->addAction(nextAnnotationAction);
@@ -146,12 +167,12 @@ void MainWindow::createToolbars()
 	toolBarMenu->addAction(annotationToolBar->toggleViewAction());
 	
 	presetToolBar = new QToolBar("Presets");
-	presetToolBar->addAction(presetCylinderAction);
-	presetToolBar->addAction(presetNucleotideAction);
-	presetToolBar->addAction(presetLocalAlignmentAction);
-	presetToolBar->addAction(presetFrequencyMapAction);
-	presetToolBar->addAction(presetBiasFrequencyAction);
-	presetToolBar->setOrientation(Qt::Horizontal);
+	//~ presetToolBar->addAction(presetCylinderAction);
+	//~ presetToolBar->addAction(presetNucleotideAction);
+	//~ presetToolBar->addAction(presetLocalAlignmentAction);
+	//~ presetToolBar->addAction(presetFrequencyMapAction);
+	//~ presetToolBar->addAction(presetBiasFrequencyAction);
+	//~ presetToolBar->setOrientation(Qt::Horizontal);
 	toolBarMenu->addAction(presetToolBar->toggleViewAction());
 	toolToolBar = addToolBar("tools");
 	toolToolBar->addAction(moveAction);
@@ -332,6 +353,8 @@ void MainWindow::createConnections()
 	/****Print Signals*****/
 	connect( glWidget, SIGNAL(printText(QString)), textArea, SLOT(append(QString)));
 	connect( glWidget, SIGNAL(printHtml(QString)), textArea, SLOT(insertHtml(QString)));
+
+	connect( glWidget, SIGNAL(addGraphMode(AbstractGraph*)), this, SLOT(addDisplayAction(AbstractGraph*)));
 
 }
 

@@ -60,6 +60,13 @@ GLWidget::GLWidget(UiVariables gui, QWidget *parent)
     gtfTrack = new AnnotationDisplay(&ui, this);
     cylinder = new CylinderDisplay(&ui, this);
    	align = new AlignmentDisplay(&ui, this);
+   	
+   	//~ emit addGraphMode(gtfTrack);
+   	emit addGraphMode(cylinder);
+   	emit addGraphMode(nuc);
+   	emit addGraphMode(freq);
+   	emit addGraphMode(align);
+   	
     marker = 0;
 
 	border = 10;    

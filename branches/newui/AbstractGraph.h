@@ -45,6 +45,10 @@ public:
 	bool updateInt(int& subject, int& value);
 	bool useTextureOptimization();
 	virtual GLuint render() = 0;
+	
+	string actionLabel;
+	string actionTooltip;
+	string actionData; 
 
 public slots:
 	void changeScale(int s);

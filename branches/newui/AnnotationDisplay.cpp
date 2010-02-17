@@ -12,6 +12,10 @@ AnnotationDisplay::AnnotationDisplay(UiVariables* gui, GLWidget* gl)
 	nucleotide_start = 1;
 	upToDate = false;
 	max_width = 0;
+	
+	actionLabel = string("Annotation Display");
+	actionTooltip = string("Genome annotation locations");
+	actionData = actionLabel; 
 }
 
 AnnotationDisplay::~AnnotationDisplay()

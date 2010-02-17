@@ -17,6 +17,10 @@ CylinderDisplay::CylinderDisplay(UiVariables* gui, GLWidget* gl)
 	upToDate = false;
 	turnCylinder = 0;
 	ntLinker = new NucleotideLinker();
+	
+	actionLabel = string("Alignment Cylinder");
+	actionTooltip = string("Best 3D alignment as a Cylinder");
+	actionData = actionLabel; 
 }	
 
 CylinderDisplay::~CylinderDisplay(){
