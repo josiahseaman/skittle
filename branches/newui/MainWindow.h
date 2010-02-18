@@ -6,6 +6,7 @@
 #include "UiVariables.h"
 //#include "MainPanel.h"
 
+class AbstractGraph;
 class QAction;
 class QLabel;
 class QActionGroup;
@@ -42,7 +43,6 @@ protected:
 	void closeEvent(QCloseEvent *event);
 	
 public slots:
-	void addDisplayAction(AbstractGraph* display);
 	void open();
 	void open(QString fileName);
 	void updateProgress(int);
@@ -53,6 +53,7 @@ public slots:
 	void changeScale(int newScale);
 	void doubleWidth();
 	void halveWidth();
+	void addDisplayActions(AbstractGraph*);
 	
 private:
 	void createActions();
@@ -110,11 +111,6 @@ private:
 	QAction *findNextAction;
 	QAction *findPrevAction;
 	QAction *hilightResultsAction;
-	QAction *presetCylinderAction;
-	QAction *presetNucleotideAction;
-	QAction *presetLocalAlignmentAction;
-	QAction *presetFrequencyMapAction;
-	QAction *presetBiasFrequencyAction;
 	QAction *openAction;
 	QAction *importAction;
 	QAction *exitAction;

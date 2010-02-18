@@ -32,15 +32,11 @@ void AbstractGraph::paint_square(point position, color c)
 	glPushMatrix();
     	glColor3d(c.r /255.0, c.g /255.0, c.b /255.0); 
         glTranslated(position.x, position.y, position.z);
-        glBegin(GL_QUADS);/**/
+        glBegin(GL_QUADS);
 	        glVertex3d(.0, .0, 0);
 	        glVertex3d(-1.0, .0, 0);
 	        glVertex3d(-1, -1, 0);
-	        glVertex3d(.0, -1, 0);/*/
-	        glVertex3d(.5, .5, 0);
-	        glVertex3d(-.5, .5, 0);
-	        glVertex3d(-.5, -.5, 0);
-	        glVertex3d(.5, -.5, 0);/**/
+	        glVertex3d(.0, -1, 0);
 	    glEnd();
 	glPopMatrix();
 }

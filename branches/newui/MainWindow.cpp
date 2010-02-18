@@ -12,7 +12,7 @@
 
 MainWindow::MainWindow()
 {
-	scrollArea = new QFrame;//QScrollArea;//QScrollArea;//(this)
+	scrollArea = new QFrame;
 	scrollArea->setBackgroundRole(QPalette::Dark);
 	
 	setDockOptions(QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks);
@@ -28,7 +28,7 @@ MainWindow::MainWindow()
 	glWidget = new GLWidget(getDisplayVariables(), this);
 	
 	QHBoxLayout* cLayout = new QHBoxLayout;	
-	cLayout->addWidget(glWidget);//setWidget
+	cLayout->addWidget(glWidget);
 	cLayout->addWidget(verticalScrollBar);
 	scrollArea->setLayout(cLayout);
 	//scrollArea->setWidgetResizable(true);
@@ -38,10 +38,11 @@ MainWindow::MainWindow()
 	trackReader = new GtfReader(getDisplayVariables());
 
 	createConnections();
+	glWidget->createButtons();
 	readSettings();
 }
 
-void MainWindow::addDisplayAction(AbstractGraph* display)
+void MainWindow::addDisplayActions(AbstractGraph* display)
 {
 	if(display->actionLabel.size() > 0)
 	{
@@ -71,37 +72,17 @@ void MainWindow::createActions()
 	prevAnnotationAction = new QAction("Previous Annotation",this);	
 	browseCommunityAction = new QAction("Browse Community Research",this);	
 	delAnnotationAction = new QAction("Delete Current Bookmark",this);	
+	
+	/*****TODO: NOT CURRENTLY IN USE ********/
 	findSequenceAction = new QAction("Find Sequence",this);	
 	findSequenceAction->setStatusTip("Find Arbitrary Sequence");
-	
 	findNextAction = new QAction("Find Next", this);
 	findNextAction->setStatusTip("Jump to Next Instance of Current Sequence");
-	
 	findPrevAction = new QAction("Find Previous", this);
 	findPrevAction->setStatusTip("Jump to Previous Instance of Current Sequence");
-	
 	hilightResultsAction = new QAction("Highlight Results",this);
 	hilightResultsAction->setStatusTip("Highlight All copies of Current Sequence");
 	hilightResultsAction->setCheckable(true);
-	//~ 
-	//~ presetCylinderAction = new QAction("Cylinder View",this);
-	//~ presetCylinderAction->setStatusTip("View Nucleotide Correlations as Cylinder");
-	//~ presetCylinderAction->setData("Cylinder");
-	//~ presetNucleotideAction = new QAction("Nucleotide View",this);
-	//~ presetNucleotideAction->setStatusTip("View Basic Nucleotide Sequence");
-	//~ presetNucleotideAction->setData("Nucleotide");
-	//~ presetLocalAlignmentAction = new QAction("Local Alignment View",this);
-	//~ presetLocalAlignmentAction->setData("Local Alignment");
-	//~ presetLocalAlignmentAction->setStatusTip("Display Local Alignment");
-		//~ 
-	//~ presetFrequencyMapAction = new QAction("Frequency Map View",this);
-	//~ presetFrequencyMapAction->setData("Frequency Map");
-	//~ presetFrequencyMapAction->setStatusTip("Display Frequency Graph");
-	//~ 
-	//~ presetBiasFrequencyAction = new QAction("Nucl. Bias/Freq. Map View",this);
-	//~ presetBiasFrequencyAction->setData("Bias/Freq");
-	//~ presetBiasFrequencyAction->setStatusTip("Display Composite Nucleotide Bias / Frequency Map View");
-	
 	
 	openAction = new QAction("&Open",this);
 	openAction->setStatusTip("Open a Sequence File");
@@ -128,12 +109,6 @@ void MainWindow::createMenus()
 	viewMenu = menuBar()->addMenu("&View");
 	toolBarMenu = viewMenu->addMenu("ToolBar");
 	presetMenu = viewMenu->addMenu("Presets");
-	
-	//~ presetMenu->addAction(presetCylinderAction);
-	//~ presetMenu->addAction(presetNucleotideAction);
-	//~ presetMenu->addAction(presetLocalAlignmentAction);
-	//~ presetMenu->addAction(presetFrequencyMapAction);
-	//~ presetMenu->addAction(presetBiasFrequencyAction);
 	
 	annotationMenu = menuBar()->addMenu("&Annotations");
 	annotationMenu->addAction(addAnnotationAction);
@@ -167,12 +142,8 @@ void MainWindow::createToolbars()
 	toolBarMenu->addAction(annotationToolBar->toggleViewAction());
 	
 	presetToolBar = new QToolBar("Presets");
-	//~ presetToolBar->addAction(presetCylinderAction);
-	//~ presetToolBar->addAction(presetNucleotideAction);
-	//~ presetToolBar->addAction(presetLocalAlignmentAction);
-	//~ presetToolBar->addAction(presetFrequencyMapAction);
-	//~ presetToolBar->addAction(presetBiasFrequencyAction);
-	//~ presetToolBar->setOrientation(Qt::Horizontal);
+	
+	presetToolBar->setOrientation(Qt::Horizontal);
 	toolBarMenu->addAction(presetToolBar->toggleViewAction());
 	toolToolBar = addToolBar("tools");
 	toolToolBar->addAction(moveAction);
@@ -223,7 +194,7 @@ void MainWindow::createToolbars()
     displayLength->setMinimum(1000);
     displayLength->setMaximum(400000000);//something very large MAX_INT?
     displayLength->setSingleStep(1);
-    displayLength->setValue(50000);	
+    displayLength->setValue(10000);	
 	settingToolBar->addWidget(displayLength);
 	
 	toolBarMenu->addAction(settingToolBar->toggleViewAction());
@@ -337,24 +308,14 @@ void MainWindow::createConnections()
 	connect(startOffset, SIGNAL(valueChanged(int)), glWidget, SLOT(updateDisplay()));
 	connect(displayLength, SIGNAL(valueChanged(int)), glWidget, SLOT(updateDisplay()));
 
-
-
    	/****PRESETS****/
-	connect( presetNucleotideAction, SIGNAL(triggered()), glWidget->nuc, SLOT(toggleVisibility()));
-	connect( presetFrequencyMapAction, SIGNAL(triggered()), glWidget->freq, SLOT(toggleVisibility()));
-	connect( presetCylinderAction, SIGNAL(triggered()), glWidget->cylinder, SLOT(toggleVisibility()));
-	connect( presetLocalAlignmentAction, SIGNAL(triggered()), glWidget->align, SLOT(toggleVisibility()));
 
-/*	connect( presetNucleotideAction, SIGNAL(triggered()), glWidget, SLOT(updateDisplay()));
-	connect( presetLocalAlignmentAction, SIGNAL(triggered()), glWidget, SLOT(updateDisplay()));
-	connect( presetFrequencyMapAction, SIGNAL(triggered()), glWidget, SLOT(updateDisplay()));
-	connect( presetCylinderAction, SIGNAL(triggered()), glWidget, SLOT(updateDisplay()));
 
 	/****Print Signals*****/
 	connect( glWidget, SIGNAL(printText(QString)), textArea, SLOT(append(QString)));
 	connect( glWidget, SIGNAL(printHtml(QString)), textArea, SLOT(insertHtml(QString)));
 
-	connect( glWidget, SIGNAL(addGraphMode(AbstractGraph*)), this, SLOT(addDisplayAction(AbstractGraph*)));
+	connect( glWidget, SIGNAL(addGraphMode(AbstractGraph*)), this, SLOT(addDisplayActions(AbstractGraph*)));
 
 }
 

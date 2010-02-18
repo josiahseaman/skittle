@@ -61,12 +61,6 @@ GLWidget::GLWidget(UiVariables gui, QWidget *parent)
     cylinder = new CylinderDisplay(&ui, this);
    	align = new AlignmentDisplay(&ui, this);
    	
-   	//~ emit addGraphMode(gtfTrack);
-   	emit addGraphMode(cylinder);
-   	emit addGraphMode(nuc);
-   	emit addGraphMode(freq);
-   	emit addGraphMode(align);
-   	
     marker = 0;
 
 	border = 10;    
@@ -95,11 +89,21 @@ GLWidget::GLWidget(UiVariables gui, QWidget *parent)
     setMouseTracking(true);
     setFocusPolicy(Qt::ClickFocus);
    	createConnections();
+//   	createButtons();
 }
 
 GLWidget::~GLWidget()
 {
     makeCurrent();
+}
+
+void GLWidget::createButtons()
+{
+   	//~ emit addGraphMode((AbstractGraph*)gtfTrack);
+   	emit addGraphMode((AbstractGraph*)cylinder);
+   	emit addGraphMode((AbstractGraph*)nuc);
+   	emit addGraphMode((AbstractGraph*)freq);
+   	emit addGraphMode((AbstractGraph*)align);	
 }
 
 void GLWidget::createConnections()
@@ -183,7 +187,7 @@ void GLWidget::on_resizeButton_clicked()
 void GLWidget::setPageSize()
 {
 	ui.verticalScrollBar->setMaximum( max(0, (int)(nuc->sequence->size() - ui.widthDial->value()) ) );//- ui.sizeDial->value()*.2
-	ui.verticalScrollBar->setPageStep(nuc->max_display_size);
+	ui.verticalScrollBar->setPageStep(ui.sizeDial->value());
 }
 	
 void GLWidget::setTool(int tool)

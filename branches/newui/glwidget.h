@@ -50,6 +50,7 @@ public:
 	
     GLWidget(UiVariables gui, QWidget *parent = 0);
     ~GLWidget();
+	void createButtons();
 	void createConnections();
 
     QSize minimumSizeHint() const;
