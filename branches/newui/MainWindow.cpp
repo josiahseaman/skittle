@@ -165,8 +165,8 @@ void MainWindow::createToolbars()
 	settingToolBar->addWidget(doubleDisplayWidth);
 	halveDisplayWidth = new QPushButton("/2",this);
 	settingToolBar->addWidget(halveDisplayWidth);
+	
 	settingToolBar->addWidget(new QLabel("Scale"));
-
 	scale = new QSpinBox(this);
     scale->setMinimum(1);
     scale->setMaximum(100000);
@@ -181,21 +181,29 @@ void MainWindow::createToolbars()
     zoom->setSingleStep(10);
     zoom->setValue(100);	
 	settingToolBar->addWidget(zoom);
-	settingToolBar->addWidget(new QLabel("Start"));
 	
+	settingToolBar->addWidget(new QLabel("Start"));
 	startOffset = new QSpinBox(this);
     startOffset->setMinimum(1);
     startOffset->setMaximum(400000000);
     startOffset->setValue(1);
 	settingToolBar->addWidget(startOffset);
+	
 	settingToolBar->addWidget(new QLabel("Display Length"));
-
 	displayLength = new QSpinBox(this);
     displayLength->setMinimum(1000);
     displayLength->setMaximum(400000000);//something very large MAX_INT?
     displayLength->setSingleStep(1);
     displayLength->setValue(10000);	
 	settingToolBar->addWidget(displayLength);
+	
+	settingToolBar->addWidget(new QLabel("Oligomer Length"));
+	wordLength = new QSpinBox(this);
+    wordLength->setMinimum(1);
+    wordLength->setMaximum(5);
+    wordLength->setSingleStep(1);
+    wordLength->setValue(3);	
+	settingToolBar->addWidget(wordLength);
 	
 	toolBarMenu->addAction(settingToolBar->toggleViewAction());
 	addToolBar(Qt::RightToolBarArea,presetToolBar);
@@ -329,6 +337,7 @@ UiVariables MainWindow::getDisplayVariables()
     var.startDial = startOffset;
     var.scaleDial = scale;
     var.zoomDial = zoom;
+    var.oligDial = wordLength;
     
     return var;
 }

@@ -60,6 +60,7 @@ GLWidget::GLWidget(UiVariables gui, QWidget *parent)
     gtfTrack = new AnnotationDisplay(&ui, this);
     cylinder = new CylinderDisplay(&ui, this);
    	align = new AlignmentDisplay(&ui, this);
+   	olig = new Oligomers(&ui, this);
    	
     marker = 0;
 
@@ -79,6 +80,7 @@ GLWidget::GLWidget(UiVariables gui, QWidget *parent)
     nuc->createConnections();
     freq->createConnections();
     cylinder->createConnections();
+    olig->createConnections();
    	
 	connect( ui.alignButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));
 	connect( ui.freqButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));
@@ -104,6 +106,7 @@ void GLWidget::createButtons()
    	emit addGraphMode((AbstractGraph*)nuc);
    	emit addGraphMode((AbstractGraph*)freq);
    	emit addGraphMode((AbstractGraph*)align);	
+   	emit addGraphMode((AbstractGraph*)olig);
 }
 
 void GLWidget::createConnections()
@@ -112,6 +115,7 @@ void GLWidget::createConnections()
 	connect( freq, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
 	connect( cylinder, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
 	connect( align, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
+	connect( olig, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
 	
 	connect(nuc, SIGNAL(sizeChanged(int)), this, SLOT(setPageSize()) );
 }
@@ -133,13 +137,14 @@ double GLWidget::getZoom()
 
 void GLWidget::setTotalDisplayWidth()
 {	
-	if( nuc && freq)
+	if( nuc && freq && olig)
 	{
 		double z = getZoom();
 		int total_width = border
 			+ (!gtfTrack->hidden) * 6 
 			+ (!nuc->hidden) * (nuc->width() + border) 
 			+ (!freq->hidden) * (freq->width() + border)
+			+ (!olig->hidden) * (olig->width() + border)
 			+ (!align->hidden) * (align->width() + border)
 			+ (!cylinder->hidden) * ((int)(cylinder->maxWidth()*2) + border);
 		//setMinimumWidth((double)(total_width)*z*6);
@@ -162,6 +167,7 @@ void GLWidget::displayString(const string& seq)
 	nuc->sequence= &seq;
 	align->setSequence(&seq);
 	freq->sequence = &seq;
+	olig->sequence = &seq;
 	cylinder->sequence = &seq;
 	
 	setPageSize();
@@ -389,6 +395,12 @@ void GLWidget::paintGL()
 			nuc->display();
 		    glTranslated(nuc->width() + border, 0 , 0);
 		}
+		if(!olig->hidden)
+		{
+			olig->checkVariables();
+		    olig->display();
+	        glTranslated(olig->width() + border, 0 , 0);
+		}
 		if(!align->hidden)
 		{
 			align->display();
@@ -488,6 +500,11 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 		{
 			nuc->mouseClick(oglCoords);
 			oglCoords.x -= nuc->width() + border;
+		}
+		if(!olig->hidden)
+		{
+			olig->mouseClick(oglCoords);//pass click event
+			oglCoords.x -= olig->width() + border;
 		}
 		if(!align->hidden)
 		{

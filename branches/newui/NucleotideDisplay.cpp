@@ -1,5 +1,4 @@
 #include "NucleotideDisplay.h"
-#include "AlignmentDisplay.h"
 #include "glwidget.h"
 #include <sstream>
 

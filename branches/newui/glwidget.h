@@ -31,6 +31,7 @@
 #include "AnnotationDisplay.h"
 #include "CylinderDisplay.h"
 #include "AlignmentDisplay.h"
+#include "Oligomers.h"
 
 
 using namespace std;
@@ -47,6 +48,7 @@ public:
 	AnnotationDisplay* gtfTrack;
 	CylinderDisplay* cylinder;
    	AlignmentDisplay* align;
+   	Oligomers* olig;
 	
     GLWidget(UiVariables gui, QWidget *parent = 0);
     ~GLWidget();

@@ -48,7 +48,7 @@ public slots:
 	
 signals:
 
-private:
+protected:
 	GLuint display_object;
 	vector< vector<float> > freq;
 	TextureCanvas* textureBuffer;

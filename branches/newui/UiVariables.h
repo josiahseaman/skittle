@@ -13,6 +13,7 @@ public:
     QSpinBox* startDial;
     QSpinBox* scaleDial;
     QSpinBox* zoomDial;
+    QSpinBox* oligDial;
 
 
 UiVariables()

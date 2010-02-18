@@ -95,6 +95,7 @@ private:
 	QSpinBox* zoom;
 	QSpinBox *startOffset;
 	QSpinBox *displayLength;
+	QSpinBox *wordLength;
 	
 	
 	QAction *moveAction;

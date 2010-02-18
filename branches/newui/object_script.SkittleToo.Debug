@@ -11,6 +11,7 @@ INPUT(
 ./debug\main.o
 ./debug\MainWindow.o
 ./debug\NucleotideDisplay.o
+./debug\Oligomers.o
 ./debug\TextRender.o
 ./debug\TextureCanvas.o
 ./debug\moc_AbstractGraph.o
@@ -22,4 +23,5 @@ INPUT(
 ./debug\moc_GtfReader.o
 ./debug\moc_MainWindow.o
 ./debug\moc_NucleotideDisplay.o
+./debug\moc_Oligomers.o
 );
