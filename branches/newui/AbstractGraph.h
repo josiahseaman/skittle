@@ -34,17 +34,18 @@ public:
 	int nucleotide_start;
 	int scale;
 	
-	 int width() const{
-		return Width;
-	}
+	virtual int width();
 	
-	void checkVariables();
-	point get_position(int index);
-	int height();
-	void paint_square(point position, color c);
-	bool updateInt(int& subject, int& value);
-	bool useTextureOptimization();
+	virtual point get_position(int index);
+	virtual int height();
+	virtual void paint_square(point position, color c);
+	virtual bool updateInt(int& subject, int& value);
+	virtual bool useTextureOptimization();
+	virtual void display() = 0;
+	virtual void checkVariables();
 	virtual GLuint render() = 0;
+	virtual void setSequence(const string* seq);
+	virtual void mouseClick(point2D pt);
 	
 	string actionLabel;
 	string actionTooltip;

@@ -373,3 +373,11 @@ void AlignmentDisplay::setSequence(const string* seq)
 	normalPack(seq);
 }
 
+void AlignmentDisplay::mouseClick(point2D pt)
+{
+}
+
+int AlignmentDisplay::width()
+{ 
+	return Width / scale; 
+}

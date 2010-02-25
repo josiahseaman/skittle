@@ -39,15 +39,7 @@ public:
 	void calculate(vector<color>& img, int vote_size);
 	vector<color> calculateBoundaries(vector<color>& img, int row_size, int graphWidth);
 	double correlate(vector<color>& img, int beginA, int beginB, int pixelsPerSample);
-	
-	inline int width() const
-	{
-		int widthMultiplier = 1;
-		if(wordLength < 3)	{		widthMultiplier = 4;	}
-		else if(wordLength == 3)	{		widthMultiplier = 2;	}
-	
-		return F_width*widthMultiplier + 50;
-	}
+	int width();
 	
 	inline int ACGT_num(char n)
 	{
@@ -68,6 +60,7 @@ signals:
 private:
 	TextureCanvas* graphBuffer;
 	int wordLength;
+	int similarityGraphWidth;
 
 };
 

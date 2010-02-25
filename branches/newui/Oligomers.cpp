@@ -10,6 +10,7 @@ Oligomers::Oligomers(UiVariables* gui, GLWidget* gl)
 	ui = gui;
 	graphBuffer = new TextureCanvas( );
 	wordLength = 0;
+	similarityGraphWidth = 50;
 //	changeWordLength(ui->oligDial->value());
 	actionLabel = string("Oligomer Display");
 	actionTooltip = string("Short string usage (codons = length 3)");
@@ -88,7 +89,7 @@ void Oligomers::display()
 	glPushMatrix();
 		glScaled(1,-1,1);
 		textureBuffer->display();
-		glTranslated(width()- 50 + 2, 0, 0);
+		glTranslated(width()- similarityGraphWidth + 2, 0, 0);
 		graphBuffer->display();
 	glPopMatrix();
 
@@ -135,15 +136,14 @@ void Oligomers::load_canvas()
 				pixels.push_back( color(grey, grey, grey) );
 		}
 	}
-	int graphWidth = 50;
-	vector<color> chart = calculateBoundaries(pixels, F_width*widthMultiplier, graphWidth);	
+	vector<color> chart = calculateBoundaries(pixels, F_width*widthMultiplier, similarityGraphWidth);	
 	
 	if(textureBuffer)
 		delete textureBuffer;
 	textureBuffer = new TextureCanvas( pixels, F_width*widthMultiplier );
 	
 	delete graphBuffer;
-	graphBuffer = new TextureCanvas( chart, graphWidth );
+	graphBuffer = new TextureCanvas( chart, similarityGraphWidth );
 
 	upToDate = true;
 }
@@ -195,7 +195,7 @@ int Oligomers::check_height()
 void Oligomers::mouseClick(point2D pt)
 {
 	//range check
-	if( pt.x < (int)width() && pt.x >= 0  )
+	if( pt.x < (int)width()-similarityGraphWidth && pt.x >= 0  )
 	{
 		pt.x = pt.x / 2;
 		int index = pt.y * ui->widthDial->value();
@@ -337,4 +337,13 @@ double Oligomers::correlate(vector<color>& img, int beginA, int beginB, int pixe
 	double answer_B = numerator_B / (denom_B1 * denom_B2);
 
 	return (answer_R + answer_G + answer_B)/3;//return the average of RGB correlation
+}
+
+int Oligomers::width()
+{
+	int widthMultiplier = 1;
+	if(wordLength < 3)	{		widthMultiplier = 4;	}
+	else if(wordLength == 3)	{		widthMultiplier = 2;	}
+
+	return F_width*widthMultiplier + similarityGraphWidth;
 }

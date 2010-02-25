@@ -27,13 +27,9 @@ public:
 	void quickSquare();
 	void display();
 	GLuint render();
-	float maxWidth();
+	int width();
+	void mouseClick(point2D pt);
 	
-	
-	inline int actualWidth()
-	{
-		return scale * width();
-	}
 	
 public slots:	
 	void saySomething();

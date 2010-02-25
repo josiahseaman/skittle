@@ -127,8 +127,13 @@ void NucleotideDisplay::color_compress()
 	upToDate = true;
 }
 
+int NucleotideDisplay::actualWidth()//Nucleotide Display changes Width internally to w/scale
+{
+	return scale * width();
+}
+
 /******SLOTS*****/
-void NucleotideDisplay::changeWidth(int w)
+void NucleotideDisplay::changeWidth(int w)//Nucleotide Display changes Width internally to w/scale
 {
 	if(w < 1)
 		w = 1;
@@ -161,3 +166,8 @@ void NucleotideDisplay::mouseClick(point2D pt)
 	}
 }
 /**/
+
+int NucleotideDisplay::width()
+{
+	return Width;
+}

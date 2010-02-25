@@ -57,10 +57,18 @@ GLWidget::GLWidget(UiVariables gui, QWidget *parent)
 	setupColorTable();
     nuc = new NucleotideDisplay(&ui, this);
     freq = new FrequencyMap(&ui, this);
+    freq->link(nuc);
     gtfTrack = new AnnotationDisplay(&ui, this);
     cylinder = new CylinderDisplay(&ui, this);
    	align = new AlignmentDisplay(&ui, this);
    	olig = new Oligomers(&ui, this);
+   	
+   	graphs.push_back(gtfTrack);
+   	graphs.push_back(cylinder);
+   	graphs.push_back(nuc);
+   	graphs.push_back(olig);
+   	graphs.push_back(align);
+   	graphs.push_back(freq);
    	
     marker = 0;
 
@@ -101,22 +109,16 @@ GLWidget::~GLWidget()
 
 void GLWidget::createButtons()
 {
-   	//~ emit addGraphMode((AbstractGraph*)gtfTrack);
-   	emit addGraphMode((AbstractGraph*)cylinder);
-   	emit addGraphMode((AbstractGraph*)nuc);
-   	emit addGraphMode((AbstractGraph*)freq);
-   	emit addGraphMode((AbstractGraph*)align);	
-   	emit addGraphMode((AbstractGraph*)olig);
+   	//~ emit addGraphMode((AbstractGraph*)gtfTrack);  	
+   	for(int i = 1; i < graphs.size(); ++i)//TODO: i = 1 = skip gtfTrack
+   		emit addGraphMode( graphs[i] );
 }
 
 void GLWidget::createConnections()
 {
-	connect(nuc, SIGNAL(displayChanged()), this, SLOT(updateDisplay()));
-	connect( freq, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
-	connect( cylinder, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
-	connect( align, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
-	connect( olig, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
-	
+   	for(int i = 1; i < graphs.size(); ++i)//TODO: i = 1 = skip gtfTrack
+   		connect( graphs[i], SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
+
 	connect(nuc, SIGNAL(sizeChanged(int)), this, SLOT(setPageSize()) );
 }
 
@@ -139,16 +141,15 @@ void GLWidget::setTotalDisplayWidth()
 {	
 	if( nuc && freq && olig)
 	{
-		double z = getZoom();
-		int total_width = border
-			+ (!gtfTrack->hidden) * 6 
-			+ (!nuc->hidden) * (nuc->width() + border) 
-			+ (!freq->hidden) * (freq->width() + border)
-			+ (!olig->hidden) * (olig->width() + border)
-			+ (!align->hidden) * (align->width() + border)
-			+ (!cylinder->hidden) * ((int)(cylinder->maxWidth()*2) + border);
+		int total_width = border;
+		for(int i = 0; i < graphs.size(); ++i)
+		{
+	   		if(graphs[i]->hidden == false)
+		   		total_width += graphs[i]->width() + border;
+		}
+		//double z = getZoom();
 		//setMinimumWidth((double)(total_width)*z*6);
-		//ui.horizontalScrollBar->setMaximum( (int)max(0.0, (double)(total_width)*z - canvasWidth ) );
+		//ui.horizontalScrollBar->setMaximum( (int)max(0.0, (double)(total_width)*z - canvasWidth ) );		
 	}
 }
 //***********SLOTS*******************
@@ -164,11 +165,12 @@ void GLWidget::changeZoom(int z)
 void GLWidget::displayString(const string& seq)
 {
 	print("New sequence received.  Size:", seq.size());
-	nuc->sequence= &seq;
-	align->setSequence(&seq);
-	freq->sequence = &seq;
-	olig->sequence = &seq;
-	cylinder->sequence = &seq;
+
+	for(int i = 1; i < graphs.size(); ++i)
+	{
+		graphs[i]->setSequence(&seq);
+	}
+
 	
 	setPageSize();
 	ui.startDial->setValue(2);//TODO: bit of a cludge
@@ -377,6 +379,16 @@ void GLWidget::paintGL()
 	    glTranslated(border,0,0);//to get zoom working right
 	    if( tool() == SELECT_TOOL)
 			glCallList(marker);//possibly replace this with a blinking cursor
+			
+		for(int i = 0; i < (int)graphs.size(); ++i)
+		{
+			if(!graphs[i]->hidden)
+			{
+				graphs[i]->display();
+		    	glTranslated(graphs[i]->width() + border, 0 , 0);
+			}
+		}
+		/*	
 		if( !gtfTrack->hidden )
 		{
 			glTranslated(3, 0 , 0);
@@ -385,10 +397,10 @@ void GLWidget::paintGL()
 		}
 	    if(!cylinder->hidden)
 		{
-			int cylinderSize = (int)cylinder->maxWidth();
-		    glTranslated(cylinderSize, 0 , 0);
+			int cylinderSize = (int)cylinder->width();
+		    glTranslated(cylinderSize/2, 0 , 0);
 			cylinder->display();
-		    glTranslated(cylinderSize + border, 0 , 0);
+		    glTranslated(cylinderSize/2 + border, 0 , 0);
 		}
 	    if(!nuc->hidden)
 		{
@@ -397,7 +409,6 @@ void GLWidget::paintGL()
 		}
 		if(!olig->hidden)
 		{
-			olig->checkVariables();
 		    olig->display();
 	        glTranslated(olig->width() + border, 0 , 0);
 		}
@@ -427,7 +438,7 @@ void GLWidget::paintGL()
 			}
 		    freq->display();
 	        glTranslated(freq->width() + border, 0 , 0);
-		}
+		}/**/
     glPopMatrix();
 }
 
@@ -487,34 +498,13 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 	{
 		/*Progressively decrement x based on the cumulative width of modules*/
 		/*The order here is important and should match the left to right display order*/
-		if(!gtfTrack->hidden)
+		for(int i = 0; i < (int)graphs.size(); ++i)
 		{
-			gtfTrack->mouseClick(oglCoords);
-			oglCoords.x -= 6;
-		}
-		if(!cylinder->hidden)
-		{
-			oglCoords.x -= ((int)cylinder->maxWidth()) * 2 + border;	
-		}
-		if(!nuc->hidden)
-		{
-			nuc->mouseClick(oglCoords);
-			oglCoords.x -= nuc->width() + border;
-		}
-		if(!olig->hidden)
-		{
-			olig->mouseClick(oglCoords);//pass click event
-			oglCoords.x -= olig->width() + border;
-		}
-		if(!align->hidden)
-		{
-			//align->mouseClick(oglCoords);
-			oglCoords.x -= align->width() + border;
-		}
-		if(!freq->hidden)
-		{
-			freq->mouseClick(oglCoords);//pass click event
-			oglCoords.x -= freq->width() + border;
+			if(!graphs[i]->hidden)
+			{
+				graphs[i]->mouseClick(oglCoords);
+				oglCoords.x -= graphs[i]->width() + border;
+			}
 		}
 	}
 	

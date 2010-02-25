@@ -6,6 +6,7 @@ FrequencyMap::FrequencyMap(UiVariables* gui, GLWidget* gl)
 {	
 	glWidget = gl;
 	ui = gui;
+	nuc = NULL;
 	//seq shouldn't be necessary
 	string* seq = new string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");	
 	sequence = seq;
@@ -67,8 +68,24 @@ void FrequencyMap::checkVariables()
 void FrequencyMap::display()
 {
 	checkVariables();
-	if(! upToDate )
-		freq_map();	
+	
+	if( !upToDate )
+	{
+		if((ui->scaleDial->value() > 1)&& nuc != NULL)
+		{
+			nuc->checkVariables();
+			if(!nuc->upToDate)
+			{
+				nuc->load_nucleotide();
+			}
+			int displayWidth = ui->widthDial->value() / ui->scaleDial->value();
+			calculate(nuc->nucleotide_colors, displayWidth);
+		}
+		else
+		{
+			freq_map();	
+		}
+	}
 	load_canvas();
 	glPushMatrix();
 		glScaled(1,-1,1);
@@ -76,8 +93,7 @@ void FrequencyMap::display()
 	glPopMatrix();
 
 	//Draw Red indicator according to Width
-	int scale = ui->scaleDial->value();
-	int displayWidth = ui->widthDial->value() / scale; 
+	int displayWidth = ui->widthDial->value() / ui->scaleDial->value(); 
 	glPushMatrix();
 		glColor4f(1,0,0, 1);//red
 	    glTranslated(displayWidth - F_start, 202, 0);
@@ -86,6 +102,11 @@ void FrequencyMap::display()
 	    paint_square(point(1, 0, .25), color(255,0,0));
 	glPopMatrix();
 
+}
+
+void FrequencyMap::link(NucleotideDisplay* nuc_display)
+{
+	nuc = nuc_display;
 }
 
 void FrequencyMap::load_canvas()
@@ -148,11 +169,6 @@ GLuint FrequencyMap::render()
 
 void FrequencyMap::freq_map()
 {
-	if(ui->scaleDial->value() > 1)
-	{
-		//color_overview_freq();
-		return;
-	}
 	check_height();
 	//glWidget->print("Freq_map: ", ++freq_map_count);
 	const char* genome = sequence->c_str() + nucleotide_start;
@@ -327,4 +343,9 @@ double FrequencyMap::correlate(vector<color>& img, int beginA, int beginB, int p
 	double answer_B = numerator_B / (denom_B1 * denom_B2);
 
 	return (answer_R + answer_G + answer_B)/3;//return the average of RGB correlation
+}
+
+int FrequencyMap::width()
+{
+	return F_width;
 }

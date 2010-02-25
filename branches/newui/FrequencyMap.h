@@ -10,6 +10,7 @@
 #include <QGLWidget>
 #include "BasicTypes.h"
 #include "AbstractGraph.h"
+#include "NucleotideDisplay.h"
 #include "UiVariables.h"
 #include "TextureCanvas.h"
 
@@ -28,6 +29,7 @@ public:
 	void createConnections();
 	void checkVariables();
 	void display();
+	void link(NucleotideDisplay* nuc_display);
 	void load_canvas();
 	GLuint render();
 	void freq_map();
@@ -38,17 +40,14 @@ public:
 	void display_freq();
 	void calculate(vector<color>& img, int vote_size);
 	double correlate(vector<color>& img, int beginA, int beginB, int pixelsPerSample);
-	
-	inline int width() const
-	{
-		return F_width;
-	}
+	int width();
 	
 public slots:	
 	
 signals:
 
 protected:
+	NucleotideDisplay* nuc;
 	GLuint display_object;
 	vector< vector<float> > freq;
 	TextureCanvas* textureBuffer;

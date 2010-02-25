@@ -144,16 +144,19 @@ void GtfReader::readFile(QString filename)
 	}	
 	file.close();	
 	emit newGtfFileRead( tracks() );
+}
 	
-	/***********OUTPUT ANNOTATED SEQUENCE************** /
+/***********OUTPUT ANNOTATED SEQUENCE************** /
+void GtfReader::snipAnnotatedSequence()
+{
 	const string* seq = glWidget->nuc->sequence;
 	ofstream fout("clipped.fa");
 	for(int i = 0; i < annotation_track.size(); i++)
 	{
 		fout << seq->substr(annotation_track[i].start, annotation_track[i].stop - annotation_track[i].start);
 	}
-	fout.close();*/
-}
+	fout.close();
+}/**/
 	
 color GtfReader::color_entry()
 {

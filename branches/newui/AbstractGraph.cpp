@@ -108,3 +108,14 @@ void AbstractGraph::toggleVisibility()
 	emit displayChanged();
 }
 
+void AbstractGraph::setSequence(const string* seq)
+{
+	sequence = seq;	
+}
+
+void AbstractGraph::mouseClick(point2D pt){	}
+
+int AbstractGraph::width() 
+{
+	return Width / scale;
+}

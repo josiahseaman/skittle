@@ -69,6 +69,7 @@ void CylinderDisplay::display()
 		display_object = render();
 	}
 	glPushMatrix();
+		glTranslated(width()/2, 0, 0);
 		glRotated(turnCylinder, 0,1,0);//rotate cylinder around Y	
 		glCallList(display_object);
 	glPopMatrix();
@@ -145,11 +146,13 @@ GLuint CylinderDisplay::render()
     return (list);
 }
 
-float CylinderDisplay::maxWidth()
+int CylinderDisplay::width()
 {
 	double pi = 3.141592653589793;
-	return max_width / (pi * 2);
+	return (int)(max_width / pi);
 }
+
+void CylinderDisplay::mouseClick(point2D pt){	}
 
 /******SLOTS*****/
 void CylinderDisplay::saySomething()

@@ -15,6 +15,7 @@ INPUT(
 ./debug\TextRender.o
 ./debug\TextureCanvas.o
 ./debug\moc_AbstractGraph.o
+./debug\moc_AlignmentDisplay.o
 ./debug\moc_AnnotationDisplay.o
 ./debug\moc_CylinderDisplay.o
 ./debug\moc_FastaReader.o

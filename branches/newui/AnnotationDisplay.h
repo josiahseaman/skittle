@@ -27,10 +27,8 @@ public:
 	void newTrack(const vector<track_entry>* track);
 	void addEntry(vector<track_entry>& activeTracks, track_entry item);
 	void mouseClick(point2D pt);
-	unsigned int width() const{
-		return max_width;
-	}
-	
+	int width();
+		
 public slots:	
 	
 signals:

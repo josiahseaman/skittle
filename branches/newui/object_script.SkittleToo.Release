@@ -15,6 +15,7 @@ INPUT(
 ./release\TextRender.o
 ./release\TextureCanvas.o
 ./release\moc_AbstractGraph.o
+./release\moc_AlignmentDisplay.o
 ./release\moc_AnnotationDisplay.o
 ./release\moc_CylinderDisplay.o
 ./release\moc_FastaReader.o

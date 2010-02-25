@@ -12,7 +12,6 @@
 #include "AbstractGraph.h"
 #include "UiVariables.h"
 #include "TextureCanvas.h"
-#include "AlignmentDisplay.h"
 
 using namespace std;
 
@@ -36,12 +35,8 @@ public:
 	GLuint render();
 	void load_nucleotide();
 	void color_compress();
-	
-	inline int actualWidth()
-	{
-		return scale * width();
-	}
-	
+	int actualWidth();//Nucleotide Display changes Width internally to w/scale
+	int width();
 	
 public slots:	
 	void changeWidth(int w);

@@ -110,6 +110,7 @@ protected:
     void redraw();
 
 private:
+	vector<AbstractGraph*> graphs;
 	vector<color> colorTable;
     GLuint object;
     GLuint marker;

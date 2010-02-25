@@ -2,6 +2,7 @@
 #ifndef ALIGNMENT_DISP
 #define ALIGNMENT_DISP
 
+#include <QGLWidget>
 #include <vector>
 #include "BasicTypes.h"
 #include "UiVariables.h"
@@ -12,6 +13,8 @@ using namespace std;
 
 class AlignmentDisplay : public AbstractGraph
 {
+    Q_OBJECT
+    
 public:
 	
 	AlignmentDisplay(UiVariables*, GLWidget* gl);
@@ -38,10 +41,9 @@ public:
 	void shiftString(unsigned char* str, int size);
 	color simpleAlignment(int index);
 	void setSequence(const string* seq);
+	void mouseClick(point2D pt);
 	
-	int width() const{ 
-		return Width / scale; 
-	}
+	int width();
 	
 	
 private:	
