@@ -31,6 +31,7 @@ public:
     GLWidget* glWidget;
     FastaReader* fastaReader;
     GtfReader* trackReader;
+	QScrollBar* horizontalScrollBar;
 	QScrollBar* verticalScrollBar;
 	MainWindow();
 

@@ -147,9 +147,9 @@ void GLWidget::setTotalDisplayWidth()
 	   		if(graphs[i]->hidden == false)
 		   		total_width += graphs[i]->width() + border;
 		}
-		//double z = getZoom();
+		double z = getZoom();
 		//setMinimumWidth((double)(total_width)*z*6);
-		//ui.horizontalScrollBar->setMaximum( (int)max(0.0, (double)(total_width)*z - canvasWidth ) );		
+		ui.horizontalScrollBar->setMaximum( (int)max(0.0, (double)(total_width)*z - canvasWidth ) );		
 	}
 }
 //***********SLOTS*******************
@@ -158,7 +158,7 @@ void GLWidget::changeZoom(int z)
 	double percent = z / 100.0;
 	zTransOffset = 200.0 / percent;
 	updateDisplaySize();
-	//setTotalDisplayWidth();
+	setTotalDisplayWidth();
 	//redraw();
 }
 

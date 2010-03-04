@@ -23,14 +23,25 @@ MainWindow::MainWindow()
 	createStatusBar();
 	oldScale = 1;
 	
+	horizontalScrollBar = new QScrollBar();
+	horizontalScrollBar->setOrientation(Qt::Horizontal);
+    horizontalScrollBar->setMaximum (50);
+    horizontalScrollBar->setPageStep(100);
+    horizontalScrollBar->setSingleStep(10);
 	verticalScrollBar = new QScrollBar();
 	verticalScrollBar->setMaximum( 100 );
 	glWidget = new GLWidget(getDisplayVariables(), this);
 	
-	QHBoxLayout* cLayout = new QHBoxLayout;	
-	cLayout->addWidget(glWidget);
-	cLayout->addWidget(verticalScrollBar);
-	scrollArea->setLayout(cLayout);
+	QFrame* subFrame = new QFrame;
+	QVBoxLayout* vLayout = new QVBoxLayout;
+	vLayout->addWidget(glWidget);
+	vLayout->addWidget(horizontalScrollBar);
+	subFrame->setLayout(vLayout);
+	
+	QHBoxLayout* hLayout = new QHBoxLayout;
+	hLayout->addWidget(subFrame);
+	hLayout->addWidget(verticalScrollBar);
+	scrollArea->setLayout(hLayout);
 	//scrollArea->setWidgetResizable(true);
 	setCentralWidget(scrollArea);
   
@@ -304,6 +315,9 @@ void MainWindow::createConnections()
 	connect(verticalScrollBar, SIGNAL(valueChanged(int)), startOffset, SLOT(setValue(int)));
 	connect(startOffset, SIGNAL(valueChanged(int)), verticalScrollBar, SLOT(setValue(int)));
 	
+	connect(horizontalScrollBar, SIGNAL(valueChanged(int)), glWidget, SLOT(slideHorizontal(int)));
+	connect(glWidget, SIGNAL(xOffsetChange(int)), horizontalScrollBar, SLOT(setValue(int)));
+	
 	
 	/****GRAPH MODE TOGGLES*******/
 	connect(widthDial, SIGNAL(valueChanged(int)), glWidget, SLOT(updateDisplaySize()));
@@ -331,6 +345,7 @@ UiVariables MainWindow::getDisplayVariables()
 {
 	UiVariables var = UiVariables();
 
+	var.horizontalScrollBar = horizontalScrollBar;
 	var.verticalScrollBar = verticalScrollBar;
 	var.sizeDial = displayLength;
     var.widthDial = widthDial;
