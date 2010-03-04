@@ -385,7 +385,7 @@ void GLWidget::paintGL()
 			if(!graphs[i]->hidden)
 			{
 				graphs[i]->display();
-		    	glTranslated(graphs[i]->width() + border, 0 , 0);
+                glTranslated(graphs[i]->width() + border, 0 , 0);
 			}
 		}
 		/*	
