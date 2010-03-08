@@ -118,8 +118,8 @@ private:
 	QAction *exitAction;
 	
 	QLabel *statusTip;
-	QProgressBar *processStatus;
-	QLabel *processState;
+	//QProgressBar *processStatus;
+	//QLabel *processState;
 	int oldScale;
 	
 };

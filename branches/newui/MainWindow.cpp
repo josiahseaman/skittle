@@ -277,14 +277,15 @@ void MainWindow::createDocks()
 void MainWindow::createStatusBar()
 {
 	//QLabel *statusTip = new QLabel("This is a status Tip",this);
-	QProgressBar *processStatus = new QProgressBar(this);
+	//QProgressBar *processStatus = new QProgressBar(this);
 	//processStatus->setMinimumWidth(300);
-	processStatus->setMaximumWidth(300);
-	processStatus->setValue(75);
-	QLabel *processState = new QLabel("Loading...",this);
+	//processStatus->setMaximumWidth(300);
+	//processStatus->setValue(75);
+	//QLabel *processState = new QLabel("Loading...",this);
 	
-	statusBar()->addPermanentWidget(processStatus);
-	statusBar()->addPermanentWidget(processState);
+	//statusBar()->addPermanentWidget(processStatus);
+	//statusBar()->addPermanentWidget(processState);
+	statusBar()->showMessage(tr("Ready"));
 }
 void MainWindow::createConnections()
 {
@@ -388,7 +389,7 @@ void MainWindow::changeWindowName(std::string name)
 
 void MainWindow::openGtf()
 {
-	QString fileName = QFileDialog::getOpenFileName(this);
+	QString fileName = QFileDialog::getOpenFileName(this,"Open GTF File", "", tr("Annotation files (*.gtf)"));
     
     if (!fileName.isEmpty()) 
 		 emit newGtfFileOpen(fileName);
@@ -426,10 +427,10 @@ void MainWindow::halveWidth()
 
 void MainWindow::updateProgress(int val)
 {
-	processStatus->setValue(val);
+	//processStatus->setValue(val);
 }
 void MainWindow::updateState(QString state){
-	processState->setText(state);
+	//processState->setText(state);
 }
 void MainWindow::updateStatus(QString tip){
 	statusBar()->showMessage(tip);
