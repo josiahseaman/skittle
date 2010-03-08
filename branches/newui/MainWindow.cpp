@@ -153,7 +153,6 @@ void MainWindow::createToolbars()
 	toolBarMenu->addAction(annotationToolBar->toggleViewAction());
 	
 	presetToolBar = new QToolBar("Presets");
-	
 	presetToolBar->setOrientation(Qt::Horizontal);
 	toolBarMenu->addAction(presetToolBar->toggleViewAction());
 	toolToolBar = addToolBar("tools");
@@ -225,13 +224,27 @@ void MainWindow::createToolbars()
 }
 
 void MainWindow::createDocks()
-{
+{	
 	QDockWidget *infoDock = new QDockWidget("Information Display", this);
 	toolBarMenu->addAction(infoDock->toggleViewAction());
 	infoDock->setAllowedAreas(Qt::AllDockWidgetAreas);
-	textArea = new QTextEdit();
+
+    tabWidget = new QTabWidget(infoDock);
+	infoDock->setWidget(tabWidget);
+	textArea = new QTextEdit(tabWidget);
 	textArea->setMinimumSize(20, 20);
-	infoDock->setWidget(textArea);
+    tabWidget->addTab(textArea, QString("Text Output"));
+    highlighterTab = new QFrame();    
+	//highlighterTab->addWidget(new QLabel("Highlighted Sequence:", highlighterTab));//QLabel* seqLabel = 
+    seqEdit = new QLineEdit(highlighterTab);
+    seqEdit->setMinimumWidth(400);
+    
+	QVBoxLayout* vLayout = new QVBoxLayout;
+	vLayout->addWidget(new QLabel("Highlighted Sequence:", highlighterTab));
+	vLayout->addWidget(seqEdit);
+	highlighterTab->setLayout(vLayout);
+	
+    tabWidget->addTab(highlighterTab, QString("Highlighter Tab"));
 	addDockWidget(Qt::BottomDockWidgetArea, infoDock);
 	
 	
@@ -333,6 +346,8 @@ void MainWindow::createConnections()
 
    	/****PRESETS****/
 
+	/****Specific Settings*****/
+	connect( seqEdit, SIGNAL(textChanged(const QString&)), glWidget->highlight, SLOT(setHighlightSequence(const QString&)));
 
 	/****Print Signals*****/
 	connect( glWidget, SIGNAL(printText(QString)), textArea, SLOT(append(QString)));

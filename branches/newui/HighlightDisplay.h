@@ -3,6 +3,7 @@
 #define HIGH_DISP
 
 #include <QGLWidget>
+#include <QString>
 #include "NucleotideDisplay.h"
 #include <string>
 #include <vector>
@@ -19,7 +20,9 @@ public:
 	GLuint render();
 	void assignColors();
 	void calculate();
-	void setHighlightSequence(string high);
+	
+public slots:
+	void setHighlightSequence(const QString&);
 	
 private:
 	vector<unsigned short int> similarity;

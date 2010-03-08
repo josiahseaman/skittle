@@ -23,6 +23,8 @@ class GLWidget;
 class QScrollArea;
 class QScrollBar;
 class QFrame;
+class QLineEdit;
+class QTabWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -87,7 +89,10 @@ private:
 	
 	QDockWidget *infoDock;
 	QTextEdit* textArea;
+	QLineEdit* seqEdit;
 	QDockWidget *filterDock;
+    QTabWidget *tabWidget;
+    QFrame *highlighterTab;
 	
 	QSpinBox *widthDial;
 	QPushButton *doubleDisplayWidth;

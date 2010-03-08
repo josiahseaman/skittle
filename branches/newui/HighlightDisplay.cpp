@@ -108,12 +108,15 @@ void HighlightDisplay::calculate()
 //	glWidget->print(outStream.str());
 }
 
-void HighlightDisplay::setHighlightSequence(string high)
+void HighlightDisplay::setHighlightSequence(const QString& high_C)
 {
+	string high = high_C.toStdString();
 	for(int l = 0; l < (int)high.size(); l++)
 		if(high[l] >= 97 && high[l] <= 122) high[l] -= 32;//cast to uppercase
 
 	target = high;
 	similarity.clear();
 	//similarity.resize(display_size, 0);//could be commented out if you use push_back instead	
+	upToDate=false;
+	invalidate();
 }
