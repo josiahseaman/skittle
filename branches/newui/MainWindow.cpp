@@ -145,6 +145,7 @@ void MainWindow::createMenus()
 void MainWindow::createToolbars()
 {
 	annotationToolBar = addToolBar("Annotations");
+	annotationToolBar->setObjectName("annotations");
 	annotationToolBar->addAction(addAnnotationAction);
 	annotationToolBar->addAction(nextAnnotationAction);
 	annotationToolBar->addAction(prevAnnotationAction);
@@ -153,9 +154,12 @@ void MainWindow::createToolbars()
 	toolBarMenu->addAction(annotationToolBar->toggleViewAction());
 	
 	presetToolBar = new QToolBar("Presets");
+	presetToolBar->setObjectName("presets");
 	presetToolBar->setOrientation(Qt::Horizontal);
 	toolBarMenu->addAction(presetToolBar->toggleViewAction());
+	
 	toolToolBar = addToolBar("tools");
+	toolToolBar->setObjectName("tools");
 	toolToolBar->addAction(moveAction);
 	toolToolBar->addAction(resizeAction);
 	toolToolBar->addAction(zoomAction);
@@ -164,6 +168,7 @@ void MainWindow::createToolbars()
 	toolBarMenu->addAction(toolToolBar->toggleViewAction());
 	
 	settingToolBar = addToolBar("Global Settings");
+	settingToolBar->setObjectName("setting");
 	settingToolBar->addWidget(new QLabel("Display Width"));
 	widthDial = new QSpinBox(this);
     widthDial->setMinimum(1);
@@ -226,6 +231,7 @@ void MainWindow::createToolbars()
 void MainWindow::createDocks()
 {	
 	QDockWidget *infoDock = new QDockWidget("Information Display", this);
+	infoDock->setObjectName("infodock");
 	toolBarMenu->addAction(infoDock->toggleViewAction());
 	infoDock->setAllowedAreas(Qt::AllDockWidgetAreas);
 
