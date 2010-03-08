@@ -62,6 +62,7 @@ GLWidget::GLWidget(UiVariables gui, QWidget *parent)
     cylinder = new CylinderDisplay(&ui, this);
    	align = new AlignmentDisplay(&ui, this);
    	olig = new Oligomers(&ui, this);
+	highlight = new HighlightDisplay(&ui, this);
    	
    	graphs.push_back(gtfTrack);
    	graphs.push_back(cylinder);
@@ -69,6 +70,7 @@ GLWidget::GLWidget(UiVariables gui, QWidget *parent)
    	graphs.push_back(olig);
    	graphs.push_back(align);
    	graphs.push_back(freq);
+   	graphs.push_back(highlight);
    	
     marker = 0;
 
@@ -139,19 +141,17 @@ double GLWidget::getZoom()
 
 void GLWidget::setTotalDisplayWidth()
 {	
-	if( nuc && freq && olig)
+	int total_width = border;
+	for(int i = 0; i < graphs.size(); ++i)
 	{
-		int total_width = border;
-		for(int i = 0; i < graphs.size(); ++i)
-		{
-	   		if(graphs[i]->hidden == false)
-		   		total_width += graphs[i]->width() + border;
-		}
-		double z = getZoom();
-		//setMinimumWidth((double)(total_width)*z*6);
-		ui.horizontalScrollBar->setMaximum( (int)max(0.0, (double)(total_width)*z - canvasWidth ) );		
+		if(graphs[i]->hidden == false)
+	   		total_width += graphs[i]->width() + border;
 	}
+	double z = getZoom();
+	//setMinimumWidth((double)(total_width)*z*6);
+	ui.horizontalScrollBar->setMaximum( (int)max(0.0, (double)(total_width)*z - canvasWidth ) );		
 }
+
 //***********SLOTS*******************
 void GLWidget::changeZoom(int z)
 {

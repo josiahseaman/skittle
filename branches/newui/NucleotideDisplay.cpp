@@ -15,7 +15,7 @@ NucleotideDisplay::NucleotideDisplay(UiVariables* gui, GLWidget* gl)
 	scale = 1;
 	changeWidth(ui->widthDial->value());
 	changeSize(ui->sizeDial->value());
-	upToDate = true;
+	upToDate = false;
 	
 	invert = false;
 	C = true;
@@ -90,6 +90,12 @@ void NucleotideDisplay::load_nucleotide()
 			nucleotide_colors.push_back( glWidget->colors(genome[i]) );//TODO: Optimize pointer function call
 	}
 	
+	loadTextureCanvas();
+	upToDate = true;
+}
+
+void NucleotideDisplay::loadTextureCanvas()
+{
 	if(textureBuffer != NULL)
 	{
 		delete textureBuffer;
@@ -97,9 +103,7 @@ void NucleotideDisplay::load_nucleotide()
 	}
 	Width = ui->widthDial->value() / ui->scaleDial->value();
 	textureBuffer = new TextureCanvas( nucleotide_colors, Width );
-
-	upToDate = true;
-}
+}	
 
 void NucleotideDisplay::color_compress()
 {

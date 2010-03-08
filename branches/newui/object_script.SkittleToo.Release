@@ -8,6 +8,7 @@ INPUT(
 ./release\FrequencyMap.o
 ./release\glwidget.o
 ./release\GtfReader.o
+./release\HighlightDisplay.o
 ./release\main.o
 ./release\MainWindow.o
 ./release\NucleotideDisplay.o
@@ -22,6 +23,7 @@ INPUT(
 ./release\moc_FrequencyMap.o
 ./release\moc_glwidget.o
 ./release\moc_GtfReader.o
+./release\moc_HighlightDisplay.o
 ./release\moc_MainWindow.o
 ./release\moc_NucleotideDisplay.o
 ./release\moc_Oligomers.o

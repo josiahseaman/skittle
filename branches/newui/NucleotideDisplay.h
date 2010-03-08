@@ -34,6 +34,7 @@ public:
 	void display();
 	GLuint render();
 	void load_nucleotide();
+	void loadTextureCanvas();
 	void color_compress();
 	int actualWidth();//Nucleotide Display changes Width internally to w/scale
 	int width();
@@ -44,7 +45,7 @@ public slots:
 	
 signals:
 
-private:
+protected:
 	GLuint display_object;
 	TextureCanvas* textureBuffer;
 };

@@ -159,7 +159,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Project]
-UnitCount=37
+UnitCount=39
 FileName=SkittleToo.dev
 Name=SkittleToo
 Type=0
@@ -358,7 +358,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit38]
-FileName=MainWindow.h
+FileName=HighlightDisplay.cpp
 CompileCpp=0
 Folder=SkittleToo
 Compile=1
@@ -368,9 +368,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit39]
-FileName=MainPanel.cpp
+FileName=HighlightDisplay.h
 CompileCpp=0
-Folder=
+Folder=SkittleToo
 Compile=1
 Link=1
 Priority=1000

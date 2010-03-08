@@ -32,6 +32,7 @@
 #include "CylinderDisplay.h"
 #include "AlignmentDisplay.h"
 #include "Oligomers.h"
+#include "HighlightDisplay.h"
 
 
 using namespace std;
@@ -49,6 +50,7 @@ public:
 	CylinderDisplay* cylinder;
    	AlignmentDisplay* align;
    	Oligomers* olig;
+   	HighlightDisplay* highlight;
 	
     GLWidget(UiVariables gui, QWidget *parent = 0);
     ~GLWidget();

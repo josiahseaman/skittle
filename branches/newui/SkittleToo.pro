@@ -20,6 +20,7 @@ HEADERS += AbstractGraph.h \
            FrequencyMap.h \
            glwidget.h \
            GtfReader.h \
+           HighlightDisplay.h \
            MainWindow.h \
            NucleotideDisplay.h \
            NucleotideLinker.h \
@@ -37,6 +38,7 @@ SOURCES += AbstractGraph.cpp \
            FrequencyMap.cpp \
            glwidget.cpp \
            GtfReader.cpp \
+           HighlightDisplay.cpp \
            main.cpp \
            MainWindow.cpp \
            NucleotideDisplay.cpp \
