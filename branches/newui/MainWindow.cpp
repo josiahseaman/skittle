@@ -234,18 +234,21 @@ void MainWindow::createDocks()
 	infoDock->setObjectName("infodock");
 	toolBarMenu->addAction(infoDock->toggleViewAction());
 	infoDock->setAllowedAreas(Qt::AllDockWidgetAreas);
-
+	
     tabWidget = new QTabWidget(infoDock);
 	infoDock->setWidget(tabWidget);
 	textArea = new QTextEdit(tabWidget);
-	textArea->setMinimumSize(20, 20);
+	tabWidget->setMinimumSize(60, 130);
     tabWidget->addTab(textArea, QString("Text Output"));
     highlighterTab = new QFrame();    
-	//highlighterTab->addWidget(new QLabel("Highlighted Sequence:", highlighterTab));//QLabel* seqLabel = 
     seqEdit = new QLineEdit(highlighterTab);
     seqEdit->setMinimumWidth(400);
+    similarityDial = new QSpinBox(highlighterTab);
+    similarityDial->setValue(80);
     
 	QVBoxLayout* vLayout = new QVBoxLayout;
+	vLayout->addWidget(new QLabel("Minimum Percent Similarity:", highlighterTab));
+	vLayout->addWidget(similarityDial);
 	vLayout->addWidget(new QLabel("Highlighted Sequence:", highlighterTab));
 	vLayout->addWidget(seqEdit);
 	highlighterTab->setLayout(vLayout);
@@ -254,9 +257,6 @@ void MainWindow::createDocks()
 	addDockWidget(Qt::BottomDockWidgetArea, infoDock);
 	
 	
-	filterDock = new QDockWidget("Data View");
-	
-	//{ //filtersWidget:
 	QWidget *filters = new QWidget;
 	QVBoxLayout *filterLayout = new QVBoxLayout;
 	QTabWidget *tabWidget = new QTabWidget();
@@ -336,8 +336,7 @@ void MainWindow::createConnections()
 	connect(startOffset, SIGNAL(valueChanged(int)), verticalScrollBar, SLOT(setValue(int)));
 	
 	connect(horizontalScrollBar, SIGNAL(valueChanged(int)), glWidget, SLOT(slideHorizontal(int)));
-	connect(glWidget, SIGNAL(xOffsetChange(int)), horizontalScrollBar, SLOT(setValue(int)));
-	
+	connect(glWidget, SIGNAL(xOffsetChange(int)), horizontalScrollBar, SLOT(setValue(int)));	
 	
 	/****GRAPH MODE TOGGLES*******/
 	connect(widthDial, SIGNAL(valueChanged(int)), glWidget, SLOT(updateDisplaySize()));
@@ -354,7 +353,8 @@ void MainWindow::createConnections()
 
 	/****Specific Settings*****/
 	connect( seqEdit, SIGNAL(textChanged(const QString&)), glWidget->highlight, SLOT(setHighlightSequence(const QString&)));
-
+	connect( similarityDial, SIGNAL(valueChanged(int)), glWidget->highlight, SLOT(setPercentSimilarity(int)));
+	
 	/****Print Signals*****/
 	connect( glWidget, SIGNAL(printText(QString)), textArea, SLOT(append(QString)));
 	connect( glWidget, SIGNAL(printHtml(QString)), textArea, SLOT(insertHtml(QString)));

@@ -23,11 +23,13 @@ public:
 	
 public slots:
 	void setHighlightSequence(const QString&);
+	void setPercentSimilarity(int);
 	
 private:
 	vector<unsigned short int> similarity;
 	string target;
 	double percentage_match;
+	int frameNumber;
 /*	
 public slots:	
 	void changeWidth(int w);

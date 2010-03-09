@@ -366,8 +366,6 @@ void GLWidget::paintGL()
 			ui.scaleDial->setValue(scale);
 		}
 	}
-	//finalizeCalculations();
-
 	//print("Frame: ", ++frame);
     glMatrixMode(GL_MODELVIEW);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -388,57 +386,6 @@ void GLWidget::paintGL()
                 glTranslated(graphs[i]->width() + border, 0 , 0);
 			}
 		}
-		/*	
-		if( !gtfTrack->hidden )
-		{
-			glTranslated(3, 0 , 0);
-			gtfTrack->display();
-			glTranslated(gtfTrack->width()+ border, 0 , 0);
-		}
-	    if(!cylinder->hidden)
-		{
-			int cylinderSize = (int)cylinder->width();
-		    glTranslated(cylinderSize/2, 0 , 0);
-			cylinder->display();
-		    glTranslated(cylinderSize/2 + border, 0 , 0);
-		}
-	    if(!nuc->hidden)
-		{
-			nuc->display();
-		    glTranslated(nuc->width() + border, 0 , 0);
-		}
-		if(!olig->hidden)
-		{
-		    olig->display();
-	        glTranslated(olig->width() + border, 0 , 0);
-		}
-		if(!align->hidden)
-		{
-			align->display();
-
-			glPushMatrix();
-				glTranslated(0, (-canvasHeight)/zoom, .1);
-				glScaled(1,.5/zoom,1);
-			    align->display_spectrum();
-		    glPopMatrix();
-
-	        glTranslated(align->width() + border, 0 , 0);
-		}
-		if(!freq->hidden)
-		{
-			freq->checkVariables();
-			if((ui.scaleDial->value() > 1) && ( !freq->upToDate ))
-			{
-				if(!nuc->upToDate)
-				{
-					nuc->load_nucleotide();
-				}
-				int displayWidth = ui.widthDial->value() / ui.scaleDial->value(); 
-				freq->calculate(nuc->nucleotide_colors, displayWidth);
-			}
-		    freq->display();
-	        glTranslated(freq->width() + border, 0 , 0);
-		}/**/
     glPopMatrix();
 }
 
@@ -537,7 +484,6 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 
 void GLWidget::translate(float dx, float dy)
 {
-	emit xOffsetChange((int)(xPosition + dx + .5));
 	if(dy != 0.0)
 	{
 		int sign = (int)(dy / fabs(dy));
@@ -545,8 +491,7 @@ void GLWidget::translate(float dx, float dy)
 		int current = ui.startDial->value();
 		ui.startDial->setValue( max(1, current+move) );
 	}
-	
-    redraw();
+	emit xOffsetChange((int)(xPosition + dx + .5));
 }
  
 void GLWidget::changeCursor(Qt::CursorShape cNumber)

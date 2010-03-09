@@ -1,6 +1,7 @@
 #include "HighlightDisplay.h"
 #include "glwidget.h"
 #include <sstream>
+#include <algorithm>
 
 HighlightDisplay::HighlightDisplay(UiVariables* gui, GLWidget* gl)
 :NucleotideDisplay(gui, gl)
@@ -12,6 +13,7 @@ HighlightDisplay::HighlightDisplay(UiVariables* gui, GLWidget* gl)
 	
 	target = string("AAAAAAAAAAAA");
 	percentage_match = 0.8;
+	frameNumber = 0;
 	
 }
 
@@ -25,7 +27,7 @@ GLuint HighlightDisplay::render()
     glNewList(list, GL_COMPILE);
     glPushMatrix();
 	glScaled(1,-1,1);
-		//if(!upToDate)
+		if(!upToDate)
 			assignColors();
 		textureBuffer->display();
 	glPopMatrix();
@@ -36,36 +38,40 @@ GLuint HighlightDisplay::render()
 
 void HighlightDisplay::assignColors()
 {
-	//if(!upToDate)
+	if(!upToDate)
 		calculate();
-	
+
+	glWidget->print("Color:", frameNumber);	
 	nucleotide_colors.clear();
 	int targetSize = target.size();
 	int remainingLength = 0;
 	int match_minimum = (int)(255 * percentage_match);
 	const char* seq = (sequence->c_str()+nucleotide_start);
-	for(int i = 0; i < (int)similarity.size(); i++)
+	int offset = 0;
+	for(int i = 0; i < (int)similarity.size(); i+=scale)
 	{
-		int grey = static_cast<int>(  float(similarity[i])/targetSize * 255 );//Grey scale based on similarity
+		vector<unsigned short int>::iterator bestMatch = max_element(similarity.begin()+i, similarity.begin()+i+scale);
+		short int bestScore = *bestMatch;
+		int grey = static_cast<int>(  float(bestScore)/targetSize * 255 );//Grey scale based on similarity
 		color pixelColor = color(grey, grey, grey);//white to grey
 		
 		//highlight matches with color
 		if(grey >= match_minimum)//count this as a starting position
 		{
+			offset = distance(similarity.begin()+i, bestMatch);
 			remainingLength = targetSize - 1;
 			pixelColor = color(255, 0, 0);//red
 		}
 		else
 		{
-			if(remainingLength)//trail after a match
+			if(remainingLength >= 1 && remainingLength >= scale)//trail after a match
 			{//green if it matches, blue if it doesn't
-				//if((*sequence)[i+nucleotide_start] == target[targetSize - remainingLength])
-				if(seq[i] == target[targetSize - remainingLength])
+				if(seq[i+offset] == target[targetSize - remainingLength - offset])
 					pixelColor = color(0, 255, 0);//green
 				else
 					pixelColor = color(0, 0, 255);//blue
 					
-				remainingLength--;
+				remainingLength = max(0, remainingLength - scale);
 			}
 		}
 		nucleotide_colors.push_back( pixelColor );
@@ -76,6 +82,7 @@ void HighlightDisplay::assignColors()
 //This calculates how well a region of the genome matches a query sequence 'target' at every nucleotide.  
 void HighlightDisplay::calculate()
 {
+	glWidget->print("Calculate:", ++frameNumber);
 	similarity.clear();
 	int targetSize = target.size();
 	//int count = 0;
@@ -83,24 +90,14 @@ void HighlightDisplay::calculate()
 	const string& seq = (*sequence);
 	for( int h = 0; h < display_size && h  < (int)seq.size() - start - (targetSize-1); h++)
 	{
-		/*//NOTE: This statement is just an optional speed up
-		if(seq[start + h] == 'N' || seq[start + h] == 'n' )
-		{//check the first and last of the reference string
-			//similarity.push_back(0);
-		}
-		else
-		{*/
 			unsigned short int score = 0;
 			int start_h = start + h;
 			for(int l = 0; l < targetSize; l++)
-			{		//if( target[l] == 'N' || ...
+			{
 				if(seq[start_h + l] == target[l])//this is the innermost loop.  This line takes the most time
 					++score;
 			}
 			similarity.push_back(score);
-			//if( score >= targetSize*percentage_match )//
-			//	++count;//
-		//}
 	}	
 	upToDate = true;
 //	stringstream outStream;//
@@ -117,6 +114,15 @@ void HighlightDisplay::setHighlightSequence(const QString& high_C)
 	target = high;
 	similarity.clear();
 	//similarity.resize(display_size, 0);//could be commented out if you use push_back instead	
-	upToDate=false;
 	invalidate();
+}
+
+void HighlightDisplay::setPercentSimilarity(int percentile)
+{
+	double newVal = (float)percentile / 100.0;
+	if( percentage_match != newVal )
+	{
+		percentage_match = newVal;
+		invalidate();
+	}
 }

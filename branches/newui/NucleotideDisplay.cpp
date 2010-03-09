@@ -55,7 +55,7 @@ void NucleotideDisplay::createConnections()
 void NucleotideDisplay::display()
 {
 	checkVariables();
-	//if( !upToDate )
+	if( !upToDate )
 	{
     	glDeleteLists(display_object, 1);
 		display_object = render();
@@ -69,7 +69,7 @@ GLuint NucleotideDisplay::render()
     glNewList(list, GL_COMPILE);
     glPushMatrix();
 	glScaled(1,-1,1);
-		//if(!upToDate)
+		if(!upToDate)
 			load_nucleotide();
 		textureBuffer->display();
 	glPopMatrix();
