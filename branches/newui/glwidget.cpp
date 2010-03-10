@@ -378,24 +378,6 @@ void GLWidget::paintGL()
     glPopMatrix();
 }
 
-void GLWidget::displayGraph(int graphMode)
-{
-    glMatrixMode(GL_MODELVIEW);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
-    glPushMatrix();
-	    glTranslated(-xPosition, 0, 0);
-	    double zoom = getZoom();
-	    glScaled(zoom, zoom, zoom);
-	    glTranslated(border,0,0);//to get zoom working right
-	    if( tool() == SELECT_TOOL)
-			glCallList(marker);//TODO: possibly replace this with a blinking cursor
-			
-		//presets->display(graphMode);
-		
-    glPopMatrix();	
-}
-
 void GLWidget::resizeGL(int width, int height)
 {
 	
@@ -496,7 +478,7 @@ void GLWidget::placeMarker(QPoint pixelCoords)
     glDeleteLists(marker, 1);	
 	marker = glGenLists(1);
     glNewList(marker, GL_COMPILE);
-		nuc->paint_square(point(x+1, -y, 0), color(255,255,0));
+		nuc->paint_square(point(x, -y, 0), color(255,255,0));
 	glEndList();
 
     redraw();

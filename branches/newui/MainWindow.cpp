@@ -465,7 +465,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::readSettings()
 {
-	glWidget->print("Reading Settings");
+	glWidget->print("Reading User Settings");
 	QSettings settings("Skittle", "Preferences");
 	settings.beginGroup("mainWindow");
 	restoreGeometry(settings.value("geometry").toByteArray());

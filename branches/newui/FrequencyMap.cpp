@@ -96,7 +96,7 @@ void FrequencyMap::display()
 	int displayWidth = ui->widthDial->value() / ui->scaleDial->value(); 
 	glPushMatrix();
 		glColor4f(1,0,0, 1);//red
-	    glTranslated(displayWidth - F_start, 202, 0);
+	    glTranslated(displayWidth - F_start -1, 202, 0);
 	    glScaled(.5, 410, 1);
 	    paint_square(point(-1, 0, .25), color(255,0,0));
 	    paint_square(point(1, 0, .25), color(255,0,0));
@@ -137,30 +137,9 @@ GLuint FrequencyMap::render()
     glNewList(list, GL_COMPILE);
 	glPushMatrix();
 	glScaled(1,-1,1);
-		
-	if(useTextureOptimization())
-	{//in the optimization, the display list is just a wrapper for the texture square.
 		if(!upToDate)
-			load_canvas();
-	
-		textureBuffer->display();
-	}
-	else
-	{
-
-		check_height();
-		for( int h = 0; h < F_height; h++)
-		{		
-			//calculate across widths 
-			for(int w = 1; w <= F_width; w++)
-			{
-				int grey = static_cast<int>(  freq[h][w] * 255 );
-				color c = color(grey, grey, grey);//white to grey							
-				paint_square(point(w-1, h, 0) , c);					
-			}
-		}	
-	}
-	
+			load_canvas();	
+		textureBuffer->display();	
 	glPopMatrix();
     glEndList();
     upToDate = true;

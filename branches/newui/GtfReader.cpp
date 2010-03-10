@@ -119,6 +119,7 @@ vector<track_entry>  GtfReader::readFile(QString filename)
 	string line;
 	while( getline(file, line) )
 	{
+		line.erase(line.size()-1);//erase last character, should be a newline character
 		stringstream lineStr( line );
 		int start = 0;
 		int stop = 0;
