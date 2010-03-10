@@ -22,11 +22,9 @@ public:
 	string chrName;
 	
 	GtfReader(UiVariables ui);
-	const vector<track_entry>& tracks();
-	
+	vector<track_entry> readFile(QString name);		
 
 public slots:
-	void readFile(QString name);	
 	void addBookmark();//int start, int end);
 	void determineOutputFile(QString file);
 	void storeChrName(string);
@@ -43,7 +41,6 @@ private:
 	UiVariables ui;
 	string outputFilename;
 	ifstream file;
-	vector<track_entry> annotation_track;
 	QProgressDialog* progressBar;
 	int bytesInFile;//file size, but more specific
 	int blockSize;

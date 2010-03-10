@@ -46,7 +46,6 @@ MainWindow::MainWindow()
 	setCentralWidget(scrollArea);
   
 	fastaReader = new FastaReader(glWidget);
-	trackReader = new GtfReader(getDisplayVariables());
 
 	createConnections();
 	glWidget->createButtons();
@@ -316,12 +315,12 @@ void MainWindow::createConnections()
     connect(fastaReader, SIGNAL(newFileRead(const string&)), glWidget, SLOT(displayString(const string&)));
     connect(fastaReader, SIGNAL(fileNameChanged(string)), this, SLOT(changeWindowName(string)));
     
-    connect(this, SIGNAL(newFileOpen(QString)), trackReader, SLOT(determineOutputFile(QString)));
+    connect(this, SIGNAL(newFileOpen(QString)), glWidget->trackReader, SLOT(determineOutputFile(QString)));
 
 	connect(importAction, SIGNAL(triggered()), this, SLOT(openGtf()));
-	connect(this, SIGNAL(newGtfFileOpen(QString)), trackReader, SLOT(readFile(QString)));
-	connect(trackReader, SIGNAL(newGtfFileRead(const vector<track_entry>&)), glWidget, SLOT(newAnnotation(const vector<track_entry>&)));
-	connect(addAnnotationAction, SIGNAL(triggered()), trackReader, SLOT(addBookmark()));
+	connect(this, SIGNAL(newGtfFileOpen(QString)), glWidget, SLOT(addAnnotationDisplay(QString)));
+	
+	connect(addAnnotationAction, SIGNAL(triggered()), glWidget->trackReader, SLOT(addBookmark()));
 
     connect(moveAction, SIGNAL(triggered()), glWidget, SLOT(on_moveButton_clicked()));
     connect(selectAction, SIGNAL(triggered()), glWidget, SLOT(on_selectButton_clicked()));

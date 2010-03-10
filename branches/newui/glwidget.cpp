@@ -58,13 +58,12 @@ GLWidget::GLWidget(UiVariables gui, QWidget *parent)
     nuc = new NucleotideDisplay(&ui, this);
     freq = new FrequencyMap(&ui, this);
     freq->link(nuc);
-    gtfTrack = new AnnotationDisplay(&ui, this);
+    trackReader = new GtfReader(ui);
     cylinder = new CylinderDisplay(&ui, this);
    	align = new AlignmentDisplay(&ui, this);
    	olig = new Oligomers(&ui, this);
 	highlight = new HighlightDisplay(&ui, this);
    	
-   	graphs.push_back(gtfTrack);
    	graphs.push_back(cylinder);
    	graphs.push_back(nuc);
    	graphs.push_back(olig);
@@ -111,14 +110,13 @@ GLWidget::~GLWidget()
 
 void GLWidget::createButtons()
 {
-   	//~ emit addGraphMode((AbstractGraph*)gtfTrack);  	
-   	for(int i = 1; i < graphs.size(); ++i)//TODO: i = 1 = skip gtfTrack
+   	for(int i = 0; i < graphs.size(); ++i)
    		emit addGraphMode( graphs[i] );
 }
 
 void GLWidget::createConnections()
 {
-   	for(int i = 1; i < graphs.size(); ++i)//TODO: i = 1 = skip gtfTrack
+   	for(int i = 0; i < graphs.size(); ++i)
    		connect( graphs[i], SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
 
 	connect(nuc, SIGNAL(sizeChanged(int)), this, SLOT(setPageSize()) );
@@ -166,7 +164,7 @@ void GLWidget::displayString(const string& seq)
 {
 	print("New sequence received.  Size:", seq.size());
 
-	for(int i = 1; i < graphs.size(); ++i)
+	for(int i = 0; i < graphs.size(); ++i)
 	{
 		graphs[i]->setSequence(&seq);
 	}
@@ -250,10 +248,15 @@ void GLWidget::updateDisplaySize()
 		updateDisplay();
 }
 
-void GLWidget::newAnnotation(const vector<track_entry>& track)
+void GLWidget::addAnnotationDisplay(QString fileName)
 {
+	vector<track_entry> track = trackReader->readFile(fileName);
 	print("Annotations Received: ", track.size());
-	gtfTrack->newTrack( &track );
+	if( track.size() > 0 )
+	{
+		graphs.insert(graphs.begin(), (AbstractGraph*)(new AnnotationDisplay(&ui, this)))  ;
+		(static_cast<AnnotationDisplay*>(graphs[0]))->newTrack( track );
+	}
 }
 
 /*****************FUNCTIONS*******************/
@@ -340,20 +343,6 @@ void GLWidget::initializeGL()
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
 }
-/*
-void GLWidget::finalizeCalculations()
-{
-	gtfTrack->display();
-	cylinder->display();
-	nuc->display();
-	int scale = ui.scaleDial->value();
-	if(scale > 1){
-		int displayWidth = ui.widthDial->value() / scale; 
-		freq->calculate(nuc->nucleotide_colors, displayWidth);
-	}
-	freq->display();
-	
-}*/
 
 void GLWidget::paintGL()
 {

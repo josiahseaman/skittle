@@ -33,7 +33,7 @@
 #include "AlignmentDisplay.h"
 #include "Oligomers.h"
 #include "HighlightDisplay.h"
-
+#include "GtfReader.h"
 
 using namespace std;
 
@@ -44,6 +44,7 @@ class GLWidget : public QGLWidget
 public:
 	UiVariables ui;
 	string chromosomeName;
+	GtfReader*	trackReader;
 	NucleotideDisplay* nuc;//make this private
 	FrequencyMap* freq;
 	AnnotationDisplay* gtfTrack;
@@ -51,6 +52,7 @@ public:
    	AlignmentDisplay* align;
    	Oligomers* olig;
    	HighlightDisplay* highlight;
+   	
 	
     GLWidget(UiVariables gui, QWidget *parent = 0);
     ~GLWidget();
@@ -86,7 +88,7 @@ public slots:
     void slideHorizontal(int);
 	void updateDisplay();
 	void updateDisplaySize();
-	void newAnnotation(const vector<track_entry>&);
+	void addAnnotationDisplay(QString fileName);
     
 signals:
 	void xOffsetChange(int);

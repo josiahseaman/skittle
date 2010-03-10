@@ -28,14 +28,16 @@ bool trackCompare(const track_entry& a, const track_entry& b)
 	return a.start < b.start;
 }
 
-void AnnotationDisplay::newTrack(const vector<track_entry>* track)
+void AnnotationDisplay::newTrack(vector<track_entry> track)
 {
+	gtfTrack = vector<track_entry>(track);
+	/*
 	gtfTrack.clear();
 	gtfTrack.resize(track->size());
 	for(int i = 0; i < track->size(); ++i)
 	{
 		gtfTrack[i] = (*track)[i];
-	}
+	}*/
 	sort(gtfTrack.begin(), gtfTrack.end(), trackCompare);
 	hidden = false;
 }

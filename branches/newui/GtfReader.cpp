@@ -104,14 +104,13 @@ void GtfReader::storeChrName(string seqName)
 	chrName = seqName;
 }
 
-/*PRIVATE FUNCTIONS*/
-
-void GtfReader::readFile(QString filename)
+vector<track_entry>  GtfReader::readFile(QString filename)
 {
+	vector<track_entry> annotation_track;
 	inputFilename = filename.toStdString();
 	if( inputFilename.empty() || !initFile(inputFilename) )
 	{
-		return;
+		return vector<track_entry>();
 	}
 	
 	annotation_track.clear();
@@ -143,9 +142,11 @@ void GtfReader::readFile(QString filename)
 		}
 	}	
 	file.close();	
-	emit newGtfFileRead( tracks() );
+	return annotation_track;
 }
 	
+/*PRIVATE FUNCTIONS*/
+
 /***********OUTPUT ANNOTATED SEQUENCE************** /
 void GtfReader::snipAnnotatedSequence()
 {
@@ -172,7 +173,3 @@ bool GtfReader::eq(string& str1, const char* str2)
 	return str1[0] == str2[0];//strcomp(str1.c_str(), str2) == 0;
 }
 
-const vector<track_entry>& GtfReader::tracks()
-{
-	return annotation_track;
-}

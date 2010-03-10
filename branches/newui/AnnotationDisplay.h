@@ -24,7 +24,7 @@ public:
 	void display();
 	GLuint render();
 	void displayTrack(const vector<track_entry>& track);
-	void newTrack(const vector<track_entry>* track);
+	void newTrack(vector<track_entry> track);
 	void addEntry(vector<track_entry>& activeTracks, track_entry item);
 	void mouseClick(point2D pt);
 	int width();
