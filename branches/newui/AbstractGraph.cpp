@@ -1,5 +1,6 @@
 #include "AbstractGraph.h"
 #include "UiVariables.h"
+#include "glwidget.h"
 #include <math.h>
 
 
@@ -66,6 +67,7 @@ void AbstractGraph::changeScale(int s)
 {
 	if(updateInt(scale, s))
 	{
+		//glWidget->print("Scale Change");
 		emit scaleChanged(s);
 	}
 }
@@ -74,6 +76,7 @@ void AbstractGraph::changeWidth(int w)
 {
 	if(updateInt(Width, w ))
 	{
+		//glWidget->print("Width Change");
 		emit widthChanged(w);
 	}
 }
@@ -83,6 +86,7 @@ void AbstractGraph::changeSize(int s)
 	if(updateInt(max_display_size, s))
 	{
 		display_size = min( max_display_size, max(0, ((int)sequence->size() - nucleotide_start)) );
+		//glWidget->print("Size Change");
 		emit sizeChanged(s);
 	}
 }
@@ -92,6 +96,7 @@ void AbstractGraph::changeStart(int s)
 	if(updateInt(nucleotide_start, s))
 	{
 		display_size = min( max_display_size, max(0, ((int)sequence->size() - nucleotide_start)) );
+		//glWidget->print("Start Change");
 		emit startChanged(s);
 	}
 }

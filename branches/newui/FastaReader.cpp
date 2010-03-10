@@ -81,6 +81,7 @@ void FastaReader::readFile(QString fileName)
 			progressBar = NULL;
 		}
 		buffer.clear();
+		buffer.resize(0);
 		glWidget->print("Done reading file.");
 		emit newFileRead( seq() );
 	}

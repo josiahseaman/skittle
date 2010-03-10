@@ -143,9 +143,10 @@ void NucleotideDisplay::changeWidth(int w)//Nucleotide Display changes Width int
 		w = 1;
 	if(actualWidth() != w)
 	{
+		glWidget->print("Nucleotide Width");
 		Width = max(1, w / ui->scaleDial->value() );
-		invalidate();
 		emit widthChanged(w);
+		invalidate();
 	}	
 }
 /**/

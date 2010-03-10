@@ -41,7 +41,6 @@ void HighlightDisplay::assignColors()
 	if(!upToDate)
 		calculate();
 
-	glWidget->print("Color:", frameNumber);	
 	nucleotide_colors.clear();
 	int targetSize = target.size();
 	int remainingLength = 0;
@@ -82,7 +81,7 @@ void HighlightDisplay::assignColors()
 //This calculates how well a region of the genome matches a query sequence 'target' at every nucleotide.  
 void HighlightDisplay::calculate()
 {
-	glWidget->print("Calculate:", ++frameNumber);
+	//glWidget->print("Calculate:", ++frameNumber);
 	similarity.clear();
 	int targetSize = target.size();
 	//int count = 0;
