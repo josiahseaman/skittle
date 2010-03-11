@@ -104,7 +104,7 @@ void OligomerDisplay::display()
 void OligomerDisplay::load_canvas()
 {
 	pixels.clear();
-	check_height();
+	height();
 	
 	//set scaling
 	float min_score = freq[0][0];
@@ -162,7 +162,7 @@ GLuint OligomerDisplay::render()//deprecated
 void OligomerDisplay::freq_map()
 {
 	glWidget->print("OligomerDisplay: ", ++frameCount);
-	check_height();
+	height();
 	const char* genome = sequence->c_str() + nucleotide_start;
 	for( int h = 0; h < F_height; h++)
 	{
@@ -186,10 +186,10 @@ void OligomerDisplay::freq_map()
 	upToDate = true;
 }
 
-int OligomerDisplay::check_height()
+int OligomerDisplay::height()
 {	
-	Width = ui->widthDial->value();	
-	if(Width < 1) Width = 1;
+	//Width = ui->widthDial->value();	
+	//if(Width < 1) Width = 1;
 		
 	F_height = (display_size - wordLength ) / Width;
 

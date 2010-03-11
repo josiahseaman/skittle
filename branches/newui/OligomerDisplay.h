@@ -29,7 +29,7 @@ public:
 	void load_canvas();
 	GLuint render();
 	void freq_map();
-	int check_height();
+	int height();
 	void mouseClick(point2D pt);
 	
 	void display_freq();

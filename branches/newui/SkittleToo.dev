@@ -348,16 +348,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit36]
-FileName=Oligomers.cpp
-CompileCpp=0
-Folder=SkittleToo
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit38]
 FileName=HighlightDisplay.cpp
 CompileCpp=0
 Folder=SkittleToo
@@ -367,8 +357,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit38]
+FileName=OligomerDisplay.cpp
+CompileCpp=0
+Folder=SkittleToo
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit39]
-FileName=HighlightDisplay.h
+FileName=OligomerDisplay.h
 CompileCpp=0
 Folder=SkittleToo
 Compile=1
@@ -378,7 +378,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit37]
-FileName=Oligomers.h
+FileName=HighlightDisplay.h
 CompileCpp=0
 Folder=SkittleToo
 Compile=1
