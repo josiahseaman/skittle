@@ -3,7 +3,7 @@
 #include <sstream>
 #include <algorithm>
 
-AnnotationDisplay::AnnotationDisplay(UiVariables* gui, GLWidget* gl)
+AnnotationDisplay::AnnotationDisplay(UiVariables* gui, GLWidget* gl, string gtfFileName)
 {	
 	glWidget = gl;
 	ui = gui;
@@ -16,6 +16,8 @@ AnnotationDisplay::AnnotationDisplay(UiVariables* gui, GLWidget* gl)
 	actionLabel = string("Annotation Display");
 	actionTooltip = string("Genome annotation locations");
 	actionData = actionLabel; 
+	
+	fileName = gtfFileName;
 }
 
 AnnotationDisplay::~AnnotationDisplay()
@@ -33,6 +35,7 @@ void AnnotationDisplay::newTrack(vector<track_entry> track)
 	gtfTrack = vector<track_entry>(track);
 	sort(gtfTrack.begin(), gtfTrack.end(), trackCompare);
 	hidden = false;
+	emit displayChanged();
 }
 
 void AnnotationDisplay::display()
@@ -168,6 +171,21 @@ int AnnotationDisplay::width()
 }
 
 
-/******SLOTS*****/
+string AnnotationDisplay::getFileName()
+{
+	return fileName;
+}
 
+void AnnotationDisplay::setFileName(string gtfFileName)
+{
+	fileName = gtfFileName;
+}
+
+/******SLOTS*****/
+void AnnotationDisplay::addEntry(track_entry entry)
+{
+	gtfTrack.push_back(entry);
+	sort(gtfTrack.begin(), gtfTrack.end(), trackCompare);
+	emit displayChanged();
+}
 /**/

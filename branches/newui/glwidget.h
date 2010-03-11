@@ -88,17 +88,18 @@ public slots:
     void slideHorizontal(int);
 	void updateDisplay();
 	void updateDisplaySize();
-	void addAnnotationDisplay(QString fileName);
+	AnnotationDisplay* addAnnotationDisplay(QString fileName);
+	void addTrackEntry(track_entry entry, string gtfFileName);
     
 signals:
 	void xOffsetChange(int);
 	void printText(QString);
 	void printHtml(QString);
 	void addGraphMode(AbstractGraph*);
+	void AnnotationDisplayAdded(AnnotationDisplay*);
 
 protected:
 	void displayTrack(const vector<track_entry>& track);
-	void addEntry(vector<track_entry>& activeTracks, track_entry item);
 	QPointF pixelToGlCoords(QPoint pCoords, double z = 0);
     void initializeGL();
     void paintGL();

@@ -63,9 +63,14 @@ void GtfReader::addBookmark()//int start, int end)
 	dialog.sequence->setText( QString(chrName.c_str()) );
 	
 	parent.show();
+	
 	int result = parent.exec();
 	if(result == QDialog::Accepted)
 	{
+		track_entry entry = track_entry(dialog.start->text().toInt(), dialog.end->text().toInt(), color_entry());
+		
+		emit BookmarkAdded(entry, outputFilename);
+		
 		ofstream outFile;
 		outFile.open(outputFilename.c_str(), ios::app);
 		if(!outFile.fail())
@@ -86,7 +91,6 @@ void GtfReader::addBookmark()//int start, int end)
 		{
 			ErrorBox msg("Could not read the file.");
 		}
-		
 		outFile.close();
 	}
 }
@@ -174,3 +178,7 @@ bool GtfReader::eq(string& str1, const char* str2)
 	return str1[0] == str2[0];//strcomp(str1.c_str(), str2) == 0;
 }
 
+string GtfReader::currentFileName()
+{
+	return outputFilename;
+}

@@ -46,6 +46,7 @@ public:
 	virtual GLuint render() = 0;
 	virtual void setSequence(const string* seq);
 	virtual void mouseClick(point2D pt);
+	virtual string getFileName();
 	
 	string actionLabel;
 	string actionTooltip;

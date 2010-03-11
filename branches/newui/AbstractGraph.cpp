@@ -62,6 +62,11 @@ bool AbstractGraph::useTextureOptimization()
 		return true;
 }
 
+string AbstractGraph::getFileName()
+{
+	return "";
+}
+
 //***********SLOTS*******************
 void AbstractGraph::changeScale(int s)
 {

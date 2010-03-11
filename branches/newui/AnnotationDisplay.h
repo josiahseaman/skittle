@@ -19,7 +19,7 @@ class AnnotationDisplay : public AbstractGraph
     
 public:
 	
-	AnnotationDisplay(UiVariables* gui, GLWidget* gl);
+	AnnotationDisplay(UiVariables* gui, GLWidget* gl, string gtfFileName);
 	~AnnotationDisplay();
 	void display();
 	GLuint render();
@@ -27,8 +27,11 @@ public:
 	void newTrack(vector<track_entry> track);
 	void mouseClick(point2D pt);
 	int width();
+	void setFileName(string gtfFileName);
+	string getFileName();
 		
-public slots:	
+public slots:
+	void addEntry(track_entry entry);
 	
 signals:
 
@@ -38,6 +41,7 @@ private:
 	GLuint display_object;
 	vector<track_entry> gtfTrack;
 	
+	string fileName;
 	void stackEntry(vector<track_entry>& activeEntries, track_entry item);
 };
 

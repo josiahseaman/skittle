@@ -313,12 +313,12 @@ void MainWindow::createConnections()
     connect(openAction, SIGNAL(triggered()), this, SLOT(open()));
     connect(this, SIGNAL(newFileOpen(QString)), fastaReader, SLOT(readFile(QString)));
     connect(fastaReader, SIGNAL(newFileRead(const string&)), glWidget, SLOT(displayString(const string&)));
-    connect(fastaReader, SIGNAL(fileNameChanged(string)), this, SLOT(changeWindowName(string)));
-    
+    //connect(fastaReader, SIGNAL(fileNameChanged(string)), this, SLOT(changeWindowName(string))); //function not implemented
     connect(this, SIGNAL(newFileOpen(QString)), glWidget->trackReader, SLOT(determineOutputFile(QString)));
 
 	connect(importAction, SIGNAL(triggered()), this, SLOT(openGtf()));
 	connect(this, SIGNAL(newGtfFileOpen(QString)), glWidget, SLOT(addAnnotationDisplay(QString)));
+	connect(glWidget->trackReader,SIGNAL(BookmarkAdded(track_entry,string)),glWidget,SLOT(addTrackEntry(track_entry,string)));
 	
 	connect(addAnnotationAction, SIGNAL(triggered()), glWidget->trackReader, SLOT(addBookmark()));
 
@@ -380,16 +380,12 @@ UiVariables MainWindow::getDisplayVariables()
 
 void MainWindow::open()
 {
-	QStringList filters;
-	filters << "Image files (*.png *.xpm *.jpg)"
-         << "Text files (*.txt)"
-         << "Any files (*)";
-
-	QFileDialog dialog(this);
-	//dialog.setNameFilters(filters);
-	QString fileName = dialog.getOpenFileName(this);
-	//dialog.exec();
-    
+	QString fileName = QFileDialog::getOpenFileName(
+		this,"Open Sequence File", 
+		"", 
+		"FASTA files (*.fa);; Image files (*.png *.xpm *.jpg);; Text files (*.txt);; All files (*)"
+	);
+	
     if (!fileName.isEmpty()) 
 		 emit newFileOpen(fileName);
 }
@@ -409,7 +405,7 @@ void MainWindow::changeWindowName(std::string name)
 
 void MainWindow::openGtf()
 {
-	QString fileName = QFileDialog::getOpenFileName(this,"Open GTF File", "", tr("Annotation files (*.gtf)"));
+	QString fileName = QFileDialog::getOpenFileName(this,"Open GTF File", "", tr("Annotation files (*.gtf);; Any files (*)"));
     
     if (!fileName.isEmpty()) 
 		 emit newGtfFileOpen(fileName);
