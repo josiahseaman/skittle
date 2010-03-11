@@ -23,7 +23,7 @@ public:
 	
 	GtfReader(UiVariables ui);
 	vector<track_entry> readFile(QString name);
-	string currentFileName();
+	string outputFile();
 
 public slots:
 	void addBookmark();//int start, int end);

@@ -36,8 +36,7 @@ public:
 	void load_nucleotide();
 	void loadTextureCanvas();
 	void color_compress();
-	int actualWidth();//Nucleotide Display changes Width internally to w/scale
-	int width();
+	int widthInBp();//Nucleotide Display changes Width internally to w/scale
 	
 public slots:	
 //	void changeWidth(int w);

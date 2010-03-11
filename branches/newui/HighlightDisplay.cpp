@@ -47,8 +47,6 @@ void HighlightDisplay::assignColors()
 	int match_minimum = (int)(255 * percentage_match);
 	const char* seq = (sequence->c_str()+nucleotide_start);
 	int offset = 0;
-	//string scaledTarget;
-	//string scaledMatch;
 	for(int i = 0; i < (int)similarity.size(); i+=scale)
 	{
 		vector<unsigned short int>::iterator bestMatch = max_element(similarity.begin()+i, similarity.begin()+i+scale);
@@ -67,8 +65,6 @@ void HighlightDisplay::assignColors()
 		{
 			if(remainingLength >= 1 && remainingLength >= scale)//trail after a match
 			{//green if it matches, blue if it doesn't
-				//scaledTarget.append(1, target[targetSize - remainingLength]);
-				//scaledMatch.append(1, seq[i+offset]);
 				if(seq[i+offset] == target[targetSize - remainingLength])
 					pixelColor = color(0, 255, 0);//green
 				else
@@ -79,9 +75,6 @@ void HighlightDisplay::assignColors()
 		}
 		nucleotide_colors.push_back( pixelColor );
 	}
-	//glWidget->print("Offset: ", offset);
-	//glWidget->print(scaledTarget.c_str());
-	//glWidget->print(scaledMatch.c_str());
 	loadTextureCanvas();
 }
 

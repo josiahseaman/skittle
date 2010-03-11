@@ -46,6 +46,7 @@ void FrequencyMap::createConnections()
 	connect( this, SIGNAL(widthChanged(int)), this, SIGNAL(displayChanged()));
 	connect( this, SIGNAL(startChanged(int)), this, SIGNAL(displayChanged()));
 	connect( this, SIGNAL(sizeChanged(int)), this, SIGNAL(displayChanged()));
+	//
 	
 	connect( ui->widthDial, SIGNAL(valueChanged(int)), this, SLOT(changeWidth(int)));
 	//connect( this, SIGNAL(widthChanged(int)), ui->widthDial, SLOT(setValue(int)));//width dial = Width
@@ -55,14 +56,8 @@ void FrequencyMap::createConnections()
 	
 	connect( ui->sizeDial, SIGNAL(valueChanged(int)), this, SLOT(changeSize(int)));
 	connect( this, SIGNAL(sizeChanged(int)), ui->sizeDial, SLOT(setValue(int)));
-
-}
-
-void FrequencyMap::checkVariables()
-{
-	changeStart(ui->startDial->value());
-	changeSize(ui->sizeDial->value());
-	changeWidth(ui->widthDial->value());//width and scale
+	
+	connect( ui->scaleDial, SIGNAL(valueChanged(int)), this, SLOT(changeScale(int)));
 }
 
 void FrequencyMap::display()
@@ -71,14 +66,14 @@ void FrequencyMap::display()
 	
 	if( !upToDate )
 	{
-		if((ui->scaleDial->value() > 1)&& nuc != NULL)
+		if((scale > 1)&& nuc != NULL)
 		{
 			nuc->checkVariables();
 			if(!nuc->upToDate)
 			{
 				nuc->load_nucleotide();
 			}
-			int displayWidth = ui->widthDial->value() / ui->scaleDial->value();
+			int displayWidth = ui->widthDial->value() / scale;
 			calculate(nuc->nucleotide_colors, displayWidth);
 		}
 		else
@@ -112,8 +107,7 @@ void FrequencyMap::link(NucleotideDisplay* nuc_display)
 void FrequencyMap::load_canvas()
 {
 	pixels.clear();
-	check_height();
-	for( int h = 0; h < F_height; h++)
+	for( int h = 0; h < height(); h++)
 	{		
 		for(int w = 1; w <= F_width; w++)
 		{
@@ -148,10 +142,9 @@ GLuint FrequencyMap::render()
 
 void FrequencyMap::freq_map()
 {
-	check_height();
 	//glWidget->print("Freq_map: ", ++freq_map_count);
 	const char* genome = sequence->c_str() + nucleotide_start;
-	for( int h = 0; h < F_height; h++)
+	for( int h = 0; h < height(); h++)
 	{
 		int offset = h * Width;
 		int end = offset+Width-1;
@@ -168,7 +161,7 @@ void FrequencyMap::freq_map()
 				int score = 0;
 				for(int l = 0; l < Width; l++)
 				{					
-					if(genome[offset + l] == genome[offset + w + F_start + l])				
+					if(genome[offset + l] == genome[offset + w + F_start*scale + l])				
 						score += 1; //pixel matches the one above it			
 				}
 				freq[h][w] = float(score) / Width;
@@ -178,12 +171,9 @@ void FrequencyMap::freq_map()
 	upToDate = true;
 }
 
-int FrequencyMap::check_height()
-{	
-	Width = ui->widthDial->value();	
-	if(Width < 1) Width = 1;
-		
-	F_height = (((long int)display_size) - F_width - F_start - Width ) / Width;
+int FrequencyMap::height()
+{		
+	F_height = (((long int)display_size) - F_start*scale - F_width*scale ) / Width;
 
 	F_height = max(0, min(400, F_height) );
 	
@@ -194,18 +184,21 @@ int FrequencyMap::check_height()
 void FrequencyMap::mouseClick(point2D pt)
 {
 	//range check
-	if( pt.x < (int)width() && pt.x >= 0  )
+	if( pt.x < (int)width() && pt.x >= 0 && pt.y <= height() )
 	{
 		pt.x += 1;//+1 because offset 1 is the first pixel [0]
-		pt.x *= ui->scaleDial->value();
-		int index = pt.y * ui->widthDial->value();
+		pt.x *= scale;
+		int index = pt.y * Width;
 		index = index + nucleotide_start;
 		int index2 = index + pt.x;
-		int w = ui->widthDial->value() / ui->scaleDial->value();
-		stringstream ss;
-		ss << "Offset: "<<pt.x<<" #" << index << " compared with #" << index2 << "  \n"
-			<< sequence->substr(index, w) << "\n <----> \n" << sequence->substr(index2, w);
-		glWidget->print(ss.str());
+		int w = min( 100, ui->widthDial->value() );
+		if( index2 + w < sequence->size() )
+		{
+			stringstream ss;
+			ss << "Offset: "<<pt.x<<" #" << index << " compared with #" << index2 << "  \n"
+				<< sequence->substr(index, w) << "\n <----> \n" << sequence->substr(index2, w);
+			glWidget->print(ss.str());
+		}
 		
 		//ui->widthDial->setValue( pt.x);
 	}
@@ -217,9 +210,7 @@ vector<point> FrequencyMap::bestMatches()
 	//calculate(color_avgs, width() / ui->scaleDial->value());
 		
 	vector<point> best_matches;
-	check_height();
-	//glWidget->print("Height: ", F_height);
-	for(int h =0; h < F_height; h++)
+	for(int h =0; h < height(); h++)
 	{
 		float best_score = 0;
 		int best_freq = 0;
@@ -246,8 +237,7 @@ void FrequencyMap::calculate(vector<color>& img, int pixelsPerSample)//construct
 	//display_size = img.size();
 	checkVariables();
 	//glWidget->print("Calculate(): ", ++calculate_count);
-	check_height();
-	for( int h = 0; h < F_height; h++)
+	for( int h = 0; h < height(); h++)
 	{
 		int offset = h * pixelsPerSample;
 		for(int w = 1; w <= F_width; w++)//calculate across widths 1-F_width

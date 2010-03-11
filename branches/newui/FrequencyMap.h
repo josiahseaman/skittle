@@ -27,13 +27,12 @@ public:
 	FrequencyMap(UiVariables* gui, GLWidget* gl);
 	~FrequencyMap();
 	void createConnections();
-	void checkVariables();
 	void display();
 	void link(NucleotideDisplay* nuc_display);
 	void load_canvas();
 	GLuint render();
 	void freq_map();
-	int check_height();
+	int height();
 	void mouseClick(point2D pt);
 	
 	vector<point> bestMatches();

@@ -44,6 +44,9 @@
 
 #include "glwidget.h"
 #include "UiVariables.h"
+#include <string>
+
+using std::string;
 //! [0]
 GLWidget::GLWidget(UiVariables gui, QWidget *parent)
     : QGLWidget(parent)
@@ -248,19 +251,21 @@ void GLWidget::updateDisplaySize()
 		updateDisplay();
 }
 
-AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fileName)
+/*AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fName)
 {
-	if (fileName == "")
-	{
-		fileName = QString(trackReader->currentFileName().c_str());
-	}
-	AnnotationDisplay* tempTrackDisplay;
+	string fileName = fName.toStdString();
+	//if( fileName.empty() )
+	//{
+	//	fileName = trackReader->outputFile();
+	//}
+	AnnotationDisplay* tempTrackDisplay = NULL;
 	int fileIndex = -1;
 	for ( int n = 0; n < graphs.size(); n++)
 	{
-		tempTrackDisplay = dynamic_cast<AnnotationDisplay*>(graphs[n]);
-		if ( tempTrackDisplay != NULL && tempTrackDisplay->getFileName() == fileName.toStdString())
+		AnnotationDisplay* testPtr = dynamic_cast<AnnotationDisplay*>(graphs[n]);
+		if ( testPtr != NULL && testPtr->getFileName().compare(fileName) == 0 )
 		{
+			tempTrackDisplay = testPtr;
 			fileIndex = n;
 			break;
 		}
@@ -268,19 +273,58 @@ AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fileName)
 	//if not found: exising track display
 	if (fileIndex == -1)
 	{
-		vector<track_entry> track = trackReader->readFile(fileName);
+		vector<track_entry> track = trackReader->readFile(QString(fileName.c_str()));
 
 		print("Annotations Received: ", track.size());
-		if( track.size() > 0 || trackReader->currentFileName() == fileName.toStdString())
+		if( track.size() > 0)// || trackReader->outputFile().compare(fileName) == 0 )//
 		{
-			graphs.insert(graphs.begin(), (AbstractGraph*)(new AnnotationDisplay(&ui, this, fileName.toStdString())))  ;
-			tempTrackDisplay = (static_cast<AnnotationDisplay*>(graphs[0]));
+			tempTrackDisplay = new AnnotationDisplay(&ui, this, fileName);
+			graphs.insert(graphs.begin(), static_cast<AnnotationDisplay*>(tempTrackDisplay) );
 			connect(tempTrackDisplay, SIGNAL(displayChanged()), this, SLOT(updateDisplay()));
 			tempTrackDisplay->newTrack( track );
 		}
 	}
 	return tempTrackDisplay;
-}
+}/**/
+
+AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fName)
+{
+	string fileName = fName.toStdString();
+	/*if( fileName.empty() )
+	{
+		fileName = trackReader->outputFile();
+	}*/
+
+	AnnotationDisplay* tempTrackDisplay = NULL;
+	int fileIndex = -1;
+	for ( int n = 0; n < graphs.size(); n++)
+	{
+		AnnotationDisplay* testPtr = dynamic_cast<AnnotationDisplay*>(graphs[n]);
+		if ( testPtr != NULL && testPtr->getFileName().compare(fileName) == 0 )
+		{
+			tempTrackDisplay = testPtr;
+			fileIndex = n;
+			break;
+		}	
+	}
+
+	//if not found: exising track display
+	if (fileIndex == -1)
+	{
+		vector<track_entry> track = trackReader->readFile(QString(fileName.c_str()));
+
+		print("Annotations Received: ", track.size());
+		if( track.size() > 0)// || trackReader->outputFile().compare(fileName) == 0 )//
+		{
+			tempTrackDisplay = new AnnotationDisplay(&ui, this, fileName);
+			graphs.insert(graphs.begin(), static_cast<AnnotationDisplay*>(tempTrackDisplay) );
+			connect(tempTrackDisplay, SIGNAL(displayChanged()), this, SLOT(updateDisplay()));
+			tempTrackDisplay->newTrack( track );
+			tempTrackDisplay = NULL;
+		}
+	}
+	return tempTrackDisplay;
+} 
 
 void GLWidget::addTrackEntry(track_entry entry, string gtfFileName)
 {

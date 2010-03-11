@@ -67,9 +67,6 @@ void GtfReader::addBookmark()//int start, int end)
 	int result = parent.exec();
 	if(result == QDialog::Accepted)
 	{
-		track_entry entry = track_entry(dialog.start->text().toInt(), dialog.end->text().toInt(), color_entry());
-		
-		emit BookmarkAdded(entry, outputFilename);
 		
 		ofstream outFile;
 		outFile.open(outputFilename.c_str(), ios::app);
@@ -85,13 +82,16 @@ void GtfReader::addBookmark()//int start, int end)
 			outFile << dialog.frame->currentText().toStdString() << "\t";//QComboBox
 			outFile << dialog.note->toPlainText().toStdString() << "\t";//QPlainTextEdit
 			outFile << "\n";
+			outFile.close();
 		
+			track_entry entry = track_entry(dialog.start->text().toInt(), dialog.end->text().toInt(), color_entry(), dialog.note->toPlainText().toStdString());
+			emit BookmarkAdded(entry, outputFilename);	
 		}
 		else
 		{
 			ErrorBox msg("Could not read the file.");
+			outFile.close();
 		}
-		outFile.close();
 	}
 }
 
@@ -178,7 +178,7 @@ bool GtfReader::eq(string& str1, const char* str2)
 	return str1[0] == str2[0];//strcomp(str1.c_str(), str2) == 0;
 }
 
-string GtfReader::currentFileName()
+string GtfReader::outputFile()
 {
 	return outputFilename;
 }

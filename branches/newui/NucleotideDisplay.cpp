@@ -47,8 +47,6 @@ void NucleotideDisplay::createConnections()
 	connect( ui->sizeDial, SIGNAL(valueChanged(int)), this, SLOT(changeSize(int)));
 	connect( this, SIGNAL(sizeChanged(int)), ui->sizeDial, SLOT(setValue(int)));
 
-	//connect( ui->scaleDial, SIGNAL(valueChanged(int)), this, SLOT(changeScale(int)));
-	
 	connect( ui->scaleDial, SIGNAL(valueChanged(int)), this, SLOT(changeScale(int)));
 }
 
@@ -101,8 +99,8 @@ void NucleotideDisplay::loadTextureCanvas()
 		delete textureBuffer;
 		textureBuffer = NULL;
 	}
-	Width = ui->widthDial->value() / ui->scaleDial->value();
-	textureBuffer = new TextureCanvas( nucleotide_colors, Width );
+	//Width = ui->widthDial->value() / ui->scaleDial->value();
+	textureBuffer = new TextureCanvas( nucleotide_colors, width() );
 }	
 
 void NucleotideDisplay::color_compress()
@@ -136,7 +134,7 @@ void NucleotideDisplay::changeWidth(int w)//Nucleotide Display changes Width int
 {
 	if(w < 1)
 		w = 1;
-	if(actualWidth() != w)
+	if(widthInBp() != w)
 	{
 		glWidget->print("Nucleotide Width");
 		Width = max(1, w / ui->scaleDial->value() );
@@ -148,7 +146,7 @@ void NucleotideDisplay::changeWidth(int w)//Nucleotide Display changes Width int
 void NucleotideDisplay::mouseClick(point2D pt)
 {
 	//range check
-	if( pt.x < width() && pt.x >= 0 && pt.y <= display_size / actualWidth() )
+	if( pt.x < width() && pt.x >= 0 && pt.y <= height() )
 	{
 		int index = pt.y * width() + pt.x;
 		index *= scale;
@@ -167,12 +165,7 @@ void NucleotideDisplay::mouseClick(point2D pt)
 }
 /**/
 
-int NucleotideDisplay::width()
+int NucleotideDisplay::widthInBp()//Nucleotide Display changes Width internally to w/scale
 {
 	return Width;
-}
-
-int NucleotideDisplay::actualWidth()//Nucleotide Display changes Width internally to w/scale
-{
-	return scale * width();
 }

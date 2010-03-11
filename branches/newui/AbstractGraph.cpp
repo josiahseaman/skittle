@@ -82,7 +82,9 @@ void AbstractGraph::changeWidth(int w)
 	if(updateInt(Width, w ))
 	{
 		//glWidget->print("Width Change");
-		emit widthChanged(w);
+		if(Width < scale)
+			Width = scale;
+		emit widthChanged(Width);
 	}
 }
 
@@ -123,7 +125,9 @@ void AbstractGraph::setSequence(const string* seq)
 	sequence = seq;	
 }
 
-void AbstractGraph::mouseClick(point2D pt){	}
+void AbstractGraph::mouseClick(point2D pt)
+{	
+}
 
 int AbstractGraph::width() 
 {
