@@ -40,7 +40,7 @@ public:
 	int width();
 	
 public slots:	
-	void changeWidth(int w);
+//	void changeWidth(int w);
 	void mouseClick(point2D pt);
 	
 signals:

@@ -31,13 +31,6 @@ bool trackCompare(const track_entry& a, const track_entry& b)
 void AnnotationDisplay::newTrack(vector<track_entry> track)
 {
 	gtfTrack = vector<track_entry>(track);
-	/*
-	gtfTrack.clear();
-	gtfTrack.resize(track->size());
-	for(int i = 0; i < track->size(); ++i)
-	{
-		gtfTrack[i] = (*track)[i];
-	}*/
 	sort(gtfTrack.begin(), gtfTrack.end(), trackCompare);
 	hidden = false;
 }
@@ -79,22 +72,22 @@ void AnnotationDisplay::displayTrack(const vector<track_entry>& track)
 	//glWidget->print("--------------------");
 	if(track.empty()) 
 		return;
-	vector<track_entry> activeTracks = vector<track_entry>();
+	vector<track_entry> activeEntries = vector<track_entry>();
 	track_entry blank = track_entry(0,0, color(0,0,0));
-	activeTracks.push_back(blank);
+	activeEntries.push_back(blank);
 	for(int row = 0; row < display_size / width; row++)
 	{
 		//check to see if any of the old tracks are done
-		for(int k = 0; k < activeTracks.size(); ++k)
+		for(int k = 0; k < activeEntries.size(); ++k)
 		{
-			if( !activeTracks[k].isBlank() )
+			if( !activeEntries[k].isBlank() )
 			{
-				if( activeTracks[k].stop < pix_start )
+				if( activeEntries[k].stop < pix_start )
 				{
-					if( activeTracks[k].col == color(200,200,200) )
-						activeTracks[k] = blank;//remove the entry
+					if( activeEntries[k].col == color(200,200,200) )
+						activeEntries[k] = blank;//remove the entry
 					else
-						activeTracks[k].col = color(200,200,200);
+						activeEntries[k].col = color(200,200,200);
 				}
 			}
 		}
@@ -106,21 +99,21 @@ void AnnotationDisplay::displayTrack(const vector<track_entry>& track)
 			    || (track[next_spot].stop >= pix_start && track[next_spot].stop <= pix_stop)//end in range
 				|| (track[next_spot].start < pix_start && track[next_spot].stop > pix_stop)) )//in the middle
 		{
-			addEntry(activeTracks, track[next_spot++]);		//place new tracks in proper position
+			stackEntry(activeEntries, track[next_spot++]);		//place new tracks in proper position
 		}
 		
 		//display each track
 		glPushMatrix();
 			glScaled(1,-1,1);
-		for(int x = 0; x < activeTracks.size(); ++x)
+		for(int x = 0; x < activeEntries.size(); ++x)
 		{
 			color c;
-			if(activeTracks[x].isBlank())
+			if(activeEntries[x].isBlank())
 				c = color(200,200,200); 
 			else	
-				c = activeTracks[x].col;
+				c = activeEntries[x].col;
 				
-			glPushName( activeTracks[x].index );
+			glPushName( activeEntries[x].index );
 			paint_square( point(x*2,row,0), c );
 			paint_square( point(x*2+1,row,0), c );
 			glPopName();
@@ -133,17 +126,17 @@ void AnnotationDisplay::displayTrack(const vector<track_entry>& track)
 	}
 }
 
-void AnnotationDisplay::addEntry(vector<track_entry>& activeTracks, track_entry item)
+void AnnotationDisplay::stackEntry(vector<track_entry>& activeEntries, track_entry item)
 {
-		for(int k = 0; k < activeTracks.size(); ++k)
+		for(int k = 0; k < activeEntries.size(); ++k)
 		{
-			if( activeTracks[k].isBlank() )
+			if( activeEntries[k].isBlank() )
 			{
-				activeTracks[k] = item;
+				activeEntries[k] = item;
 				return;
 			}
 		}//we reached the end without finding an open spot
-		activeTracks.push_back(item);
+		activeEntries.push_back(item);
 }
 
 void AnnotationDisplay::mouseClick(point2D pt)

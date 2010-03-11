@@ -25,7 +25,6 @@ public:
 	GLuint render();
 	void displayTrack(const vector<track_entry>& track);
 	void newTrack(vector<track_entry> track);
-	void addEntry(vector<track_entry>& activeTracks, track_entry item);
 	void mouseClick(point2D pt);
 	int width();
 		
@@ -38,6 +37,8 @@ private:
 	unsigned int max_width;
 	GLuint display_object;
 	vector<track_entry> gtfTrack;
+	
+	void stackEntry(vector<track_entry>& activeEntries, track_entry item);
 };
 
 #endif
