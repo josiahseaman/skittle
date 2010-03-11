@@ -89,6 +89,7 @@ public slots:
 	void updateDisplay();
 	void updateDisplaySize();
 	AnnotationDisplay* addAnnotationDisplay(QString fileName);
+	AnnotationDisplay* findMatchingAnnotationDisplay(string fileName);
 	void addTrackEntry(track_entry entry, string gtfFileName);
     
 signals:
