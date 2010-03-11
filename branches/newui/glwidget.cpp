@@ -43,8 +43,15 @@
 #include <vector>
 
 #include "glwidget.h"
-#include "UiVariables.h"
-#include <string>
+#include "NucleotideDisplay.h"
+#include "FrequencyMap.h"
+#include "AnnotationDisplay.h"
+#include "CylinderDisplay.h"
+#include "AlignmentDisplay.h"
+#include "OligomerDisplay.h"
+#include "HighlightDisplay.h"
+#include "GtfReader.h"
+
 
 using std::string;
 //! [0]
@@ -120,7 +127,10 @@ void GLWidget::createButtons()
 void GLWidget::createConnections()
 {
    	for(int i = 0; i < graphs.size(); ++i)
+   	{
    		connect( graphs[i], SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
+   		//graphs[i]->createConnections();
+	}
 
 	connect(nuc, SIGNAL(sizeChanged(int)), this, SLOT(setPageSize()) );
 }

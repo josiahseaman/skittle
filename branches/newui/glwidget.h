@@ -26,14 +26,16 @@
 #include <string>
 #include "BasicTypes.h"
 #include "UiVariables.h"
-#include "NucleotideDisplay.h"
-#include "FrequencyMap.h"
-#include "AnnotationDisplay.h"
-#include "CylinderDisplay.h"
-#include "AlignmentDisplay.h"
-#include "OligomerDisplay.h"
-#include "HighlightDisplay.h"
-#include "GtfReader.h"
+
+class AbstractGraph;
+class NucleotideDisplay;
+class FrequencyMap;
+class AnnotationDisplay;
+class CylinderDisplay;
+class AlignmentDisplay;
+class OligomerDisplay;
+class HighlightDisplay;
+class GtfReader;
 
 using namespace std;
 

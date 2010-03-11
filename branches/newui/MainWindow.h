@@ -7,6 +7,10 @@
 //#include "MainPanel.h"
 
 class AbstractGraph;
+class FastaReader;
+class GtfReader;
+class GLWidget;
+
 class QAction;
 class QLabel;
 class QActionGroup;
@@ -17,9 +21,6 @@ class QSpinBox;
 class QComboBox;
 class QPushButton;
 class QProgressBar;
-class FastaReader;
-class GtfReader;
-class GLWidget;
 class QScrollArea;
 class QScrollBar;
 class QFrame;

@@ -29,7 +29,6 @@ private:
 	vector<unsigned short int> similarity;
 	string target;
 	double percentage_match;
-	int frameNumber;
 /*	
 public slots:	
 	void changeWidth(int w);

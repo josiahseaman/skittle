@@ -21,9 +21,6 @@ class OligomerDisplay : public FrequencyMap
     Q_OBJECT
     
 public:
-	
-	bool texture_optimization;
-	
 	OligomerDisplay(UiVariables* gui, GLWidget* gl);
 	~OligomerDisplay();
 	void createConnections();
@@ -61,7 +58,6 @@ private:
 	TextureCanvas* graphBuffer;
 	int wordLength;
 	int similarityGraphWidth;
-
 };
 
 #endif

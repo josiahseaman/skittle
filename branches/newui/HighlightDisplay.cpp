@@ -13,7 +13,7 @@ HighlightDisplay::HighlightDisplay(UiVariables* gui, GLWidget* gl)
 	
 	target = string("AAAAAAAAAAAA");
 	percentage_match = 0.8;
-	frameNumber = 0;
+	frameCount = 0;
 	
 }
 
@@ -81,7 +81,7 @@ void HighlightDisplay::assignColors()
 //This calculates how well a region of the genome matches a query sequence 'target' at every nucleotide.  
 void HighlightDisplay::calculate()
 {
-	//glWidget->print("Calculate:", ++frameNumber);
+	//glWidget->print("Calculate:", ++frameCount);
 	similarity.clear();
 	int targetSize = target.size();
 	//int count = 0;

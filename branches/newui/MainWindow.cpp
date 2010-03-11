@@ -2,13 +2,21 @@
 #include <QScrollArea>
 #include <QtGui/QScrollBar>
 
+#include <iostream>
 #include <string>
+
 #include "MainWindow.h"
 #include "FastaReader.h"
 #include "GtfReader.h"
 #include "glwidget.h"
 #include "AbstractGraph.h"
-#include <iostream>
+#include "NucleotideDisplay.h"
+#include "FrequencyMap.h"
+#include "AnnotationDisplay.h"
+#include "CylinderDisplay.h"
+#include "AlignmentDisplay.h"
+#include "OligomerDisplay.h"
+#include "HighlightDisplay.h"
 
 MainWindow::MainWindow()
 {

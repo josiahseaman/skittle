@@ -11,10 +11,15 @@ OligomerDisplay::OligomerDisplay(UiVariables* gui, GLWidget* gl)
 	graphBuffer = new TextureCanvas( );
 	wordLength = 0;
 	similarityGraphWidth = 50;
+	frameCount = 0;
 //	changeWordLength(ui->oligDial->value());
 	actionLabel = string("Oligomer Display");
 	actionTooltip = string("Short string usage (codons = length 3)");
 	actionData = actionLabel; 
+	
+	connect( ui->oligDial, SIGNAL(valueChanged(int)), this, SLOT(changeWordLength(int)));
+	connect( this, SIGNAL(wordLengthChanged(int)), ui->oligDial, SLOT(setValue(int)));
+	connect( this, SIGNAL(wordLengthChanged(int)), this, SIGNAL(displayChanged()));//either this line or changeWordLength::invalidate()
 }
 
 OligomerDisplay::~OligomerDisplay()
@@ -56,13 +61,14 @@ void OligomerDisplay::changeWordLength(int w)
 {
 	if(updateInt(wordLength, w ))
 	{
-		F_width = (int)pow(4, wordLength);	
+		F_width = (int)pow(4, wordLength);
 		freq.clear();
 		freq = vector< vector<float> >();
 		for(int i = 0; i < 400; i++)
 		{
 			freq.push_back( vector<float>(F_width, 0.0) );
 		}
+		//invalidate();
 		emit wordLengthChanged(w);
 	}
 }
@@ -155,6 +161,7 @@ GLuint OligomerDisplay::render()//deprecated
 
 void OligomerDisplay::freq_map()
 {
+	glWidget->print("OligomerDisplay: ", ++frameCount);
 	check_height();
 	const char* genome = sequence->c_str() + nucleotide_start;
 	for( int h = 0; h < F_height; h++)

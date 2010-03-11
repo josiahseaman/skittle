@@ -20,6 +20,7 @@ class AbstractGraph : public QGLWidget
 	
 protected:			
 	int Width;
+	int frameCount;
 
 public:
 	GLWidget* glWidget;
@@ -36,6 +37,7 @@ public:
 	
 	virtual int width();
 	
+	virtual void createConnections();
 	virtual point get_position(int index);
 	virtual int height();
 	virtual void paint_square(point position, color c);
