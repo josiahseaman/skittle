@@ -16,7 +16,7 @@
 
 using namespace std;
 
-class Oligomers : public FrequencyMap
+class OligomerDisplay : public FrequencyMap
 {
     Q_OBJECT
     
@@ -24,8 +24,8 @@ public:
 	
 	bool texture_optimization;
 	
-	Oligomers(UiVariables* gui, GLWidget* gl);
-	~Oligomers();
+	OligomerDisplay(UiVariables* gui, GLWidget* gl);
+	~OligomerDisplay();
 	void createConnections();
 	void checkVariables();
 	void display();

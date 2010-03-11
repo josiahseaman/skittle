@@ -1,9 +1,9 @@
-#include "Oligomers.h"
+#include "OligomerDisplay.h"
 #include "glwidget.h"
 #include <sstream>
 #include <math.h>
 
-Oligomers::Oligomers(UiVariables* gui, GLWidget* gl)
+OligomerDisplay::OligomerDisplay(UiVariables* gui, GLWidget* gl)
 :FrequencyMap(gui, gl)
 {	
 	glWidget = gl;
@@ -17,14 +17,14 @@ Oligomers::Oligomers(UiVariables* gui, GLWidget* gl)
 	actionData = actionLabel; 
 }
 
-Oligomers::~Oligomers()
+OligomerDisplay::~OligomerDisplay()
 {
     glDeleteLists(display_object, 1);
 }
 
 /**IMPORTANT: When referring to the parent ui->glWidget, it is not fully constructed yet.
 *** these connections should be placed in glWidget's constructor.    ***/
-void Oligomers::createConnections()
+void OligomerDisplay::createConnections()
 {
 	connect( this, SIGNAL(widthChanged(int)), this, SIGNAL(displayChanged()));
 	connect( this, SIGNAL(startChanged(int)), this, SIGNAL(displayChanged()));
@@ -44,7 +44,7 @@ void Oligomers::createConnections()
 	connect( this, SIGNAL(wordLengthChanged(int)), ui->oligDial, SLOT(setValue(int)));
 }
 
-void Oligomers::checkVariables()
+void OligomerDisplay::checkVariables()
 {
 	changeStart(ui->startDial->value());
 	changeSize(ui->sizeDial->value());
@@ -52,7 +52,7 @@ void Oligomers::checkVariables()
 	changeWidth(ui->widthDial->value());//width and scale
 }
 	
-void Oligomers::changeWordLength(int w)
+void OligomerDisplay::changeWordLength(int w)
 {
 	if(updateInt(wordLength, w ))
 	{
@@ -67,7 +67,7 @@ void Oligomers::changeWordLength(int w)
 	}
 }
 
-void Oligomers::toggleVisibility()
+void OligomerDisplay::toggleVisibility()
 {
 	hidden = !hidden;
 	if(hidden) {
@@ -80,7 +80,7 @@ void Oligomers::toggleVisibility()
 	emit displayChanged();
 }
 
-void Oligomers::display()
+void OligomerDisplay::display()
 {
 	checkVariables();
 	if(! upToDate )
@@ -95,7 +95,7 @@ void Oligomers::display()
 
 }
 
-void Oligomers::load_canvas()
+void OligomerDisplay::load_canvas()
 {
 	pixels.clear();
 	check_height();
@@ -148,12 +148,12 @@ void Oligomers::load_canvas()
 	upToDate = true;
 }
 
-GLuint Oligomers::render()//deprecated
+GLuint OligomerDisplay::render()//deprecated
 {
 	return 0;
 }
 
-void Oligomers::freq_map()
+void OligomerDisplay::freq_map()
 {
 	check_height();
 	const char* genome = sequence->c_str() + nucleotide_start;
@@ -179,7 +179,7 @@ void Oligomers::freq_map()
 	upToDate = true;
 }
 
-int Oligomers::check_height()
+int OligomerDisplay::check_height()
 {	
 	Width = ui->widthDial->value();	
 	if(Width < 1) Width = 1;
@@ -192,7 +192,7 @@ int Oligomers::check_height()
 }
 
 /******SLOTS*****/
-void Oligomers::mouseClick(point2D pt)
+void OligomerDisplay::mouseClick(point2D pt)
 {
 	//range check
 	if( pt.x < (int)width()-similarityGraphWidth && pt.x >= 0  )
@@ -216,7 +216,7 @@ color randomColor()
 	return color(r, g, b);
 }
 
-vector<color> Oligomers::calculateBoundaries(vector<color>& img, int row_size, int graphWidth)
+vector<color> OligomerDisplay::calculateBoundaries(vector<color>& img, int row_size, int graphWidth)
 {
 	//compute average value
 	double average = 0.0;
@@ -273,7 +273,7 @@ vector<color> Oligomers::calculateBoundaries(vector<color>& img, int row_size, i
 	return comparisonScores;
 }/**/
 
-double Oligomers::correlate(vector<color>& img, int beginA, int beginB, int pixelsPerSample)//calculations for a single pixel
+double OligomerDisplay::correlate(vector<color>& img, int beginA, int beginB, int pixelsPerSample)//calculations for a single pixel
 {//correlation will be a value between -1 and 1 representing how closley related 2 sequences are
 	//calculation variables!!!  should all be double to prevent overflow
 	double N = pixelsPerSample;
@@ -339,7 +339,7 @@ double Oligomers::correlate(vector<color>& img, int beginA, int beginB, int pixe
 	return (answer_R + answer_G + answer_B)/3;//return the average of RGB correlation
 }
 
-int Oligomers::width()
+int OligomerDisplay::width()
 {
 	int widthMultiplier = 1;
 	if(wordLength < 3)	{		widthMultiplier = 4;	}

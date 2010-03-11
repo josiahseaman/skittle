@@ -64,7 +64,7 @@ GLWidget::GLWidget(UiVariables gui, QWidget *parent)
     trackReader = new GtfReader(ui);
     cylinder = new CylinderDisplay(&ui, this);
    	align = new AlignmentDisplay(&ui, this);
-   	olig = new Oligomers(&ui, this);
+   	olig = new OligomerDisplay(&ui, this);
 	highlight = new HighlightDisplay(&ui, this);
    	
    	graphs.push_back(cylinder);

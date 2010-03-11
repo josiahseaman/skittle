@@ -31,7 +31,7 @@
 #include "AnnotationDisplay.h"
 #include "CylinderDisplay.h"
 #include "AlignmentDisplay.h"
-#include "Oligomers.h"
+#include "OligomerDisplay.h"
 #include "HighlightDisplay.h"
 #include "GtfReader.h"
 
@@ -50,7 +50,7 @@ public:
 	AnnotationDisplay* gtfTrack;
 	CylinderDisplay* cylinder;
    	AlignmentDisplay* align;
-   	Oligomers* olig;
+   	OligomerDisplay* olig;
    	HighlightDisplay* highlight;
    	
 	

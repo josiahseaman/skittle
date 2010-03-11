@@ -12,7 +12,7 @@ INPUT(
 ./release\main.o
 ./release\MainWindow.o
 ./release\NucleotideDisplay.o
-./release\Oligomers.o
+./release\OligomerDisplay.o
 ./release\TextRender.o
 ./release\TextureCanvas.o
 ./release\moc_AbstractGraph.o
@@ -26,5 +26,5 @@ INPUT(
 ./release\moc_HighlightDisplay.o
 ./release\moc_MainWindow.o
 ./release\moc_NucleotideDisplay.o
-./release\moc_Oligomers.o
+./release\moc_OligomerDisplay.o
 );
