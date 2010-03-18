@@ -58,6 +58,7 @@ private:
 	TextureCanvas* graphBuffer;
 	int wordLength;
 	int similarityGraphWidth;
+	double minDeltaBoundary;
 };
 
 #endif

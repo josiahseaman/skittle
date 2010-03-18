@@ -495,7 +495,8 @@ void GLWidget::resizeGL(int width, int height)
 
 void GLWidget::mousePressEvent(QMouseEvent *event)
 {
-	placeMarker(event->pos());
+	if(tool() == SELECT_TOOL)
+		placeMarker(event->pos());
 	QPointF qp = pixelToGlCoords(event->pos());
 	int x = (int)(qp.x());
 	int y = (int)(qp.y());

@@ -12,6 +12,7 @@ OligomerDisplay::OligomerDisplay(UiVariables* gui, GLWidget* gl)
 	wordLength = 0;
 	similarityGraphWidth = 50;
 	frameCount = 0;
+	minDeltaBoundary = 2.0;
 //	changeWordLength(ui->oligDial->value());
 	actionLabel = string("Oligomer Display");
 	actionTooltip = string("Short string usage (codons = length 3)");
@@ -90,8 +91,10 @@ void OligomerDisplay::display()
 {
 	checkVariables();
 	if(! upToDate )
+	{
 		freq_map();	
-	load_canvas();
+		load_canvas();
+	}
 	glPushMatrix();
 		glScaled(1,-1,1);
 		textureBuffer->display();
@@ -257,7 +260,7 @@ vector<color> OligomerDisplay::calculateBoundaries(vector<color>& img, int row_s
 //		colorPalette.push_back(randomColor());
 		
 	int colorIndex = 0;
-	double minimumCorrelation = average - 2*standardDeviation;
+	double minimumCorrelation = average - minDeltaBoundary*standardDeviation;
 	vector<color> comparisonScores;
 	for(int i = 0; i+1 < (int)scores.size(); ++i)
 	{
