@@ -164,7 +164,7 @@ GLuint OligomerDisplay::render()//deprecated
 
 void OligomerDisplay::freq_map()
 {
-	glWidget->print("OligomerDisplay: ", ++frameCount);
+	//glWidget->print("OligomerDisplay: ", ++frameCount);
 	height();
 	const char* genome = sequence->c_str() + nucleotide_start;
 	for( int h = 0; h < F_height; h++)

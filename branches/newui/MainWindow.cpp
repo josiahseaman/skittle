@@ -17,6 +17,7 @@
 #include "AlignmentDisplay.h"
 #include "OligomerDisplay.h"
 #include "HighlightDisplay.h"
+#include "ViewManager.h"
 
 MainWindow::MainWindow()
 {
@@ -38,25 +39,31 @@ MainWindow::MainWindow()
     horizontalScrollBar->setSingleStep(10);
 	verticalScrollBar = new QScrollBar();
 	verticalScrollBar->setMaximum( 100 );
+
+	viewManager	= new ViewManager();
 	glWidget = new GLWidget(getDisplayVariables(), this);
+	glWidget2 = new GLWidget(getDisplayVariables(), this);
+	viewManager->changeSelection(glWidget);
 	
 	QFrame* subFrame = new QFrame;
-	QVBoxLayout* vLayout = new QVBoxLayout;
-	vLayout->addWidget(glWidget);
-	vLayout->addWidget(horizontalScrollBar);
-	subFrame->setLayout(vLayout);
 	
 	QHBoxLayout* hLayout = new QHBoxLayout;
-	hLayout->addWidget(subFrame);
+	hLayout->addWidget(glWidget);
+	hLayout->addWidget(glWidget2);
 	hLayout->addWidget(verticalScrollBar);
-	scrollArea->setLayout(hLayout);
-	//scrollArea->setWidgetResizable(true);
+	subFrame->setLayout(hLayout);
+	
+	QVBoxLayout* vLayout = new QVBoxLayout;
+	vLayout->addWidget(subFrame);
+	vLayout->addWidget(horizontalScrollBar);
+	scrollArea->setLayout(vLayout);
+	
 	setCentralWidget(scrollArea);
   
-	fastaReader = new FastaReader(glWidget);
 
 	createConnections();
 	glWidget->createButtons();
+	glWidget2->createButtons();
 	readSettings();
 }
 
@@ -76,6 +83,10 @@ void MainWindow::addDisplayActions(AbstractGraph* display)
 	{
 		glWidget->print("Tried to add display mode with no label, aborting...");
 	}
+}
+void MainWindow::addDisplayDivider()
+{
+	presetToolBar->addSeparator();	
 }
 
 void MainWindow::createActions()
@@ -318,10 +329,12 @@ void MainWindow::createConnections()
 	/******Internal UI Logic*********/
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close())); 
 
+	connect(glWidget, SIGNAL(IveBeenClicked(GLWidget*)), viewManager, SLOT(changeSelection(GLWidget*)));
+	connect(glWidget2, SIGNAL(IveBeenClicked(GLWidget*)), viewManager, SLOT(changeSelection(GLWidget*)));
+
+
     connect(openAction, SIGNAL(triggered()), this, SLOT(open()));
-    connect(this, SIGNAL(newFileOpen(QString)), fastaReader, SLOT(readFile(QString)));
-    connect(fastaReader, SIGNAL(newFileRead(const string&)), glWidget, SLOT(displayString(const string&)));
-    //connect(fastaReader, SIGNAL(fileNameChanged(string)), this, SLOT(changeWindowName(string))); //function not implemented
+    connect(this, SIGNAL(newFileOpen(QString)), viewManager, SLOT(changeFile(QString)));
     connect(this, SIGNAL(newFileOpen(QString)), glWidget->trackReader, SLOT(determineOutputFile(QString)));
 
 	connect(importAction, SIGNAL(triggered()), this, SLOT(openGtf()));
@@ -356,6 +369,16 @@ void MainWindow::createConnections()
 	connect(startOffset, SIGNAL(valueChanged(int)), glWidget, SLOT(updateDisplay()));
 	connect(displayLength, SIGNAL(valueChanged(int)), glWidget, SLOT(updateDisplay()));
 
+	/****GRAPH MODE TOGGLES*******/
+	connect(widthDial, SIGNAL(valueChanged(int)), glWidget2, SLOT(updateDisplaySize()));
+    connect(zoom, SIGNAL(valueChanged(int)), glWidget2, SLOT(changeZoom(int)));
+	//connect( ui.zoomDial, SIGNAL(valueChanged(int)), glWidget2, SLOT(updateDisplaySize()));
+	connect(widthDial, SIGNAL(valueChanged(int)), glWidget2, SLOT(updateDisplay()));
+	connect(zoom, SIGNAL(valueChanged(int)), glWidget2, SLOT(updateDisplay()));
+	connect(scale, SIGNAL(valueChanged(int)), glWidget2, SLOT(updateDisplay()));
+	connect(scale, SIGNAL(valueChanged(int)), glWidget2, SLOT(updateDisplaySize()));
+	connect(startOffset, SIGNAL(valueChanged(int)), glWidget2, SLOT(updateDisplay()));
+	connect(displayLength, SIGNAL(valueChanged(int)), glWidget2, SLOT(updateDisplay()));
    	/****PRESETS****/
 
 	/****Specific Settings*****/
@@ -367,6 +390,9 @@ void MainWindow::createConnections()
 	connect( glWidget, SIGNAL(printHtml(QString)), textArea, SLOT(insertHtml(QString)));
 
 	connect( glWidget, SIGNAL(addGraphMode(AbstractGraph*)), this, SLOT(addDisplayActions(AbstractGraph*)));
+	connect( glWidget2, SIGNAL(addGraphMode(AbstractGraph*)), this, SLOT(addDisplayActions(AbstractGraph*)));
+	
+	connect( glWidget, SIGNAL(addDivider()), this, SLOT(addDisplayDivider()));
 
 }
 

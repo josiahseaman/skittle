@@ -28,6 +28,7 @@ HEADERS += AbstractGraph.h \
            OligomerDisplay.h \
            TextRender.h \
            TextureCanvas.h \
+           ViewManager.h \
            UiVariables.h
 SOURCES += AbstractGraph.cpp \
            AlignmentDisplay.cpp \
@@ -44,4 +45,5 @@ SOURCES += AbstractGraph.cpp \
            NucleotideDisplay.cpp \
            OligomerDisplay.cpp \
            TextRender.cpp \
-           TextureCanvas.cpp 
+           TextureCanvas.cpp \
+           ViewManager.cpp

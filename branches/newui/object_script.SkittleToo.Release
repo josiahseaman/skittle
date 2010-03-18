@@ -15,6 +15,7 @@ INPUT(
 ./release\OligomerDisplay.o
 ./release\TextRender.o
 ./release\TextureCanvas.o
+./release\ViewManager.o
 ./release\moc_AbstractGraph.o
 ./release\moc_AlignmentDisplay.o
 ./release\moc_AnnotationDisplay.o
@@ -27,4 +28,5 @@ INPUT(
 ./release\moc_MainWindow.o
 ./release\moc_NucleotideDisplay.o
 ./release\moc_OligomerDisplay.o
+./release\moc_ViewManager.o
 );

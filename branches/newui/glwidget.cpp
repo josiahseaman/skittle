@@ -51,6 +51,7 @@
 #include "OligomerDisplay.h"
 #include "HighlightDisplay.h"
 #include "GtfReader.h"
+#include "FastaReader.h"
 
 
 using std::string;
@@ -65,6 +66,9 @@ GLWidget::GLWidget(UiVariables gui, QWidget *parent)
 	frame = 0;
 	
 	setupColorTable();
+	reader = new FastaReader(this);
+	connect(reader, SIGNAL(newFileRead(const string&)), this, SLOT(displayString(const string&)));
+	
     nuc = new NucleotideDisplay(&ui, this);
     freq = new FrequencyMap(&ui, this);
     freq->link(nuc);
@@ -122,6 +126,7 @@ void GLWidget::createButtons()
 {
    	for(int i = 0; i < graphs.size(); ++i)
    		emit addGraphMode( graphs[i] );
+   	emit addDivider();
 }
 
 void GLWidget::createConnections()
@@ -131,8 +136,8 @@ void GLWidget::createConnections()
    		connect( graphs[i], SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
    		//graphs[i]->createConnections();
 	}
-
-	connect(nuc, SIGNAL(sizeChanged(int)), this, SLOT(setPageSize()) );
+	connect(nuc, SIGNAL(sizeChanged(int)), this, SLOT(setPageSize()) );//TODO: Nuc shouldn't be special
+	
 }
 
 QSize GLWidget::minimumSizeHint() const
@@ -495,6 +500,8 @@ void GLWidget::resizeGL(int width, int height)
 
 void GLWidget::mousePressEvent(QMouseEvent *event)
 {
+	emit IveBeenClicked(this);
+	
 	if(tool() == SELECT_TOOL)
 		placeMarker(event->pos());
 	QPointF qp = pixelToGlCoords(event->pos());
@@ -724,3 +731,7 @@ void GLWidget::print(int num1, int num2)
 	emit printText(QString( ss1.str().c_str() ));	
 }
 
+void GLWidget::loadFile(QString fileName)
+{
+	reader->readFile(fileName);
+}

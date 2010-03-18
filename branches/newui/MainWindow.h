@@ -10,6 +10,7 @@ class AbstractGraph;
 class FastaReader;
 class GtfReader;
 class GLWidget;
+class ViewManager;
 
 class QAction;
 class QLabel;
@@ -31,7 +32,9 @@ class MainWindow : public QMainWindow
 {
 		Q_OBJECT
 public:
+	QFrame* glHandler;
     GLWidget* glWidget;
+    GLWidget* glWidget2;
     FastaReader* fastaReader;
     GtfReader* trackReader;
 	QScrollBar* horizontalScrollBar;
@@ -58,7 +61,7 @@ public slots:
 	void doubleWidth();
 	void halveWidth();
 	void addDisplayActions(AbstractGraph*);
-	
+	void addDisplayDivider();
 private:
 	void createActions();
 	void createMenus();
@@ -72,6 +75,7 @@ private:
 	void readSettings();
 	void writeSettings();
 	
+	ViewManager* viewManager;
 	QFrame* scrollArea;//QScrollArea
 	QMenu *annotationMenu;
 	QMenu *fileMenu;

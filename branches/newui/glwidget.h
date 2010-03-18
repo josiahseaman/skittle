@@ -27,6 +27,7 @@
 #include "BasicTypes.h"
 #include "UiVariables.h"
 
+class FastaReader;
 class AbstractGraph;
 class NucleotideDisplay;
 class FrequencyMap;
@@ -93,13 +94,16 @@ public slots:
 	AnnotationDisplay* addAnnotationDisplay(QString fileName);
 	AnnotationDisplay* findMatchingAnnotationDisplay(string fileName);
 	void addTrackEntry(track_entry entry, string gtfFileName);
+	void loadFile(QString);
     
 signals:
 	void xOffsetChange(int);
 	void printText(QString);
 	void printHtml(QString);
 	void addGraphMode(AbstractGraph*);
+	void addDivider();
 	void AnnotationDisplayAdded(AnnotationDisplay*);
+	void IveBeenClicked(GLWidget*);
 
 protected:
 	void displayTrack(const vector<track_entry>& track);
@@ -131,6 +135,7 @@ private:
 	int border;
 	int currentTool;
 	int frame;
+	FastaReader* reader;
 };
 //! [3]
 /* Alu Consensus Sequence 290bp
