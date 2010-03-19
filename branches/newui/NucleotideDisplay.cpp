@@ -26,6 +26,7 @@ NucleotideDisplay::NucleotideDisplay(UiVariables* gui, GLWidget* gl)
 	actionLabel = string("Nucleotide Display");
 	actionTooltip = string("Nucleotides as Colors");
 	actionData = actionLabel; 
+	display_object = 0;
 }
 
 NucleotideDisplay::~NucleotideDisplay(){
@@ -55,7 +56,7 @@ void NucleotideDisplay::display()
 	checkVariables();
 	if( !upToDate )
 	{
-    	glDeleteLists(display_object, 1);
+    	//glDeleteLists(display_object, 1);
 		display_object = render();
 	}
 	glCallList(display_object);

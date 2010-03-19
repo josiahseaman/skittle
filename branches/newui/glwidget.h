@@ -47,6 +47,7 @@ class GLWidget : public QGLWidget
 public:
 	UiVariables ui;
 	string chromosomeName;
+	FastaReader* reader;
 	GtfReader*	trackReader;
 	NucleotideDisplay* nuc;//make this private
 	FrequencyMap* freq;
@@ -86,7 +87,6 @@ public slots:
     void on_moveButton_clicked();
     void on_selectButton_clicked();
     void on_resizeButton_clicked();
-    void setPageSize();
     void setTool(int tool);
     void slideHorizontal(int);
 	void updateDisplay();
@@ -135,7 +135,6 @@ private:
 	int border;
 	int currentTool;
 	int frame;
-	FastaReader* reader;
 };
 //! [3]
 /* Alu Consensus Sequence 290bp

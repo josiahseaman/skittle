@@ -18,6 +18,7 @@ AnnotationDisplay::AnnotationDisplay(UiVariables* gui, GLWidget* gl, string gtfF
 	actionData = actionLabel; 
 	
 	fileName = gtfFileName;
+	display_object = 0;
 }
 
 AnnotationDisplay::~AnnotationDisplay()
@@ -42,7 +43,7 @@ void AnnotationDisplay::display()
 {
 	if( !upToDate )
 	{
-    	glDeleteLists(display_object, 1);
+    	//glDeleteLists(display_object, 1);
 		display_object = render();
 	}	
 	glCallList(display_object);

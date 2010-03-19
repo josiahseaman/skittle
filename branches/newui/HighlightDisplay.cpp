@@ -75,10 +75,10 @@ void HighlightDisplay::assignColors()
 		}
 		nucleotide_colors.push_back( pixelColor );
 	}
-	if(nucleotide_colors.size() < 10 )
+	/*if(nucleotide_colors.size() < 10 )
 	{
 		glWidget->print("Error: No Highlight Data!");
-	}
+	}*/
 	loadTextureCanvas();
 }
 

@@ -85,8 +85,6 @@ GLWidget::GLWidget(UiVariables gui, QWidget *parent)
    	graphs.push_back(freq);
    	graphs.push_back(highlight);
    	
-    marker = 0;
-
 	border = 10;    
     xPosition = 0;
     slideHorizontal(0);
@@ -96,9 +94,6 @@ GLWidget::GLWidget(UiVariables gui, QWidget *parent)
 	setTool(RESIZE_TOOL);
 	/*connect( ui->widthDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
     connect(ui.zoomDial, SIGNAL(valueChanged(int)), this, SLOT(changeZoom(int)));
-
-	connect( nuc, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
-	connect( nuc, SIGNAL(sizeChanged(int)), this, SLOT(setPageSize()) );
 	
     nuc->createConnections();
     freq->createConnections();
@@ -108,8 +103,6 @@ GLWidget::GLWidget(UiVariables gui, QWidget *parent)
 	connect( ui.alignButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));
 	connect( ui.freqButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));
 	connect( ui.cylinderButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));*/
-	   
-	setPageSize();
 	
     setMouseTracking(true);
     setFocusPolicy(Qt::ClickFocus);
@@ -136,8 +129,8 @@ void GLWidget::createConnections()
    		connect( graphs[i], SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
    		//graphs[i]->createConnections();
 	}
-	connect(nuc, SIGNAL(sizeChanged(int)), this, SLOT(setPageSize()) );//TODO: Nuc shouldn't be special
 	
+	connect(trackReader,SIGNAL(BookmarkAdded(track_entry,string)), this,SLOT(addTrackEntry(track_entry,string)));	
 }
 
 QSize GLWidget::minimumSizeHint() const
@@ -175,7 +168,6 @@ void GLWidget::changeZoom(int z)
 	zTransOffset = 200.0 / percent;
 	updateDisplaySize();
 	setTotalDisplayWidth();
-	//redraw();
 }
 
 void GLWidget::displayString(const string& seq)
@@ -187,9 +179,8 @@ void GLWidget::displayString(const string& seq)
 		graphs[i]->setSequence(&seq);
 	}
 
-	
-	setPageSize();
-	ui.startDial->setValue(2);//TODO: bit of a cludge
+	//setPageSize();
+	ui.startDial->setValue(2);//TODO: bit of a cludge to reset the start position
 	ui.startDial->setValue(1);
 }
 
@@ -206,12 +197,6 @@ void GLWidget::on_selectButton_clicked()
 void GLWidget::on_resizeButton_clicked()
 {
 	setTool(RESIZE_TOOL);
-}
-
-void GLWidget::setPageSize()
-{
-	ui.verticalScrollBar->setMaximum( max(0, (int)(nuc->sequence->size() - ui.widthDial->value()) ) );//- ui.sizeDial->value()*.2
-	ui.verticalScrollBar->setPageStep(ui.sizeDial->value());
 }
 	
 void GLWidget::setTool(int tool)
@@ -437,6 +422,9 @@ void GLWidget::initializeGL()
     glShadeModel(GL_FLAT);
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
+    
+   	marker = 0;//glGenLists(1);
+
 }
 
 void GLWidget::paintGL()
@@ -460,8 +448,9 @@ void GLWidget::paintGL()
 	    glScaled(zoom, zoom, zoom);
 	    glTranslated(border,0,0);//to get zoom working right
 	    if( tool() == SELECT_TOOL)
+	    {
 			glCallList(marker);//possibly replace this with a blinking cursor
-			
+		}	
 		for(int i = 0; i < (int)graphs.size(); ++i)
 		{
 			if(!graphs[i]->hidden)
@@ -573,7 +562,7 @@ void GLWidget::placeMarker(QPoint pixelCoords)
 	QPointF qp = pixelToGlCoords(pixelCoords);
 	int x = (int)(qp.x());//round off
 	int y = (int)(qp.y());//round off
-    glDeleteLists(marker, 1);	
+	//glDeleteLists(marker, 1);	
 	marker = glGenLists(1);
     glNewList(marker, GL_COMPILE);
 		nuc->paint_square(point(x, -y, 0), color(255,255,0));

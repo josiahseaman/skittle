@@ -26,7 +26,7 @@ public:
 	string outputFile();
 
 public slots:
-	void addBookmark();//int start, int end);
+	void addBookmark();
 	void determineOutputFile(QString file);
 	void storeChrName(string);
 

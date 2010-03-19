@@ -40,7 +40,7 @@ MainWindow::MainWindow()
 	verticalScrollBar = new QScrollBar();
 	verticalScrollBar->setMaximum( 100 );
 
-	viewManager	= new ViewManager();
+	viewManager	= new ViewManager(getDisplayVariables());
 	glWidget = new GLWidget(getDisplayVariables(), this);
 	glWidget2 = new GLWidget(getDisplayVariables(), this);
 	viewManager->changeSelection(glWidget);
@@ -336,16 +336,18 @@ void MainWindow::createConnections()
     connect(openAction, SIGNAL(triggered()), this, SLOT(open()));
     connect(this, SIGNAL(newFileOpen(QString)), viewManager, SLOT(changeFile(QString)));
     connect(this, SIGNAL(newFileOpen(QString)), glWidget->trackReader, SLOT(determineOutputFile(QString)));
+    connect(this, SIGNAL(newFileOpen(QString)), glWidget2->trackReader, SLOT(determineOutputFile(QString)));
 
 	connect(importAction, SIGNAL(triggered()), this, SLOT(openGtf()));
-	connect(this, SIGNAL(newGtfFileOpen(QString)), glWidget, SLOT(addAnnotationDisplay(QString)));
-	connect(glWidget->trackReader,SIGNAL(BookmarkAdded(track_entry,string)),glWidget,SLOT(addTrackEntry(track_entry,string)));
-	
-	connect(addAnnotationAction, SIGNAL(triggered()), glWidget->trackReader, SLOT(addBookmark()));
+	connect(this, SIGNAL(newGtfFileOpen(QString)), viewManager, SLOT(addAnnotationDisplay(QString)));	
+	connect(addAnnotationAction, SIGNAL(triggered()), viewManager, SLOT(addBookmark()));
 
     connect(moveAction, SIGNAL(triggered()), glWidget, SLOT(on_moveButton_clicked()));
     connect(selectAction, SIGNAL(triggered()), glWidget, SLOT(on_selectButton_clicked()));
     connect(resizeAction, SIGNAL(triggered()), glWidget, SLOT(on_resizeButton_clicked()));
+    connect(moveAction, SIGNAL(triggered()), glWidget2, SLOT(on_moveButton_clicked()));
+    connect(selectAction, SIGNAL(triggered()), glWidget2, SLOT(on_selectButton_clicked()));
+    connect(resizeAction, SIGNAL(triggered()), glWidget2, SLOT(on_resizeButton_clicked()));
     
 	connect( scale, SIGNAL(valueChanged(int)), this, SLOT(changeScale(int)));
 	
@@ -355,13 +357,9 @@ void MainWindow::createConnections()
 	connect(verticalScrollBar, SIGNAL(valueChanged(int)), startOffset, SLOT(setValue(int)));
 	connect(startOffset, SIGNAL(valueChanged(int)), verticalScrollBar, SLOT(setValue(int)));
 	
-	connect(horizontalScrollBar, SIGNAL(valueChanged(int)), glWidget, SLOT(slideHorizontal(int)));
-	connect(glWidget, SIGNAL(xOffsetChange(int)), horizontalScrollBar, SLOT(setValue(int)));	
-	
-	/****GRAPH MODE TOGGLES*******/
+	/****UNIVERSAL VARIABLES*******/
 	connect(widthDial, SIGNAL(valueChanged(int)), glWidget, SLOT(updateDisplaySize()));
     connect(zoom, SIGNAL(valueChanged(int)), glWidget, SLOT(changeZoom(int)));
-	//connect( ui.zoomDial, SIGNAL(valueChanged(int)), glWidget, SLOT(updateDisplaySize()));
 	connect(widthDial, SIGNAL(valueChanged(int)), glWidget, SLOT(updateDisplay()));
 	connect(zoom, SIGNAL(valueChanged(int)), glWidget, SLOT(updateDisplay()));
 	connect(scale, SIGNAL(valueChanged(int)), glWidget, SLOT(updateDisplay()));
@@ -369,10 +367,9 @@ void MainWindow::createConnections()
 	connect(startOffset, SIGNAL(valueChanged(int)), glWidget, SLOT(updateDisplay()));
 	connect(displayLength, SIGNAL(valueChanged(int)), glWidget, SLOT(updateDisplay()));
 
-	/****GRAPH MODE TOGGLES*******/
+	/****UNIVERSAL VARIABLES*******/
 	connect(widthDial, SIGNAL(valueChanged(int)), glWidget2, SLOT(updateDisplaySize()));
     connect(zoom, SIGNAL(valueChanged(int)), glWidget2, SLOT(changeZoom(int)));
-	//connect( ui.zoomDial, SIGNAL(valueChanged(int)), glWidget2, SLOT(updateDisplaySize()));
 	connect(widthDial, SIGNAL(valueChanged(int)), glWidget2, SLOT(updateDisplay()));
 	connect(zoom, SIGNAL(valueChanged(int)), glWidget2, SLOT(updateDisplay()));
 	connect(scale, SIGNAL(valueChanged(int)), glWidget2, SLOT(updateDisplay()));
@@ -383,13 +380,17 @@ void MainWindow::createConnections()
 
 	/****Specific Settings*****/
 	connect( seqEdit, SIGNAL(textChanged(const QString&)), glWidget->highlight, SLOT(setHighlightSequence(const QString&)));
-	connect( similarityDial, SIGNAL(valueChanged(int)), glWidget->highlight, SLOT(setPercentSimilarity(int)));
+	connect( seqEdit, SIGNAL(textChanged(const QString&)), glWidget2->highlight, SLOT(setHighlightSequence(const QString&)));
+	connect( similarityDial, SIGNAL(valueChanged(int)), glWidget->highlight, SLOT(setPercentSimilarity(int)));	
+	connect( similarityDial, SIGNAL(valueChanged(int)), glWidget2->highlight, SLOT(setPercentSimilarity(int)));
 	
 	/****Print Signals*****/
-	connect( glWidget, SIGNAL(printText(QString)), textArea, SLOT(append(QString)));
-	connect( glWidget, SIGNAL(printHtml(QString)), textArea, SLOT(insertHtml(QString)));
+	 connect( glWidget, SIGNAL(printText(QString)), textArea, SLOT(append(QString)));
+	connect( glWidget2, SIGNAL(printText(QString)), textArea, SLOT(append(QString)));
+	 connect( glWidget, SIGNAL(printHtml(QString)), textArea, SLOT(insertHtml(QString)));
+	connect( glWidget2, SIGNAL(printHtml(QString)), textArea, SLOT(insertHtml(QString)));
 
-	connect( glWidget, SIGNAL(addGraphMode(AbstractGraph*)), this, SLOT(addDisplayActions(AbstractGraph*)));
+	 connect( glWidget, SIGNAL(addGraphMode(AbstractGraph*)), this, SLOT(addDisplayActions(AbstractGraph*)));
 	connect( glWidget2, SIGNAL(addGraphMode(AbstractGraph*)), this, SLOT(addDisplayActions(AbstractGraph*)));
 	
 	connect( glWidget, SIGNAL(addDivider()), this, SLOT(addDisplayDivider()));

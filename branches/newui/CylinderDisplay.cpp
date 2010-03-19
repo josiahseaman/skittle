@@ -21,6 +21,7 @@ CylinderDisplay::CylinderDisplay(UiVariables* gui, GLWidget* gl)
 	actionLabel = string("Alignment Cylinder");
 	actionTooltip = string("Best 3D alignment as a Cylinder");
 	actionData = actionLabel; 
+	display_object = 0;
 }	
 
 CylinderDisplay::~CylinderDisplay(){
@@ -65,7 +66,7 @@ void CylinderDisplay::display()
 	checkVariables();
 	if( !upToDate )
 	{
-    	glDeleteLists(display_object, 1);
+    	//glDeleteLists(display_object, 1);
 		display_object = render();
 	}
 	glPushMatrix();

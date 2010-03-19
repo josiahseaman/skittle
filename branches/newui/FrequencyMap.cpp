@@ -32,6 +32,7 @@ FrequencyMap::FrequencyMap(UiVariables* gui, GLWidget* gl)
 	actionLabel = string("Repeat Map");
 	actionTooltip = string("Graph of possible alignmments");
 	actionData = actionLabel; 
+	display_object = 0;
 }
 
 FrequencyMap::~FrequencyMap()
