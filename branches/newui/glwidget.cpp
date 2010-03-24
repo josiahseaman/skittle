@@ -67,7 +67,7 @@ GLWidget::GLWidget(UiVariables gui, QWidget *parent)
 	
 	setupColorTable();
 	reader = new FastaReader(this);
-	connect(reader, SIGNAL(newFileRead(const string&)), this, SLOT(displayString(const string&)));
+	connect(reader, SIGNAL(newFileRead(const string*)), this, SLOT(displayString(const string*)));
 	
     nuc = new NucleotideDisplay(&ui, this);
     freq = new FrequencyMap(&ui, this);
@@ -170,16 +170,19 @@ void GLWidget::changeZoom(int z)
 	setTotalDisplayWidth();
 }
 
-void GLWidget::displayString(const string& seq)
+const string* GLWidget::seq()
 {
-	print("New sequence received.  Size:", seq.size());
+	return reader->seq();
+}
+
+void GLWidget::displayString(const string* seq)
+{
+	print("New sequence received.  Size:", seq->size());
 
 	for(int i = 0; i < graphs.size(); ++i)
 	{
-		graphs[i]->setSequence(&seq);
+		graphs[i]->setSequence(seq);
 	}
-
-	//setPageSize();
 	ui.startDial->setValue(2);//TODO: bit of a cludge to reset the start position
 	ui.startDial->setValue(1);
 }
@@ -418,6 +421,9 @@ QPointF GLWidget::pixelToGlCoords(QPoint pCoords, double z)
 
 void GLWidget::initializeGL()
 {
+	for(int i = 0; i < graphs.size(); ++i)
+		graphs[i]->setSequence(seq());
+	
     qglClearColor(QColor::fromRgbF(0.5, 0.5, 0.5));
     glShadeModel(GL_FLAT);
     glEnable(GL_DEPTH_TEST);

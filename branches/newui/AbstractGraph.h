@@ -21,11 +21,11 @@ class AbstractGraph : public QGLWidget
 protected:			
 	int Width;
 	int frameCount;
+	const string* sequence;
 
 public:
 	GLWidget* glWidget;
 	UiVariables* ui;	
-	const string* sequence;
 	
 	bool hidden;
 	bool upToDate;

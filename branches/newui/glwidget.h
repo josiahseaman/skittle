@@ -79,11 +79,12 @@ public:
 	void printHtml(std::string s);
 	void print(const char* s, int num);
 	void print(int num1, int num2);
+	const string* seq();
 
 
 public slots:
     void changeZoom(int z);
-    void displayString(const string&);
+    void displayString(const string*);
     void on_moveButton_clicked();
     void on_selectButton_clicked();
     void on_resizeButton_clicked();

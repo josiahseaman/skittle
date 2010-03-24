@@ -191,7 +191,7 @@ void MainWindow::createToolbars()
 	widthDial = new QSpinBox(this);
     widthDial->setMinimum(1);
     widthDial->setMaximum(1000000000);
-    widthDial->setValue(250);
+    widthDial->setValue(128);
 	settingToolBar->addWidget(widthDial);
 
 	doubleDisplayWidth = new QPushButton("x2",this);

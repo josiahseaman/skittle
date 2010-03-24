@@ -90,7 +90,7 @@ void HighlightDisplay::calculate()
 	int targetSize = target.size();
 	//int count = 0;
 	int start = nucleotide_start;
-	const string& seq = (*sequence);
+	const string& seq = *sequence;
 	for( int h = 0; h < display_size && h  < (int)seq.size() - start - (targetSize-1); h++)
 	{
 			unsigned short int score = 0;

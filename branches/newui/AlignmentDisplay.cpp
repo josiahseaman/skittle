@@ -7,7 +7,7 @@
 AlignmentDisplay::AlignmentDisplay(UiVariables* gui, GLWidget* gl)
 {	
 	glWidget = gl;
-	string* seq = new string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");	
+	string* seq = new string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");
 	sequence = seq;
 
 	ui = gui;	
@@ -373,11 +373,3 @@ void AlignmentDisplay::setSequence(const string* seq)
 	normalPack(seq);
 }
 
-void AlignmentDisplay::mouseClick(point2D pt)
-{
-}
-
-int AlignmentDisplay::width()
-{ 
-	return Width / scale; 
-}

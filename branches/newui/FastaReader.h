@@ -32,7 +32,7 @@ class FastaReader : public QObject
 public:
 	
 	FastaReader(GLWidget* gl);
-	const string& seq();
+	const string* seq();
 	
 
 public slots:
@@ -40,7 +40,7 @@ public slots:
 
 signals:
 	void fileNameChanged(string name);
-	void newFileRead(const string&);
+	void newFileRead(const string*);
 	void progressValueChanged(int start);
 	
 private:
@@ -52,6 +52,7 @@ private:
 	int readBlock2(int &start);
 	int readBlock3(int &start);
 	void storeChrName(string n);
+	string logo();
 
 	ifstream wordfile;
 	string sequence;

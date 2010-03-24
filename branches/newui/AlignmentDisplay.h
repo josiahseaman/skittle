@@ -41,10 +41,7 @@ public:
 	void shiftString(unsigned char* str, int size);
 	color simpleAlignment(int index);
 	void setSequence(const string* seq);
-	void mouseClick(point2D pt);
-	
-	int width();
-	
+
 	
 private:	
 	unsigned int charPerIndex;

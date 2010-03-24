@@ -7,7 +7,6 @@ FrequencyMap::FrequencyMap(UiVariables* gui, GLWidget* gl)
 	glWidget = gl;
 	ui = gui;
 	nuc = NULL;
-	//seq shouldn't be necessary
 	string* seq = new string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");	
 	sequence = seq;
 	textureBuffer = NULL;
