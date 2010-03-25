@@ -13,11 +13,15 @@ ViewManager::ViewManager(UiVariables gui)
 void ViewManager::changeSelection(GLWidget* current)
 {
 	if(activeWidget != NULL)
+	{
 		disconnectWidget();
-	
-	activeWidget = current;
-	setPageSize();
-	connectWidget();
+	}
+		activeWidget = current;
+		connectWidget();
+		
+		setPageSize();
+		activeWidget->setTotalDisplayWidth();
+	//}
 }
 
 void ViewManager::changeFile(QString fileName)
@@ -39,12 +43,21 @@ void ViewManager::connectWidget()
 {		    	
 	connect(ui.horizontalScrollBar, SIGNAL(valueChanged(int)), activeWidget, SLOT(slideHorizontal(int)));
 	connect(activeWidget, SIGNAL(xOffsetChange(int)), ui.horizontalScrollBar, SLOT(setValue(int)));	
+	//connect resizing horizontalScroll
+	connect(activeWidget, SIGNAL(totalWidthChanged(int)), this, SLOT(setHorizontalWidth(int)));
 }
 
 void ViewManager::disconnectWidget()
 {
 	disconnect(ui.horizontalScrollBar, SIGNAL(valueChanged(int)), activeWidget, SLOT(slideHorizontal(int)));
 	disconnect(activeWidget, SIGNAL(xOffsetChange(int)), ui.horizontalScrollBar, SLOT(setValue(int)));		
+	//disconnect resizing horizontalScroll
+	disconnect(activeWidget, SIGNAL(totalWidthChanged(int)), this, SLOT(setHorizontalWidth(int)));
+}
+
+void ViewManager::setHorizontalWidth(int val)
+{
+	ui.horizontalScrollBar->setMaximum( max(0, val) );
 }
 
 void ViewManager::addAnnotationDisplay(QString fileName)

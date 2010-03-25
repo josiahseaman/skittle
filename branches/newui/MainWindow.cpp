@@ -113,6 +113,8 @@ void MainWindow::createActions()
 	hilightResultsAction->setStatusTip("Highlight All copies of Current Sequence");
 	hilightResultsAction->setCheckable(true);
 	
+	addViewAction = new QAction("Add New View Panel",this);	
+	
 	openAction = new QAction("&Open",this);
 	openAction->setStatusTip("Open a Sequence File");
 	
@@ -138,6 +140,8 @@ void MainWindow::createMenus()
 	viewMenu = menuBar()->addMenu("&View");
 	toolBarMenu = viewMenu->addMenu("ToolBar");
 	presetMenu = viewMenu->addMenu("Presets");
+	viewMenu->addSeparator();
+	viewMenu->addAction(addViewAction);
 	
 	annotationMenu = menuBar()->addMenu("&Annotations");
 	annotationMenu->addAction(addAnnotationAction);

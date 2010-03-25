@@ -124,6 +124,7 @@ private:
 	QAction *findNextAction;
 	QAction *findPrevAction;
 	QAction *hilightResultsAction;
+	QAction *addViewAction;
 	QAction *openAction;
 	QAction *importAction;
 	QAction *exitAction;

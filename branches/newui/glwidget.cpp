@@ -158,7 +158,9 @@ void GLWidget::setTotalDisplayWidth()
 	}
 	double z = getZoom();
 	//setMinimumWidth((double)(total_width)*z*6);
-	ui.horizontalScrollBar->setMaximum( (int)max(0.0, (double)(total_width)*z - canvasWidth ) );		
+	//ui.horizontalScrollBar->setMaximum( (int)max(0.0, (double)(total_width)*z - canvasWidth ) );
+	int val = (int)max(0.0, (double)(total_width)*z - canvasWidth ) ;
+	emit totalWidthChanged(val); 
 }
 
 //***********SLOTS*******************

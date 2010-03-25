@@ -18,6 +18,7 @@ public slots:
 	void changeSelection(GLWidget*);
 	void changeFile(QString);
 	void setPageSize();
+	void setHorizontalWidth(int);
 	void addAnnotationDisplay(QString);
 	void addBookmark();
 	

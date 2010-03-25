@@ -98,6 +98,7 @@ public slots:
 	void loadFile(QString);
     
 signals:
+	void totalWidthChanged(int);
 	void xOffsetChange(int);
 	void printText(QString);
 	void printHtml(QString);
