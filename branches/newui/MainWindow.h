@@ -33,12 +33,8 @@ class MainWindow : public QMainWindow
 		Q_OBJECT
 public:
 	QFrame* glHandler;
-    GLWidget* glWidget;
-    GLWidget* glWidget2;
     FastaReader* fastaReader;
     GtfReader* trackReader;
-	QScrollBar* horizontalScrollBar;
-	QScrollBar* verticalScrollBar;
 	MainWindow();
 
 
@@ -76,7 +72,6 @@ private:
 	void writeSettings();
 	
 	ViewManager* viewManager;
-	QFrame* scrollArea;//QScrollArea
 	QMenu *annotationMenu;
 	QMenu *fileMenu;
 	QMenu *presetMenu;

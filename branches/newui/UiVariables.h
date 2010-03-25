@@ -7,8 +7,6 @@
 class UiVariables
 {
 public:
-	QScrollBar* horizontalScrollBar;
-	QScrollBar* verticalScrollBar;
     QSpinBox* sizeDial;
     QSpinBox* widthDial;
     QSpinBox* startDial;
@@ -19,8 +17,6 @@ public:
 
 UiVariables()
 {
-	horizontalScrollBar = NULL;
-	verticalScrollBar = NULL;
     sizeDial = NULL;
     widthDial = NULL;
     startDial = NULL;
