@@ -10,7 +10,6 @@ class AbstractGraph;
 class FastaReader;
 class GtfReader;
 class GLWidget;
-class ViewManager;
 
 class QAction;
 class QLabel;
@@ -30,6 +29,8 @@ class QTabWidget;
 
 class MainWindow : public QMainWindow
 {
+friend class ViewManager;
+
 		Q_OBJECT
 public:
 	QFrame* glHandler;

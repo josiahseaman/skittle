@@ -1,14 +1,16 @@
-//ViewSplitter.cpp
+//ViewManager.cpp
 #include "ViewManager.h"
 #include "glwidget.h"
+#include "HighlightDisplay.h"
 #include "GtfReader.h"
+#include "MainWindow.h"
 #include <QtGui/QScrollBar>
 
-ViewManager::ViewManager(UiVariables gui)
+ViewManager::ViewManager(MainWindow* window, UiVariables gui)
 {
+	mainWindow = window;
 	ui = gui;
 	activeWidget = NULL;
-	connect(ui.sizeDial, SIGNAL(valueChanged(int)), this, SLOT(setPageSize()) );
 
 	horizontalScrollBar = new QScrollBar();
 	horizontalScrollBar->setOrientation(Qt::Horizontal);
@@ -18,22 +20,18 @@ ViewManager::ViewManager(UiVariables gui)
 	verticalScrollBar = new QScrollBar();
 	verticalScrollBar->setMaximum( 100 );
 	
-		//scrollArea = new QFrame;
 	setBackgroundRole(QPalette::Dark);
-	//	glWidgets = new vector<GLWidget*>;
 	glWidget = new GLWidget(ui, this);
-	glWidget2 = new GLWidget(ui, this);
-	
-	connect(glWidget, SIGNAL(IveBeenClicked(GLWidget*)), this, SLOT(changeSelection(GLWidget*)));
-	connect(glWidget2, SIGNAL(IveBeenClicked(GLWidget*)), this, SLOT(changeSelection(GLWidget*)));
+	//views.push_back(glWidget);
+	uiToGlwidgetConnections(glWidget);
+	//glWidget2 = NULL;//new GLWidget(ui, this);
 	
 	changeSelection(glWidget);
 
 	QFrame* subFrame = new QFrame;
-	
-	QHBoxLayout* hLayout = new QHBoxLayout;
+	hLayout = new QHBoxLayout;
 	hLayout->addWidget(glWidget);
-	hLayout->addWidget(glWidget2);
+	//hLayout->addWidget(glWidget2);
 	hLayout->addWidget(verticalScrollBar);
 	subFrame->setLayout(hLayout);
 	
@@ -42,11 +40,64 @@ ViewManager::ViewManager(UiVariables gui)
 	vLayout->addWidget(horizontalScrollBar);
 	setLayout(vLayout);
 	
+	createConnections();
+}
+
+void ViewManager::createConnections()
+{
+	connect(ui.sizeDial, SIGNAL(valueChanged(int)), this, SLOT(setPageSize()) );	
+	
 	connect(verticalScrollBar, SIGNAL(valueChanged(int)), ui.startDial, SLOT(setValue(int)));
 	connect(ui.startDial, SIGNAL(valueChanged(int)), verticalScrollBar, SLOT(setValue(int)));
+	
+	connect(mainWindow->addViewAction, SIGNAL(triggered()), this, SLOT(addNewView()));
+}
+
+void ViewManager::uiToGlwidgetConnections(GLWidget* active)
+{
+	connect(active, SIGNAL(IveBeenClicked(GLWidget*)), this, SLOT(changeSelection(GLWidget*)));
+	connect(mainWindow, SIGNAL(newFileOpen(QString)), active->trackReader, SLOT(determineOutputFile(QString)));
+	
+    connect(mainWindow->moveAction, SIGNAL(triggered()), active, SLOT(on_moveButton_clicked()));
+    connect(mainWindow->selectAction, SIGNAL(triggered()), active, SLOT(on_selectButton_clicked()));
+    connect(mainWindow->resizeAction, SIGNAL(triggered()), active, SLOT(on_resizeButton_clicked()));
+    
+	/****UNIVERSAL VARIABLES*******/
+	connect(mainWindow->widthDial, SIGNAL(valueChanged(int)),     active, SLOT(updateDisplaySize()));
+    connect(mainWindow->zoom, SIGNAL(valueChanged(int)),          active, SLOT(changeZoom(int)));
+	connect(mainWindow->widthDial, SIGNAL(valueChanged(int)),     active, SLOT(updateDisplay()));
+	connect(mainWindow->zoom, SIGNAL(valueChanged(int)),          active, SLOT(updateDisplay()));
+	connect(mainWindow->scale, SIGNAL(valueChanged(int)),         active, SLOT(updateDisplay()));
+	connect(mainWindow->scale, SIGNAL(valueChanged(int)),         active, SLOT(updateDisplaySize()));
+	connect(mainWindow->startOffset, SIGNAL(valueChanged(int)),   active, SLOT(updateDisplay()));
+	connect(mainWindow->displayLength, SIGNAL(valueChanged(int)), active, SLOT(updateDisplay()));
+	
+	/****Specific Settings**** TODO: Move to display constructors "needs()"*/
+	connect( mainWindow->seqEdit, SIGNAL(textChanged(const QString&)), active->highlight, SLOT(setHighlightSequence(const QString&)));
+	connect( mainWindow->similarityDial, SIGNAL(valueChanged(int)), active->highlight, SLOT(setPercentSimilarity(int)));	
+	
+	/****Print Signals*****/
+	connect( active, SIGNAL(printText(QString)), mainWindow->textArea, SLOT(append(QString)));
+	connect( active, SIGNAL(printHtml(QString)), mainWindow->textArea, SLOT(insertHtml(QString)));
+
+	connect( active, SIGNAL(addGraphMode(AbstractGraph*)), mainWindow, SLOT(addDisplayActions(AbstractGraph*)));
+	
+	connect( active, SIGNAL(addDivider()), mainWindow, SLOT(addDisplayDivider()));
+	active->createButtons();	
 
 }
+
 //public slots
+void ViewManager::addNewView()
+{
+	GLWidget* newGlWidget = new GLWidget(ui, this);
+	views.push_back(newGlWidget);
+	hLayout->insertWidget((int)views.size(), newGlWidget); 
+	uiToGlwidgetConnections(newGlWidget);
+	changeSelection(newGlWidget);
+	mainWindow->openAction->trigger();
+}
+
 void ViewManager::changeSelection(GLWidget* current)
 {
 	if(activeWidget != NULL)

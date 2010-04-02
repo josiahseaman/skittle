@@ -31,8 +31,8 @@ public:
 	NucleotideDisplay(UiVariables* gui, GLWidget* gl);
 	~NucleotideDisplay();
 	void createConnections();
-	void display();
-	GLuint render();
+	virtual void display();
+	virtual GLuint render();
 	void load_nucleotide();
 	void loadTextureCanvas();
 	void color_compress();

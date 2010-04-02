@@ -21,7 +21,6 @@
 
 MainWindow::MainWindow()
 {
-		
 	setDockOptions(QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks);
 	createActions();
 	createMenus();
@@ -30,13 +29,10 @@ MainWindow::MainWindow()
 	createStatusBar();
 	oldScale = 1;
 
-	viewManager	= new ViewManager(getDisplayVariables());
-	setCentralWidget(viewManager);
-  
+	viewManager	= new ViewManager(this, getDisplayVariables());
+	setCentralWidget(viewManager);  
 
 	createConnections();
-	viewManager->glWidget->createButtons();
-	viewManager->glWidget2->createButtons();
 	readSettings();
 }
 
@@ -57,6 +53,7 @@ void MainWindow::addDisplayActions(AbstractGraph* display)
 		viewManager->glWidget->print("Tried to add display mode with no label, aborting...");
 	}
 }
+
 void MainWindow::addDisplayDivider()
 {
 	presetToolBar->addSeparator();	
@@ -310,63 +307,17 @@ void MainWindow::createConnections()
 
     connect(openAction, SIGNAL(triggered()), this, SLOT(open()));
     connect(this, SIGNAL(newFileOpen(QString)), viewManager, SLOT(changeFile(QString)));
-    connect(this, SIGNAL(newFileOpen(QString)), viewManager->glWidget->trackReader, SLOT(determineOutputFile(QString)));
-    connect(this, SIGNAL(newFileOpen(QString)), viewManager->glWidget2->trackReader, SLOT(determineOutputFile(QString)));
 
 	connect(importAction, SIGNAL(triggered()), this, SLOT(openGtf()));
 	connect(this, SIGNAL(newGtfFileOpen(QString)), viewManager, SLOT(addAnnotationDisplay(QString)));	
 	connect(addAnnotationAction, SIGNAL(triggered()), viewManager, SLOT(addBookmark()));
-
-    connect(moveAction, SIGNAL(triggered()), viewManager->glWidget, SLOT(on_moveButton_clicked()));
-    connect(selectAction, SIGNAL(triggered()), viewManager->glWidget, SLOT(on_selectButton_clicked()));
-    connect(resizeAction, SIGNAL(triggered()), viewManager->glWidget, SLOT(on_resizeButton_clicked()));
-    connect(moveAction, SIGNAL(triggered()), viewManager->glWidget2, SLOT(on_moveButton_clicked()));
-    connect(selectAction, SIGNAL(triggered()), viewManager->glWidget2, SLOT(on_selectButton_clicked()));
-    connect(resizeAction, SIGNAL(triggered()), viewManager->glWidget2, SLOT(on_resizeButton_clicked()));
     
 	connect( scale, SIGNAL(valueChanged(int)), this, SLOT(changeScale(int)));
 	
 	connect( doubleDisplayWidth, SIGNAL(clicked()), this, SLOT(doubleWidth()));
-	connect( halveDisplayWidth, SIGNAL(clicked()), this, SLOT(halveWidth()));
-	
-	
-	/****UNIVERSAL VARIABLES*******/
-	connect(widthDial, SIGNAL(valueChanged(int)), viewManager->glWidget, SLOT(updateDisplaySize()));
-    connect(zoom, SIGNAL(valueChanged(int)), viewManager->glWidget, SLOT(changeZoom(int)));
-	connect(widthDial, SIGNAL(valueChanged(int)), viewManager->glWidget, SLOT(updateDisplay()));
-	connect(zoom, SIGNAL(valueChanged(int)), viewManager->glWidget, SLOT(updateDisplay()));
-	connect(scale, SIGNAL(valueChanged(int)), viewManager->glWidget, SLOT(updateDisplay()));
-	connect(scale, SIGNAL(valueChanged(int)), viewManager->glWidget, SLOT(updateDisplaySize()));
-	connect(startOffset, SIGNAL(valueChanged(int)), viewManager->glWidget, SLOT(updateDisplay()));
-	connect(displayLength, SIGNAL(valueChanged(int)), viewManager->glWidget, SLOT(updateDisplay()));
+	connect( halveDisplayWidth, SIGNAL(clicked()), this, SLOT(halveWidth()));	
 
-	/****UNIVERSAL VARIABLES*******/
-	connect(widthDial, SIGNAL(valueChanged(int)), viewManager->glWidget2, SLOT(updateDisplaySize()));
-    connect(zoom, SIGNAL(valueChanged(int)), viewManager->glWidget2, SLOT(changeZoom(int)));
-	connect(widthDial, SIGNAL(valueChanged(int)), viewManager->glWidget2, SLOT(updateDisplay()));
-	connect(zoom, SIGNAL(valueChanged(int)), viewManager->glWidget2, SLOT(updateDisplay()));
-	connect(scale, SIGNAL(valueChanged(int)), viewManager->glWidget2, SLOT(updateDisplay()));
-	connect(scale, SIGNAL(valueChanged(int)), viewManager->glWidget2, SLOT(updateDisplaySize()));
-	connect(startOffset, SIGNAL(valueChanged(int)), viewManager->glWidget2, SLOT(updateDisplay()));
-	connect(displayLength, SIGNAL(valueChanged(int)), viewManager->glWidget2, SLOT(updateDisplay()));
    	/****PRESETS****/
-
-	/****Specific Settings*****/
-	connect( seqEdit, SIGNAL(textChanged(const QString&)), viewManager->glWidget->highlight, SLOT(setHighlightSequence(const QString&)));
-	connect( seqEdit, SIGNAL(textChanged(const QString&)), viewManager->glWidget2->highlight, SLOT(setHighlightSequence(const QString&)));
-	connect( similarityDial, SIGNAL(valueChanged(int)), viewManager->glWidget->highlight, SLOT(setPercentSimilarity(int)));	
-	connect( similarityDial, SIGNAL(valueChanged(int)), viewManager->glWidget2->highlight, SLOT(setPercentSimilarity(int)));
-	
-	/****Print Signals*****/
-	 connect( viewManager->glWidget, SIGNAL(printText(QString)), textArea, SLOT(append(QString)));
-	connect( viewManager->glWidget2, SIGNAL(printText(QString)), textArea, SLOT(append(QString)));
-	 connect( viewManager->glWidget, SIGNAL(printHtml(QString)), textArea, SLOT(insertHtml(QString)));
-	connect( viewManager->glWidget2, SIGNAL(printHtml(QString)), textArea, SLOT(insertHtml(QString)));
-
-	 connect( viewManager->glWidget, SIGNAL(addGraphMode(AbstractGraph*)), this, SLOT(addDisplayActions(AbstractGraph*)));
-	connect( viewManager->glWidget2, SIGNAL(addGraphMode(AbstractGraph*)), this, SLOT(addDisplayActions(AbstractGraph*)));
-	
-	connect( viewManager->glWidget, SIGNAL(addDivider()), this, SLOT(addDisplayDivider()));
 
 }
 
