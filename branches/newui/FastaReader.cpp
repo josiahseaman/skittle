@@ -198,14 +198,17 @@ int FastaReader::readBlock3(int &start)
 	return wordfile.tellg();
 }
 
+string FastaReader::trimFilename(string path)
+{
+	int startI = path.find_last_of('/');
+	int endI = path.size();//path.find_last_of('.');//
+	int sizeI = endI - startI;
+	return path.substr(startI+1, sizeI-1); 
+}
+
 void FastaReader::storeChrName(string path)
 {
-	int startI = path.find_last_of('\\');
-	if(startI == path.size())
-		startI = path.find_last_of('/');
-	int endI = path.find_last_of('.');
-	int sizeI = endI - startI;
-	string name = path.substr(startI+1, sizeI-1);
+	string name = trimFilename(path);
 	glWidget->chromosomeName = name;
 	emit fileNameChanged(name);
 }

@@ -24,7 +24,7 @@ public:
 	void uiToGlwidgetConnections(GLWidget* active);
 	
 public slots:
-	void addNewView();
+	GLWidget* addNewView();
 	void changeSelection(GLWidget*);
 	void changeFile(QString);
 	void setPageSize();

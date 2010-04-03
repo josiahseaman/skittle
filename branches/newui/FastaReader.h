@@ -33,7 +33,7 @@ public:
 	
 	FastaReader(GLWidget* gl);
 	const string* seq();
-	
+	string trimFilename(string path);
 
 public slots:
 	void readFile(QString name);	

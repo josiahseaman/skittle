@@ -56,10 +56,11 @@
 
 using std::string;
 //! [0]
-GLWidget::GLWidget(UiVariables gui, QWidget *parent)
-    : QGLWidget(parent)
+GLWidget::GLWidget(UiVariables gui, QDockWidget* parentWidget)
+    : QGLWidget(parentWidget)
 {
 	ui = gui;
+	parent = parentWidget;
 	setMouseTracking(true);
 	setMinimumWidth(80);
 	setMinimumHeight(300);
@@ -729,5 +730,6 @@ void GLWidget::print(int num1, int num2)
 
 void GLWidget::loadFile(QString fileName)
 {
+	parent->setWindowTitle( reader->trimFilename(fileName.toStdString()).c_str());
 	reader->readFile(fileName);
 }

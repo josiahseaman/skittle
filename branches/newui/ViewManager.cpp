@@ -21,17 +21,10 @@ ViewManager::ViewManager(MainWindow* window, UiVariables gui)
 	verticalScrollBar->setMaximum( 100 );
 	
 	setBackgroundRole(QPalette::Dark);
-	glWidget = new GLWidget(ui, this);
-	//views.push_back(glWidget);
-	uiToGlwidgetConnections(glWidget);
-	//glWidget2 = NULL;//new GLWidget(ui, this);
-	
-	changeSelection(glWidget);
+	//glWidget = new GLWidget(ui, this);
 
 	QFrame* subFrame = new QFrame;
 	hLayout = new QHBoxLayout;
-	hLayout->addWidget(glWidget);
-	//hLayout->addWidget(glWidget2);
 	hLayout->addWidget(verticalScrollBar);
 	subFrame->setLayout(hLayout);
 	
@@ -41,6 +34,9 @@ ViewManager::ViewManager(MainWindow* window, UiVariables gui)
 	setLayout(vLayout);
 	
 	createConnections();
+	
+	glWidget = addNewView();
+	changeSelection(glWidget);
 }
 
 void ViewManager::createConnections()
@@ -88,14 +84,23 @@ void ViewManager::uiToGlwidgetConnections(GLWidget* active)
 }
 
 //public slots
-void ViewManager::addNewView()
+GLWidget* ViewManager::addNewView()
 {
-	GLWidget* newGlWidget = new GLWidget(ui, this);
+	QDockWidget* viewTitleBar = new QDockWidget("Skittle Logo", this);
+	viewTitleBar->setFeatures(QDockWidget::DockWidgetClosable);
+	viewTitleBar->setObjectName("viewTitleBar");
+	mainWindow->viewMenu->addAction(viewTitleBar->toggleViewAction());
+	viewTitleBar->setAllowedAreas(Qt::AllDockWidgetAreas);
+	
+	GLWidget* newGlWidget = new GLWidget(ui, viewTitleBar);
+	viewTitleBar->setWidget(newGlWidget);
+	
+	hLayout->insertWidget((int)views.size(), viewTitleBar, 0); 
 	views.push_back(newGlWidget);
-	hLayout->insertWidget((int)views.size(), newGlWidget); 
 	uiToGlwidgetConnections(newGlWidget);
 	changeSelection(newGlWidget);
 	mainWindow->openAction->trigger();
+	return newGlWidget;
 }
 
 void ViewManager::changeSelection(GLWidget* current)
