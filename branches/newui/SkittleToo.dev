@@ -159,7 +159,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Project]
-UnitCount=41
+UnitCount=42
 FileName=SkittleToo.dev
 Name=SkittleToo
 Type=0
@@ -449,6 +449,16 @@ BuildCmd=
 
 [Unit41]
 FileName=ViewManager.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit42]
+FileName=MdiChildWindow.cpp
 CompileCpp=0
 Folder=
 Compile=1

@@ -27,7 +27,6 @@
 #include "BasicTypes.h"
 #include "UiVariables.h"
 
-class QDockWidget;
 class FastaReader;
 class AbstractGraph;
 class NucleotideDisplay;
@@ -48,7 +47,7 @@ class GLWidget : public QGLWidget
 public:
 	UiVariables ui;
 	string chromosomeName;
-	QDockWidget* parent;
+	QWidget* parent;
 	FastaReader* reader;
 	GtfReader*	trackReader;
 	NucleotideDisplay* nuc;//make this private
@@ -60,7 +59,7 @@ public:
    	HighlightDisplay* highlight;
    	
 	
-    GLWidget(UiVariables gui, QDockWidget* parent = 0);
+    GLWidget(UiVariables gui, QWidget* parent = 0);
     ~GLWidget();
 	void createButtons();
 	void createConnections();
@@ -108,6 +107,7 @@ signals:
 	void addDivider();
 	void AnnotationDisplayAdded(AnnotationDisplay*);
 	void IveBeenClicked(GLWidget*);
+	void displaySizeChanged();
 
 protected:
 	void displayTrack(const vector<track_entry>& track);

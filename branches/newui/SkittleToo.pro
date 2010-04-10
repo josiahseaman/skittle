@@ -22,6 +22,7 @@ HEADERS += AbstractGraph.h \
            GtfReader.h \
            HighlightDisplay.h \
            MainWindow.h \
+           MdiChildWindow.h \
            NucleotideDisplay.h \
            NucleotideLinker.h \
            NucleotideLink.h \
@@ -42,6 +43,7 @@ SOURCES += AbstractGraph.cpp \
            HighlightDisplay.cpp \
            main.cpp \
            MainWindow.cpp \
+           MdiChildWindow.cpp \
            NucleotideDisplay.cpp \
            OligomerDisplay.cpp \
            TextRender.cpp \

@@ -11,6 +11,7 @@ INPUT(
 ./debug\HighlightDisplay.o
 ./debug\main.o
 ./debug\MainWindow.o
+./debug\MdiChildWindow.o
 ./debug\NucleotideDisplay.o
 ./debug\OligomerDisplay.o
 ./debug\TextRender.o
@@ -26,6 +27,7 @@ INPUT(
 ./debug\moc_GtfReader.o
 ./debug\moc_HighlightDisplay.o
 ./debug\moc_MainWindow.o
+./debug\moc_MdiChildWindow.o
 ./debug\moc_NucleotideDisplay.o
 ./debug\moc_OligomerDisplay.o
 ./debug\moc_ViewManager.o

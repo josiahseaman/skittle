@@ -3,7 +3,7 @@
 #define VIEWMANAGER
 
 #include <QtCore>
-#include <QFrame>
+#include <QMdiArea>
 #include <vector>
 #include "UiVariables.h"
 
@@ -11,7 +11,7 @@ class GLWidget;
 class MainWindow;
 class QHBoxLayout;
 
-class ViewManager : public QFrame
+class ViewManager : public QMdiArea//QFrame//
 {
 	Q_OBJECT
 
@@ -27,8 +27,6 @@ public slots:
 	GLWidget* addNewView();
 	void changeSelection(GLWidget*);
 	void changeFile(QString);
-	void setPageSize();
-	void setHorizontalWidth(int);
 	void addAnnotationDisplay(QString);
 	void addBookmark();
 	
@@ -38,15 +36,7 @@ private:
 	std::vector<GLWidget*> views;
 	MainWindow* mainWindow;
 	GLWidget* activeWidget;
-	UiVariables ui;
-	QHBoxLayout* hLayout;
-	QScrollBar* horizontalScrollBar;
-	QScrollBar* verticalScrollBar;
-	//	vector<GLWidget*> glwidgets;
-
-	void connectWidget();
-	void disconnectWidget();
-	
+	UiVariables ui;	
 };
 
 

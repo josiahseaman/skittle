@@ -56,13 +56,13 @@
 
 using std::string;
 //! [0]
-GLWidget::GLWidget(UiVariables gui, QDockWidget* parentWidget)
+GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
     : QGLWidget(parentWidget)
 {
 	ui = gui;
 	parent = parentWidget;
 	setMouseTracking(true);
-	setMinimumWidth(80);
+	setMinimumWidth(450);
 	setMinimumHeight(300);
 	frame = 0;
 	
@@ -136,7 +136,7 @@ void GLWidget::createConnections()
 
 QSize GLWidget::minimumSizeHint() const
 {
-    return QSize(80, 60);
+    return QSize(160, 60);
 }
 
 QSize GLWidget::sizeHint() const
@@ -151,6 +151,7 @@ double GLWidget::getZoom()
 
 void GLWidget::setTotalDisplayWidth()
 {	
+	//print("SetWidth: ", ui.widthDial->value());
 	int total_width = border;
 	for(int i = 0; i < graphs.size(); ++i)
 	{
@@ -161,6 +162,8 @@ void GLWidget::setTotalDisplayWidth()
 	
 	int val = (int)max(0.0, (double)(total_width)*z - canvasWidth ) ;
 	emit totalWidthChanged(val); 
+	//setMinimumWidth(val*6);//parent->
+	//print("Width ", val);
 }
 
 //***********SLOTS*******************
@@ -179,7 +182,7 @@ const string* GLWidget::seq()
 
 void GLWidget::displayString(const string* seq)
 {
-	print("New sequence received.  Size:", seq->size());
+	//print("New sequence received.  Size:", seq->size());
 
 	for(int i = 0; i < graphs.size(); ++i)
 	{
@@ -244,6 +247,7 @@ void GLWidget::updateDisplay()
 
 void GLWidget::updateDisplaySize()
 {
+	//print("Updating Size: ", ui.sizeDial->value());
 	QSize dimensions = size();
 	double pixelHeight = dimensions.height();
 	int w = ui.widthDial->value();
@@ -254,6 +258,7 @@ void GLWidget::updateDisplaySize()
 	ui.sizeDial->setValue( w * display_lines );
 	if(ui.sizeDial->value() !=  w * display_lines )
 		updateDisplay();
+	emit displaySizeChanged();
 }
 
 /*AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fName)
@@ -730,6 +735,7 @@ void GLWidget::print(int num1, int num2)
 
 void GLWidget::loadFile(QString fileName)
 {
-	parent->setWindowTitle( reader->trimFilename(fileName.toStdString()).c_str());
+	if(parent != NULL)
+		parent->setWindowTitle( reader->trimFilename(fileName.toStdString()).c_str());
 	reader->readFile(fileName);
 }

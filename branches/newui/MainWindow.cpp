@@ -303,8 +303,6 @@ void MainWindow::createConnections()
 	/******Internal UI Logic*********/
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close())); 
 
-
-
     connect(openAction, SIGNAL(triggered()), this, SLOT(open()));
     connect(this, SIGNAL(newFileOpen(QString)), viewManager, SLOT(changeFile(QString)));
 

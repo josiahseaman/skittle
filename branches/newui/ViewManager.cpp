@@ -4,35 +4,20 @@
 #include "HighlightDisplay.h"
 #include "GtfReader.h"
 #include "MainWindow.h"
+#include "MdiChildWindow.h"
 #include <QtGui/QScrollBar>
 
 ViewManager::ViewManager(MainWindow* window, UiVariables gui)
+:QMdiArea(window)
 {
 	mainWindow = window;
 	ui = gui;
 	activeWidget = NULL;
-
-	horizontalScrollBar = new QScrollBar();
-	horizontalScrollBar->setOrientation(Qt::Horizontal);
-    horizontalScrollBar->setMaximum (50);
-    horizontalScrollBar->setPageStep(100);
-    horizontalScrollBar->setSingleStep(10);
-	verticalScrollBar = new QScrollBar();
-	verticalScrollBar->setMaximum( 100 );
 	
 	setBackgroundRole(QPalette::Dark);
 	//glWidget = new GLWidget(ui, this);
 
-	QFrame* subFrame = new QFrame;
-	hLayout = new QHBoxLayout;
-	hLayout->addWidget(verticalScrollBar);
-	subFrame->setLayout(hLayout);
-	
-	QVBoxLayout* vLayout = new QVBoxLayout;
-	vLayout->addWidget(subFrame);
-	vLayout->addWidget(horizontalScrollBar);
-	setLayout(vLayout);
-	
+
 	createConnections();
 	
 	glWidget = addNewView();
@@ -40,12 +25,7 @@ ViewManager::ViewManager(MainWindow* window, UiVariables gui)
 }
 
 void ViewManager::createConnections()
-{
-	connect(ui.sizeDial, SIGNAL(valueChanged(int)), this, SLOT(setPageSize()) );	
-	
-	connect(verticalScrollBar, SIGNAL(valueChanged(int)), ui.startDial, SLOT(setValue(int)));
-	connect(ui.startDial, SIGNAL(valueChanged(int)), verticalScrollBar, SLOT(setValue(int)));
-	
+{	
 	connect(mainWindow->addViewAction, SIGNAL(triggered()), this, SLOT(addNewView()));
 }
 
@@ -86,18 +66,14 @@ void ViewManager::uiToGlwidgetConnections(GLWidget* active)
 //public slots
 GLWidget* ViewManager::addNewView()
 {
-	QDockWidget* viewTitleBar = new QDockWidget("Skittle Logo", this);
-	viewTitleBar->setFeatures(QDockWidget::DockWidgetClosable);
-	viewTitleBar->setObjectName("viewTitleBar");
-	mainWindow->viewMenu->addAction(viewTitleBar->toggleViewAction());
-	viewTitleBar->setAllowedAreas(Qt::AllDockWidgetAreas);
+	MdiChildWindow* child = new MdiChildWindow(ui);
+    addSubWindow(child);
+    child->show();
 	
-	GLWidget* newGlWidget = new GLWidget(ui, viewTitleBar);
-	viewTitleBar->setWidget(newGlWidget);
-	
-	hLayout->insertWidget((int)views.size(), viewTitleBar, 0); 
-	views.push_back(newGlWidget);
+	GLWidget* newGlWidget = child->glWidget;
 	uiToGlwidgetConnections(newGlWidget);
+	
+	views.push_back(newGlWidget);
 	changeSelection(newGlWidget);
 	mainWindow->openAction->trigger();
 	return newGlWidget;
@@ -107,12 +83,11 @@ void ViewManager::changeSelection(GLWidget* current)
 {
 	if(activeWidget != NULL)
 	{
-		disconnectWidget();
+		//disconnectWidget();
 	}
 		activeWidget = current;
-		connectWidget();
+		//connectWidget();
 		
-		setPageSize();
 		activeWidget->setTotalDisplayWidth();
 	//}
 }
@@ -123,34 +98,6 @@ void ViewManager::changeFile(QString fileName)
 	{
 		activeWidget->loadFile(fileName);
 	}
-}
-
-void ViewManager::setPageSize()
-{
-	if( activeWidget != NULL)
-		verticalScrollBar->setMaximum( max(0, (int)(activeWidget->seq()->size() - ui.widthDial->value()) ) );
-	verticalScrollBar->setPageStep(ui.sizeDial->value());
-}
-
-void ViewManager::connectWidget()
-{		    	
-	connect(horizontalScrollBar, SIGNAL(valueChanged(int)), activeWidget, SLOT(slideHorizontal(int)));
-	connect(activeWidget, SIGNAL(xOffsetChange(int)), horizontalScrollBar, SLOT(setValue(int)));	
-	//connect resizing horizontalScroll
-	connect(activeWidget, SIGNAL(totalWidthChanged(int)), this, SLOT(setHorizontalWidth(int)));
-}
-
-void ViewManager::disconnectWidget()
-{
-	disconnect(horizontalScrollBar, SIGNAL(valueChanged(int)), activeWidget, SLOT(slideHorizontal(int)));
-	disconnect(activeWidget, SIGNAL(xOffsetChange(int)), horizontalScrollBar, SLOT(setValue(int)));		
-	//disconnect resizing horizontalScroll
-	disconnect(activeWidget, SIGNAL(totalWidthChanged(int)), this, SLOT(setHorizontalWidth(int)));
-}
-
-void ViewManager::setHorizontalWidth(int val)
-{
-	horizontalScrollBar->setMaximum( max(0, val) );
 }
 
 void ViewManager::addAnnotationDisplay(QString fileName)

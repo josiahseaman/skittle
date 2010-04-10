@@ -11,6 +11,7 @@ INPUT(
 ./release\HighlightDisplay.o
 ./release\main.o
 ./release\MainWindow.o
+./release\MdiChildWindow.o
 ./release\NucleotideDisplay.o
 ./release\OligomerDisplay.o
 ./release\TextRender.o
@@ -26,6 +27,7 @@ INPUT(
 ./release\moc_GtfReader.o
 ./release\moc_HighlightDisplay.o
 ./release\moc_MainWindow.o
+./release\moc_MdiChildWindow.o
 ./release\moc_NucleotideDisplay.o
 ./release\moc_OligomerDisplay.o
 ./release\moc_ViewManager.o
