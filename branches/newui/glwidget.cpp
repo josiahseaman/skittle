@@ -241,6 +241,7 @@ void GLWidget::slideHorizontal(int x)
 void GLWidget::updateDisplay()
 {
 	setTotalDisplayWidth();
+	//updateDisplaySize();
 	//print("UpdateGL");
 	redraw();
 }
@@ -255,10 +256,12 @@ void GLWidget::updateDisplaySize()
 	int display_lines = static_cast<int>(pixelHeight / 3.0 * zoom + 0.5);
 	
 	ui.sizeDial->setSingleStep(w * 10);
-	ui.sizeDial->setValue( w * display_lines );
 	if(ui.sizeDial->value() !=  w * display_lines )
-		updateDisplay();
-	emit displaySizeChanged();
+	{
+		ui.sizeDial->setValue( w * display_lines );
+		emit displaySizeChanged();
+		//updateDisplay();
+	}
 }
 
 /*AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fName)
@@ -498,6 +501,7 @@ void GLWidget::resizeGL(int width, int height)
     
     glMatrixMode(GL_MODELVIEW);
     setTotalDisplayWidth();
+    updateDisplaySize();
 }
 
 void GLWidget::mousePressEvent(QMouseEvent *event)

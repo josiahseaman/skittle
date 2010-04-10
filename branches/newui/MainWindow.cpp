@@ -22,18 +22,22 @@
 MainWindow::MainWindow()
 {
 	setDockOptions(QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks);
+	setWindowTitle( "Skittle Genome Visualizer");
 	createActions();
 	createMenus();
 	createToolbars();
 	createDocks();
 	createStatusBar();
 	oldScale = 1;
-
+	createUiConnections();
+	
 	viewManager	= new ViewManager(this, getDisplayVariables());
 	setCentralWidget(viewManager);  
+	createFileConnections();
 
-	createConnections();
 	readSettings();
+	
+	//openAction->trigger();
 }
 
 void MainWindow::addDisplayActions(AbstractGraph* display)
@@ -298,10 +302,17 @@ void MainWindow::createStatusBar()
 	//statusBar()->addPermanentWidget(processState);
 	statusBar()->showMessage(tr("Ready"));
 }
-void MainWindow::createConnections()
-{
-	/******Internal UI Logic*********/
+void MainWindow::createUiConnections()
+{	/******Internal UI Logic*********/
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close())); 
+    
+	connect( scale, SIGNAL(valueChanged(int)), this, SLOT(changeScale(int)));
+	
+	connect( doubleDisplayWidth, SIGNAL(clicked()), this, SLOT(doubleWidth()));
+	connect( halveDisplayWidth, SIGNAL(clicked()), this, SLOT(halveWidth()));	
+}
+void MainWindow::createFileConnections()
+{
 
     connect(openAction, SIGNAL(triggered()), this, SLOT(open()));
     connect(this, SIGNAL(newFileOpen(QString)), viewManager, SLOT(changeFile(QString)));
@@ -310,13 +321,6 @@ void MainWindow::createConnections()
 	connect(this, SIGNAL(newGtfFileOpen(QString)), viewManager, SLOT(addAnnotationDisplay(QString)));	
 	connect(addAnnotationAction, SIGNAL(triggered()), viewManager, SLOT(addBookmark()));
     
-	connect( scale, SIGNAL(valueChanged(int)), this, SLOT(changeScale(int)));
-	
-	connect( doubleDisplayWidth, SIGNAL(clicked()), this, SLOT(doubleWidth()));
-	connect( halveDisplayWidth, SIGNAL(clicked()), this, SLOT(halveWidth()));	
-
-   	/****PRESETS****/
-
 }
 
 UiVariables MainWindow::getDisplayVariables()
@@ -353,9 +357,9 @@ void MainWindow::open(QString fileName)
 
 void MainWindow::changeWindowName(std::string name)
 {
-	string title = "Skittle - ";
+	string title = "Skittle Genome Visualizer";
 	title.append(name);
-	setWindowTitle(QApplication::translate("SkittleGUI", title.c_str(), 0, QApplication::UnicodeUTF8));
+	setWindowTitle( "Skittle Genome Visualizer");
 }
 
 void MainWindow::openGtf()

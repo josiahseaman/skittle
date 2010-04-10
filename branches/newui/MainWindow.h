@@ -66,7 +66,8 @@ private:
 	void createContextMenus();
 	void createToolbars();
 	void createStatusBar();
-	void createConnections();
+	void createUiConnections();
+	void createFileConnections();
 	UiVariables getDisplayVariables();
 	bool loadfile(const QString &filename);
 	void readSettings();

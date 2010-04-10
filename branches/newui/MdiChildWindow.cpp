@@ -13,7 +13,7 @@ MdiChildWindow::MdiChildWindow(UiVariables gui)
 	verticalScrollBar->setMaximum( 100 );
 
 	subFrame = new QFrame(this);
-	glWidget = new GLWidget(ui, subFrame);
+	glWidget = new GLWidget(ui, this);
 	QHBoxLayout* hLayout = new QHBoxLayout;
 	hLayout->addWidget(glWidget);
 	hLayout->addWidget(verticalScrollBar);
@@ -44,7 +44,6 @@ void MdiChildWindow::connectWidget()
 {
 	connect(horizontalScrollBar, SIGNAL(valueChanged(int)), glWidget, SLOT(slideHorizontal(int)));
 	connect(glWidget, SIGNAL(xOffsetChange(int)), horizontalScrollBar, SLOT(setValue(int)));	
-	//connect resizing horizontalScroll
 	connect(glWidget, SIGNAL(totalWidthChanged(int)), this, SLOT(setHorizontalWidth(int)));
 }
 
