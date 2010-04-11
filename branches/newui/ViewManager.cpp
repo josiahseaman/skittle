@@ -32,7 +32,6 @@ void ViewManager::createConnections()
 void ViewManager::uiToGlwidgetConnections(GLWidget* active)
 {
 	connect(active, SIGNAL(IveBeenClicked(GLWidget*)), this, SLOT(changeSelection(GLWidget*)));
-	connect(mainWindow, SIGNAL(newFileOpen(QString)), active->trackReader, SLOT(determineOutputFile(QString)));
 	
     connect(mainWindow->moveAction, SIGNAL(triggered()), active, SLOT(on_moveButton_clicked()));
     connect(mainWindow->selectAction, SIGNAL(triggered()), active, SLOT(on_selectButton_clicked()));
@@ -97,6 +96,7 @@ void ViewManager::changeFile(QString fileName)
 	if(activeWidget != NULL)
 	{
 		activeWidget->loadFile(fileName);
+		activeWidget->trackReader->determineOutputFile(fileName);
 	}
 }
 

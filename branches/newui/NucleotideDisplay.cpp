@@ -55,12 +55,12 @@ void NucleotideDisplay::createConnections()
 void NucleotideDisplay::display()
 {
 	checkVariables();
-	if( !upToDate )
-	{
-    	//glDeleteLists(display_object, 1);
-		display_object = render();
-	}
-	glCallList(display_object);
+	glPushMatrix();
+	glScaled(1,-1,1);
+		if(!upToDate)
+			load_nucleotide();
+		textureBuffer->display();
+	glPopMatrix();
 }
 
 GLuint NucleotideDisplay::render()

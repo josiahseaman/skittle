@@ -98,14 +98,17 @@ void GtfReader::addBookmark()//int start, int end)
 void GtfReader::determineOutputFile(QString file)
 {
 	string filename = file.toStdString();
-	
 	outputFilename = filename;
 	outputFilename.append("-skittle_notes.gtf");
+	chrName = trimFilename(filename);
 }
 
-void GtfReader::storeChrName(string seqName)
+string GtfReader::trimFilename(string path)
 {
-	chrName = seqName;
+	int startI = path.find_last_of('/');
+	int endI = path.size();//path.find_last_of('.');//
+	int sizeI = endI - startI;
+	return path.substr(startI+1, sizeI-1); 
 }
 
 vector<track_entry>  GtfReader::readFile(QString filename)

@@ -21,6 +21,17 @@ HighlightDisplay::~HighlightDisplay(){
     glDeleteLists(display_object, 1);
 }
 
+void HighlightDisplay::display()
+{
+	checkVariables();
+	glPushMatrix();
+	glScaled(1,-1,1);
+		if(!upToDate)
+			assignColors();
+		textureBuffer->display();
+	glPopMatrix();
+}
+
 GLuint HighlightDisplay::render()
 {
 	GLuint list = glGenLists(1);

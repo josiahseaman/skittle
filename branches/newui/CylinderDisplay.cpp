@@ -67,12 +67,13 @@ void CylinderDisplay::display()
 	if( !upToDate )
 	{
     	//glDeleteLists(display_object, 1);
-		display_object = render();
+		//display_object = render();
 	}
 	glPushMatrix();
 		glTranslated(width()/2, 0, 0);
 		glRotated(turnCylinder, 0,1,0);//rotate cylinder around Y	
-		glCallList(display_object);
+		//glCallList(display_object);
+		render();
 	glPopMatrix();
 }
 
@@ -83,7 +84,7 @@ void CylinderDisplay::display()
 GLuint CylinderDisplay::render()
 {
 	GLuint square = glGenLists(1);
-	GLuint list = glGenLists(1);
+	//GLuint list = glGenLists(1);
 	
 	glNewList(square, GL_COMPILE);
 		createSquare();
@@ -96,7 +97,7 @@ GLuint CylinderDisplay::render()
 		//ntLinker->tie_up_loose_ends(width_list);
 		//ntLinker->cap_movement(width_list, 1);
 
-    glNewList(list, GL_COMPILE);
+    //glNewList(list, GL_COMPILE);
 		
 	if( !width_list.empty() )
 	{
@@ -141,10 +142,10 @@ GLuint CylinderDisplay::render()
 		glPopMatrix();
 	}		
 
-    glEndList();
+    //glEndList();
     upToDate = true;
     
-    return (list);
+    return 0;//(list);
 }
 
 int CylinderDisplay::width()

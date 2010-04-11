@@ -17,6 +17,7 @@ class HighlightDisplay : public NucleotideDisplay
 public:	
 	HighlightDisplay(UiVariables* gui, GLWidget* gl);
 	~HighlightDisplay();
+	void display();
 	GLuint render();
 	void assignColors();
 	void calculate();

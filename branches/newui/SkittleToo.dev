@@ -1,24 +1,4 @@
-[Unit1]
-FileName=window.cpp
-CompileCpp=0
-Folder=SkittleToo
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit2]
-FileName=AbstractGraph.h
-CompileCpp=0
-Folder=SkittleToo
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit3]
 FileName=BasicTypes.h
 CompileCpp=0
 Folder=SkittleToo
@@ -28,8 +8,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit6]
-FileName=glwidget.h
+[Unit3]
+FileName=FastaReader.h
 CompileCpp=0
 Folder=SkittleToo
 Compile=1
@@ -38,7 +18,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit7]
+[Unit6]
 FileName=NucleotideDisplay.h
 CompileCpp=0
 Folder=SkittleToo
@@ -48,7 +28,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit8]
+[Unit7]
 FileName=QtSkittle_private.h
 CompileCpp=0
 Folder=SkittleToo
@@ -58,7 +38,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit9]
+[Unit8]
 FileName=TextureCanvas.h
 CompileCpp=0
 Folder=SkittleToo
@@ -69,7 +49,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit10]
-FileName=window.h
+FileName=FrequencyMap.cpp
 CompileCpp=0
 Folder=SkittleToo
 Compile=1
@@ -79,16 +59,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit13]
-FileName=glwidget.cpp
-CompileCpp=0
-Folder=SkittleToo
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit15]
 FileName=NucleotideDisplay.cpp
 CompileCpp=0
 Folder=SkittleToo
@@ -98,17 +68,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit16]
-FileName=TextureCanvas.cpp
-CompileCpp=0
-Folder=SkittleToo
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit17]
+[Unit15]
 FileName=AbstractGraph.cpp
 CompileCpp=0
 Folder=
@@ -118,7 +78,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit18]
+[Unit16]
 FileName=SkittleToo.pro
 CompileCpp=0
 Folder=SkittleToo
@@ -128,7 +88,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit19]
+[Unit17]
 FileName=AlignmentDisplay.cpp
 CompileCpp=0
 Folder=
@@ -138,7 +98,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit20]
+[Unit18]
 FileName=AlignmentDisplay.h
 CompileCpp=0
 Folder=
@@ -148,7 +108,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit21]
+[Unit19]
 FileName=TextRender.cpp
 CompileCpp=0
 Folder=
@@ -158,8 +118,28 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit20]
+FileName=TextRender.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit21]
+FileName=GtfReader.cpp
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Project]
-UnitCount=42
+UnitCount=41
 FileName=SkittleToo.dev
 Name=SkittleToo
 Type=0
@@ -208,26 +188,6 @@ ProductVersion=
 AutoIncBuildNr=0
 
 [Unit22]
-FileName=TextRender.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit23]
-FileName=GtfReader.cpp
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-CompileCpp=0
-
-[Unit24]
 FileName=GtfReader.h
 CompileCpp=0
 Folder=
@@ -237,17 +197,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit25]
+[Unit23]
 FileName=AnnotationDisplay.h
-CompileCpp=0
 Folder=
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+CompileCpp=0
 
-[Unit26]
+[Unit24]
 FileName=AnnotationDisplay.cpp
 CompileCpp=0
 Folder=
@@ -257,7 +217,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit27]
+[Unit25]
 FileName=CylinderDisplay.cpp
 CompileCpp=0
 Folder=
@@ -267,17 +227,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit29]
-FileName=NucleotideLinker.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit28]
+[Unit26]
 FileName=CylinderDisplay.h
 CompileCpp=0
 Folder=
@@ -287,8 +237,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit30]
-FileName=NucleotideLinker.cpp
+[Unit27]
+FileName=NucleotideLinker.h
 CompileCpp=0
 Folder=
 Compile=1
@@ -297,7 +247,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit31]
+[Unit29]
 FileName=NucleotideLink.h
 CompileCpp=0
 Folder=
@@ -307,7 +257,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit32]
+[Unit28]
+FileName=NucleotideLinker.cpp
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit30]
 FileName=UiVariables.h
 CompileCpp=0
 Folder=
@@ -317,7 +277,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit33]
+[Unit31]
 FileName=MainWindow.cpp
 CompileCpp=0
 Folder=SkittleToo
@@ -327,7 +287,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit34]
+[Unit32]
 FileName=MainWindow.h
 CompileCpp=0
 Folder=SkittleToo
@@ -337,7 +297,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit35]
+[Unit33]
 FileName=MainPanel.cpp
 CompileCpp=0
 Folder=
@@ -347,7 +307,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit36]
+[Unit34]
 FileName=HighlightDisplay.cpp
 CompileCpp=0
 Folder=SkittleToo
@@ -357,27 +317,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit38]
-FileName=OligomerDisplay.cpp
-CompileCpp=0
-Folder=SkittleToo
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit39]
-FileName=OligomerDisplay.h
-CompileCpp=0
-Folder=SkittleToo
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit37]
+[Unit35]
 FileName=HighlightDisplay.h
 CompileCpp=0
 Folder=SkittleToo
@@ -387,7 +327,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit40]
+[Unit36]
+FileName=OligomerDisplay.cpp
+CompileCpp=0
+Folder=SkittleToo
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit38]
 FileName=ViewManager.cpp
 CompileCpp=0
 Folder=
@@ -397,8 +347,38 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit39]
+FileName=ViewManager.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit37]
+FileName=OligomerDisplay.h
+CompileCpp=0
+Folder=SkittleToo
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit40]
+FileName=MdiChildWindow.cpp
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit11]
-FileName=FastaReader.cpp
+FileName=glwidget.cpp
 CompileCpp=0
 Folder=SkittleToo
 Compile=1
@@ -408,16 +388,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit4]
-FileName=FastaReader.h
-CompileCpp=0
-Folder=SkittleToo
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit5]
 FileName=FrequencyMap.h
 CompileCpp=0
 Folder=SkittleToo
@@ -427,8 +397,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit12]
-FileName=FrequencyMap.cpp
+[Unit5]
+FileName=glwidget.h
 CompileCpp=0
 Folder=SkittleToo
 Compile=1
@@ -437,7 +407,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit14]
+[Unit12]
 FileName=main.cpp
 CompileCpp=0
 Folder=SkittleToo
@@ -447,8 +417,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit14]
+FileName=TextureCanvas.cpp
+CompileCpp=0
+Folder=SkittleToo
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit41]
-FileName=ViewManager.h
+FileName=MdiChildWindow.h
 CompileCpp=0
 Folder=
 Compile=1
@@ -461,6 +441,29 @@ BuildCmd=
 FileName=MdiChildWindow.cpp
 CompileCpp=0
 Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit43]
+FileName=MdiChildWindow.h
+
+[Unit1]
+FileName=AbstractGraph.h
+CompileCpp=0
+Folder=SkittleToo
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit9]
+FileName=FastaReader.cpp
+CompileCpp=0
+Folder=SkittleToo
 Compile=1
 Link=1
 Priority=1000
