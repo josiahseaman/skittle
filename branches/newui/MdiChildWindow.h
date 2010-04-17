@@ -18,11 +18,11 @@ public:
 	QScrollBar* horizontalScrollBar;
 	QScrollBar* verticalScrollBar;
 	QFrame* subFrame;
-	GLWidget* glWidget;	
-	QFrame* largeFrame;
+	GLWidget* glWidget;
 	UiVariables ui;
 	
 	MdiChildWindow(UiVariables gui);
+	void closeEvent(QCloseEvent *event);
 	//createConnections();
 	void connectWidget();
 	

@@ -21,6 +21,11 @@ FastaReader::FastaReader( GLWidget* gl)
 	blockSize = 5000000;
 	progressBar = NULL;
 }
+FastaReader::~FastaReader()
+{
+	sequence.clear();
+	sequence.resize(0);
+}
 
 bool FastaReader::initFile(string file)
 {

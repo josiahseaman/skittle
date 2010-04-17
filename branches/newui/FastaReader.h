@@ -32,6 +32,7 @@ class FastaReader : public QObject
 public:
 	
 	FastaReader(GLWidget* gl);
+	~FastaReader();
 	const string* seq();
 	string trimFilename(string path);
 

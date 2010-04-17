@@ -69,11 +69,11 @@ GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
 	setupColorTable();
 	reader = new FastaReader(this);
 	connect(reader, SIGNAL(newFileRead(const string*)), this, SLOT(displayString(const string*)));
+    trackReader = new GtfReader(ui);
 	
     nuc = new NucleotideDisplay(&ui, this);
     freq = new FrequencyMap(&ui, this);
     freq->link(nuc);
-    trackReader = new GtfReader(ui);
     cylinder = new CylinderDisplay(&ui, this);
    	align = new AlignmentDisplay(&ui, this);
    	olig = new OligomerDisplay(&ui, this);
@@ -113,7 +113,14 @@ GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
 
 GLWidget::~GLWidget()
 {
-    makeCurrent();
+	delete reader;
+	delete trackReader;
+	
+	for(int i = graphs.size() -1; i >= 0; --i)
+	{
+		delete graphs[i];
+	}
+    makeCurrent();//TODO: What does this do???
 }
 
 void GLWidget::createButtons()
@@ -190,6 +197,7 @@ void GLWidget::displayString(const string* seq)
 	}
 	ui.startDial->setValue(2);//TODO: bit of a cludge to reset the start position
 	ui.startDial->setValue(1);
+	emit displaySizeChanged();
 }
 
 void GLWidget::on_moveButton_clicked()

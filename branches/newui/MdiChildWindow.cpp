@@ -19,7 +19,6 @@ MdiChildWindow::MdiChildWindow(UiVariables gui)
 	hLayout->addWidget(verticalScrollBar);
 	subFrame->setLayout(hLayout);//
 	
-	//largeFrame = new QFrame(this);
 	setWindowTitle("Skittle Logo");
 	QVBoxLayout* vLayout = new QVBoxLayout;
 	vLayout->addWidget(subFrame);
@@ -39,6 +38,16 @@ MdiChildWindow::MdiChildWindow(UiVariables gui)
 	setPageSize();
 
 }	
+
+void MdiChildWindow::closeEvent(QCloseEvent *event)
+{
+	//QScrollBar* horizontalScrollBar;
+	//QScrollBar* verticalScrollBar;
+	//QFrame* subFrame;
+	delete glWidget;	
+	
+	event->accept();
+}
 
 void MdiChildWindow::connectWidget()
 {
