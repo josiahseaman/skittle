@@ -1,6 +1,7 @@
 #include <QtGui>
 #include <QScrollArea>
 #include <QtGui/QScrollBar>
+#include <QtGui/QCheckBox>
 
 #include <iostream>
 #include <string>
@@ -165,6 +166,14 @@ void MainWindow::createToolbars()
 	
 	settingToolBar = addToolBar("Global Settings");
 	settingToolBar->setObjectName("setting");
+
+	QLabel* activeW = new QLabel("Active Window:");
+	QFont boldFont = activeW->font();
+	boldFont.setBold(true);
+	activeW->setFont(boldFont);	
+	settingToolBar->addWidget(activeW);
+	settingToolBar->addSeparator();
+	
 	settingToolBar->addWidget(new QLabel("Display Width"));
 	widthDial = new QSpinBox(this);
     widthDial->setMinimum(1);
@@ -204,7 +213,7 @@ void MainWindow::createToolbars()
 	displayLength = new QSpinBox(this);
     displayLength->setMinimum(1000);
     displayLength->setMaximum(400000000);//something very large MAX_INT?
-    displayLength->setSingleStep(1);
+    displayLength->setSingleStep(1000);
     displayLength->setValue(10000);	
 	settingToolBar->addWidget(displayLength);
 	
@@ -215,6 +224,19 @@ void MainWindow::createToolbars()
     wordLength->setSingleStep(1);
     wordLength->setValue(3);	
 	settingToolBar->addWidget(wordLength);
+	
+	//settingToolBar->addSeparator();
+
+	QLabel* multiW = new QLabel("Multiple Windows:");
+	multiW->setFont(boldFont);	
+	settingToolBar->addWidget(multiW);
+	settingToolBar->addSeparator();
+	//QActionGroup* multiGroup = new QActionGroup(this);
+	syncCheckBox = new QCheckBox("Synchronize Views", this);
+    syncCheckBox->setCheckState(Qt::Checked);	
+	//multiGroup->addWidget(syncCheckBox);
+	settingToolBar->addWidget(syncCheckBox);
+	
 	
 	toolBarMenu->addAction(settingToolBar->toggleViewAction());
 	addToolBar(Qt::RightToolBarArea,presetToolBar);

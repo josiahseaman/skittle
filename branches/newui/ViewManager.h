@@ -5,6 +5,7 @@
 #include <QtCore>
 #include <QMdiArea>
 #include <vector>
+#include "MdiChildWindow.h"
 #include "UiVariables.h"
 
 class GLWidget;
@@ -17,10 +18,10 @@ class ViewManager : public QMdiArea//QFrame//
 
 public:
 	GLWidget* glWidget;
-	//GLWidget* glWidget2;
 	
 	ViewManager(MainWindow* window, UiVariables gui);
 	void createConnections();
+	void connectLocalCopy(GLWidget* active, UiVariables local);
 	void uiToGlwidgetConnections(GLWidget* active);
 	
 public slots:
@@ -29,14 +30,22 @@ public slots:
 	void changeFile(QString);
 	void addAnnotationDisplay(QString);
 	void addBookmark();
-	
+	void handleWindowSync();
 	
 	
 private:
-	std::vector<GLWidget*> views;
+	std::vector<MdiChildWindow*> views;
 	MainWindow* mainWindow;
 	GLWidget* activeWidget;
 	UiVariables ui;	
+	
+	void broadcastLocalValues(UiVariables local);
+	void broadcastPublicValues(UiVariables local);
+	UiVariables copyUi();
+	void connectVariables(GLWidget*, UiVariables);
+	void disconnectVariables(GLWidget*, UiVariables);
+	UiVariables vars(GLWidget* active);
+	
 };
 
 

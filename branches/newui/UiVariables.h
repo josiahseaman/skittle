@@ -22,6 +22,17 @@ UiVariables()
     startDial = NULL;
     scaleDial = NULL;
     zoomDial = NULL;
+    oligDial = NULL;
+}
+
+UiVariables(const UiVariables& copy)
+{
+    sizeDial  = copy.sizeDial;
+    widthDial = copy.widthDial;
+    startDial = copy.startDial;
+    scaleDial = copy.scaleDial;
+    zoomDial  = copy.zoomDial;
+    oligDial  = copy.oligDial;
 }
 
 };

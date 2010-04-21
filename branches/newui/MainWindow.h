@@ -26,6 +26,7 @@ class QScrollBar;
 class QFrame;
 class QLineEdit;
 class QTabWidget;
+class QCheckBox;
 
 class MainWindow : public QMainWindow
 {
@@ -105,6 +106,7 @@ private:
 	QSpinBox *startOffset;
 	QSpinBox *displayLength;
 	QSpinBox *wordLength;
+	QCheckBox* syncCheckBox;
 	
 	
 	QAction *moveAction;
