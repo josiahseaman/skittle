@@ -23,6 +23,11 @@ public:
 	void createConnections();
 	void connectLocalCopy(GLWidget* active, UiVariables local);
 	void uiToGlwidgetConnections(GLWidget* active);
+
+signals:
+	//void startChange(int);
+	void startChangeFromOffset(int);
+	//void startChangeFromPublicStart(int);
 	
 public slots:
 	GLWidget* addNewView();
@@ -31,6 +36,11 @@ public slots:
 	void addAnnotationDisplay(QString);
 	void addBookmark();
 	void handleWindowSync();
+	//void changeLocalStart(int val);
+	//void changeLocalStartFromOffset(int val);
+	//void changeLocalStartFromPublicStart(int val);
+	
+	void changePublicStart(int val);
 	
 	
 private:
@@ -42,6 +52,8 @@ private:
 	void broadcastLocalValues(UiVariables local);
 	void broadcastPublicValues(UiVariables local);
 	UiVariables copyUi();
+//	void connectOffset(GLWidget* active, UiVariables local);
+//	void disconnectOffset(GLWidget* active, UiVariables local);
 	void connectVariables(GLWidget*, UiVariables);
 	void disconnectVariables(GLWidget*, UiVariables);
 	UiVariables vars(GLWidget* active);

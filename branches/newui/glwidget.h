@@ -119,6 +119,7 @@ protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
 	void translate(float dx, float dy);
+	void translateOffset(float dx, float dy);
     void changeCursor(Qt::CursorShape cNumber);
     void placeMarker(QPoint);
     void redraw();

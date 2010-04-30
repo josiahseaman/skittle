@@ -62,7 +62,7 @@ GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
 	ui = gui;
 	parent = parentWidget;
 	setMouseTracking(true);
-	setMinimumWidth(450);
+	setMinimumWidth(250);
 	setMinimumHeight(300);
 	frame = 0;
 	
@@ -169,7 +169,7 @@ void GLWidget::setTotalDisplayWidth()
 	
 	int val = (int)max(0.0, (double)(total_width)*z - canvasWidth ) ;
 	emit totalWidthChanged(val); 
-	//setMinimumWidth(val*6);//parent->
+	//setMinimumWidth(min(val*6, 450));//parent->
 	//print("Width ", val);
 }
 
@@ -547,18 +547,25 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 	QPointF evn = pixelToGlCoords(QPoint(event->x(), event->y()));
 	if(tool() == SELECT_TOOL)
 		placeMarker(event->pos());
-    float dx = evn.x() - old.x();
-    float dy = evn.y() - old.y();
+    double zoom = getZoom();
+    float dx = (evn.x() - old.x()) * zoom;
+    float dy = (evn.y() - old.y()) * zoom;
     if (event->buttons() & Qt::LeftButton) 
 	{
-	    double zoom = getZoom();
-		if(tool() == MOVE_TOOL)
-			translate(-dx * zoom, dy * zoom);
-		if(tool() == RESIZE_TOOL)
+		if(event->modifiers() & Qt::ControlModifier)//Qt::ControlModifier
 		{
-			translate(0, dy * zoom);//still scroll up/down
-			int value = static_cast<int>(dx * zoom * ui.scaleDial->value()*2.0 + ui.widthDial->value() + 0.5);
-			ui.widthDial->setValue(value);
+			translateOffset(-dx, dy);
+		}
+		else
+		{
+			if(tool() == MOVE_TOOL)
+				translate(-dx, dy);
+			if(tool() == RESIZE_TOOL)
+			{
+				translate(0, dy);//still scroll up/down
+				int value = static_cast<int>(dx * ui.scaleDial->value()*2.0 + ui.widthDial->value() + 0.5);
+				ui.widthDial->setValue(value);
+			}
 		}
     } 
     lastPos = event->pos();
@@ -575,6 +582,23 @@ void GLWidget::translate(float dx, float dy)
 		ui.startDial->setValue( max(1, current+move) );
 	}
 	emit xOffsetChange((int)(xPosition + dx + .5));
+}
+
+void GLWidget::translateOffset(float dx, float dy)
+{
+	int moveUp = 0;
+	if(dy != 0.0)
+	{
+		int sign = (int)(dy / fabs(dy));
+		moveUp = -1* static_cast<int>(dy  + (sign*0.5)) * ui.widthDial->value() * 2;	
+	}
+	int current = ui.offsetDial->value();
+	if(dx != 0.0)
+	{
+		int sign = (int)(dx / fabs(dx));
+		dx = (int)(dx + (0.5 * sign));
+	}
+	ui.offsetDial->setValue( current + moveUp + dx);
 }
  
 void GLWidget::changeCursor(Qt::CursorShape cNumber)

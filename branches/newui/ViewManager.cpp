@@ -73,7 +73,7 @@ GLWidget* ViewManager::addNewView()
 	UiVariables localDials = copyUi();
 	broadcastPublicValues(localDials);
 	
-	MdiChildWindow* child = new MdiChildWindow(localDials);
+	MdiChildWindow* child = new MdiChildWindow(localDials, ui.startDial);//TODO: figure out a better way to manage 
     addSubWindow(child);
     child->show();
     views.push_back(child);
@@ -82,6 +82,7 @@ GLWidget* ViewManager::addNewView()
 	connectLocalCopy(newGlWidget,  localDials);
 	uiToGlwidgetConnections(newGlWidget);
 	connectVariables(newGlWidget, localDials);
+	//connectOffset(newGlWidget, localDials);
 	
 	changeSelection(newGlWidget);
 	mainWindow->openAction->trigger();
@@ -95,8 +96,12 @@ void ViewManager::changeSelection(GLWidget* current)
 		disconnectVariables(activeWidget, vars(activeWidget));
 		connectVariables(current, vars(current));
 	}
-		activeWidget = current;		
-		activeWidget->setTotalDisplayWidth();	
+	//if(activeWidget != NULL)
+	//	disconnectOffset(activeWidget, vars(activeWidget));	
+	//connectOffset(current, vars(current));
+		
+	activeWidget = current;		
+	activeWidget->setTotalDisplayWidth();	
 }
 
 void ViewManager::changeFile(QString fileName)
@@ -144,21 +149,12 @@ void ViewManager::handleWindowSync()
 	}
 }
 
-int ViewManager::changeLocalStart(int val)
+void ViewManager::changePublicStart(int val)
 {
-	//offset or pub start change
-	//local.start = pub.start + local.offset
-	
-	int start = ui.startDial->value();
-	int offset = local.offsetDial->value();
-	
-	local.startDial->setValue(max(0, start + offset));
-}
-
-int ViewManager::changePublicStart(int val)
-{
+	//glWidget->print("changePublicStart: ", val);
 	//local.start changes
-	pub.start = local.start - local.offset
+	UiVariables local = vars(activeWidget);
+	ui.startDial->setValue(max(0, local.startDial->value() - local.offsetDial->value()));
 }
 
 //PRIVATE FUNCTIONS//
@@ -222,6 +218,14 @@ UiVariables ViewManager::copyUi()
     oligDial->setValue(3);
     oligDial->hide();
 
+	QSpinBox* offsetDial = new QSpinBox(this);
+    offsetDial->setMinimum(-40000000);
+    offsetDial->setMaximum(40000000);
+    offsetDial->setValue(100);
+    offsetDial->setSingleStep(widthDial->value());
+    mainWindow->settingToolBar->addWidget(offsetDial);
+    //offsetDial->hide();
+    
 	UiVariables localDials;
 	localDials.sizeDial  = sizeDial;
     localDials.widthDial = widthDial;
@@ -229,10 +233,23 @@ UiVariables ViewManager::copyUi()
     localDials.scaleDial = scaleDial;
     localDials.zoomDial  = zoomDial;
     localDials.oligDial  = oligDial;
+    localDials.offsetDial  = offsetDial;
     
 	return localDials;
 }
+/*
+void ViewManager::connectOffset(GLWidget* active, UiVariables local)
+{	
+	connect(local.offsetDial, SIGNAL(valueChanged(int)), this, SLOT(changeLocalStartFromOffset(int)));
+	connect(this, SIGNAL(startChangeFromOffset(int)), local.startDial, SLOT(setValue(int)));	
+}
 
+void ViewManager::disconnectOffset(GLWidget* active, UiVariables local)
+{	
+	disconnect(local.offsetDial, SIGNAL(valueChanged(int)), this, SLOT(changeLocalStartFromOffset(int)));
+	disconnect(this, SIGNAL(startChangeFromOffset(int)), local.startDial, SLOT(setValue(int)));	
+}
+*/
 void ViewManager::connectVariables(GLWidget* active, UiVariables local)
 {
 	connect(local.sizeDial	, SIGNAL(valueChanged(int)), ui.sizeDial	, SLOT(setValue(int)));
@@ -241,8 +258,13 @@ void ViewManager::connectVariables(GLWidget* active, UiVariables local)
 	connect(local.widthDial	, SIGNAL(valueChanged(int)), ui.widthDial	, SLOT(setValue(int)));
 	connect(ui.widthDial	, SIGNAL(valueChanged(int)), local.widthDial, SLOT(setValue(int)));
 
-	connect(local.startDial	, SIGNAL(valueChanged(int)), ui.startDial	, SLOT(setValue(int)));
-	connect(ui.startDial	, SIGNAL(valueChanged(int)), local.startDial, SLOT(setValue(int)));
+	//OLD:widget -> local.start -> pub.start
+	//NEW:widget -> local.start -> vMan.slots -> pub.start
+	//connect(local.startDial	, SIGNAL(valueChanged(int)), ui.startDial	, SLOT(setValue(int)));
+	connect(local.startDial , SIGNAL(valueChanged(int)), this, SLOT(changePublicStart(int)));
+	connect(ui.startDial	, SIGNAL(valueChanged(int)), 
+		dynamic_cast<MdiChildWindow*>(active->parent), SLOT(changeLocalStartFromPublicStart(int)));
+	//connect(this, SIGNAL(startChangeFromPublicStart(int)), local.startDial, SLOT(setValue(int)));	
 
 	connect(local.scaleDial	, SIGNAL(valueChanged(int)), ui.scaleDial	, SLOT(setValue(int)));
 	connect(ui.scaleDial	, SIGNAL(valueChanged(int)), local.scaleDial, SLOT(setValue(int)));
@@ -260,13 +282,17 @@ void ViewManager::disconnectVariables(GLWidget* active, UiVariables local)
 	disconnect(ui.sizeDial		, SIGNAL(valueChanged(int)), local.sizeDial	, SLOT(setValue(int)));
 
 	disconnect(local.widthDial	, SIGNAL(valueChanged(int)), ui.widthDial	, SLOT(setValue(int)));
-	disconnect(ui.widthDial		, SIGNAL(valueChanged(int)), local.widthDial, SLOT(setValue(int)));
+	disconnect(ui.widthDial	, SIGNAL(valueChanged(int)), local.widthDial, SLOT(setValue(int)));
 
-	disconnect(local.startDial	, SIGNAL(valueChanged(int)), ui.startDial	, SLOT(setValue(int)));
-	disconnect(ui.startDial		, SIGNAL(valueChanged(int)), local.startDial, SLOT(setValue(int)));
+	disconnect(local.startDial , SIGNAL(valueChanged(int)), this, SLOT(changePublicStart(int)));
+	disconnect(ui.startDial	, SIGNAL(valueChanged(int)), 
+		dynamic_cast<MdiChildWindow*>(active->parent), SLOT(changeLocalStartFromPublicStart(int)));
+	//disconnect(this, SIGNAL(startChangeFromPublicStart(int)), local.startDial, SLOT(setValue(int)));	
+	
+	//disconnect(local.offsetDial, SIGNAL(valueChanged(int)), this, SLOT(changeLocalStart(int)));
 
 	disconnect(local.scaleDial	, SIGNAL(valueChanged(int)), ui.scaleDial	, SLOT(setValue(int)));
-	disconnect(ui.scaleDial		, SIGNAL(valueChanged(int)), local.scaleDial, SLOT(setValue(int)));
+	disconnect(ui.scaleDial	, SIGNAL(valueChanged(int)), local.scaleDial, SLOT(setValue(int)));
 
 	disconnect(local.zoomDial	, SIGNAL(valueChanged(int)), ui.zoomDial	, SLOT(setValue(int)));
 	disconnect(ui.zoomDial		, SIGNAL(valueChanged(int)), local.zoomDial	, SLOT(setValue(int)));

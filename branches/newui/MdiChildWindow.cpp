@@ -1,9 +1,10 @@
 #include "MdiChildWindow.h"
 #include "glwidget.h"
 
-MdiChildWindow::MdiChildWindow(UiVariables gui)
+MdiChildWindow::MdiChildWindow(UiVariables gui, QSpinBox* pStart)
 {
 	ui = gui;
+	publicStart = pStart;
 	horizontalScrollBar = new QScrollBar();
 	horizontalScrollBar->setOrientation(Qt::Horizontal);
     horizontalScrollBar->setMaximum (50);
@@ -39,6 +40,22 @@ MdiChildWindow::MdiChildWindow(UiVariables gui)
 
 }	
 
+void MdiChildWindow::changeLocalStartFromPublicStart(int val)
+{
+	int start = val;
+	int offset = ui.offsetDial->value();
+	
+	ui.startDial->setValue((int)max(0, start + offset));
+	//emit startChangeFromPublicStart((int)max(0, start + offset));
+}
+
+void MdiChildWindow::changeLocalStartFromOffset(int val)
+{
+	int start = publicStart->value();
+	int offset = ui.offsetDial->value();
+	ui.startDial->setValue((int)max(0, start + offset));
+}
+
 void MdiChildWindow::closeEvent(QCloseEvent *event)
 {
 	//QScrollBar* horizontalScrollBar;
@@ -54,11 +71,18 @@ void MdiChildWindow::connectWidget()
 	connect(horizontalScrollBar, SIGNAL(valueChanged(int)), glWidget, SLOT(slideHorizontal(int)));
 	connect(glWidget, SIGNAL(xOffsetChange(int)), horizontalScrollBar, SLOT(setValue(int)));	
 	connect(glWidget, SIGNAL(totalWidthChanged(int)), this, SLOT(setHorizontalWidth(int)));
+	connect(ui.widthDial, SIGNAL(valueChanged(int)), this, SLOT(setOffsetStep(int)));
+	connect(ui.offsetDial, SIGNAL(valueChanged(int)), this, SLOT(changeLocalStartFromOffset(int)));
 }
 
 void MdiChildWindow::setHorizontalWidth(int val)
 {
 	horizontalScrollBar->setMaximum( max(0, val) );
+}
+
+void MdiChildWindow::setOffsetStep(int val)
+{
+	ui.offsetDial->setSingleStep(val);
 }
 
 void MdiChildWindow::setPageSize()

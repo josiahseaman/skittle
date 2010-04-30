@@ -21,15 +21,20 @@ public:
 	GLWidget* glWidget;
 	UiVariables ui;
 	
-	MdiChildWindow(UiVariables gui);
+	MdiChildWindow(UiVariables gui, QSpinBox* pStart);
 	void closeEvent(QCloseEvent *event);
 	//createConnections();
 	void connectWidget();
 	
 public slots:
+	void changeLocalStartFromPublicStart(int val);
+	void changeLocalStartFromOffset(int val);
 	void setHorizontalWidth(int val);
+	void setOffsetStep(int val);
 	void setPageSize();
 
+private:
+	QSpinBox* publicStart;
 	
 };	
 #endif
