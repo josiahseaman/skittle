@@ -27,6 +27,7 @@ HighlightDisplay::~HighlightDisplay(){
 QFrame* HighlightDisplay::settingsUi()
 {	
     QFrame* highlighterTab = new QFrame();    
+    highlighterTab->setWindowTitle(QString("Sequence Highlighter Settings"));
     QLineEdit* seqEdit = new QLineEdit(highlighterTab);
     seqEdit->setMinimumWidth(400);
     QSpinBox* similarityDial = new QSpinBox(highlighterTab);

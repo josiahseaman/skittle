@@ -45,10 +45,29 @@ void OligomerDisplay::createConnections()
 	
 	connect( ui->sizeDial, SIGNAL(valueChanged(int)), this, SLOT(changeSize(int)));
 	connect( this, SIGNAL(sizeChanged(int)), ui->sizeDial, SLOT(setValue(int)));
-	
-	connect( ui->oligDial, SIGNAL(valueChanged(int)), this, SLOT(changeWordLength(int)));
-	connect( this, SIGNAL(wordLengthChanged(int)), ui->oligDial, SLOT(setValue(int)));
+
+	connect( oligDial, SIGNAL(valueChanged(int)), this, SLOT(changeWordLength(int)));
+	connect( this, SIGNAL(wordLengthChanged(int)), oligDial, SLOT(setValue(int)));
 }
+
+/*
+QFrame* OligomerDisplay::settingsUi()
+{	
+    QFrame* settingsTab = new QFrame();    
+    settingsTab->setWindowTitle(QString("Oligomer Settings"));
+    QSpinBox* oligDial = new QSpinBox(settingsTab);
+    oligDial->setValue(3);
+    
+	QVBoxLayout* vLayout = new QVBoxLayout;
+	vLayout->addWidget(new QLabel("Oligomer Length Displayed:", settingsTab));
+	vLayout->addWidget(oligDial);
+	settingsTab->setLayout(vLayout);
+	
+	connect( oligDial, SIGNAL(valueChanged(int)), this, SLOT(changeWordLength(int)));
+	connect( this, SIGNAL(wordLengthChanged(int)), oligDial, SLOT(setValue(int)));
+	
+	return settingsTab;
+}*/
 
 void OligomerDisplay::checkVariables()
 {

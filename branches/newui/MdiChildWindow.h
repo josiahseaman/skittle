@@ -30,6 +30,8 @@ public:
 	void closeEvent(QCloseEvent *event);
 	//createConnections();
 	void connectWidget();
+	void hideSettingsTabs();
+	void showSettingsTabs();
 	
 public slots:
 	void changeLocalStartFromPublicStart(int val);

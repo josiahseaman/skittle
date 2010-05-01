@@ -105,17 +105,29 @@ void MdiChildWindow::createSettingsTabs()
 	for(int i = 0; i < (int)settingsTabs.size(); ++i)
 	{
 		if( settingsTabs[i] != NULL )
-			settingsDock->addTab(settingsTabs[i], QString("Settings Tab"));
+			settingsDock->addTab(settingsTabs[i], settingsTabs[i]->windowTitle());
+		else
+			glWidget->print("WARNING: NULL entry in MdiChildWindow::settingsTabs");
 	}
-/*	foreach(glwidget)
-	{
-		foreach(AbstractGraph)
-		{
-			QFrame* tab = AbstractGraph->settingsUi();
-			
-			{
-			    mainWindow->tabWidget->addTab(tab, QString("Settings Tab"));
-			}
-		}
-	}*/
 }
+
+void MdiChildWindow::hideSettingsTabs()
+{
+	for(int i = 0; i < (int)settingsTabs.size(); ++i)
+	{
+		int index = settingsDock->indexOf(settingsTabs[i]);
+		if(index > -1)
+			settingsDock->removeTab(index);
+		//settingsTabs[i]->removeTab(1);
+	}
+}
+
+void MdiChildWindow::showSettingsTabs()
+{
+	for(int i = 0; i < (int)settingsTabs.size(); ++i)
+	{
+		settingsDock->insertTab(1, settingsTabs[i], settingsTabs[i]->windowTitle());
+		//settingsTabs[i]->insertTab(1);
+	}
+}
+

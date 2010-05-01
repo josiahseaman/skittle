@@ -86,11 +86,22 @@ GLWidget* ViewManager::addNewView()
 
 void ViewManager::changeSelection(GLWidget* current)
 {
-	if(activeWidget != NULL && mainWindow->syncCheckBox->isChecked() == false )
+	if(current == activeWidget)
+		return;
+		
+	int tabIndex = mainWindow->tabWidget->currentIndex();	
+	if(activeWidget != NULL)
 	{
-		disconnectVariables(activeWidget, vars(activeWidget));
-		connectVariables(current, vars(current));
+		if(mainWindow->syncCheckBox->isChecked() == false )
+		{
+			disconnectVariables(activeWidget, vars(activeWidget));
+			connectVariables(current, vars(current));
+		}
+		dynamic_cast<MdiChildWindow*>(activeWidget->parent)->hideSettingsTabs();
 	}
+	
+	dynamic_cast<MdiChildWindow*>(current->parent)->showSettingsTabs();
+	mainWindow->tabWidget->setCurrentIndex(tabIndex);
 	//if(activeWidget != NULL)
 	//	disconnectOffset(activeWidget, vars(activeWidget));	
 	//connectOffset(current, vars(current));
