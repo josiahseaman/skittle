@@ -150,3 +150,8 @@ int AbstractGraph::width()
 {
 	return Width / scale;
 }
+
+QFrame* AbstractGraph::settingsUi()
+{
+	return NULL;
+}

@@ -1,10 +1,13 @@
 #include "MdiChildWindow.h"
 #include "glwidget.h"
+#include <QtGui/QTabWidget>
+#include "HighlightDisplay.h"  //TODO: remove dependency
 
-MdiChildWindow::MdiChildWindow(UiVariables gui, QSpinBox* pStart)
+MdiChildWindow::MdiChildWindow(UiVariables gui, QSpinBox* pStart, QTabWidget* settings)
 {
 	ui = gui;
 	publicStart = pStart;
+	settingsDock = settings;
 	horizontalScrollBar = new QScrollBar();
 	horizontalScrollBar->setOrientation(Qt::Horizontal);
     horizontalScrollBar->setMaximum (50);
@@ -37,7 +40,7 @@ MdiChildWindow::MdiChildWindow(UiVariables gui, QSpinBox* pStart)
 	/**/
 	connectWidget();
 	setPageSize();
-
+	createSettingsTabs();
 }	
 
 void MdiChildWindow::changeLocalStartFromPublicStart(int val)
@@ -62,7 +65,9 @@ void MdiChildWindow::closeEvent(QCloseEvent *event)
 	//QScrollBar* verticalScrollBar;
 	//QFrame* subFrame;
 	delete glWidget;	
-	
+	delete ui.offsetDial;//->hide();
+	for(int i = 0; i < (int)settingsTabs.size(); ++i)
+		delete settingsTabs[i];
 	event->accept();
 }
 
@@ -91,4 +96,26 @@ void MdiChildWindow::setPageSize()
 	if( glWidget != NULL)
 		verticalScrollBar->setMaximum( max(0, (int)(glWidget->seq()->size() - ui.widthDial->value()) ) );
 	verticalScrollBar->setPageStep(ui.sizeDial->value());
+}
+
+void MdiChildWindow::createSettingsTabs()
+{
+	//QFrame* tab = glWidget->highlight->settingsUi();
+	settingsTabs = glWidget->settingsUi();
+	for(int i = 0; i < (int)settingsTabs.size(); ++i)
+	{
+		if( settingsTabs[i] != NULL )
+			settingsDock->addTab(settingsTabs[i], QString("Settings Tab"));
+	}
+/*	foreach(glwidget)
+	{
+		foreach(AbstractGraph)
+		{
+			QFrame* tab = AbstractGraph->settingsUi();
+			
+			{
+			    mainWindow->tabWidget->addTab(tab, QString("Settings Tab"));
+			}
+		}
+	}*/
 }

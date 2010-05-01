@@ -52,10 +52,6 @@ void ViewManager::uiToGlwidgetConnections(GLWidget* active)
     connect(mainWindow->selectAction, SIGNAL(triggered()), active, SLOT(on_selectButton_clicked()));
     connect(mainWindow->resizeAction, SIGNAL(triggered()), active, SLOT(on_resizeButton_clicked()));
 	
-	/****Specific Settings**** TODO: Move to display constructors "needs()"*/
-	connect( mainWindow->seqEdit, SIGNAL(textChanged(const QString&)), active->highlight, SLOT(setHighlightSequence(const QString&)));
-	connect( mainWindow->similarityDial, SIGNAL(valueChanged(int)), active->highlight, SLOT(setPercentSimilarity(int)));	
-	
 	/****Print Signals*****/
 	connect( active, SIGNAL(printText(QString)), mainWindow->textArea, SLOT(append(QString)));
 	connect( active, SIGNAL(printHtml(QString)), mainWindow->textArea, SLOT(insertHtml(QString)));
@@ -73,7 +69,7 @@ GLWidget* ViewManager::addNewView()
 	UiVariables localDials = copyUi();
 	broadcastPublicValues(localDials);
 	
-	MdiChildWindow* child = new MdiChildWindow(localDials, ui.startDial);//TODO: figure out a better way to manage 
+	MdiChildWindow* child = new MdiChildWindow(localDials, ui.startDial, mainWindow->tabWidget);//TODO: figure out a better way to manage startDial
     addSubWindow(child);
     child->show();
     views.push_back(child);
@@ -82,7 +78,6 @@ GLWidget* ViewManager::addNewView()
 	connectLocalCopy(newGlWidget,  localDials);
 	uiToGlwidgetConnections(newGlWidget);
 	connectVariables(newGlWidget, localDials);
-	//connectOffset(newGlWidget, localDials);
 	
 	changeSelection(newGlWidget);
 	mainWindow->openAction->trigger();
@@ -221,7 +216,7 @@ UiVariables ViewManager::copyUi()
 	QSpinBox* offsetDial = new QSpinBox(this);
     offsetDial->setMinimum(-40000000);
     offsetDial->setMaximum(40000000);
-    offsetDial->setValue(100);
+    offsetDial->setValue(0);
     offsetDial->setSingleStep(widthDial->value());
     mainWindow->settingToolBar->addWidget(offsetDial);
     //offsetDial->hide();
@@ -305,4 +300,3 @@ UiVariables ViewManager::vars(GLWidget* active)
 {
 	return dynamic_cast<MdiChildWindow*>(active->parent)->ui;
 }
-

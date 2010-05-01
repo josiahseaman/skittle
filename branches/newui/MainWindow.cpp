@@ -236,6 +236,7 @@ void MainWindow::createToolbars()
     syncCheckBox->setCheckState(Qt::Checked);	
 	//multiGroup->addWidget(syncCheckBox);
 	settingToolBar->addWidget(syncCheckBox);
+	settingToolBar->addWidget( new QLabel("Offsets:"));
 	
 	
 	toolBarMenu->addAction(settingToolBar->toggleViewAction());
@@ -243,7 +244,6 @@ void MainWindow::createToolbars()
 	addToolBar(Qt::LeftToolBarArea,toolToolBar);
 	addToolBar(Qt::LeftToolBarArea,annotationToolBar);
 	addToolBar(Qt::TopToolBarArea,settingToolBar);
-	
 }
 
 void MainWindow::createDocks()
@@ -253,25 +253,15 @@ void MainWindow::createDocks()
 	toolBarMenu->addAction(infoDock->toggleViewAction());
 	infoDock->setAllowedAreas(Qt::AllDockWidgetAreas);
 	
-    tabWidget = new QTabWidget(infoDock);
+	tabWidget = new QTabWidget(infoDock);
 	infoDock->setWidget(tabWidget);
 	textArea = new QTextEdit(tabWidget);
 	tabWidget->setMinimumSize(60, 130);
     tabWidget->addTab(textArea, QString("Text Output"));
-    highlighterTab = new QFrame();    
-    seqEdit = new QLineEdit(highlighterTab);
-    seqEdit->setMinimumWidth(400);
-    similarityDial = new QSpinBox(highlighterTab);
-    similarityDial->setValue(80);
     
-	QVBoxLayout* vLayout = new QVBoxLayout;
-	vLayout->addWidget(new QLabel("Minimum Percent Similarity:", highlighterTab));
-	vLayout->addWidget(similarityDial);
-	vLayout->addWidget(new QLabel("Highlighted Sequence:", highlighterTab));
-	vLayout->addWidget(seqEdit);
-	highlighterTab->setLayout(vLayout);
-	
-    tabWidget->addTab(highlighterTab, QString("Highlighter Tab"));
+	/**/
+	/**/
+    
 	addDockWidget(Qt::BottomDockWidgetArea, infoDock);
 	
 	

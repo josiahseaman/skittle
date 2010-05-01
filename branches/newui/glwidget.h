@@ -81,6 +81,8 @@ public:
 	void print(const char* s, int num);
 	void print(int num1, int num2);
 	const string* seq();
+	
+	vector<QFrame*> settingsUi();
 
 
 public slots:

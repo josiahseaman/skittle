@@ -3,11 +3,16 @@
 
 #include <QMdiArea>
 #include <QFrame>
+#include <vector>
 #include "UiVariables.h"
 
 class GLWidget;
 class MainWindow;
 class QHBoxLayout;
+class QTabWidget;
+class QFrame;
+
+using std::vector;
 
 class MdiChildWindow : public QFrame
 {
@@ -21,7 +26,7 @@ public:
 	GLWidget* glWidget;
 	UiVariables ui;
 	
-	MdiChildWindow(UiVariables gui, QSpinBox* pStart);
+	MdiChildWindow(UiVariables gui, QSpinBox* pStart, QTabWidget* settings);
 	void closeEvent(QCloseEvent *event);
 	//createConnections();
 	void connectWidget();
@@ -35,6 +40,9 @@ public slots:
 
 private:
 	QSpinBox* publicStart;
+	QTabWidget* settingsDock;
+	vector<QFrame*> settingsTabs;
 	
+	void createSettingsTabs();
 };	
 #endif

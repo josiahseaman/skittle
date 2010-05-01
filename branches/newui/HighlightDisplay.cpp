@@ -2,6 +2,9 @@
 #include "glwidget.h"
 #include <sstream>
 #include <algorithm>
+#include <QtGui/QFrame>
+#include <QtGui/QSpinBox>
+#include <QtGui/QVBoxLayout>
 
 HighlightDisplay::HighlightDisplay(UiVariables* gui, GLWidget* gl)
 :NucleotideDisplay(gui, gl)
@@ -19,6 +22,27 @@ HighlightDisplay::HighlightDisplay(UiVariables* gui, GLWidget* gl)
 
 HighlightDisplay::~HighlightDisplay(){
     glDeleteLists(display_object, 1);
+}
+
+QFrame* HighlightDisplay::settingsUi()
+{	
+    QFrame* highlighterTab = new QFrame();    
+    QLineEdit* seqEdit = new QLineEdit(highlighterTab);
+    seqEdit->setMinimumWidth(400);
+    QSpinBox* similarityDial = new QSpinBox(highlighterTab);
+    similarityDial->setValue(80);
+    
+	QVBoxLayout* vLayout = new QVBoxLayout;
+	vLayout->addWidget(new QLabel("Minimum Percent Similarity:", highlighterTab));
+	vLayout->addWidget(similarityDial);
+	vLayout->addWidget(new QLabel("Highlighted Sequence:", highlighterTab));
+	vLayout->addWidget(seqEdit);
+	highlighterTab->setLayout(vLayout);
+	
+	connect( seqEdit, SIGNAL(textChanged(const QString&)), this, SLOT(setHighlightSequence(const QString&)));
+    connect( similarityDial, SIGNAL(valueChanged(int)), this, SLOT(setPercentSimilarity(int)));     	
+	
+	return highlighterTab;
 }
 
 void HighlightDisplay::display()

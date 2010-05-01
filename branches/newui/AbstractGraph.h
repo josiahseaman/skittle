@@ -3,6 +3,7 @@
 
 #include <QGLWidget>
 #include <string>
+#include <vector>
 #include "BasicTypes.h"
 #include "UiVariables.h"
 /**
@@ -11,6 +12,7 @@
 */
 
 class GLWidget;
+class QFrame;
 
 using namespace std;
 
@@ -34,6 +36,9 @@ public:
 	int max_display_size;
 	int nucleotide_start;
 	int scale;
+	string actionLabel;
+	string actionTooltip;
+	string actionData; 
 	
 	virtual int width();
 	
@@ -49,10 +54,8 @@ public:
 	virtual void setSequence(const string* seq);
 	virtual void mouseClick(point2D pt);
 	virtual string getFileName();
+	virtual QFrame* settingsUi();
 	
-	string actionLabel;
-	string actionTooltip;
-	string actionData; 
 
 public slots:
 	void changeScale(int s);

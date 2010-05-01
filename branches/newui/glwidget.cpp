@@ -62,8 +62,8 @@ GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
 	ui = gui;
 	parent = parentWidget;
 	setMouseTracking(true);
-	setMinimumWidth(250);
-	setMinimumHeight(300);
+	setMinimumWidth(100);
+	setMinimumHeight(100);
 	frame = 0;
 	
 	setupColorTable();
@@ -148,7 +148,7 @@ QSize GLWidget::minimumSizeHint() const
 
 QSize GLWidget::sizeHint() const
 {
-    return QSize(80, 60);
+    return QSize(450, 300);
 }
 
 double GLWidget::getZoom()
@@ -169,8 +169,6 @@ void GLWidget::setTotalDisplayWidth()
 	
 	int val = (int)max(0.0, (double)(total_width)*z - canvasWidth ) ;
 	emit totalWidthChanged(val); 
-	//setMinimumWidth(min(val*6, 450));//parent->
-	//print("Width ", val);
 }
 
 //***********SLOTS*******************
@@ -774,4 +772,17 @@ void GLWidget::loadFile(QString fileName)
 	if(parent != NULL)
 		parent->setWindowTitle( reader->trimFilename(fileName.toStdString()).c_str());
 	reader->readFile(fileName);
+}
+
+vector<QFrame*> GLWidget::settingsUi()
+{
+	vector<QFrame*> tabs;
+	
+	for(int i =0; i < (int)graphs.size(); ++i)
+	{
+		QFrame* tab = graphs[i]->settingsUi();
+		if(tab != NULL)
+			tabs.push_back(tab);
+	}
+	return tabs;
 }

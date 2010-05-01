@@ -9,6 +9,7 @@
 #include <vector>
 
 using namespace std;
+class QFrame;
 
 class HighlightDisplay : public NucleotideDisplay
 {
@@ -17,6 +18,7 @@ class HighlightDisplay : public NucleotideDisplay
 public:	
 	HighlightDisplay(UiVariables* gui, GLWidget* gl);
 	~HighlightDisplay();
+	QFrame* settingsUi();
 	void display();
 	GLuint render();
 	void assignColors();
