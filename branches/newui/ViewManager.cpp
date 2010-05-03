@@ -172,7 +172,6 @@ void ViewManager::broadcastLocalValues(UiVariables local)
 	ui.widthDial->setValue(local.widthDial->value());
 	ui.scaleDial->setValue(local.scaleDial->value());
 	ui.zoomDial->setValue(local.zoomDial->value());
-	ui.oligDial->setValue(local.oligDial->value());
 }
 
 void ViewManager::broadcastPublicValues(UiVariables local)
@@ -183,7 +182,6 @@ void ViewManager::broadcastPublicValues(UiVariables local)
 	local.widthDial->setValue(ui.widthDial->value());
 	local.scaleDial->setValue(ui.scaleDial->value());
 	local.zoomDial->setValue(ui.zoomDial->value());
-	local.oligDial->setValue(ui.oligDial->value());
 }
 
 UiVariables ViewManager::copyUi()
@@ -217,12 +215,6 @@ UiVariables ViewManager::copyUi()
     sizeDial->setMaximum(400000000);//something very large MAX_INT?
     sizeDial->setValue(10000);	
     sizeDial->hide();
-	
-	QSpinBox* oligDial = new QSpinBox(this);
-    oligDial->setMinimum(1);
-    oligDial->setMaximum(5);
-    oligDial->setValue(3);
-    oligDial->hide();
 
 	QSpinBox* offsetDial = new QSpinBox(this);
     offsetDial->setMinimum(-40000000);
@@ -238,7 +230,6 @@ UiVariables ViewManager::copyUi()
     localDials.startDial = startDial;
     localDials.scaleDial = scaleDial;
     localDials.zoomDial  = zoomDial;
-    localDials.oligDial  = oligDial;
     localDials.offsetDial  = offsetDial;
     
 	return localDials;
@@ -277,9 +268,6 @@ void ViewManager::connectVariables(GLWidget* active, UiVariables local)
 
 	connect(local.zoomDial	, SIGNAL(valueChanged(int)), ui.zoomDial	, SLOT(setValue(int)));
 	connect(ui.zoomDial		, SIGNAL(valueChanged(int)), local.zoomDial	, SLOT(setValue(int)));
-
-	connect(local.oligDial	, SIGNAL(valueChanged(int)), ui.oligDial	, SLOT(setValue(int)));
-	connect(ui.oligDial		, SIGNAL(valueChanged(int)), local.oligDial	, SLOT(setValue(int)));//TODO: Move this to individual basis
 }
 
 void ViewManager::disconnectVariables(GLWidget* active, UiVariables local)
@@ -302,9 +290,6 @@ void ViewManager::disconnectVariables(GLWidget* active, UiVariables local)
 
 	disconnect(local.zoomDial	, SIGNAL(valueChanged(int)), ui.zoomDial	, SLOT(setValue(int)));
 	disconnect(ui.zoomDial		, SIGNAL(valueChanged(int)), local.zoomDial	, SLOT(setValue(int)));
-
-	disconnect(local.oligDial	, SIGNAL(valueChanged(int)), ui.oligDial	, SLOT(setValue(int)));
-	disconnect(ui.oligDial		, SIGNAL(valueChanged(int)), local.oligDial	, SLOT(setValue(int)));//TODO: Move this to individual basis
 }
 
 UiVariables ViewManager::vars(GLWidget* active)

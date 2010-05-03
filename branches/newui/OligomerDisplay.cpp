@@ -2,40 +2,50 @@
 #include "glwidget.h"
 #include <sstream>
 #include <math.h>
+#include <QDoubleSpinBox>
 
 OligomerDisplay::OligomerDisplay(UiVariables* gui, GLWidget* gl)
-:FrequencyMap(gui, gl)
 {	
 	glWidget = gl;
 	ui = gui;
+	string* seq = new string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");	
+	sequence = seq;
 	graphBuffer = new TextureCanvas( );
-	wordLength = 0;
+	textureBuffer = NULL;
+	hidden = true;
+	
+	nucleotide_start = 1;
+	F_width = 250;
+	F_height = 0;
+	changeWidth(ui->widthDial->value());
+	changeSize(ui->sizeDial->value());
+	upToDate = false;
+	
 	similarityGraphWidth = 50;
 	frameCount = 0;
 	minDeltaBoundary = 2.0;
-//	changeWordLength(ui->oligDial->value());
 	actionLabel = string("Oligomer Display");
 	actionTooltip = string("Short string usage (codons = length 3)");
 	actionData = actionLabel; 
+	wordLength = 2;
+	changeWordLength(3);
 	
-	connect( ui->oligDial, SIGNAL(valueChanged(int)), this, SLOT(changeWordLength(int)));
-	connect( this, SIGNAL(wordLengthChanged(int)), ui->oligDial, SLOT(setValue(int)));
 	connect( this, SIGNAL(wordLengthChanged(int)), this, SIGNAL(displayChanged()));//either this line or changeWordLength::invalidate()
 }
 
 OligomerDisplay::~OligomerDisplay()
 {
-    glDeleteLists(display_object, 1);
 }
 
 /**IMPORTANT: When referring to the parent ui->glWidget, it is not fully constructed yet.
 *** these connections should be placed in glWidget's constructor.    ***/
 void OligomerDisplay::createConnections()
-{
+{		
+			//TODO: Currently, createConnections is not called by anything
 	connect( this, SIGNAL(widthChanged(int)), this, SIGNAL(displayChanged()));
 	connect( this, SIGNAL(startChanged(int)), this, SIGNAL(displayChanged()));
 	connect( this, SIGNAL(sizeChanged(int)), this, SIGNAL(displayChanged()));
-	connect( this, SIGNAL(wordLengthChanged(int)), this, SIGNAL(displayChanged()));
+	//connect( this, SIGNAL(wordLengthChanged(int)), this, SIGNAL(displayChanged()));
 	
 	connect( ui->widthDial, SIGNAL(valueChanged(int)), this, SLOT(changeWidth(int)));
 	//connect( this, SIGNAL(widthChanged(int)), ui->widthDial, SLOT(setValue(int)));//width dial = Width
@@ -45,38 +55,60 @@ void OligomerDisplay::createConnections()
 	
 	connect( ui->sizeDial, SIGNAL(valueChanged(int)), this, SLOT(changeSize(int)));
 	connect( this, SIGNAL(sizeChanged(int)), ui->sizeDial, SLOT(setValue(int)));
-
-	connect( oligDial, SIGNAL(valueChanged(int)), this, SLOT(changeWordLength(int)));
-	connect( this, SIGNAL(wordLengthChanged(int)), oligDial, SLOT(setValue(int)));
 }
 
-/*
+
 QFrame* OligomerDisplay::settingsUi()
 {	
     QFrame* settingsTab = new QFrame();    
     settingsTab->setWindowTitle(QString("Oligomer Settings"));
-    QSpinBox* oligDial = new QSpinBox(settingsTab);
-    oligDial->setValue(3);
+	QFormLayout* formLayout = new QFormLayout;
+	formLayout->setRowWrapPolicy(QFormLayout::WrapLongRows);
+	settingsTab->setLayout(formLayout);
     
-	QVBoxLayout* vLayout = new QVBoxLayout;
-	vLayout->addWidget(new QLabel("Oligomer Length Displayed:", settingsTab));
-	vLayout->addWidget(oligDial);
-	settingsTab->setLayout(vLayout);
+    oligDial = new QSpinBox(settingsTab);
+    oligDial->setMinimum(1);
+    oligDial->setMaximum(5);
+    oligDial->setSingleStep(1);
+    oligDial->setValue(3);	
+	formLayout->addRow("Oligomer Length Displayed:", oligDial);
 	
 	connect( oligDial, SIGNAL(valueChanged(int)), this, SLOT(changeWordLength(int)));
 	connect( this, SIGNAL(wordLengthChanged(int)), oligDial, SLOT(setValue(int)));
+	connect( this, SIGNAL(wordLengthChanged(int)), this, SIGNAL(displayChanged()));
+	
+	QDoubleSpinBox* threshholdDial = new QDoubleSpinBox(settingsTab);
+    threshholdDial->setMinimum(0.1);
+    threshholdDial->setMaximum(10.0);
+    threshholdDial->setSingleStep(.1);
+    threshholdDial->setDecimals(2);
+    threshholdDial->setSuffix(" stdevs");
+    threshholdDial->setValue(minDeltaBoundary);	
+    formLayout->addRow("Isochore Boundary Threshhold", threshholdDial);
+	
+	connect( threshholdDial, SIGNAL(valueChanged(double)), this, SLOT(changeMinDelta(double)));	
 	
 	return settingsTab;
-}*/
+}
 
 void OligomerDisplay::checkVariables()
-{
+{	
+	changeScale(ui->scaleDial->value());	
+	changeWidth(ui->widthDial->value());//width and scale
 	changeStart(ui->startDial->value());
 	changeSize(ui->sizeDial->value());
-	changeWordLength(ui->oligDial->value());
-	changeWidth(ui->widthDial->value());//width and scale
+	changeWordLength(oligDial->value());
 }
-	
+
+void OligomerDisplay::changeMinDelta(double mD)
+{
+	glWidget->print("changeMinDelta(", (int)(mD*10));
+	if(updateVal(minDeltaBoundary, mD ))
+	{
+		emit displayChanged();
+	}		
+}
+
 void OligomerDisplay::changeWordLength(int w)
 {
 	if(updateInt(wordLength, w ))
@@ -93,19 +125,6 @@ void OligomerDisplay::changeWordLength(int w)
 	}
 }
 
-void OligomerDisplay::toggleVisibility()
-{
-	hidden = !hidden;
-	if(hidden) {
-		ui->oligDial->hide();
-	}
-	else{ 
-		ui->oligDial->show();
-	}
-	
-	emit displayChanged();
-}
-
 void OligomerDisplay::display()
 {
 	checkVariables();
@@ -120,7 +139,6 @@ void OligomerDisplay::display()
 		glTranslated(width()- similarityGraphWidth + 2, 0, 0);
 		graphBuffer->display();
 	glPopMatrix();
-
 }
 
 void OligomerDisplay::load_canvas()

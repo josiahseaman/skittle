@@ -71,6 +71,21 @@ bool AbstractGraph::updateInt(int& subject, int& value)
 	}	
 	return false;
 }
+
+bool AbstractGraph::updateVal(double& subject, double& value)
+{
+	if(value < 0.01)
+		value = 0.01;
+	if(subject != value)
+	{
+		subject = value;	
+		upToDate = false;
+		return true;
+	}	
+	return false;
+}
+
+
 bool AbstractGraph::useTextureOptimization()
 {
 	/*if(ui)

@@ -28,17 +28,18 @@ QFrame* HighlightDisplay::settingsUi()
 {	
     QFrame* highlighterTab = new QFrame();    
     highlighterTab->setWindowTitle(QString("Sequence Highlighter Settings"));
+	QFormLayout* formLayout = new QFormLayout;
+	formLayout->setRowWrapPolicy(QFormLayout::WrapLongRows);
+	highlighterTab->setLayout(formLayout);
+	
     QLineEdit* seqEdit = new QLineEdit(highlighterTab);
-    seqEdit->setMinimumWidth(400);
+    seqEdit->setText("AAAAAAAAAAAA");
     QSpinBox* similarityDial = new QSpinBox(highlighterTab);
     similarityDial->setValue(80);
     
-	QVBoxLayout* vLayout = new QVBoxLayout;
-	vLayout->addWidget(new QLabel("Minimum Percent Similarity:", highlighterTab));
-	vLayout->addWidget(similarityDial);
-	vLayout->addWidget(new QLabel("Highlighted Sequence:", highlighterTab));
-	vLayout->addWidget(seqEdit);
-	highlighterTab->setLayout(vLayout);
+    formLayout->addRow("Minimum Percent Similarity:", similarityDial);
+    formLayout->addRow("Highlighted Sequence:", seqEdit);
+    //seqEdit->setMinimumWidth(400);
 	
 	connect( seqEdit, SIGNAL(textChanged(const QString&)), this, SLOT(setHighlightSequence(const QString&)));
     connect( similarityDial, SIGNAL(valueChanged(int)), this, SLOT(setPercentSimilarity(int)));     	

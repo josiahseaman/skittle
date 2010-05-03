@@ -12,7 +12,6 @@ public:
     QSpinBox* startDial;
     QSpinBox* scaleDial;
     QSpinBox* zoomDial;
-    QSpinBox* oligDial;
     QSpinBox* offsetDial;
 
 
@@ -23,7 +22,6 @@ UiVariables()
     startDial = NULL;
     scaleDial = NULL;
     zoomDial = NULL;
-    oligDial = NULL;
     offsetDial = NULL;
 }
 
@@ -34,7 +32,6 @@ UiVariables(const UiVariables& copy)
     startDial = copy.startDial;
     scaleDial = copy.scaleDial;
     zoomDial  = copy.zoomDial;
-    oligDial  = copy.oligDial;
     offsetDial= copy.offsetDial;
 }
 

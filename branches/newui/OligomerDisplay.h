@@ -14,9 +14,11 @@
 #include "AbstractGraph.h"
 #include "TextureCanvas.h"
 
+class QSpinBox;
+
 using namespace std;
 
-class OligomerDisplay : public FrequencyMap
+class OligomerDisplay : public AbstractGraph//: public FrequencyMap// 
 {
     Q_OBJECT
     
@@ -24,7 +26,7 @@ public:
 	OligomerDisplay(UiVariables* gui, GLWidget* gl);
 	~OligomerDisplay();
 	void createConnections();
-	//QFrame* settingsUi();
+	QFrame* settingsUi();
 	void checkVariables();
 	void display();
 	void load_canvas();
@@ -50,16 +52,24 @@ public:
 	}
 	
 public slots:	
+	void changeMinDelta(double mD);	
 	void changeWordLength(int);
-	void toggleVisibility();
+
 signals:
 	void wordLengthChanged(int);
 	
 private:
+	TextureCanvas* textureBuffer;
 	TextureCanvas* graphBuffer;
+	vector< vector<float> > freq;
+	vector<color> pixels;
 	int wordLength;
 	int similarityGraphWidth;
 	double minDeltaBoundary;
+	QSpinBox* oligDial;
+	int F_width;
+	int F_height;
+	
 };
 
 #endif

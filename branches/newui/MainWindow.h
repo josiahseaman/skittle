@@ -105,7 +105,6 @@ private:
 	QSpinBox* zoom;
 	QSpinBox *startOffset;
 	QSpinBox *displayLength;
-	QSpinBox *wordLength;
 	QCheckBox* syncCheckBox;
 	
 	

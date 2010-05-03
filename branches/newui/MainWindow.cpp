@@ -216,14 +216,7 @@ void MainWindow::createToolbars()
     displayLength->setSingleStep(1000);
     displayLength->setValue(10000);	
 	settingToolBar->addWidget(displayLength);
-	
-	settingToolBar->addWidget(new QLabel("Oligomer Length"));
-	wordLength = new QSpinBox(this);
-    wordLength->setMinimum(1);
-    wordLength->setMaximum(5);
-    wordLength->setSingleStep(1);
-    wordLength->setValue(3);	
-	settingToolBar->addWidget(wordLength);
+
 	
 	//settingToolBar->addSeparator();
 
@@ -256,49 +249,20 @@ void MainWindow::createDocks()
 	tabWidget = new QTabWidget(infoDock);
 	infoDock->setWidget(tabWidget);
 	textArea = new QTextEdit(tabWidget);
-	tabWidget->setMinimumSize(60, 130);
     tabWidget->addTab(textArea, QString("Text Output"));
-    
-	/**/
-	/**/
-    
 	addDockWidget(Qt::BottomDockWidgetArea, infoDock);
 	
-	
+	/*
 	QWidget *filters = new QWidget;
 	QVBoxLayout *filterLayout = new QVBoxLayout;
 	QTabWidget *tabWidget = new QTabWidget();
 	tabWidget->addTab(new QListWidget, "Presets");
 	//tabWidget->addTab(new QTreeView, "Advanced");
-	
 	QTableWidget *propsWidget = new QTableWidget(4,3);
-	
 	
 	filterLayout->addWidget(tabWidget);
 	filterLayout->addWidget(propsWidget);
-	
-	filters->setLayout(filterLayout);
-	
-	//}
-	/*
-	QMainWindow *presetLayout = new QMainWindow;
-	filterDock->setWidget(presetLayout);
-	presetLayout->addToolBar(presetToolBar);
-	presetLayout->setCentralWidget(filters); 
-	presetLayout->setMaximumWidth(300);
-	presetLayout->setWindowFlags(Qt::Widget);
-	
-	addDockWidget(Qt::RightDockWidgetArea, filterDock);
-	*/
-	//{ settingDock:
-		//QVBoxLayout *settingLayout = new QVBoxLayout;
-		//QDockWidget *settingDock = new QDockWidget("Global Settings", this);
-		//settingDock->setAllowedAreas(Qt::AllDockWidgetAreas);
-		//settingDock->setWidget(new QTextEdit);
-		//toolBarMenu->addAction(infoDock->toggleViewAction());
-		//addDockWidget(Qt::BottomDockWidgetArea, settingDock);
-	
-	//}
+	filters->setLayout(filterLayout);*/
 }
 
 void MainWindow::createStatusBar()
@@ -344,7 +308,6 @@ UiVariables MainWindow::getDisplayVariables()
     var.startDial = startOffset;
     var.scaleDial = scale;
     var.zoomDial = zoom;
-    var.oligDial = wordLength;
     
     return var;
 }

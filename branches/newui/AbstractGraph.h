@@ -47,6 +47,7 @@ public:
 	virtual int height();
 	virtual void paint_square(point position, color c);
 	virtual bool updateInt(int& subject, int& value);
+	virtual bool updateVal(double& subject, double& value);
 	virtual bool useTextureOptimization();
 	virtual void display() = 0;
 	virtual void checkVariables();

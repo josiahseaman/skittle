@@ -38,9 +38,9 @@ MdiChildWindow::MdiChildWindow(UiVariables gui, QSpinBox* pStart, QTabWidget* se
 	connect(verticalScrollBar, SIGNAL(valueChanged(int)), ui.startDial, SLOT(setValue(int)));
 	connect(ui.startDial, SIGNAL(valueChanged(int)), verticalScrollBar, SLOT(setValue(int)));
 	/**/
+	createSettingsTabs();
 	connectWidget();
 	setPageSize();
-	createSettingsTabs();
 }	
 
 void MdiChildWindow::changeLocalStartFromPublicStart(int val)
