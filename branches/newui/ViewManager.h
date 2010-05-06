@@ -12,12 +12,12 @@ class GLWidget;
 class MainWindow;
 class QHBoxLayout;
 
-class ViewManager : public QMdiArea//QFrame//
+class ViewManager : public QMdiArea
 {
 	Q_OBJECT
 
 public:
-	GLWidget* glWidget;
+	GLWidget* activeWidget;
 	
 	ViewManager(MainWindow* window, UiVariables gui);
 	void createConnections();
@@ -25,28 +25,21 @@ public:
 	void uiToGlwidgetConnections(GLWidget* active);
 
 signals:
-	//void startChange(int);
-	void startChangeFromOffset(int);
-	//void startChangeFromPublicStart(int);
 	
 public slots:
 	GLWidget* addNewView();
 	void changeSelection(GLWidget*);
+	void closeSubWindow(MdiChildWindow* closing);
 	void changeFile(QString);
 	void addAnnotationDisplay(QString);
 	void addBookmark();
-	void handleWindowSync();
-	//void changeLocalStart(int val);
-	//void changeLocalStartFromOffset(int val);
-	//void changeLocalStartFromPublicStart(int val);
-	
+	void handleWindowSync();	
 	void changePublicStart(int val);
 	
 	
 private:
 	std::vector<MdiChildWindow*> views;
 	MainWindow* mainWindow;
-	GLWidget* activeWidget;
 	UiVariables ui;	
 	
 	void broadcastLocalValues(UiVariables local);

@@ -39,6 +39,11 @@ public slots:
 	void setHorizontalWidth(int val);
 	void setOffsetStep(int val);
 	void setPageSize();
+	void hideSettingsTab(QFrame*);
+	void showSettingsTab(QFrame*);
+
+signals:
+	void subWindowClosing(MdiChildWindow*);
 
 private:
 	QSpinBox* publicStart;

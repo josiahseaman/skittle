@@ -20,6 +20,7 @@ AlignmentDisplay::AlignmentDisplay(UiVariables* gui, GLWidget* gl)
 	pSeqSize = 0;
 	
 	textureBuffer = NULL;	
+	settingsTab = NULL;
 	hidden = true;
 	upToDate = true;
 	

@@ -55,7 +55,8 @@ void MainWindow::addDisplayActions(AbstractGraph* display)
 	}
 	else
 	{
-		viewManager->glWidget->print("Tried to add display mode with no label, aborting...");
+		if(viewManager->activeWidget != NULL)
+			viewManager->activeWidget->print("Tried to add display mode with no label, aborting...");//TODO: Move print to MainWindow
 	}
 }
 
@@ -395,7 +396,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::readSettings()
 {
-	viewManager->glWidget->print("Reading User Settings");
+	if(viewManager->activeWidget != NULL)
+		viewManager->activeWidget->print("Reading User Settings");
 	QSettings settings("Skittle", "Preferences");
 	settings.beginGroup("mainWindow");
 	restoreGeometry(settings.value("geometry").toByteArray());
@@ -404,8 +406,9 @@ void MainWindow::readSettings()
 }
 
 void MainWindow::writeSettings()
-{
-	viewManager->glWidget->print("Writing Settings");
+{	
+	if(viewManager->activeWidget != NULL)
+		viewManager->activeWidget->print("Writing Settings");
 	QSettings settings("Skittle", "Preferences");
 	settings.beginGroup("mainWindow");
 	settings. setValue("geometry", saveGeometry());

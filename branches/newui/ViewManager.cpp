@@ -6,6 +6,7 @@
 #include "MainWindow.h"
 #include "MdiChildWindow.h"
 #include <QtGui/QScrollBar>
+#include <algorithm>
 
 ViewManager::ViewManager(MainWindow* window, UiVariables gui)
 :QMdiArea(window)
@@ -20,8 +21,7 @@ ViewManager::ViewManager(MainWindow* window, UiVariables gui)
 
 	createConnections();
 	
-	glWidget = addNewView();
-	changeSelection(glWidget);
+	addNewView();//glWidget = 
 }
 
 void ViewManager::createConnections()
@@ -70,6 +70,7 @@ GLWidget* ViewManager::addNewView()
 	broadcastPublicValues(localDials);
 	
 	MdiChildWindow* child = new MdiChildWindow(localDials, ui.startDial, mainWindow->tabWidget);//TODO: figure out a better way to manage startDial
+	connect( child, SIGNAL(subWindowClosing(MdiChildWindow*)), this, SLOT(closeSubWindow(MdiChildWindow*)));
     addSubWindow(child);
     child->show();
     views.push_back(child);
@@ -102,12 +103,23 @@ void ViewManager::changeSelection(GLWidget* current)
 	
 	dynamic_cast<MdiChildWindow*>(current->parent)->showSettingsTabs();
 	mainWindow->tabWidget->setCurrentIndex(tabIndex);
-	//if(activeWidget != NULL)
-	//	disconnectOffset(activeWidget, vars(activeWidget));	
-	//connectOffset(current, vars(current));
 		
 	activeWidget = current;		
 	activeWidget->setTotalDisplayWidth();	
+}
+
+void ViewManager::closeSubWindow(MdiChildWindow* closing)
+{
+	vector<MdiChildWindow*>::iterator it;
+	it = std::find(views.begin(), views.end(), closing);
+	views.erase(it);
+	if(closing->glWidget == activeWidget)
+	{
+		if( views.size() > 0)
+			changeSelection(views[0]->glWidget);
+		else
+			activeWidget = NULL;
+	}
 }
 
 void ViewManager::changeFile(QString fileName)
@@ -234,19 +246,7 @@ UiVariables ViewManager::copyUi()
     
 	return localDials;
 }
-/*
-void ViewManager::connectOffset(GLWidget* active, UiVariables local)
-{	
-	connect(local.offsetDial, SIGNAL(valueChanged(int)), this, SLOT(changeLocalStartFromOffset(int)));
-	connect(this, SIGNAL(startChangeFromOffset(int)), local.startDial, SLOT(setValue(int)));	
-}
 
-void ViewManager::disconnectOffset(GLWidget* active, UiVariables local)
-{	
-	disconnect(local.offsetDial, SIGNAL(valueChanged(int)), this, SLOT(changeLocalStartFromOffset(int)));
-	disconnect(this, SIGNAL(startChangeFromOffset(int)), local.startDial, SLOT(setValue(int)));	
-}
-*/
 void ViewManager::connectVariables(GLWidget* active, UiVariables local)
 {
 	connect(local.sizeDial	, SIGNAL(valueChanged(int)), ui.sizeDial	, SLOT(setValue(int)));

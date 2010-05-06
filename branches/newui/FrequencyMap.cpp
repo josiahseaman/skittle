@@ -1,6 +1,8 @@
 #include "FrequencyMap.h"
 #include "glwidget.h"
 #include <sstream>
+#include <QFrame>
+
 
 FrequencyMap::FrequencyMap(UiVariables* gui, GLWidget* gl)
 {	
@@ -58,6 +60,37 @@ void FrequencyMap::createConnections()
 	connect( this, SIGNAL(sizeChanged(int)), ui->sizeDial, SLOT(setValue(int)));
 	
 	connect( ui->scaleDial, SIGNAL(valueChanged(int)), this, SLOT(changeScale(int)));
+}
+
+QFrame* FrequencyMap::settingsUi()
+{	
+    settingsTab = new QFrame();    
+    settingsTab->setWindowTitle(QString("Repeat Map Settings"));
+	QFormLayout* formLayout = new QFormLayout;
+	formLayout->setRowWrapPolicy(QFormLayout::WrapLongRows);
+	settingsTab->setLayout(formLayout);
+    
+	QSpinBox* graphStartDial = new QSpinBox(settingsTab);
+	graphStartDial->setMinimum(1);	
+	graphStartDial->setMaximum(100000);	
+	formLayout->addRow("Starting Offset:", graphStartDial);
+	
+	connect( graphStartDial, SIGNAL(valueChanged(int)), this, SLOT(changeFStart(int)));	
+	connect( this, SIGNAL(fStartChanged(int)), graphStartDial, SLOT(setValue(int)));
+	connect( this, SIGNAL(fStartChanged(int)), this, SIGNAL(displayChanged()));
+    
+    QSpinBox* graphWidthDial  = new QSpinBox(settingsTab);
+    graphWidthDial->setMinimum(1);
+    graphWidthDial->setMaximum(1000);
+    graphWidthDial->setSingleStep(10);
+    graphWidthDial->setValue(F_width);
+	formLayout->addRow("Graph Display Width:", graphWidthDial);
+	
+	connect( graphWidthDial, SIGNAL(valueChanged(int)), this, SLOT(changeGraphWidth(int)));
+	connect( this, SIGNAL(graphWidthChanged(int)), graphWidthDial, SLOT(setValue(int)));
+	connect( this, SIGNAL(graphWidthChanged(int)), this, SIGNAL(displayChanged()));
+	
+	return settingsTab;
 }
 
 void FrequencyMap::display()
@@ -147,9 +180,9 @@ void FrequencyMap::freq_map()
 	for( int h = 0; h < height(); h++)
 	{
 		int offset = h * Width;
-		int end = offset+Width-1;
+		/*int end = offset+Width-1;
 		//NOTE: This statement is just an optional speed up
-		/*if(genome[offset] == 'N' || genome[offset] == 'n' || genome[end] == 'N' || genome[end] == 'n')
+		if(genome[offset] == 'N' || genome[offset] == 'n' || genome[end] == 'N' || genome[end] == 'n')
 		{//check the first and last of the reference string
 			for(int w = 1; w <= F_width; w++)
 				freq[h][w] = 0;//set whole row to zero
@@ -181,6 +214,31 @@ int FrequencyMap::height()
 }
 
 /******SLOTS*****/
+void FrequencyMap::changeFStart(int val)
+{
+	if(updateInt(F_start, val))
+		emit fStartChanged(F_start);
+}
+
+void FrequencyMap::changeGraphWidth(int val)
+{
+	if(updateInt(F_width, val))
+	{
+		//freq.clear();
+		//freq = vector< vector<float> >();
+		for(int i = 0; i < 400; i++)
+		{
+			freq[i].clear();
+		}
+		for(int i = 0; i < 400; i++)
+		{
+			freq[i] = vector<float>(F_width, 0.0) ;
+		}
+		
+		emit graphWidthChanged(F_width);
+	}
+}	
+
 void FrequencyMap::mouseClick(point2D pt)
 {
 	//range check

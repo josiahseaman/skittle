@@ -60,7 +60,7 @@ void OligomerDisplay::createConnections()
 
 QFrame* OligomerDisplay::settingsUi()
 {	
-    QFrame* settingsTab = new QFrame();    
+    settingsTab = new QFrame();    
     settingsTab->setWindowTitle(QString("Oligomer Settings"));
 	QFormLayout* formLayout = new QFormLayout;
 	formLayout->setRowWrapPolicy(QFormLayout::WrapLongRows);
@@ -102,7 +102,6 @@ void OligomerDisplay::checkVariables()
 
 void OligomerDisplay::changeMinDelta(double mD)
 {
-	glWidget->print("changeMinDelta(", (int)(mD*10));
 	if(updateVal(minDeltaBoundary, mD ))
 	{
 		emit displayChanged();

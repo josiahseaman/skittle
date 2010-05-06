@@ -20,13 +20,11 @@ class FrequencyMap : public AbstractGraph
 {
     Q_OBJECT
     
-public:
-	
-	bool texture_optimization;
-	
+public:	
 	FrequencyMap(UiVariables* gui, GLWidget* gl);
 	~FrequencyMap();
 	void createConnections();
+	QFrame* settingsUi();
 	void display();
 	void link(NucleotideDisplay* nuc_display);
 	void load_canvas();
@@ -42,9 +40,13 @@ public:
 	int width();
 	
 public slots:	
+	void changeFStart(int val);
+	void changeGraphWidth(int val);
 	
 signals:
-
+	void fStartChanged(int);
+	void graphWidthChanged(int);
+	
 protected:
 	NucleotideDisplay* nuc;
 	GLuint display_object;

@@ -24,10 +24,12 @@ protected:
 	int Width;
 	int frameCount;
 	const string* sequence;
+	QFrame* settingsTab;
 
 public:
 	GLWidget* glWidget;
 	UiVariables* ui;	
+	
 	
 	bool hidden;
 	bool upToDate;
@@ -48,7 +50,6 @@ public:
 	virtual void paint_square(point position, color c);
 	virtual bool updateInt(int& subject, int& value);
 	virtual bool updateVal(double& subject, double& value);
-	virtual bool useTextureOptimization();
 	virtual void display() = 0;
 	virtual void checkVariables();
 	virtual GLuint render() = 0;
@@ -68,6 +69,8 @@ public slots:
 	
 signals:
 	void displayChanged();
+	void hideSettings(QFrame*);
+	void showSettings(QFrame*);
 	void scaleChanged(int);
 	void sizeChanged(int);	
 	void startChanged(int);

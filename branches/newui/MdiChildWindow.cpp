@@ -2,6 +2,9 @@
 #include "glwidget.h"
 #include <QtGui/QTabWidget>
 #include "HighlightDisplay.h"  //TODO: remove dependency
+#include <algorithm>
+
+using std::find;
 
 MdiChildWindow::MdiChildWindow(UiVariables gui, QSpinBox* pStart, QTabWidget* settings)
 {
@@ -64,6 +67,7 @@ void MdiChildWindow::closeEvent(QCloseEvent *event)
 	//QScrollBar* horizontalScrollBar;
 	//QScrollBar* verticalScrollBar;
 	//QFrame* subFrame;
+	emit subWindowClosing(this);
 	delete glWidget;	
 	delete ui.offsetDial;//->hide();
 	for(int i = 0; i < (int)settingsTabs.size(); ++i)
@@ -101,14 +105,35 @@ void MdiChildWindow::setPageSize()
 void MdiChildWindow::createSettingsTabs()
 {
 	//QFrame* tab = glWidget->highlight->settingsUi();
-	settingsTabs = glWidget->settingsUi();
-	for(int i = 0; i < (int)settingsTabs.size(); ++i)
+	glWidget->settingsUi();//settingsTabs = 
+	/*for(int i = 0; i < (int)temp.size(); ++i)
 	{
-		if( settingsTabs[i] != NULL )
-			settingsDock->addTab(settingsTabs[i], settingsTabs[i]->windowTitle());
-		else
+		if( settingsTabs[i] == NULL )
 			glWidget->print("WARNING: NULL entry in MdiChildWindow::settingsTabs");
+		//else
+			//settingsDock->addTab(settingsTabs[i], settingsTabs[i]->windowTitle());
+			
+	}*/
+	connect( glWidget, SIGNAL(hideSettings(QFrame*)), this, SLOT(hideSettingsTab(QFrame*)));
+	connect( glWidget, SIGNAL(showSettings(QFrame*)), this, SLOT(showSettingsTab(QFrame*)));
+}
+
+//NOTE: The plural and singular forms of (hide/show)SettingsTab(s) are similar but not identical in where they get the pointer
+void MdiChildWindow::hideSettingsTab(QFrame* tab)
+{
+	int index = settingsDock->indexOf(tab);
+	if(index > -1)
+	{
+		settingsDock->removeTab(index); 
+		vector<QFrame*>::iterator it;
+		it = std::find(settingsTabs.begin(), settingsTabs.end(), tab);
+		settingsTabs.erase(it);
 	}
+}
+void MdiChildWindow::showSettingsTab(QFrame* tab)
+{
+	settingsTabs.push_back(tab);
+	settingsDock->insertTab(1, tab, tab->windowTitle());
 }
 
 void MdiChildWindow::hideSettingsTabs()

@@ -85,15 +85,6 @@ bool AbstractGraph::updateVal(double& subject, double& value)
 	return false;
 }
 
-
-bool AbstractGraph::useTextureOptimization()
-{
-	/*if(ui)
-		return ui->textureCheckBox->isChecked();
-	else*/
-		return true;
-}
-
 string AbstractGraph::getFileName()
 {
 	return "";
@@ -149,6 +140,13 @@ void AbstractGraph::invalidate()
 void AbstractGraph::toggleVisibility()
 {
 	hidden = !hidden;
+	if(settingsTab != NULL)
+	{
+		if(hidden)
+			emit hideSettings(settingsTab);
+		else
+			emit showSettings(settingsTab);
+	}	
 	emit displayChanged();
 }
 
@@ -167,6 +165,7 @@ int AbstractGraph::width()
 }
 
 QFrame* AbstractGraph::settingsUi()
-{
+{//settingsUi should be called before toggleVisibility() the first time so that "settingsTab" will have a value
+	settingsTab = NULL;
 	return NULL;
 }

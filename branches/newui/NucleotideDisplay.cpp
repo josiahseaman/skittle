@@ -9,7 +9,8 @@ NucleotideDisplay::NucleotideDisplay(UiVariables* gui, GLWidget* gl)
 	string* seq = new string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");	
 	sequence = seq;
 	
-	textureBuffer = NULL;	
+	textureBuffer = NULL;
+	settingsTab = NULL;	
 	hidden = false;
 	
 	nucleotide_start = 1;

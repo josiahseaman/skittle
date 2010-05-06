@@ -93,18 +93,6 @@ GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
     canvasWidth = 1;
 	canvasHeight = 1;
 	setTool(RESIZE_TOOL);
-	/*connect( ui->widthDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
-    connect(ui.zoomDial, SIGNAL(valueChanged(int)), this, SLOT(changeZoom(int)));
-	
-    nuc->createConnections();
-    freq->createConnections();
-    cylinder->createConnections();
-    olig->createConnections();
-   	
-	connect( ui.alignButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));
-	connect( ui.freqButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));
-	connect( ui.cylinderButton, SIGNAL(clicked()), this, SLOT(updateDisplay()));*/
-	
     setMouseTracking(true);
     setFocusPolicy(Qt::ClickFocus);
    	createConnections();
@@ -135,6 +123,8 @@ void GLWidget::createConnections()
    	for(int i = 0; i < graphs.size(); ++i)
    	{
    		connect( graphs[i], SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
+   		connect( graphs[i], SIGNAL(hideSettings(QFrame*)), this, SIGNAL(hideSettings(QFrame*)));
+   		connect( graphs[i], SIGNAL(showSettings(QFrame*)), this, SIGNAL(showSettings(QFrame*)));
    		//graphs[i]->createConnections();
 	}
 	
@@ -782,7 +772,7 @@ vector<QFrame*> GLWidget::settingsUi()
 	{
 		QFrame* tab = graphs[i]->settingsUi();
 		if(tab != NULL)
-			tabs.push_back(tab);
+			tabs.insert(tabs.begin(),tab);
 	}
 	return tabs;
 }

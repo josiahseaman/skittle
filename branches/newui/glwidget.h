@@ -37,6 +37,7 @@ class AlignmentDisplay;
 class OligomerDisplay;
 class HighlightDisplay;
 class GtfReader;
+class QFrame;
 
 using namespace std;
 
@@ -110,6 +111,8 @@ signals:
 	void AnnotationDisplayAdded(AnnotationDisplay*);
 	void IveBeenClicked(GLWidget*);
 	void displaySizeChanged();
+	void hideSettings(QFrame*);
+	void showSettings(QFrame*);
 
 protected:
 	void displayTrack(const vector<track_entry>& track);

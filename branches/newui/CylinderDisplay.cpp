@@ -9,6 +9,7 @@ CylinderDisplay::CylinderDisplay(UiVariables* gui, GLWidget* gl)
 	string* seq = new string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");
 	sequence = seq;
 	hidden = true;
+	settingsTab = NULL;
 	
 	nucleotide_start = 1;
 	scale = 1;

@@ -21,7 +21,6 @@ class NucleotideDisplay : public AbstractGraph
 
 public:
 	vector<color> nucleotide_colors;
-	bool texture_optimization;
 	bool invert;
 	bool C;
 	bool G;
