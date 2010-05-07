@@ -3,6 +3,12 @@
 #include "glwidget.h"
 #include <math.h>
 
+AbstractGraph::~AbstractGraph()
+{
+	if(toggleButton != NULL)
+		emit deleteButton(toggleButton);
+}
+
 void AbstractGraph::createConnections()
 {
 	connect( this, SIGNAL(widthChanged(int)), this, SIGNAL(displayChanged()));

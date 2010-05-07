@@ -52,10 +52,6 @@ void ViewManager::uiToGlwidgetConnections(GLWidget* active)
     connect(mainWindow->selectAction, SIGNAL(triggered()), active, SLOT(on_selectButton_clicked()));
     connect(mainWindow->resizeAction, SIGNAL(triggered()), active, SLOT(on_resizeButton_clicked()));
 	
-	/****Print Signals*****/
-	connect( active, SIGNAL(printText(QString)), mainWindow->textArea, SLOT(append(QString)));
-	connect( active, SIGNAL(printHtml(QString)), mainWindow->textArea, SLOT(insertHtml(QString)));
-
 	connect( active, SIGNAL(addGraphMode(AbstractGraph*)), mainWindow, SLOT(addDisplayActions(AbstractGraph*)));
 	
 	connect( active, SIGNAL(addDivider()), mainWindow, SLOT(addDisplayDivider()));

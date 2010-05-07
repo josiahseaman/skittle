@@ -10,6 +10,7 @@ OligomerDisplay::OligomerDisplay(UiVariables* gui, GLWidget* gl)
 	ui = gui;
 	string* seq = new string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");	
 	sequence = seq;
+	toggleButton = NULL;
 	graphBuffer = new TextureCanvas( );
 	textureBuffer = NULL;
 	hidden = true;

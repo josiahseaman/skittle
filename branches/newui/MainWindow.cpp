@@ -48,7 +48,9 @@ void MainWindow::addDisplayActions(AbstractGraph* display)
 		QAction* presetAction = new QAction(QString(display->actionLabel.c_str()),this);
 		presetAction->setStatusTip(QString(display->actionTooltip.c_str()));
 		presetAction->setData(QString(display->actionData.c_str()));
+		display->toggleButton = presetAction;
 		connect(presetAction,SIGNAL(triggered()),display, SLOT(toggleVisibility()));
+		connect(display, SIGNAL(deleteButton(QAction*)), this, SLOT(removeButton(QAction*)));
 	
 		presetMenu->addAction(presetAction);
 		presetToolBar->addAction(presetAction);
@@ -58,6 +60,12 @@ void MainWindow::addDisplayActions(AbstractGraph* display)
 		if(viewManager->activeWidget != NULL)
 			viewManager->activeWidget->print("Tried to add display mode with no label, aborting...");//TODO: Move print to MainWindow
 	}
+}
+
+void MainWindow::removeButton(QAction* presetAction)
+{
+	presetMenu->removeAction(presetAction);
+	presetToolBar->removeAction(presetAction);
 }
 
 void MainWindow::addDisplayDivider()
@@ -415,3 +423,38 @@ void MainWindow::writeSettings()
 	settings.setValue("state", saveState());
 	settings.endGroup();
 }
+
+/**********Print Functions**********/
+void MainWindow::print(const char* s)
+{
+	textArea->append(QString(s));	
+}
+
+void MainWindow::print(std::string s)
+{
+	textArea->append(QString(s.c_str()));	
+}
+
+void MainWindow::printHtml(std::string s)
+{
+	//QTextCursor cursor = textArea->textCursor();
+	//cursor.movePosition(QTextCursor::End);
+	textArea->insertHtml(QString(s.c_str()));
+}
+
+void MainWindow::print(const char* s, int num)
+{
+	stringstream ss1;
+	ss1 << s << num;
+
+	textArea->append(QString( ss1.str().c_str() ));	
+}
+
+void MainWindow::print(int num1, int num2)
+{
+	stringstream ss1;
+	ss1 << num1 << ", " << num2;
+
+	textArea->append(QString( ss1.str().c_str() ));	
+}
+

@@ -12,6 +12,7 @@ FrequencyMap::FrequencyMap(UiVariables* gui, GLWidget* gl)
 	string* seq = new string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");	
 	sequence = seq;
 	textureBuffer = NULL;
+	toggleButton = NULL;
 	hidden = true;
 
 	nucleotide_start = 1;
@@ -284,7 +285,7 @@ vector<point> FrequencyMap::bestMatches()
 				}
 			}
 		}
-		if(best_freq == 0) best_freq = 1;//TODO: NNNNN's show up as 0 and causes crash
+		if(best_freq == 0) best_freq = 1;//NNNNN's show up as 0 and causes crash
 		best_matches.push_back( point(best_score, (float)best_freq, 0) );
 	}
 	return best_matches;

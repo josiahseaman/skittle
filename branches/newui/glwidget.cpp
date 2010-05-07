@@ -723,40 +723,6 @@ color GLWidget::spectrum(double i)
 	return color(red, green, blue);
 }
 
-/**********Print Functions**********/
-void GLWidget::print(const char* s)
-{
-	emit printText(QString(s));	
-}
-
-void GLWidget::print(std::string s)
-{
-	emit printText(QString(s.c_str()));	
-}
-
-void GLWidget::printHtml(std::string s)
-{
-	//QTextCursor cursor = textArea->textCursor();
-	//cursor.movePosition(QTextCursor::End);
-	emit printHtml(QString(s.c_str()));
-}
-
-void GLWidget::print(const char* s, int num)
-{
-	stringstream ss1;
-	ss1 << s << num;
-
-	emit printText(QString( ss1.str().c_str() ));	
-}
-
-void GLWidget::print(int num1, int num2)
-{
-	stringstream ss1;
-	ss1 << num1 << ", " << num2;
-
-	emit printText(QString( ss1.str().c_str() ));	
-}
-
 void GLWidget::loadFile(QString fileName)
 {
 	if(parent != NULL)

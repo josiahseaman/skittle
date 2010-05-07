@@ -76,12 +76,7 @@ public:
 	void setupColorTable();
     color spectrum(double i);
     
-    void print(const char* s);
-	void print(std::string s);
-	void printHtml(std::string s);
-	void print(const char* s, int num);
-	void print(int num1, int num2);
-	const string* seq();
+    const string* seq();
 	
 	vector<QFrame*> settingsUi();
 

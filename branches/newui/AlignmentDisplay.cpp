@@ -15,6 +15,7 @@ AlignmentDisplay::AlignmentDisplay(UiVariables* gui, GLWidget* gl)
 	scale = sizeof(long int) * 4;//4 characters per byte (2 bits per nucleotide)
 	sequence = NULL;
 	packSeq = NULL;
+	toggleButton = NULL;
 	countTableShort = NULL;
 	countTableChar = NULL;
 	pSeqSize = 0;

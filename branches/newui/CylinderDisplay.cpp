@@ -10,6 +10,7 @@ CylinderDisplay::CylinderDisplay(UiVariables* gui, GLWidget* gl)
 	sequence = seq;
 	hidden = true;
 	settingsTab = NULL;
+	toggleButton = NULL;
 	
 	nucleotide_start = 1;
 	scale = 1;

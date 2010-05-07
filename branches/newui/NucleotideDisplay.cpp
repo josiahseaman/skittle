@@ -10,7 +10,8 @@ NucleotideDisplay::NucleotideDisplay(UiVariables* gui, GLWidget* gl)
 	sequence = seq;
 	
 	textureBuffer = NULL;
-	settingsTab = NULL;	
+	settingsTab = NULL;
+	toggleButton = NULL;	
 	hidden = false;
 	
 	nucleotide_start = 1;

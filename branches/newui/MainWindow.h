@@ -38,16 +38,14 @@ public:
     FastaReader* fastaReader;
     GtfReader* trackReader;
 	MainWindow();
+	void print(const char* s);
+	void print(std::string s);
+	void printHtml(std::string s);
+	void print(const char* s, int num);
+	void print(int num1, int num2); 
 
-
-signals:
-	void newFileOpen(QString name);
-	void newGtfFileOpen(QString name);
-	
-protected:
-	void closeEvent(QCloseEvent *event);
-	
 public slots:
+	void removeButton(QAction* presetAction);
 	void open();
 	void open(QString fileName);
 	void updateProgress(int);
@@ -60,6 +58,15 @@ public slots:
 	void halveWidth();
 	void addDisplayActions(AbstractGraph*);
 	void addDisplayDivider();
+	
+signals:
+	void newFileOpen(QString name);
+	void newGtfFileOpen(QString name);
+	
+	
+protected:
+	void closeEvent(QCloseEvent *event);
+	
 private:
 	void createActions();
 	void createMenus();

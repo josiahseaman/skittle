@@ -13,6 +13,7 @@
 
 class GLWidget;
 class QFrame;
+class QAction;
 
 using namespace std;
 
@@ -33,6 +34,7 @@ public:
 	
 	bool hidden;
 	bool upToDate;
+	QAction* toggleButton;
 	
 	int display_size;
 	int max_display_size;
@@ -42,6 +44,7 @@ public:
 	string actionTooltip;
 	string actionData; 
 	
+	~AbstractGraph();
 	virtual int width();
 	
 	virtual void createConnections();
@@ -75,6 +78,7 @@ signals:
 	void sizeChanged(int);	
 	void startChanged(int);
 	void widthChanged(int);	
+	void deleteButton(QAction*);
 	
 };
 
