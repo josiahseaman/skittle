@@ -1,8 +1,10 @@
-#ifndef UI_VARS
-#define UI_VARS
+#ifndef JUI_VARS
+#define JUI_VARS
 
-#include <QtGui/QSpinBox>
-#include <QtGui/QScrollBar>
+#include <string>
+
+class QTextEdit;
+class QSpinBox;
 
 class UiVariables
 {
@@ -14,26 +16,15 @@ public:
     QSpinBox* zoomDial;
     QSpinBox* offsetDial;
 
-
-UiVariables()
-{
-    sizeDial = NULL;
-    widthDial = NULL;
-    startDial = NULL;
-    scaleDial = NULL;
-    zoomDial = NULL;
-    offsetDial = NULL;
-}
-
-UiVariables(const UiVariables& copy)
-{
-    sizeDial  = copy.sizeDial;
-    widthDial = copy.widthDial;
-    startDial = copy.startDial;
-    scaleDial = copy.scaleDial;
-    zoomDial  = copy.zoomDial;
-    offsetDial= copy.offsetDial;
-}
-
+	//UiVariables();
+	UiVariables(QTextEdit*);
+	//UiVariables(const UiVariables& copy);
+	void print(const char*);
+	//void print(std::string s);
+	void printHtml(std::string);
+	//void print(const char* s, int num);
+	//void print(int num1, int num2); 
+private: 
+	QTextEdit* textArea;
 };
 #endif

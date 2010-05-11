@@ -12,11 +12,12 @@
 #include <QRunnable>
 #include <qtconcurrentrun.h>
 #include <QApplication>
-#include "glwidget.h"
+//#include "UiVariables.h"
 
 using namespace std;
 
 class GLWidget;
+class UiVariables;
 
 struct to_upper {
   int operator() ( int ch )
@@ -31,7 +32,7 @@ class FastaReader : public QObject
 	
 public:
 	
-	FastaReader(GLWidget* gl);
+	FastaReader(GLWidget* gl, UiVariables* gui);
 	~FastaReader();
 	const string* seq();
 	string trimFilename(string path);
@@ -46,6 +47,7 @@ signals:
 	
 private:
 	GLWidget* glWidget;
+	UiVariables* ui;
 	char upperCase(char& c);
 	bool initFile(string file);
 	void loadingProgress();

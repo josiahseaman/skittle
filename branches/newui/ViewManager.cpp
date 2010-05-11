@@ -9,10 +9,10 @@
 #include <algorithm>
 
 ViewManager::ViewManager(MainWindow* window, UiVariables gui)
-:QMdiArea(window)
+	: QMdiArea(window),
+	ui(gui)
 {
 	mainWindow = window;
-	ui = gui;
 	activeWidget = NULL;
 	
 	setBackgroundRole(QPalette::Dark);
@@ -165,7 +165,7 @@ void ViewManager::handleWindowSync()
 
 void ViewManager::changePublicStart(int val)
 {
-	//glWidget->print("changePublicStart: ", val);
+	//ui.print("changePublicStart: ", val);
 	//local.start changes
 	UiVariables local = vars(activeWidget);
 	ui.startDial->setValue(max(0, local.startDial->value() - local.offsetDial->value()));
@@ -232,7 +232,7 @@ UiVariables ViewManager::copyUi()
     mainWindow->settingToolBar->addWidget(offsetDial);
     //offsetDial->hide();
     
-	UiVariables localDials;
+	UiVariables localDials(ui);
 	localDials.sizeDial  = sizeDial;
     localDials.widthDial = widthDial;
     localDials.startDial = startDial;

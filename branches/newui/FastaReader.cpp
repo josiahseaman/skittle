@@ -1,6 +1,7 @@
 #include <QtGui>
 #include "FastaReader.h"
 #include "BasicTypes.h"
+#include "glwidget.h"
 #include "UiVariables.h"
 
 #include <string>
@@ -13,9 +14,10 @@
 
 using namespace QtConcurrent;
 
-FastaReader::FastaReader( GLWidget* gl) 
+FastaReader::FastaReader( GLWidget* gl, UiVariables* gui) 
 {	
 	glWidget = gl;
+	ui = gui;
 	sequence = logo();//string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");//
 	bytesInFile = 0;
 	blockSize = 5000000;
@@ -48,7 +50,7 @@ bool FastaReader::initFile(string file)
 void FastaReader::readFile(QString fileName)
 {
 	string file = fileName.toStdString();
-	glWidget->print(file);
+	ui->print(file.c_str());
 	if( file.empty() )
 		return;
 	storeChrName(file);	
@@ -87,7 +89,7 @@ void FastaReader::readFile(QString fileName)
 		}
 		buffer.clear();
 		buffer.resize(0);
-		glWidget->print("Done reading file.");
+		ui->print("Done reading file.");
 		emit newFileRead( seq() );
 	}
 }

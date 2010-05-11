@@ -114,7 +114,7 @@ void HighlightDisplay::assignColors()
 	}
 	/*if(nucleotide_colors.size() < 10 )
 	{
-		glWidget->print("Error: No Highlight Data!");
+		ui->print("Error: No Highlight Data!");
 	}*/
 	loadTextureCanvas();
 }
@@ -122,7 +122,7 @@ void HighlightDisplay::assignColors()
 //This calculates how well a region of the genome matches a query sequence 'target' at every nucleotide.  
 void HighlightDisplay::calculate()
 {
-	//glWidget->print("Calculate:", ++frameCount);
+	//ui->print("Calculate:", ++frameCount);
 	similarity.clear();
 	int targetSize = target.size();
 	//int count = 0;
@@ -142,7 +142,7 @@ void HighlightDisplay::calculate()
 	upToDate = true;
 //	stringstream outStream;//
 //	outStream << count << " matches to " << target << " at " << percentage_match * 100 << "% similarity" << endl;
-//	glWidget->print(outStream.str());
+//	ui->print(outStream.str());
 }
 
 void HighlightDisplay::setHighlightSequence(const QString& high_C)

@@ -21,8 +21,9 @@ using namespace QtConcurrent;
 using namespace std;
 
 GtfReader::GtfReader(UiVariables gui)
+	:ui(gui)
 {	
-	ui = gui;
+	//ui = gui;
 	inputFilename = string("blank.fa");
 	outputFilename = string("user.gtf");
 	bytesInFile = 0;

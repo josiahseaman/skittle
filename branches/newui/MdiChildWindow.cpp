@@ -7,8 +7,8 @@
 using std::find;
 
 MdiChildWindow::MdiChildWindow(UiVariables gui, QSpinBox* pStart, QTabWidget* settings)
+	: ui(gui)
 {
-	ui = gui;
 	publicStart = pStart;
 	settingsDock = settings;
 	horizontalScrollBar = new QScrollBar();
@@ -96,7 +96,7 @@ void MdiChildWindow::setOffsetStep(int val)
 
 void MdiChildWindow::setPageSize()
 {
-	//glWidget->print("setPageSize", ui.sizeDial->value());
+	//ui.print("setPageSize", ui.sizeDial->value());
 	if( glWidget != NULL)
 		verticalScrollBar->setMaximum( max(0, (int)(glWidget->seq()->size() - ui.widthDial->value()) ) );
 	verticalScrollBar->setPageStep(ui.sizeDial->value());
@@ -109,7 +109,7 @@ void MdiChildWindow::createSettingsTabs()
 	/*for(int i = 0; i < (int)temp.size(); ++i)
 	{
 		if( settingsTabs[i] == NULL )
-			glWidget->print("WARNING: NULL entry in MdiChildWindow::settingsTabs");
+			ui.print("WARNING: NULL entry in MdiChildWindow::settingsTabs");
 		//else
 			//settingsDock->addTab(settingsTabs[i], settingsTabs[i]->windowTitle());
 			

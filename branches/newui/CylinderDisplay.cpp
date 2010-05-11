@@ -92,7 +92,7 @@ GLuint CylinderDisplay::render()
 		createSquare();
 	glEndList();
 
-	//glWidget->print("Cylinder calculated");
+	//ui->print("Cylinder calculated");
 	//width_list = vector<float>(max_display_size, (float)Width);
 	ntLinker->calculate(sequence->substr(nucleotide_start, display_size), Width);
 	width_list = ntLinker->smooth(Width, 80);
@@ -161,5 +161,5 @@ void CylinderDisplay::mouseClick(point2D pt){	}
 /******SLOTS*****/
 void CylinderDisplay::saySomething()
 {
-	glWidget->print("I see you");
+	ui->print("I see you");
 }

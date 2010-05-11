@@ -41,8 +41,10 @@
 #include <math.h>
 #include <sstream>
 #include <vector>
+#include <sstream>
 
 #include "glwidget.h"
+#include "UiVariables.h"
 #include "NucleotideDisplay.h"
 #include "FrequencyMap.h"
 #include "AnnotationDisplay.h"
@@ -57,9 +59,9 @@
 using std::string;
 //! [0]
 GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
-    : QGLWidget(parentWidget)
+    : QGLWidget(parentWidget),
+    ui(gui)
 {
-	ui = gui;
 	parent = parentWidget;
 	setMouseTracking(true);
 	setMinimumWidth(100);
@@ -67,7 +69,7 @@ GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
 	frame = 0;
 	
 	setupColorTable();
-	reader = new FastaReader(this);
+	reader = new FastaReader(this, &ui);
 	connect(reader, SIGNAL(newFileRead(const string*)), this, SLOT(displayString(const string*)));
     trackReader = new GtfReader(ui);
 	
@@ -148,7 +150,7 @@ double GLWidget::getZoom()
 
 void GLWidget::setTotalDisplayWidth()
 {	
-	//print("SetWidth: ", ui.widthDial->value());
+	//ui.print("SetWidth: ", ui.widthDial->value());
 	int total_width = border;
 	for(int i = 0; i < graphs.size(); ++i)
 	{
@@ -177,7 +179,7 @@ const string* GLWidget::seq()
 
 void GLWidget::displayString(const string* seq)
 {
-	//print("New sequence received.  Size:", seq->size());
+	//ui.print("New sequence received.  Size:", seq->size());
 
 	for(int i = 0; i < graphs.size(); ++i)
 	{
@@ -220,7 +222,9 @@ void GLWidget::setTool(int tool)
 			changeCursor(Qt::CrossCursor);
 			break;
 		default:
-			print("Error: Tool ID unrecognized.", tool);
+			stringstream ss1;
+			ss1 << "Error: Tool ID unrecognized." << tool;
+			ui.print(ss1.str().c_str());
 	}
 }
 
@@ -238,13 +242,13 @@ void GLWidget::updateDisplay()
 {
 	setTotalDisplayWidth();
 	//updateDisplaySize();
-	//print("UpdateGL");
+	//ui.print("UpdateGL");
 	redraw();
 }
 
 void GLWidget::updateDisplaySize()
 {
-	//print("Updating Size: ", ui.sizeDial->value());
+	//ui.print("Updating Size: ", ui.sizeDial->value());
 	QSize dimensions = size();
 	double pixelHeight = dimensions.height();
 	int w = ui.widthDial->value();
@@ -284,7 +288,7 @@ void GLWidget::updateDisplaySize()
 	{
 		vector<track_entry> track = trackReader->readFile(QString(fileName.c_str()));
 
-		print("Annotations Received: ", track.size());
+		ui.print("Annotations Received: ", track.size());
 		if( track.size() > 0)// || trackReader->outputFile().compare(fileName) == 0 )//
 		{
 			tempTrackDisplay = new AnnotationDisplay(&ui, this, fileName);
@@ -311,7 +315,9 @@ AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fName)
 	else
 	{
 		vector<track_entry> track = trackReader->readFile(QString(fileName.c_str()));
-		print("Annotations Received: ", track.size());
+		stringstream ss1;
+		ss1 << "Annotations Received: " << track.size();
+		ui.print(ss1.str().c_str());
 		if( track.size() > 0)// || trackReader->outputFile().compare(fileName) == 0 )//
 		{
 			tempTrackDisplay = new AnnotationDisplay(&ui, this, fileName);
@@ -450,7 +456,7 @@ void GLWidget::paintGL()
 			ui.scaleDial->setValue(scale);
 		}
 	}
-	//print("Frame: ", ++frame);
+	//ui.print("Frame: ", ++frame);
     glMatrixMode(GL_MODELVIEW);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();

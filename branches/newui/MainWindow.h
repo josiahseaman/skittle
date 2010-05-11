@@ -38,11 +38,6 @@ public:
     FastaReader* fastaReader;
     GtfReader* trackReader;
 	MainWindow();
-	void print(const char* s);
-	void print(std::string s);
-	void printHtml(std::string s);
-	void print(const char* s, int num);
-	void print(int num1, int num2); 
 
 public slots:
 	void removeButton(QAction* presetAction);
@@ -80,6 +75,7 @@ private:
 	bool loadfile(const QString &filename);
 	void readSettings();
 	void writeSettings();
+	void print(const char* str);
 	
 	ViewManager* viewManager;
 	QMenu *annotationMenu;

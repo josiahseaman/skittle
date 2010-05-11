@@ -140,7 +140,7 @@ void NucleotideDisplay::changeWidth(int w)//Nucleotide Display changes Width int
 		w = 1;
 	if(widthInBp() != w)
 	{
-		glWidget->print("Nucleotide Width");
+		ui->print("Nucleotide Width");
 		Width = max(1, w / ui->scaleDial->value() );
 		emit widthChanged(w);
 		invalidate();
@@ -157,14 +157,14 @@ void NucleotideDisplay::mouseClick(point2D pt)
 		index = max(0, index);
 		index = min((int)display_size-51, index);
 		index = min( index + nucleotide_start, ((int)sequence->size()) - 51 );
-//			glWidget->print("Index: ", index);
+//			ui->print("Index: ", index);
 		string chromosome = glWidget->chromosomeName;
 		stringstream ss;
 		ss << "Index: " << index << "  Sequence: " << sequence->substr(index, 100);
 		//ss<< "   <a href=\"http://genome.ucsc.edu/cgi-bin/hgTracks?hgsid=132202298&clade=mammal&org=Human&db=hg18&position="
 		//<<chromosome<<":"<<index<<"-"<<index+200<<"&pix=800&Submit=submit\">View in Genome Browser</a> [external link]";
 		//																											chr5			12389181	12390000
-		glWidget->print(ss.str());
+		ui->print(ss.str().c_str());
 	}
 }
 /**/

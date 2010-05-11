@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 #include "BasicTypes.h"
-#include "UiVariables.h"
 /**
 *  This is the base class for all Grapher objects.  The constructor requires
 *  a Ui reference so that it can 'connect' to controls in the Ui.
@@ -14,6 +13,7 @@
 class GLWidget;
 class QFrame;
 class QAction;
+class UiVariables;
 
 using namespace std;
 

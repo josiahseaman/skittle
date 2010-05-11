@@ -73,7 +73,7 @@ void AnnotationDisplay::displayTrack(const vector<track_entry>& track)
 	int display_size = ui->sizeDial->value();
 	int next_spot = 0;
 	
-	//glWidget->print("--------------------");
+	//ui->print("--------------------");
 	if(track.empty()) 
 		return;
 	vector<track_entry> activeEntries = vector<track_entry>();
@@ -148,7 +148,7 @@ void AnnotationDisplay::mouseClick(point2D pt)
 	//range check
 	if( pt.x <= width() && pt.x >= 0 )
 	{
-		glWidget->print("-------------");
+		ui->print("-------------");
 		int start = ui->startDial->value() + pt.y * ui->widthDial->value() + pt.x;
 		int stop = start + ui->widthDial->value();
 		if(!gtfTrack.empty())
@@ -159,7 +159,7 @@ void AnnotationDisplay::mouseClick(point2D pt)
 				    || (gtfTrack[i].stop >= start && gtfTrack[i].stop <= stop)//end in range
 					|| (gtfTrack[i].start < start && gtfTrack[i].stop > stop)) )//in the middle
 				{
-					glWidget->print(gtfTrack[i].toString());
+					ui->print(gtfTrack[i].toString().c_str());
 				}
 			}
 		}

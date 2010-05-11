@@ -201,7 +201,7 @@ GLuint OligomerDisplay::render()//deprecated
 
 void OligomerDisplay::freq_map()
 {
-	//glWidget->print("OligomerDisplay: ", ++frameCount);
+	//ui->print("OligomerDisplay: ", ++frameCount);
 	height();
 	const char* genome = sequence->c_str() + nucleotide_start;
 	for( int h = 0; h < F_height; h++)
@@ -251,7 +251,7 @@ void OligomerDisplay::mouseClick(point2D pt)
 		stringstream ss;
 		ss << "Dinucleotide: " << pt.x << "  Count: " << freq[pt.y][pt.x] << "\nSequence:"
 			<< sequence->substr(index, w);
-		glWidget->print(ss.str());
+		ui->print(ss.str().c_str());
 	}
 }
 

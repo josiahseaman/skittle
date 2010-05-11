@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 
 #include "MainWindow.h"
 #include "FastaReader.h"
@@ -57,8 +58,7 @@ void MainWindow::addDisplayActions(AbstractGraph* display)
 	}
 	else
 	{
-		if(viewManager->activeWidget != NULL)
-			viewManager->activeWidget->print("Tried to add display mode with no label, aborting...");//TODO: Move print to MainWindow
+		print("Tried to add display mode with no label, aborting...");
 	}
 }
 
@@ -310,7 +310,7 @@ void MainWindow::createFileConnections()
 
 UiVariables MainWindow::getDisplayVariables()
 {
-	UiVariables var = UiVariables();
+	UiVariables var = UiVariables(textArea);
 
 	var.sizeDial = displayLength;
     var.widthDial = widthDial;
@@ -404,8 +404,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::readSettings()
 {
-	if(viewManager->activeWidget != NULL)
-		viewManager->activeWidget->print("Reading User Settings");
+	print("Reading User Settings");
 	QSettings settings("Skittle", "Preferences");
 	settings.beginGroup("mainWindow");
 	restoreGeometry(settings.value("geometry").toByteArray());
@@ -415,8 +414,7 @@ void MainWindow::readSettings()
 
 void MainWindow::writeSettings()
 {	
-	if(viewManager->activeWidget != NULL)
-		viewManager->activeWidget->print("Writing Settings");
+	print("Writing Settings");
 	QSettings settings("Skittle", "Preferences");
 	settings.beginGroup("mainWindow");
 	settings. setValue("geometry", saveGeometry());
@@ -425,36 +423,7 @@ void MainWindow::writeSettings()
 }
 
 /**********Print Functions**********/
-void MainWindow::print(const char* s)
+void MainWindow::print(const char* str)
 {
-	textArea->append(QString(s));	
+	textArea->append(QString(str));
 }
-
-void MainWindow::print(std::string s)
-{
-	textArea->append(QString(s.c_str()));	
-}
-
-void MainWindow::printHtml(std::string s)
-{
-	//QTextCursor cursor = textArea->textCursor();
-	//cursor.movePosition(QTextCursor::End);
-	textArea->insertHtml(QString(s.c_str()));
-}
-
-void MainWindow::print(const char* s, int num)
-{
-	stringstream ss1;
-	ss1 << s << num;
-
-	textArea->append(QString( ss1.str().c_str() ));	
-}
-
-void MainWindow::print(int num1, int num2)
-{
-	stringstream ss1;
-	ss1 << num1 << ", " << num2;
-
-	textArea->append(QString( ss1.str().c_str() ));	
-}
-
