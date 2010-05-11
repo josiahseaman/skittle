@@ -25,6 +25,7 @@
 #include <QKeyEvent>
 #include <string>
 #include "BasicTypes.h"
+#include "UiVariables.h"
 
 class UiVariables;
 class FastaReader;
@@ -46,7 +47,7 @@ class GLWidget : public QGLWidget
     Q_OBJECT
 
 public:
-	UiVariables& ui;
+	UiVariables ui;
 	string chromosomeName;
 	QWidget* parent;
 	FastaReader* reader;

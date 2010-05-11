@@ -120,7 +120,7 @@ void ViewManager::closeSubWindow(MdiChildWindow* closing)
 
 void ViewManager::changeFile(QString fileName)
 {
-	if(activeWidget != NULL)
+	if(activeWidget != NULL && !fileName.isEmpty() )
 	{
 		activeWidget->loadFile(fileName);
 		activeWidget->trackReader->determineOutputFile(fileName);
@@ -232,7 +232,7 @@ UiVariables ViewManager::copyUi()
     mainWindow->settingToolBar->addWidget(offsetDial);
     //offsetDial->hide();
     
-	UiVariables localDials(ui);
+	UiVariables localDials(ui.textArea);
 	localDials.sizeDial  = sizeDial;
     localDials.widthDial = widthDial;
     localDials.startDial = startDial;

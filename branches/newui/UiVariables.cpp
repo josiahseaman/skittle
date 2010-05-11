@@ -1,9 +1,10 @@
 #include <QtGui/QTextEdit>
 #include <QtGui/QSpinBox>
 #include <QString>
+#include <iostream>
 #include "UiVariables.h"
 
-/*UiVariables::UiVariables()
+UiVariables::UiVariables()
 {
 	textArea = NULL;
     sizeDial = NULL;
@@ -12,11 +13,12 @@
     scaleDial = NULL;
     zoomDial = NULL;
     offsetDial = NULL;
-}*/
+}
 
 UiVariables::UiVariables(QTextEdit* text)
 {
 	textArea = text;
+	textArea->toPlainText();
     sizeDial = NULL;
     widthDial = NULL;
     startDial = NULL;
@@ -37,7 +39,13 @@ UiVariables::UiVariables(const UiVariables& copy)
 
 void UiVariables::print(char const * s)
 {
-	textArea->append(QString(s));	
+	if(textArea != NULL)
+	{
+		QString name(s);
+		//QString tValue = textArea;
+		std::cerr << "s: " << s << " name: " << name.toStdString() << " current Value: " << (int)textArea << std::endl;
+		//textArea->append(name);	
+	}
 }
 
 /*void UiVariables::print(std::string s)
@@ -49,7 +57,8 @@ void UiVariables::printHtml(std::string s)
 {
 	//QTextCursor cursor = textArea->textCursor();
 	//cursor.movePosition(QTextCursor::End);
-	textArea->insertHtml(QString(s.c_str()));
+	if(textArea != NULL)
+		textArea->insertHtml(QString(s.c_str()));
 }
 
 /*

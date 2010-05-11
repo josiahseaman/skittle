@@ -15,8 +15,9 @@ public:
     QSpinBox* scaleDial;
     QSpinBox* zoomDial;
     QSpinBox* offsetDial;
+	QTextEdit* textArea;
 
-	//UiVariables();
+	UiVariables();
 	UiVariables(QTextEdit*);
 	//UiVariables(const UiVariables& copy);
 	void print(const char*);
@@ -24,7 +25,6 @@ public:
 	void printHtml(std::string);
 	//void print(const char* s, int num);
 	//void print(int num1, int num2); 
-private: 
-	QTextEdit* textArea;
+
 };
 #endif

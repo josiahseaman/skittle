@@ -23,6 +23,7 @@
 
 MainWindow::MainWindow()
 {
+	textArea = NULL;
 	setDockOptions(QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks);
 	setWindowTitle( "Skittle Genome Visualizer");
 	createActions();
@@ -425,5 +426,6 @@ void MainWindow::writeSettings()
 /**********Print Functions**********/
 void MainWindow::print(const char* str)
 {
-	textArea->append(QString(str));
+	if(textArea != NULL)
+		textArea->append(QString(str));
 }

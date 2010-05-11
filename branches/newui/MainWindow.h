@@ -24,9 +24,9 @@ class QProgressBar;
 class QScrollArea;
 class QScrollBar;
 class QFrame;
-class QLineEdit;
 class QTabWidget;
 class QCheckBox;
+class ViewManager;
 
 class MainWindow : public QMainWindow
 {

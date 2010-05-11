@@ -44,7 +44,6 @@
 #include <sstream>
 
 #include "glwidget.h"
-#include "UiVariables.h"
 #include "NucleotideDisplay.h"
 #include "FrequencyMap.h"
 #include "AnnotationDisplay.h"
@@ -59,9 +58,9 @@
 using std::string;
 //! [0]
 GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
-    : QGLWidget(parentWidget),
-    ui(gui)
+    : QGLWidget(parentWidget)
 {
+    ui = (gui);
 	parent = parentWidget;
 	setMouseTracking(true);
 	setMinimumWidth(100);
