@@ -16,6 +16,7 @@ INPUT(
 ./release\OligomerDisplay.o
 ./release\TextRender.o
 ./release\TextureCanvas.o
+./release\UiVariables.o
 ./release\ViewManager.o
 ./release\moc_AbstractGraph.o
 ./release\moc_AlignmentDisplay.o

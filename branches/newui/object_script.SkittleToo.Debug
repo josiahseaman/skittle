@@ -16,6 +16,7 @@ INPUT(
 ./debug\OligomerDisplay.o
 ./debug\TextRender.o
 ./debug\TextureCanvas.o
+./debug\UiVariables.o
 ./debug\ViewManager.o
 ./debug\moc_AbstractGraph.o
 ./debug\moc_AlignmentDisplay.o

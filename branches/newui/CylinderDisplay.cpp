@@ -92,7 +92,6 @@ GLuint CylinderDisplay::render()
 		createSquare();
 	glEndList();
 
-	//ui->print("Cylinder calculated");
 	//width_list = vector<float>(max_display_size, (float)Width);
 	ntLinker->calculate(sequence->substr(nucleotide_start, display_size), Width);
 	width_list = ntLinker->smooth(Width, 80);

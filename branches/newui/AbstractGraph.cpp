@@ -101,7 +101,6 @@ void AbstractGraph::changeScale(int s)
 {
 	if(updateInt(scale, s))
 	{
-		//ui->print("Scale Change");
 		emit scaleChanged(s);
 	}
 }
@@ -110,7 +109,6 @@ void AbstractGraph::changeWidth(int w)
 {
 	if(updateInt(Width, w ))
 	{
-		//ui->print("Width Change");
 		if(Width < scale)
 			Width = scale;
 		emit widthChanged(Width);
@@ -122,7 +120,6 @@ void AbstractGraph::changeSize(int s)
 	if(updateInt(max_display_size, s))
 	{
 		display_size = min( max_display_size, max(0, ((int)sequence->size() - nucleotide_start)) );
-		//ui->print("Size Change");
 		emit sizeChanged(s);
 	}
 }
@@ -132,7 +129,6 @@ void AbstractGraph::changeStart(int s)
 	if(updateInt(nucleotide_start, s))
 	{
 		display_size = min( max_display_size, max(0, ((int)sequence->size() - nucleotide_start)) );
-		//ui->print("Start Change");
 		emit startChanged(s);
 	}
 }

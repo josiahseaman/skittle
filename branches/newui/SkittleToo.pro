@@ -48,5 +48,5 @@ SOURCES += AbstractGraph.cpp \
            OligomerDisplay.cpp \
            TextRender.cpp \
            TextureCanvas.cpp \
-           ViewManager.cpp \
-           UiVariables.h
+           UiVariables.cpp \
+           ViewManager.cpp

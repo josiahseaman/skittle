@@ -1,5 +1,5 @@
-#ifndef JUI_VARS
-#define JUI_VARS
+#ifndef JUI_VARS1234
+#define JUI_VARS1234
 
 #include <string>
 

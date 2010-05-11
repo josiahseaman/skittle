@@ -73,7 +73,6 @@ void AnnotationDisplay::displayTrack(const vector<track_entry>& track)
 	int display_size = ui->sizeDial->value();
 	int next_spot = 0;
 	
-	//ui->print("--------------------");
 	if(track.empty()) 
 		return;
 	vector<track_entry> activeEntries = vector<track_entry>();

@@ -310,7 +310,7 @@ void MainWindow::createFileConnections()
 
 UiVariables MainWindow::getDisplayVariables()
 {
-	UiVariables var = UiVariables(textArea);
+	UiVariables var(textArea);
 
 	var.sizeDial = displayLength;
     var.widthDial = widthDial;
