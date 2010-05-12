@@ -256,7 +256,7 @@ void FrequencyMap::mouseClick(point2D pt)
 			stringstream ss;
 			ss << "Offset: "<<pt.x<<" #" << index << " compared with #" << index2 << "  \n"
 				<< sequence->substr(index, w) << "\n <----> \n" << sequence->substr(index2, w);
-			ui->print(ss.str().c_str());
+			ui->print(ss.str());
 		}
 		
 		//ui->widthDial->setValue( pt.x);

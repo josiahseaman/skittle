@@ -52,7 +52,7 @@ void FastaReader::readFile(QString fileName)
 	string file = fileName.toStdString();
 	if( file.empty() )
 		return;
-	ui->print(file.c_str());
+	ui->print(file);
 	storeChrName(file);	
 	sequence.clear();
 	sequence = string(">"); //inserting this character at the beginning means the first nucleotide is at sequence[1]
