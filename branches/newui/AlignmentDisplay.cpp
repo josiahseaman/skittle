@@ -55,8 +55,10 @@ void AlignmentDisplay::display()
 
 void AlignmentDisplay::loadTexture()
 {
-	scale = max(4, (scale / 4) * 4);//enforces scale is a multiple of 4
-	ui->scaleDial->setValue(scale);
+	/*int s = ui->scaleDial->value();
+	s = max(4, (s / 4) * 4);//enforces scale is a multiple of 4
+	ui->scaleDial->setValue(s);
+	checkVariables();*/
 	//return if changed?
 
 	vector<color> alignment_colors;
@@ -90,9 +92,10 @@ GLuint AlignmentDisplay::render()
 
 void AlignmentDisplay::VLRcheck(vector<point> matches)//alternative to loadTexture
 {
-	checkVariables();
-	scale = max(4, (scale / 4) * 4);//enforces scale is a multiple of 4
-	ui->scaleDial->setValue(scale);
+	/*int s = ui->scaleDial->value();
+	s = max(4, (s / 4) * 4);//enforces scale is a multiple of 4
+	ui->scaleDial->setValue(s);
+	checkVariables();*/
 	//return if changed?
 
 	vector<color> alignment_colors;
@@ -375,3 +378,8 @@ void AlignmentDisplay::setSequence(const string* seq)
 	normalPack(seq);
 }
 
+void AlignmentDisplay::changeScale(int s)
+{
+	ui->print("AlignmentDisplay::changeScale ", s);
+	AbstractGraph::changeScale(s);
+}

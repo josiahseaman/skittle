@@ -25,6 +25,7 @@ void AbstractGraph::createConnections()
 	connect( this, SIGNAL(sizeChanged(int)), ui->sizeDial, SLOT(setValue(int)));
 
 	connect( ui->scaleDial, SIGNAL(valueChanged(int)), this, SLOT(changeScale(int)));
+	connect( this, SIGNAL(scaleChanged(int)), ui->scaleDial, SLOT(setValue(int)));
 }
 
 void AbstractGraph::checkVariables()
@@ -101,6 +102,7 @@ void AbstractGraph::changeScale(int s)
 {
 	if(updateInt(scale, s))
 	{
+		ui->print("AbstractGraph::changeScale ", s);
 		emit scaleChanged(s);
 	}
 }

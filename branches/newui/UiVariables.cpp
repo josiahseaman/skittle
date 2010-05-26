@@ -59,7 +59,7 @@ void UiVariables::printHtml(std::string s)
 
 void UiVariables::print(const char* s, int num)
 {
-	stringstream ss1;
+	std::stringstream ss1;
 	ss1 << s << num;
 
 	textArea->append(QString( ss1.str().c_str() ));	

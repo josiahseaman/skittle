@@ -42,6 +42,8 @@ public:
 	color simpleAlignment(int index);
 	void setSequence(const string* seq);
 
+public slots:
+	void changeScale(int s);
 	
 private:	
 	unsigned int charPerIndex;

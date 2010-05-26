@@ -41,7 +41,9 @@
 #include <math.h>
 #include <sstream>
 #include <vector>
-#include <sstream>
+
+#include <stdlib.h>
+#include <ctime>
 
 #include "glwidget.h"
 #include "NucleotideDisplay.h"
@@ -98,6 +100,8 @@ GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
     setFocusPolicy(Qt::ClickFocus);
    	createConnections();
 //   	createButtons();
+
+	srand(time(0));
 }
 
 GLWidget::~GLWidget()
@@ -121,6 +125,7 @@ void GLWidget::createButtons()
 
 void GLWidget::createConnections()
 {
+	
    	for(int i = 0; i < graphs.size(); ++i)
    	{
    		connect( graphs[i], SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
@@ -221,9 +226,7 @@ void GLWidget::setTool(int tool)
 			changeCursor(Qt::CrossCursor);
 			break;
 		default:
-			stringstream ss1;
-			ss1 << "Error: Tool ID unrecognized." << tool;
-			ui.print(ss1.str().c_str());
+			ui.print("Error: Tool ID unrecognized: ",  tool);
 	}
 }
 
@@ -314,9 +317,7 @@ AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fName)
 	else
 	{
 		vector<track_entry> track = trackReader->readFile(QString(fileName.c_str()));
-		stringstream ss1;
-		ss1 << "Annotations Received: " << track.size();
-		ui.print(ss1.str().c_str());
+		ui.print("Annotations Received: ", track.size());
 		if( track.size() > 0)// || trackReader->outputFile().compare(fileName) == 0 )//
 		{
 			tempTrackDisplay = new AnnotationDisplay(&ui, this, fileName);
@@ -446,15 +447,21 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
+	
 	if(!align->hidden)//TODO: move this inside AlignmentDisplay
 	{
 		int scale = ui.scaleDial->value();
 		scale = max(4, (scale / 4) * 4);//enforces scale is a multiple of 4
 		if(scale != ui.scaleDial->value())
 		{
-			ui.scaleDial->setValue(scale);
+			if(rand() % 10 != 1)
+			{
+				ui.print("GLWidget::paintGL ", scale);
+				ui.scaleDial->setValue(scale);
+				return;
+			}
 		}
-	}
+	}/**/  
 	//ui.print("Frame: ", ++frame);
     glMatrixMode(GL_MODELVIEW);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -591,7 +598,7 @@ void GLWidget::translateOffset(float dx, float dy)
 		int sign = (int)(dx / fabs(dx));
 		dx = (int)(dx + (0.5 * sign));
 	}
-	ui.offsetDial->setValue( current + moveUp + dx);
+	ui.offsetDial->setValue( (int)(current + moveUp + dx));
 }
  
 void GLWidget::changeCursor(Qt::CursorShape cNumber)
