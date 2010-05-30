@@ -31,8 +31,8 @@ MainWindow::MainWindow()
 	createToolbars();
 	createDocks();
 	createStatusBar();
-	oldScale = 1;
 	createUiConnections();
+	oldScale = 1;
 	
 	viewManager	= new ViewManager(this, getDisplayVariables());
 	setCentralWidget(viewManager);  

@@ -35,6 +35,8 @@ public slots:
 	void addBookmark();
 	void handleWindowSync();	
 	void changePublicStart(int val);
+	void printNum(int num);
+	void printNum2(int num);
 	
 	
 private:

@@ -26,6 +26,7 @@ void AbstractGraph::createConnections()
 
 	connect( ui->scaleDial, SIGNAL(valueChanged(int)), this, SLOT(changeScale(int)));
 	connect( this, SIGNAL(scaleChanged(int)), ui->scaleDial, SLOT(setValue(int)));
+	//NOTE: the above line may resolve a synchronization loop issue
 }
 
 void AbstractGraph::checkVariables()
@@ -92,6 +93,11 @@ bool AbstractGraph::updateVal(double& subject, double& value)
 	return false;
 }
 
+void AbstractGraph::displayLegend(float canvasWidth, float canvasHeight)
+{
+}
+
+
 string AbstractGraph::getFileName()
 {
 	return "";
@@ -102,7 +108,6 @@ void AbstractGraph::changeScale(int s)
 {
 	if(updateInt(scale, s))
 	{
-		ui->print("AbstractGraph::changeScale ", s);
 		emit scaleChanged(s);
 	}
 }

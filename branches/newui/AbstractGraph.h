@@ -54,6 +54,7 @@ public:
 	virtual bool updateInt(int& subject, int& value);
 	virtual bool updateVal(double& subject, double& value);
 	virtual void display() = 0;
+	virtual void displayLegend(float canvasWidth, float canvasHeight);
 	virtual void checkVariables();
 	virtual GLuint render() = 0;
 	virtual void setSequence(const string* seq);

@@ -61,8 +61,9 @@ using std::string;
 //! [0]
 GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
     : QGLWidget(parentWidget)
+    //,ui(gui)
 {
-    ui = (gui);
+    ui = gui;
 	parent = parentWidget;
 	setMouseTracking(true);
 	setMinimumWidth(100);
@@ -125,7 +126,6 @@ void GLWidget::createButtons()
 
 void GLWidget::createConnections()
 {
-	
    	for(int i = 0; i < graphs.size(); ++i)
    	{
    		connect( graphs[i], SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
@@ -134,7 +134,8 @@ void GLWidget::createConnections()
    		//graphs[i]->createConnections();
 	}
 	
-	connect(trackReader,SIGNAL(BookmarkAdded(track_entry,string)), this,SLOT(addTrackEntry(track_entry,string)));	
+	connect(trackReader,SIGNAL(BookmarkAdded(track_entry,string)), this,SLOT(addTrackEntry(track_entry,string)));
+	
 }
 
 QSize GLWidget::minimumSizeHint() const
@@ -447,17 +448,19 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
-	
+	/** /
 	if(!align->hidden)//TODO: move this inside AlignmentDisplay
 	{
 		int scale = ui.scaleDial->value();
-		scale = max(4, (scale / 4) * 4);//enforces scale is a multiple of 4
+		int rem = scale % 4;
+		scale = scale - rem;//enforces scale is a multiple of 4
+		scale = max(4, scale);
 		if(scale != ui.scaleDial->value())
 		{
 			if(rand() % 10 != 1)
 			{
 				ui.print("GLWidget::paintGL ", scale);
-				ui.scaleDial->setValue(scale);
+				emit scaleChanged(scale);//ui.scaleDial->setValue(
 				return;
 			}
 		}
@@ -480,6 +483,7 @@ void GLWidget::paintGL()
 			if(!graphs[i]->hidden)
 			{
 				graphs[i]->display();
+				graphs[i]->displayLegend(canvasWidth / getZoom(), canvasHeight / getZoom());
                 glTranslated(graphs[i]->width() + border, 0 , 0);
 			}
 		}
@@ -496,7 +500,7 @@ void GLWidget::resizeGL(int width, int height)
 	
 	float pixelToGridRatio = 6.0;
 	canvasWidth = width / pixelToGridRatio;
-	canvasHeight = height / pixelToGridRatio;
+	canvasHeight = (height / pixelToGridRatio);
 	float left = 0;
 	float right = left + width / pixelToGridRatio;
 	float top = 0;

@@ -25,7 +25,7 @@ public:
 	void mergeMatches(vector<color>& original, vector<point>& vlr);
 	void VLRcheck(vector<point> matches);
 	
-	void display_spectrum();
+	void displayLegend(float canvasWidth, float canvasHeight);
 	color alignment_color(int score, int frequency);
 	color interpolate(color p1, color p3, double progress);
 	

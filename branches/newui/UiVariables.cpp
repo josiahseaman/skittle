@@ -26,16 +26,17 @@ UiVariables::UiVariables(QTextEdit* text)
     zoomDial = NULL;
     offsetDial = NULL;
 }
-/*
+
 UiVariables::UiVariables(const UiVariables& copy)
 {
+	textArea  = copy.textArea;
     sizeDial  = copy.sizeDial;
     widthDial = copy.widthDial;
     startDial = copy.startDial;
     scaleDial = copy.scaleDial;
     zoomDial  = copy.zoomDial;
     offsetDial= copy.offsetDial;
-}*/
+}
 
 void UiVariables::print(char const * s)
 {
@@ -61,6 +62,14 @@ void UiVariables::print(const char* s, int num)
 {
 	std::stringstream ss1;
 	ss1 << s << num;
+
+	textArea->append(QString( ss1.str().c_str() ));	
+}
+
+void UiVariables::printNum(int num)
+{
+	std::stringstream ss1;
+	ss1 << num;
 
 	textArea->append(QString( ss1.str().c_str() ));	
 }

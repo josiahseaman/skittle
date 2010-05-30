@@ -55,10 +55,15 @@ void AlignmentDisplay::display()
 
 void AlignmentDisplay::loadTexture()
 {
-	/*int s = ui->scaleDial->value();
-	s = max(4, (s / 4) * 4);//enforces scale is a multiple of 4
-	ui->scaleDial->setValue(s);
-	checkVariables();*/
+	/**/
+	int s = ui->scaleDial->value();
+	if(s % 4 != 0)
+	{
+		ui->print("Warning: The SCALE on Repeat Overview should be set to a multiple of 4.");
+	}
+	//s = max(4, (s / 4) * 4);//enforces scale is a multiple of 4
+	//ui->scaleDial->setValue(s);
+	checkVariables();/**/
 	//return if changed?
 
 	vector<color> alignment_colors;
@@ -129,7 +134,7 @@ void AlignmentDisplay::mergeMatches(vector<color>& original, vector<point>& vlr)
 	}
 }
 
-void AlignmentDisplay::display_spectrum()
+void AlignmentDisplay::displayLegend(float canvasWidth, float canvasHeight)
 {
 	/** /
 	glPushMatrix();
@@ -147,28 +152,30 @@ void AlignmentDisplay::display_spectrum()
 	
 	glPopMatrix();
 	/*/
-	for(int i = 0; i < 250; i++)
-	{
-		glPushMatrix();
-			glTranslated(i,4,0);
-			color c = alignment_color(scale, i);//spectrum(i/255.0);//ui->scaleDial->value()
-			glScaled(1,10,1);//*(c.b / 125.0)
-    		glColor3d(c.r /255.0, c.g /255.0, c.b /255.0); 
-    	    glBegin(GL_QUADS);
-		        glVertex3d(0, .5, 0);
-		        glVertex3d(-1, .5, 0);
-		        glVertex3d(-1, -.5, 0);
-		        glVertex3d(0, -.5, 0);
-		    glEnd();
-		glPopMatrix();
-	}
-	TextRender textOutput = TextRender();
-	glColor3d(0,0,0);
-	textOutput.range_labels(1, 250, point(0.5,2,.3), point(250.5,2,.3), 16);
-	glColor3d(1,1,1);
-	textOutput.range_labels(1, 250, point(0,1.5,.5), point(250,1.5,.5), 16);
+	glPushMatrix();
+		glTranslated(0,-canvasHeight,1);//
+		for(int i = 0; i < 250; i++)
+		{
+			glPushMatrix();
+				glTranslated(i,4,0);
+				color c = alignment_color(scale, i);//spectrum(i/255.0);//ui->scaleDial->value()
+				glScaled(1,10,1);//*(c.b / 125.0)
+	    		glColor3d(c.r /255.0, c.g /255.0, c.b /255.0); 
+	    	    glBegin(GL_QUADS);
+			        glVertex3d(0, .5, 0);
+			        glVertex3d(-1, .5, 0);
+			        glVertex3d(-1, -.5, 0);
+			        glVertex3d(0, -.5, 0);
+			    glEnd();
+			glPopMatrix();
+		}
+		TextRender textOutput = TextRender();
+		glColor3d(0,0,0);
+		textOutput.range_labels(1, 250, point(0.5,2,.3), point(250.5,2,.3), 16);
+		glColor3d(1,1,1);
+		textOutput.range_labels(1, 250, point(0,1.5,.5), point(250,1.5,.5), 16);
+	glPopMatrix();
 	/**/
-	
 }
 
 
@@ -383,3 +390,4 @@ void AlignmentDisplay::changeScale(int s)
 	ui->print("AlignmentDisplay::changeScale ", s);
 	AbstractGraph::changeScale(s);
 }
+

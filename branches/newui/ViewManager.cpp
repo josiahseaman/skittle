@@ -243,6 +243,16 @@ UiVariables ViewManager::copyUi()
 	return localDials;
 }
 
+void ViewManager::printNum(int num)
+{
+	ui.print("Global:  ", num);
+}
+
+void ViewManager::printNum2(int num)
+{
+	ui.print("Local:   ", num);
+}
+
 void ViewManager::connectVariables(GLWidget* active, UiVariables local)
 {
 	connect(local.sizeDial	, SIGNAL(valueChanged(int)), ui.sizeDial	, SLOT(setValue(int)));
@@ -259,8 +269,11 @@ void ViewManager::connectVariables(GLWidget* active, UiVariables local)
 		dynamic_cast<MdiChildWindow*>(active->parent), SLOT(changeLocalStartFromPublicStart(int)));
 	//connect(this, SIGNAL(startChangeFromPublicStart(int)), local.startDial, SLOT(setValue(int)));	
 
+	//connect(ui.scaleDial	, SIGNAL(valueChanged(int)), this,            SLOT(printNum(int)));
+	//connect(local.scaleDial	, SIGNAL(valueChanged(int)), this,            SLOT(printNum2(int)));
 	connect(local.scaleDial	, SIGNAL(valueChanged(int)), ui.scaleDial	, SLOT(setValue(int)));
 	connect(ui.scaleDial	, SIGNAL(valueChanged(int)), local.scaleDial, SLOT(setValue(int)));
+	connect(active,           SIGNAL(scaleChanged(int)), local.scaleDial,    SLOT(setValue(int)));
 
 	connect(local.zoomDial	, SIGNAL(valueChanged(int)), ui.zoomDial	, SLOT(setValue(int)));
 	connect(ui.zoomDial		, SIGNAL(valueChanged(int)), local.zoomDial	, SLOT(setValue(int)));
