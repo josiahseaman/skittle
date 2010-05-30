@@ -88,6 +88,7 @@ public slots:
     void on_moveButton_clicked();
     void on_selectButton_clicked();
     void on_resizeButton_clicked();
+    void on_zoomButton_clicked();
     void setTool(int tool);
     void slideHorizontal(int);
 	void updateDisplay();
@@ -152,5 +153,7 @@ TGAACCCGGGAGGCGGAGGTTGCAGTGAGCCGAGATCGCGCCACTGCACTCCAGCCTGGGCGACAGAGCGAGACTCCGTC
 #define MOVE_TOOL 1
 #define RESIZE_TOOL 2
 #define SELECT_TOOL 3
+#define ZOOM_TOOL 4
+#define FIND_TOOL 5
 
 #endif

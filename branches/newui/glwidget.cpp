@@ -210,23 +210,31 @@ void GLWidget::on_resizeButton_clicked()
 	setTool(RESIZE_TOOL);
 }
 	
+void GLWidget::on_zoomButton_clicked()
+{
+	setTool(ZOOM_TOOL);
+}
+	
 void GLWidget::setTool(int tool)
 {
+	int oldTool = currentTool;
+	currentTool = tool;
 	switch(tool)
 	{
 		case MOVE_TOOL:
-			currentTool = tool;
 			changeCursor(Qt::SizeAllCursor);
 			break;
 		case RESIZE_TOOL:
-			currentTool = tool;
 			changeCursor(Qt::SizeHorCursor);
 			break;
 		case SELECT_TOOL:
-			currentTool = tool;
+			changeCursor(Qt::CrossCursor);
+			break;
+		case ZOOM_TOOL:
 			changeCursor(Qt::CrossCursor);
 			break;
 		default:
+			currentTool = oldTool;
 			ui.print("Error: Tool ID unrecognized: ",  tool);
 	}
 }
@@ -541,7 +549,21 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 			}
 		}
 	}
-	
+	if(tool() == ZOOM_TOOL)
+	{
+		float zoomFactor = 1.2;
+		if(event->modifiers() & Qt::SHIFT)
+			zoomFactor = .8;
+		int scale = ui.scaleDial->value();//take current scale
+		int index = oglCoords.y * (ui.widthDial->value()/scale) + oglCoords.x;
+		index *= scale;
+		index = max(0, index + ui.startDial->value());
+		int newScale = (int)(scale / zoomFactor) + (zoomFactor > 1.0? 0 : 1);//reduce scale by 10-20%  (Nx4)
+		int newSize = (int)(ui.sizeDial->value() / zoomFactor);//calculate new projected size
+		ui.startDial->setValue( index - (newSize/2) );//set start as centered point - size/2
+		//size should recalculate
+		ui.scaleDial->setValue(newScale);//set scale to the new value
+	}
     lastPos = event->pos();
 }
 
