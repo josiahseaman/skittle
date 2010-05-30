@@ -201,7 +201,7 @@ void MainWindow::createToolbars()
     scale->setMinimum(1);
     scale->setMaximum(100000);
     scale->setValue(1);
-    scale->setSingleStep(1);	
+    scale->setSingleStep(4);	
 	settingToolBar->addWidget(scale);
 	
 	settingToolBar->addWidget(new QLabel("Zoom"));

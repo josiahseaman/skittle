@@ -44,6 +44,7 @@ public:
 
 public slots:
 	void changeScale(int s);
+	void toggleVisibility();
 	
 private:	
 	unsigned int charPerIndex;

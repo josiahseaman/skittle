@@ -391,3 +391,13 @@ void AlignmentDisplay::changeScale(int s)
 	AbstractGraph::changeScale(s);
 }
 
+void AlignmentDisplay::toggleVisibility()
+{
+	if(hidden)
+	{
+		int s = ui->scaleDial->value();
+		s = max(4, (s / 4) * 4);//enforces scale is a multiple of 4
+		ui->scaleDial->setValue(s);	
+	}
+	AbstractGraph::toggleVisibility();	
+}
