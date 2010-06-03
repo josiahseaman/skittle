@@ -37,6 +37,8 @@
 
 #include <QtGui>
 #include <QtOpenGL>
+#include <QBitmap>
+//#include <QCursor>
 
 #include <math.h>
 #include <sstream>
@@ -100,6 +102,7 @@ GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
     setMouseTracking(true);
     setFocusPolicy(Qt::ClickFocus);
    	createConnections();
+   	createCursors();
 //   	createButtons();
 
 	srand(time(0));
@@ -231,7 +234,7 @@ void GLWidget::setTool(int tool)
 			changeCursor(Qt::CrossCursor);
 			break;
 		case ZOOM_TOOL:
-			changeCursor(Qt::CrossCursor);
+			setCursor(zoomInCursor);
 			break;
 		default:
 			currentTool = oldTool;
@@ -373,12 +376,10 @@ int GLWidget::tool()
 //***********KEY HANDLING**************
 void GLWidget::keyPressEvent( QKeyEvent *event )
 {
-	int step = 10;
-	/*if( keyboardModifiers() == Qt::ControlModifier )
-		step = 100;
-	if( keyboardModifiers() == Qt::ShiftModifier )
-		step = 1;
-	*/
+	if( event->modifiers() & Qt::SHIFT && tool() == ZOOM_TOOL)
+		setCursor(zoomOutCursor);
+		
+	int step = 10;	
 	int tenLines = ui.widthDial->value() * step;
     switch ( event->key() )//the keys should be passed directly to the widgets
     {
@@ -405,6 +406,17 @@ void GLWidget::keyPressEvent( QKeyEvent *event )
 	event->accept();
 }
 
+void GLWidget::keyReleaseEvent( QKeyEvent *event )
+{
+	if( event->key() == Qt::Key_Shift && tool() == ZOOM_TOOL)
+	{
+		setCursor(zoomInCursor);		
+		event->accept();
+	}
+	else{
+		QGLWidget::keyReleaseEvent( event );
+	}
+}
 
 //***********Functions*************
 QPointF GLWidget::pixelToGlCoords(QPoint pCoords, double z)
@@ -554,15 +566,30 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 		float zoomFactor = 1.2;
 		if(event->modifiers() & Qt::SHIFT)
 			zoomFactor = .8;
+			
 		int scale = ui.scaleDial->value();//take current scale
 		int index = oglCoords.y * (ui.widthDial->value()/scale) + oglCoords.x;
 		index *= scale;
 		index = max(0, index + ui.startDial->value());
-		int newScale = (int)(scale / zoomFactor) + (zoomFactor > 1.0? 0 : 1);//reduce scale by 10-20%  (Nx4)
 		int newSize = (int)(ui.sizeDial->value() / zoomFactor);//calculate new projected size
 		ui.startDial->setValue( index - (newSize/2) );//set start as centered point - size/2
 		//size should recalculate
-		ui.scaleDial->setValue(newScale);//set scale to the new value
+		int newScale = (int)(scale / zoomFactor) + (zoomFactor > 1.0? 0 : 1);//reduce scale by 10-20%  (Nx4)
+		int zoom = ui.zoomDial->value();
+		if( zoomFactor > 1.0 )  // we're zooming in
+		{
+			if(scale == 1)
+				ui.zoomDial->setValue( zoom * zoomFactor );
+			else
+				ui.scaleDial->setValue(newScale);//set scale to the new value
+		}
+		else//zooming out
+		{
+			if(zoom > 100)
+				ui.zoomDial->setValue( zoom * zoomFactor );
+			else
+				ui.scaleDial->setValue(newScale);//set scale to the new value
+		}
 	}
     lastPos = event->pos();
 }
@@ -779,4 +806,25 @@ vector<QFrame*> GLWidget::settingsUi()
 			tabs.insert(tabs.begin(),tab);
 	}
 	return tabs;
+}
+
+void GLWidget::createCursors()
+{
+	QBitmap pic = QBitmap(":/zoomIn.png");
+	if(pic.isNull())
+	{
+		ui.print("Warning: Null pic");
+	}
+	QBitmap mask = QBitmap(":/zoomIn-mask.png");
+	if(mask.isNull())
+	{
+		ui.print("Warning: Null mask");
+	}
+	zoomInCursor = QCursor( pic, mask);  
+	QBitmap pic2 = QBitmap(":/zoomOut.png");
+	if(pic2.isNull())
+	{
+		ui.print("Warning: Null pic2");
+	}
+	zoomOutCursor = QCursor( pic2, mask);  
 }

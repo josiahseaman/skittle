@@ -23,6 +23,7 @@
 #include <QGLWidget>
 #include <math.h>
 #include <QKeyEvent>
+#include <QCursor>
 #include <string>
 #include "BasicTypes.h"
 #include "UiVariables.h"
@@ -72,6 +73,7 @@ public:
     void setTotalDisplayWidth();
 
     void keyPressEvent( QKeyEvent *event );
+	void keyReleaseEvent( QKeyEvent *event );
     int tool();
     color colors(char nucleotide);
 	void setupColorTable();
@@ -126,12 +128,15 @@ protected:
     void changeCursor(Qt::CursorShape cNumber);
     void placeMarker(QPoint);
     void redraw();
+    void createCursors();
 
 private:
 	vector<AbstractGraph*> graphs;
 	vector<color> colorTable;
     GLuint object;
     GLuint marker;
+    QCursor zoomInCursor;
+    QCursor zoomOutCursor;
     double xTransOffset;
     double yTransOffset;
     double zTransOffset;

@@ -5,6 +5,7 @@
 TEMPLATE = app
 TARGET = 
 FORMS = BookmarkDialog.ui
+RESOURCES = resources.qrc
 DEPENDPATH += .
 INCLUDEPATH += .
 QT           += opengl

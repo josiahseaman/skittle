@@ -32,4 +32,5 @@ INPUT(
 ./debug\moc_NucleotideDisplay.o
 ./debug\moc_OligomerDisplay.o
 ./debug\moc_ViewManager.o
+./debug\qrc_resources.o
 );

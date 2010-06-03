@@ -80,12 +80,12 @@ void MainWindow::createActions()
 	resizeAction = new QAction("Resize",this);	
 	zoomAction = new QAction("Zoom",this);	
 	selectAction = new QAction("Select",this);	
-	findAction = new QAction("&Find",this);	
+	//findAction = new QAction("&Find",this);	
 	addAnnotationAction = new QAction("Add Annotation",this);	
-	nextAnnotationAction = new QAction("Next Annotation",this);	
-	prevAnnotationAction = new QAction("Previous Annotation",this);	
-	browseCommunityAction = new QAction("Browse Community Research",this);	
-	delAnnotationAction = new QAction("Delete Current Bookmark",this);	
+	//nextAnnotationAction = new QAction("Next Annotation",this);	
+	//prevAnnotationAction = new QAction("Previous Annotation",this);	
+	//browseCommunityAction = new QAction("Browse Community Research",this);	
+	//delAnnotationAction = new QAction("Delete Current Bookmark",this);	
 	
 	/*****TODO: NOT CURRENTLY IN USE ********/
 	findSequenceAction = new QAction("Find Sequence",this);	
@@ -117,11 +117,11 @@ void MainWindow::createMenus()
 	fileMenu->addSeparator();
 	fileMenu->addAction(importAction);
 	fileMenu->addAction(exitAction);
-	searchMenu = menuBar()->addMenu("&Search");
+	/*searchMenu = menuBar()->addMenu("&Search");
 	searchMenu->addAction(findSequenceAction);
 	searchMenu->addAction(findNextAction);
 	searchMenu->addAction(findPrevAction);
-	searchMenu->addAction(hilightResultsAction);
+	searchMenu->addAction(hilightResultsAction);*/
 	viewMenu = menuBar()->addMenu("&View");
 	toolBarMenu = viewMenu->addMenu("ToolBar");
 	presetMenu = viewMenu->addMenu("Presets");
@@ -130,22 +130,22 @@ void MainWindow::createMenus()
 	
 	annotationMenu = menuBar()->addMenu("&Annotations");
 	annotationMenu->addAction(addAnnotationAction);
-	annotationMenu->addAction(nextAnnotationAction);
-	annotationMenu->addAction(prevAnnotationAction);
-	annotationMenu->addAction(browseCommunityAction);
-	annotationMenu->addAction(delAnnotationAction);
+	//annotationMenu->addAction(nextAnnotationAction);
+	//annotationMenu->addAction(prevAnnotationAction);
+	//annotationMenu->addAction(browseCommunityAction);
+	//annotationMenu->addAction(delAnnotationAction);
 	toolMenu = menuBar()->addMenu("&Tools");
 	toolMenu->addAction(moveAction);
 	toolMenu->addAction(resizeAction);
 	toolMenu->addAction(zoomAction);
 	toolMenu->addAction(selectAction);
-	toolMenu->addAction(findAction);
+	//toolMenu->addAction(findAction);
 	toolActionGroup = new QActionGroup(this);
 	toolActionGroup->addAction(moveAction);
 	toolActionGroup->addAction(resizeAction);
 	toolActionGroup->addAction(zoomAction);
 	toolActionGroup->addAction(selectAction);
-	toolActionGroup->addAction(findAction);
+	//toolActionGroup->addAction(findAction);
 	
 }
 
@@ -154,10 +154,10 @@ void MainWindow::createToolbars()
 	annotationToolBar = addToolBar("Annotations");
 	annotationToolBar->setObjectName("annotations");
 	annotationToolBar->addAction(addAnnotationAction);
-	annotationToolBar->addAction(nextAnnotationAction);
-	annotationToolBar->addAction(prevAnnotationAction);
-	annotationToolBar->addAction(browseCommunityAction);
-	annotationToolBar->addAction(delAnnotationAction);
+	//annotationToolBar->addAction(nextAnnotationAction);
+	//annotationToolBar->addAction(prevAnnotationAction);
+	//annotationToolBar->addAction(browseCommunityAction);
+	//annotationToolBar->addAction(delAnnotationAction);
 	toolBarMenu->addAction(annotationToolBar->toggleViewAction());
 	
 	presetToolBar = new QToolBar("Presets");
@@ -171,7 +171,7 @@ void MainWindow::createToolbars()
 	toolToolBar->addAction(resizeAction);
 	toolToolBar->addAction(zoomAction);
 	toolToolBar->addAction(selectAction);
-	toolToolBar->addAction(findAction);
+	//toolToolBar->addAction(findAction);
 	toolBarMenu->addAction(toolToolBar->toggleViewAction());
 	
 	settingToolBar = addToolBar("Global Settings");
