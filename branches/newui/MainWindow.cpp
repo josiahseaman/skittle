@@ -49,7 +49,8 @@ void MainWindow::addDisplayActions(AbstractGraph* display)
 	{
 		QAction* presetAction = new QAction(QString(display->actionLabel.c_str()),this);
 		presetAction->setStatusTip(QString(display->actionTooltip.c_str()));
-		presetAction->setData(QString(display->actionData.c_str()));
+		presetAction->setToolTip(QString(display->actionTooltip.c_str()));
+		//presetAction->setData(QString(display->actionData.c_str()));
 		display->toggleButton = presetAction;
 		connect(presetAction,SIGNAL(triggered()),display, SLOT(toggleVisibility()));
 		connect(display, SIGNAL(deleteButton(QAction*)), this, SLOT(removeButton(QAction*)));
@@ -77,9 +78,13 @@ void MainWindow::addDisplayDivider()
 void MainWindow::createActions()
 {
 	moveAction = new QAction("Move",this);	
+	moveAction->setToolTip(QString("Horizontal and vertical scroll"));
 	resizeAction = new QAction("Resize",this);	
+	resizeAction->setToolTip(QString("Adjust Width and Start position"));
 	zoomAction = new QAction("Zoom",this);	
+	zoomAction->setToolTip(QString("Shift+Click to zoom out"));
 	selectAction = new QAction("Select",this);	
+	selectAction->setToolTip(QString("Displays index and sequence information"));
 	//findAction = new QAction("&Find",this);	
 	addAnnotationAction = new QAction("Add Annotation",this);	
 	//nextAnnotationAction = new QAction("Next Annotation",this);	
@@ -98,7 +103,7 @@ void MainWindow::createActions()
 	hilightResultsAction->setStatusTip("Highlight All copies of Current Sequence");
 	hilightResultsAction->setCheckable(true);
 	
-	addViewAction = new QAction("Add New View Panel",this);	
+	addViewAction = new QAction("New Window",this);	
 	
 	openAction = new QAction("&Open",this);
 	openAction->setStatusTip("Open a Sequence File");
@@ -153,6 +158,7 @@ void MainWindow::createToolbars()
 {
 	annotationToolBar = addToolBar("Annotations");
 	annotationToolBar->setObjectName("annotations");
+	annotationToolBar->addAction(addViewAction);
 	annotationToolBar->addAction(addAnnotationAction);
 	//annotationToolBar->addAction(nextAnnotationAction);
 	//annotationToolBar->addAction(prevAnnotationAction);

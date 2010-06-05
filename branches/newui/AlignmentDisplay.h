@@ -18,7 +18,7 @@ class AlignmentDisplay : public AbstractGraph
 public:
 	
 	AlignmentDisplay(UiVariables*, GLWidget* gl);
-	void display();//calls render
+	void display();
 	void loadTexture();//calls simple alignment
 	GLuint render();//creates display list using loadTexture
 	

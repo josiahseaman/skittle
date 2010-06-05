@@ -14,7 +14,8 @@ HighlightDisplay::HighlightDisplay(UiVariables* gui, GLWidget* gl)
 	actionTooltip = string("Highlights user specified sequences");
 	actionData = actionLabel; 
 	
-	target = string("AAAAAAAAAAAA");
+	target = 				  string("AAAAAAAAAAAA");
+	reverseComplementTarget = string("TTTTTTTTTTTT");
 	percentage_match = 0.8;
 	frameCount = 0;
 	
@@ -36,14 +37,17 @@ QFrame* HighlightDisplay::settingsUi()
     seqEdit->setText("AAAAAAAAAAAA");
     QSpinBox* similarityDial = new QSpinBox(settingsTab);
     similarityDial->setValue(80);
+    reverseCheck = new QCheckBox("Search Reverse Complement", settingsTab);
+    reverseCheck->setChecked(true);
     
+    formLayout->addRow(reverseCheck);
     formLayout->addRow("Minimum Percent Similarity:", similarityDial);
     formLayout->addRow("Highlighted Sequence:", seqEdit);
     //seqEdit->setMinimumWidth(400);
 	
 	connect( seqEdit, SIGNAL(textChanged(const QString&)), this, SLOT(setHighlightSequence(const QString&)));
     connect( similarityDial, SIGNAL(valueChanged(int)), this, SLOT(setPercentSimilarity(int)));     	
-	
+	connect( reverseCheck, SIGNAL(released()), this, SLOT(invalidate()));
 	return settingsTab;
 }
 
@@ -53,96 +57,149 @@ void HighlightDisplay::display()
 	glPushMatrix();
 	glScaled(1,-1,1);
 		if(!upToDate)
-			assignColors();
+		{
+			vector<int> forward = identifyMatches(target);
+			vector<int> reverse;
+			if(reverseCheck->isChecked())
+				reverse = identifyMatches(reverseComplementTarget);
+			combine(forward, reverse);
+			loadTextureCanvas();
+			upToDate = true;
+		}
 		textureBuffer->display();
 	glPopMatrix();
 }
 
-GLuint HighlightDisplay::render()
+GLuint HighlightDisplay::render()//deprecated
 {
 	GLuint list = glGenLists(1);
-    glNewList(list, GL_COMPILE);
-    glPushMatrix();
-	glScaled(1,-1,1);
-		if(!upToDate)
-			assignColors();
-		textureBuffer->display();
-	glPopMatrix();
-    glEndList();
-    upToDate = true;
     return list;
 }
 
-void HighlightDisplay::assignColors()
+vector<int> HighlightDisplay::identifyMatches(string find)
 {
-	if(!upToDate)
-		calculate();
+	vector<unsigned short int> scores = calculate(find);
 
-	nucleotide_colors.clear();
-	int targetSize = target.size();
+	vector<int> pixels;
+	int findSize = find.size();
 	int remainingLength = 0;
 	int match_minimum = (int)(255 * percentage_match);
 	const char* seq = (sequence->c_str()+nucleotide_start);
 	int offset = 0;
-	for(int i = 0; i < (int)similarity.size(); i+=scale)
+	for(int i = 0; i < (int)scores.size(); i+=scale)
 	{
-		vector<unsigned short int>::iterator bestMatch = max_element(similarity.begin()+i, similarity.begin()+i+scale);
+		vector<unsigned short int>::iterator bestMatch = max_element(scores.begin()+i, scores.begin()+i+scale);
 		short int bestScore = *bestMatch;
-		int grey = static_cast<int>(  float(bestScore)/targetSize * 255 );//Grey scale based on similarity
-		color pixelColor = color(grey, grey, grey);//white to grey
+		int grey = static_cast<int>(  float(bestScore)/findSize * 255 );//Grey scale based on similarity
+		int pixelColor = grey;//white to grey
 		
 		//highlight matches with color
 		if(grey >= match_minimum)//count this as a starting position
 		{
-			offset = distance(similarity.begin()+i, bestMatch);
-			remainingLength = targetSize - scale;
-			pixelColor = color(255, 0, 0);//red
+			offset = distance(scores.begin()+i, bestMatch);
+			remainingLength = findSize - scale;
+			pixelColor = 259;
 		}
-		else
-		{
+		else{
 			if(remainingLength >= 1 && remainingLength >= scale)//trail after a match
 			{//green if it matches, blue if it doesn't
-				if(seq[i+offset] == target[targetSize - remainingLength])
-					pixelColor = color(0, 255, 0);//green
+				if(seq[i+offset] == find[findSize - remainingLength])
+					pixelColor = 259;//green
 				else
-					pixelColor = color(0, 0, 255);//blue
+					pixelColor = 257;//blue
 					
 				remainingLength = max(0, remainingLength - scale);
 			}
 		}
-		nucleotide_colors.push_back( pixelColor );
+		pixels.push_back( pixelColor );
 	}
-	/*if(nucleotide_colors.size() < 10 )
-	{
-		ui->print("Error: No Highlight Data!");
-	}*/
-	loadTextureCanvas();
+	return pixels;
 }
 
-//This calculates how well a region of the genome matches a query sequence 'target' at every nucleotide.  
-void HighlightDisplay::calculate()
+//This calculates how well a region of the genome matches a query sequence 'find' at every nucleotide.  
+vector<unsigned short int> HighlightDisplay::calculate(string find)
 {
-	//ui->print("Calculate:", ++frameCount);
-	similarity.clear();
-	int targetSize = target.size();
+	vector<unsigned short int> scores;
+	int findSize = find.size();
 	//int count = 0;
 	int start = nucleotide_start;
 	const string& seq = *sequence;
-	for( int h = 0; h < display_size && h  < (int)seq.size() - start - (targetSize-1); h++)
+	for( int h = 0; h < display_size && h  < (int)seq.size() - start - (findSize-1); h++)
 	{
 			unsigned short int score = 0;
 			int start_h = start + h;
-			for(int l = 0; l < targetSize; l++)
+			for(int l = 0; l < findSize; l++)
 			{
-				if(seq[start_h + l] == target[l])//this is the innermost loop.  This line takes the most time
+				if(seq[start_h + l] == find[l])//this is the innermost loop.  This line takes the most time
 					++score;
 			}
-			similarity.push_back(score);
+			scores.push_back(score);
 	}	
-	upToDate = true;
 //	stringstream outStream;//
-//	outStream << count << " matches to " << target << " at " << percentage_match * 100 << "% similarity" << endl;
+//	outStream << count << " matches to " << find << " at " << percentage_match * 100 << "% similarity" << endl;
 //	ui->print(outStream.str());
+	return scores;
+}
+
+void HighlightDisplay::combine(vector<int>& forward, vector<int>& reverse)
+{
+/***HIGHLIGHT COLOR LEGEND***/
+	//VALUE		MEANING		COLOR
+	//0-255 	no match	grey scale
+	//256 		buffer 		(white)
+	//257		R mismatch	yellow   1 + 256
+	//258		F mismatch	blue     2 + 256
+	//259		R match		purple   3 + 256
+	//260		F match		green    4 + 256
+	
+	//ensure that forward and reverse are the same length
+	//unsigned int size = min( forward.size(), reverse.size() );
+	//forward.resize(size);
+	//reverse.resize(size);	
+	nucleotide_colors.clear();
+	
+	color c = color(0,0,0);
+	for(unsigned int i = 0; i < forward.size(); i++)
+	{
+		int score = 0;
+		if(!reverse.empty())
+			score = max(forward[i]+1, reverse[i]);
+		else 
+			score = forward[i]+1;
+			
+		if(score < 257)
+		{
+			 c = color(score, score, score);
+		}
+		else{
+			if( score == 257) c = color(255, 215, 0);	//257		R mismatch	yellow   1 + 256
+			if( score == 258) c = color(0, 0, 255);		//258		F mismatch	blue     2 + 256
+			if( score == 259) c = color(245, 0, 0);		//259		R match		purple   3 + 256
+			if( score == 260) c = color(0, 255, 0);		//260		F match		green    4 + 256
+		}
+		nucleotide_colors.push_back( c );
+	}
+}
+
+inline char complement(char a)
+{
+	if(a == 'A') return 'T';
+	if(a == 'C') return 'G';
+	if(a == 'G') return 'C';
+	if(a == 'T') return 'A';
+	return 'N';
+}
+
+string HighlightDisplay::reverseComplement(string original)
+{
+	string rc;
+	int size = original.size();
+	rc.resize(size, 'N');
+	for(int x = 0; x < size; ++x)
+	{					
+		rc[x] = complement(original[size-x-1]);
+	}
+	return rc;
 }
 
 void HighlightDisplay::setHighlightSequence(const QString& high_C)
@@ -152,8 +209,8 @@ void HighlightDisplay::setHighlightSequence(const QString& high_C)
 		if(high[l] >= 97 && high[l] <= 122) high[l] -= 32;//cast to uppercase
 
 	target = high;
-	similarity.clear();
-	//similarity.resize(display_size, 0);//could be commented out if you use push_back instead	
+	reverseComplementTarget = reverseComplement(target);
+	
 	invalidate();
 }
 

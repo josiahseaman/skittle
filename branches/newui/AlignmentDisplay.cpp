@@ -36,7 +36,7 @@ AlignmentDisplay::AlignmentDisplay(UiVariables* gui, GLWidget* gl)
 	//packSequence is called by setSequence()
 	
 	actionLabel = string("Repeat Overview");
-	actionTooltip = string("Color by the best alignment");
+	actionTooltip = string("Color by the best alignment offset");
 	actionData = actionLabel; 
 }
 

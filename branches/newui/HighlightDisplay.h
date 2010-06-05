@@ -21,17 +21,20 @@ public:
 	QFrame* settingsUi();
 	void display();
 	GLuint render();
-	void assignColors();
-	void calculate();
+	vector<int> identifyMatches(string find);
+	vector<unsigned short int> calculate(string find);
+	void combine(vector<int>& forward, vector<int>& reverse);
+	string reverseComplement(string original);
 	
 public slots:
 	void setHighlightSequence(const QString&);
 	void setPercentSimilarity(int);
 	
 private:
-	vector<unsigned short int> similarity;
 	string target;
+	string reverseComplementTarget;
 	double percentage_match;
+	QCheckBox* reverseCheck;
 /*	
 public slots:	
 	void changeWidth(int w);

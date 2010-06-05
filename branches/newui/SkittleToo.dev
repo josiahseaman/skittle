@@ -139,7 +139,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Project]
-UnitCount=42
+UnitCount=43
 FileName=SkittleToo.dev
 Name=SkittleToo
 Type=0
@@ -448,7 +448,13 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit43]
-FileName=MdiChildWindow.h
+FileName=resources.qrc
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
 
 [Unit1]
 FileName=AbstractGraph.h

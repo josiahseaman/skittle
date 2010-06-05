@@ -247,7 +247,7 @@ void OligomerDisplay::mouseClick(point2D pt)
 		pt.x = pt.x / 2;
 		int index = pt.y * ui->widthDial->value();
 		index = index + nucleotide_start;
-		int w = ui->widthDial->value();
+		int w = min( 100, ui->widthDial->value() );
 		stringstream ss;
 		ss << "Dinucleotide: " << pt.x << "  Count: " << freq[pt.y][pt.x] << "\nSequence:"
 			<< sequence->substr(index, w);

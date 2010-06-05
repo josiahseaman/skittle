@@ -74,6 +74,7 @@ QFrame* FrequencyMap::settingsUi()
 	QSpinBox* graphStartDial = new QSpinBox(settingsTab);
 	graphStartDial->setMinimum(1);	
 	graphStartDial->setMaximum(100000);	
+	graphStartDial->setSingleStep(10);
 	formLayout->addRow("Starting Offset:", graphStartDial);
 	
 	connect( graphStartDial, SIGNAL(valueChanged(int)), this, SLOT(changeFStart(int)));	
@@ -82,7 +83,7 @@ QFrame* FrequencyMap::settingsUi()
     
     QSpinBox* graphWidthDial  = new QSpinBox(settingsTab);
     graphWidthDial->setMinimum(1);
-    graphWidthDial->setMaximum(1000);
+    graphWidthDial->setMaximum(250);
     graphWidthDial->setSingleStep(10);
     graphWidthDial->setValue(F_width);
 	formLayout->addRow("Graph Display Width:", graphWidthDial);
@@ -223,6 +224,7 @@ void FrequencyMap::changeFStart(int val)
 
 void FrequencyMap::changeGraphWidth(int val)
 {
+	val = min(250, val);
 	if(updateInt(F_width, val))
 	{
 		//freq.clear();
@@ -249,12 +251,12 @@ void FrequencyMap::mouseClick(point2D pt)
 		pt.x *= scale;
 		int index = pt.y * Width;
 		index = index + nucleotide_start;
-		int index2 = index + pt.x;
+		int index2 = index + pt.x + F_start;
 		int w = min( 100, ui->widthDial->value() );
 		if( index2 + w < sequence->size() )
 		{
 			stringstream ss;
-			ss << "Offset: "<<pt.x<<" #" << index << " compared with #" << index2 << "  \n"
+			ss << "Offset: "<<pt.x+ F_start<<" #" << index << " compared with #" << index2 << "  \n"
 				<< sequence->substr(index, w) << "\n <----> \n" << sequence->substr(index2, w);
 			ui->print(ss.str());
 		}
