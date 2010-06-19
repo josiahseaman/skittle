@@ -156,12 +156,29 @@ void AbstractGraph::toggleVisibility()
 		else
 			emit showSettings(settingsTab);
 	}	
+	setButtonFont();
 	emit displayChanged();
+}
+
+void AbstractGraph::setButtonFont()
+{
+	if(toggleButton != NULL)
+	{
+		QFont font = toggleButton->font();
+		if(hidden){
+			font.setBold(false);
+		}
+		else{
+			font.setBold(true);
+		}
+		toggleButton->setFont(font);
+	}
 }
 
 void AbstractGraph::setSequence(const string* seq)
 {
 	sequence = seq;	
+	changeSize(ui->sizeDial->value());
 }
 
 void AbstractGraph::mouseClick(point2D pt)

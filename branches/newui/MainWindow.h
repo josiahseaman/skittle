@@ -53,6 +53,7 @@ public slots:
 	void halveWidth();
 	void addDisplayActions(AbstractGraph*);
 	void addDisplayDivider();
+	void helpDialog();
 	
 signals:
 	void newFileOpen(QString name);
@@ -128,6 +129,8 @@ private:
 	QAction *openAction;
 	QAction *importAction;
 	QAction *exitAction;
+	QAction *helpAction;
+	QAction *aboutQtAct;
 	
 	QLabel *statusTip;
 	//QProgressBar *processStatus;

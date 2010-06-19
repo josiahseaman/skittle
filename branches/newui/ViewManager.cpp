@@ -46,7 +46,8 @@ void ViewManager::connectLocalCopy(GLWidget* active, UiVariables local)
 
 void ViewManager::uiToGlwidgetConnections(GLWidget* active)
 {
-	connect(active, SIGNAL(IveBeenClicked(GLWidget*)), this, SLOT(changeSelection(GLWidget*)));
+	connect(dynamic_cast<MdiChildWindow*>(active->parent), SIGNAL(IveBeenClicked(MdiChildWindow*)),
+		this, SLOT(changeSelection(MdiChildWindow*)));
 	
     connect(mainWindow->moveAction, SIGNAL(triggered()), active, SLOT(on_moveButton_clicked()));
     connect(mainWindow->selectAction, SIGNAL(triggered()), active, SLOT(on_selectButton_clicked()));
@@ -61,7 +62,7 @@ void ViewManager::uiToGlwidgetConnections(GLWidget* active)
 }
 
 //public slots
-GLWidget* ViewManager::addNewView()
+GLWidget* ViewManager::addNewView(bool suppressOpen)
 {
 	UiVariables localDials = copyUi();
 	broadcastPublicValues(localDials);
@@ -77,17 +78,19 @@ GLWidget* ViewManager::addNewView()
 	uiToGlwidgetConnections(newGlWidget);
 	connectVariables(newGlWidget, localDials);
 	
-	changeSelection(newGlWidget);
-	mainWindow->openAction->trigger();
+	changeSelection(child);
+	if(suppressOpen == false)
+		mainWindow->openAction->trigger();
 	return newGlWidget;
 }
 
-void ViewManager::changeSelection(GLWidget* current)
+void ViewManager::changeSelection(MdiChildWindow* parent)
 {
+	GLWidget* current = parent->glWidget;
 	if(current == activeWidget)
 		return;
 		
-	int tabIndex = mainWindow->tabWidget->currentIndex();	
+	int tabIndex = mainWindow->tabWidget->currentIndex();
 	if(activeWidget != NULL)
 	{
 		if(mainWindow->syncCheckBox->isChecked() == false )
@@ -95,10 +98,10 @@ void ViewManager::changeSelection(GLWidget* current)
 			disconnectVariables(activeWidget, vars(activeWidget));
 			connectVariables(current, vars(current));
 		}
-		dynamic_cast<MdiChildWindow*>(activeWidget->parent)->hideSettingsTabs();
+		parent->hideSettingsTabs();
 	}
 	
-	dynamic_cast<MdiChildWindow*>(current->parent)->showSettingsTabs();
+	parent->showSettingsTabs();
 	mainWindow->tabWidget->setCurrentIndex(tabIndex);
 		
 	activeWidget = current;		
@@ -113,7 +116,7 @@ void ViewManager::closeSubWindow(MdiChildWindow* closing)
 	if(closing->glWidget == activeWidget)
 	{
 		if( views.size() > 0)
-			changeSelection(views[0]->glWidget);
+			changeSelection(views[0]);
 		else
 			activeWidget = NULL;
 	}
@@ -121,8 +124,12 @@ void ViewManager::closeSubWindow(MdiChildWindow* closing)
 
 void ViewManager::changeFile(QString fileName)
 {
-	if(activeWidget != NULL && !fileName.isEmpty() )
+	if(!fileName.isEmpty() )
 	{
+		if(activeWidget == NULL )
+		{
+			addNewView(true);
+		}
 		activeWidget->loadFile(fileName);
 		activeWidget->trackReader->determineOutputFile(fileName);
 	}
@@ -166,10 +173,11 @@ void ViewManager::handleWindowSync()
 
 void ViewManager::changePublicStart(int val)
 {
-	//ui.print("changePublicStart: ", val);
 	//local.start changes
 	UiVariables local = vars(activeWidget);
-	ui.startDial->setValue(max(0, local.startDial->value() - local.offsetDial->value()));
+	int set = max(0, val - local.offsetDial->value());
+	ui.startDial->setValue(set);
+	ui.print("changePublicStart: ", set);	
 }
 
 //PRIVATE FUNCTIONS//

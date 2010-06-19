@@ -187,14 +187,19 @@ const string* GLWidget::seq()
 
 void GLWidget::displayString(const string* seq)
 {
-	//ui.print("New sequence received.  Size:", seq->size());
+	ui.print("New sequence received.  Size:", seq->size());
 
 	for(int i = 0; i < graphs.size(); ++i)
 	{
 		graphs[i]->setSequence(seq);
+		graphs[i]->invalidate();
 	}
-	ui.startDial->setValue(2);//TODO: bit of a cludge to reset the start position
+	//ui.startDial->setValue(2);//TODO: bit of a cludge to reset the start position
 	ui.startDial->setValue(1);
+	/*float multiplier = seq->size() / (float)ui.sizeDial->value();
+	int newScale = max(1, (int)(ui.scaleDial->value() * multiplier) );
+	ui.scaleDial->setValue( newScale );*/
+	
 	emit displaySizeChanged();
 }
 
@@ -538,7 +543,7 @@ void GLWidget::resizeGL(int width, int height)
 
 void GLWidget::mousePressEvent(QMouseEvent *event)
 {
-	emit IveBeenClicked(this);
+	//emit IveBeenClicked(this);
 	
 	if(tool() == SELECT_TOOL)
 		placeMarker(event->pos());

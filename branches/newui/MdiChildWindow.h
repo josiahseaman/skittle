@@ -32,6 +32,7 @@ public:
 	void connectWidget();
 	void hideSettingsTabs();
 	void showSettingsTabs();
+	void mousePressEvent(QMouseEvent *event);
 	
 public slots:
 	void changeLocalStartFromPublicStart(int val);
@@ -44,6 +45,7 @@ public slots:
 
 signals:
 	void subWindowClosing(MdiChildWindow*);
+	void IveBeenClicked(MdiChildWindow*);
 
 private:
 	QSpinBox* publicStart;

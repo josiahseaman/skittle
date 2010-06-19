@@ -18,7 +18,9 @@ MdiChildWindow::MdiChildWindow(UiVariables gui, QSpinBox* pStart, QTabWidget* se
     horizontalScrollBar->setSingleStep(10);
 	verticalScrollBar = new QScrollBar();
 	verticalScrollBar->setMaximum( 100 );
-
+	
+	setMouseTracking(true);
+    setFocusPolicy(Qt::ClickFocus);
 	subFrame = new QFrame(this);
 	glWidget = new GLWidget(ui, this);
 	QHBoxLayout* hLayout = new QHBoxLayout;
@@ -154,5 +156,11 @@ void MdiChildWindow::showSettingsTabs()
 		settingsDock->insertTab(1, settingsTabs[i], settingsTabs[i]->windowTitle());
 		//settingsTabs[i]->insertTab(1);
 	}
+}
+
+void MdiChildWindow::mousePressEvent(QMouseEvent *event)
+{
+	emit IveBeenClicked(this);
+	QFrame::mousePressEvent(event);
 }
 

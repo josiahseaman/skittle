@@ -27,8 +27,8 @@ public:
 signals:
 	
 public slots:
-	GLWidget* addNewView();
-	void changeSelection(GLWidget*);
+	GLWidget* addNewView(bool suppressOpen = false);
+	void changeSelection(MdiChildWindow*);
 	void closeSubWindow(MdiChildWindow* closing);
 	void changeFile(QString);
 	void addAnnotationDisplay(QString);

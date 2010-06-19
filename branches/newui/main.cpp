@@ -43,6 +43,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     MainWindow window;
+    window.show();
     if(argc > 1)
     {
 		window.open(QString(argv[1]));
@@ -50,6 +51,5 @@ int main(int argc, char *argv[])
 	else{
 		window.open();
 	}	
-    window.show();
     return app.exec();
 }

@@ -57,6 +57,7 @@ void MainWindow::addDisplayActions(AbstractGraph* display)
 	
 		presetMenu->addAction(presetAction);
 		presetToolBar->addAction(presetAction);
+		display->setButtonFont();
 	}
 	else
 	{
@@ -105,13 +106,15 @@ void MainWindow::createActions()
 	
 	addViewAction = new QAction("New Window",this);	
 	
-	openAction = new QAction("&Open",this);
+	openAction = new QAction("&Open File",this);
 	openAction->setStatusTip("Open a Sequence File");
 	
 	importAction = new QAction("&Import GTF Annotation File",this);
 	importAction->setStatusTip("Open GTF / GFF Annotation File");
 	
 	exitAction = new QAction("E&xit",this);
+	helpAction = new QAction("Online &Help",this);
+	aboutQtAct = new QAction("About Qt", this);
 	exitAction->setStatusTip("Close Program");
 }
 
@@ -119,6 +122,7 @@ void MainWindow::createMenus()
 {
 	fileMenu = menuBar()->addMenu("&File");
 	fileMenu->addAction(openAction);
+	fileMenu->addAction(addViewAction);
 	fileMenu->addSeparator();
 	fileMenu->addAction(importAction);
 	fileMenu->addAction(exitAction);
@@ -130,8 +134,6 @@ void MainWindow::createMenus()
 	viewMenu = menuBar()->addMenu("&View");
 	toolBarMenu = viewMenu->addMenu("ToolBar");
 	presetMenu = viewMenu->addMenu("Presets");
-	viewMenu->addSeparator();
-	viewMenu->addAction(addViewAction);
 	
 	annotationMenu = menuBar()->addMenu("&Annotations");
 	annotationMenu->addAction(addAnnotationAction);
@@ -152,12 +154,20 @@ void MainWindow::createMenus()
 	toolActionGroup->addAction(selectAction);
 	//toolActionGroup->addAction(findAction);
 	
+	QMenu* helpMenu = menuBar()->addMenu("&Help");
+	helpMenu->addAction(helpAction);
+	helpMenu->addAction(aboutQtAct);
+	
 }
 
 void MainWindow::createToolbars()
 {
-	annotationToolBar = addToolBar("Annotations");
-	annotationToolBar->setObjectName("annotations");
+	QFont boldFont = QFont();
+	boldFont.setBold(true);
+
+	annotationToolBar = addToolBar("Files");
+	annotationToolBar->setObjectName("file");
+	annotationToolBar->addAction(openAction);
 	annotationToolBar->addAction(addViewAction);
 	annotationToolBar->addAction(addAnnotationAction);
 	//annotationToolBar->addAction(nextAnnotationAction);
@@ -184,17 +194,16 @@ void MainWindow::createToolbars()
 	settingToolBar->setObjectName("setting");
 
 	QLabel* activeW = new QLabel("Active Window:");
-	QFont boldFont = activeW->font();
-	boldFont.setBold(true);
 	activeW->setFont(boldFont);	
 	settingToolBar->addWidget(activeW);
 	settingToolBar->addSeparator();
 	
-	settingToolBar->addWidget(new QLabel("Display Width"));
+	settingToolBar->addWidget(new QLabel("Width"));
 	widthDial = new QSpinBox(this);
     widthDial->setMinimum(1);
     widthDial->setMaximum(1000000000);
     widthDial->setValue(128);
+    widthDial->setSuffix(" bp");
 	settingToolBar->addWidget(widthDial);
 
 	doubleDisplayWidth = new QPushButton("x2",this);
@@ -208,6 +217,7 @@ void MainWindow::createToolbars()
     scale->setMaximum(100000);
     scale->setValue(1);
     scale->setSingleStep(4);	
+    scale->setSuffix(" bp/pixel");
 	settingToolBar->addWidget(scale);
 	
 	settingToolBar->addWidget(new QLabel("Zoom"));
@@ -218,7 +228,7 @@ void MainWindow::createToolbars()
     zoom->setValue(100);	
 	settingToolBar->addWidget(zoom);
 	
-	settingToolBar->addWidget(new QLabel("Start"));
+	settingToolBar->addWidget(new QLabel("Start Index"));
 	startOffset = new QSpinBox(this);
     startOffset->setMinimum(1);
     startOffset->setMaximum(400000000);
@@ -231,6 +241,7 @@ void MainWindow::createToolbars()
     displayLength->setMaximum(400000000);//something very large MAX_INT?
     displayLength->setSingleStep(1000);
     displayLength->setValue(10000);	
+    displayLength->setSuffix(" bp");
 	settingToolBar->addWidget(displayLength);
 
 	
@@ -297,6 +308,8 @@ void MainWindow::createStatusBar()
 void MainWindow::createUiConnections()
 {	/******Internal UI Logic*********/
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close())); 
+    connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+    connect(helpAction, SIGNAL(triggered()), this, SLOT(helpDialog()));
     
 	connect( scale, SIGNAL(valueChanged(int)), this, SLOT(changeScale(int)));
 	
@@ -305,14 +318,12 @@ void MainWindow::createUiConnections()
 }
 void MainWindow::createFileConnections()
 {
-
     connect(openAction, SIGNAL(triggered()), this, SLOT(open()));
     connect(this, SIGNAL(newFileOpen(QString)), viewManager, SLOT(changeFile(QString)));
 
 	connect(importAction, SIGNAL(triggered()), this, SLOT(openGtf()));
 	connect(this, SIGNAL(newGtfFileOpen(QString)), viewManager, SLOT(addAnnotationDisplay(QString)));	
 	connect(addAnnotationAction, SIGNAL(triggered()), viewManager, SLOT(addBookmark()));
-    
 }
 
 UiVariables MainWindow::getDisplayVariables()
@@ -427,6 +438,58 @@ void MainWindow::writeSettings()
 	settings. setValue("geometry", saveGeometry());
 	settings.setValue("state", saveState());
 	settings.endGroup();
+}
+
+void MainWindow::helpDialog()
+{
+	/*QMessageBox help(this);
+	help.setText("Up to date help information can be found at http://dnaskittle.com/faq.");
+	help.exec();*/
+	
+    QMessageBox mb(this);
+
+    QString c("About Qt");
+    mb.setWindowTitle(c);
+    mb.setText(QString(
+        "<h3>About Skittle</h3>"
+        "<p>Skittle is an Open Source program for browsing genome sequences.</p>"
+        "<p>Up to date help information is available online at "
+		"<a href=\"http://dnaskittle.com/faq/\">http://DNASkittle.com/faq/</a> </p>"
+        "<p>For those new to the program, there is a tutorial at "
+        "<a href=\"http://dnaskittle.com/getting-started/\">http://DNASkittle.com/getting-started/</a>"
+		" that walks through the basic tools of Skittle and some real world"
+		" genome patterns that can be identified with Skittle.</p>"
+		));
+    /** /    
+#ifndef QT_NO_IMAGEFORMAT_XPM
+    QImage logo(qtlogo_xpm);
+#else
+    QImage logo;
+#endif
+
+    if (qGray(mb.palette().color(QPalette::Active, QPalette::Text).rgb()) >
+        qGray(mb.palette().color(QPalette::Active, QPalette::Base).rgb()))
+    {
+        // light on dark, adjust some colors
+        logo.setColor(0, 0xffffffff);
+        logo.setColor(1, 0xff666666);
+        logo.setColor(2, 0xffcccc66);
+        logo.setColor(4, 0xffcccccc);
+        logo.setColor(6, 0xffffff66);
+        logo.setColor(7, 0xff999999);
+        logo.setColor(8, 0xff3333ff);
+        logo.setColor(9, 0xffffff33);
+        logo.setColor(11, 0xffcccc99);
+    }
+    QPixmap pm = QPixmap::fromImage(logo);
+    if (!pm.isNull())
+        mb.setIconPixmap(pm);/**/
+#if defined(Q_OS_WINCE)
+    mb.setDefaultButton(mb.addButton(QMessageBox::Ok));
+#else
+    mb.addButton(QMessageBox::Ok);
+#endif
+    mb.exec();
 }
 
 /**********Print Functions**********/

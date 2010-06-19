@@ -57,6 +57,7 @@ public:
 	virtual void displayLegend(float canvasWidth, float canvasHeight);
 	virtual void checkVariables();
 	virtual GLuint render() = 0;
+	virtual void setButtonFont();
 	virtual void setSequence(const string* seq);
 	virtual void mouseClick(point2D pt);
 	virtual string getFileName();
