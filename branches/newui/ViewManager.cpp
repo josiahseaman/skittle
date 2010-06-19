@@ -177,7 +177,7 @@ void ViewManager::changePublicStart(int val)
 	UiVariables local = vars(activeWidget);
 	int set = max(0, val - local.offsetDial->value());
 	ui.startDial->setValue(set);
-	ui.print("changePublicStart: ", set);	
+	//ui.print("changePublicStart: ", set);	
 }
 
 //PRIVATE FUNCTIONS//
