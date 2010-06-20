@@ -31,7 +31,7 @@ public:
 	GLuint render();
 	void freq_map();
 	int height();
-	void mouseClick(point2D pt);
+	string mouseClick(point2D pt);
 	
 	vector<point> bestMatches();
 	void display_freq();

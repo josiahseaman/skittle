@@ -239,7 +239,7 @@ int OligomerDisplay::height()
 }
 
 /******SLOTS*****/
-void OligomerDisplay::mouseClick(point2D pt)
+string OligomerDisplay::mouseClick(point2D pt)
 {
 	//range check
 	if( pt.x < (int)width()-similarityGraphWidth && pt.x >= 0  )
@@ -253,6 +253,7 @@ void OligomerDisplay::mouseClick(point2D pt)
 			<< sequence->substr(index, w);
 		ui->print(ss.str().c_str());
 	}
+	return string();
 }
 
 color randomColor()

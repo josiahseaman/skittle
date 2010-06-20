@@ -28,7 +28,7 @@ public:
 	void display();
 	GLuint render();
 	int width();
-	void mouseClick(point2D pt);
+	string mouseClick(point2D pt);
 	
 	
 public slots:	

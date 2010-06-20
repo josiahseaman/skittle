@@ -181,8 +181,9 @@ void AbstractGraph::setSequence(const string* seq)
 	changeSize(ui->sizeDial->value());
 }
 
-void AbstractGraph::mouseClick(point2D pt)
+string AbstractGraph::mouseClick(point2D pt)
 {	
+	return string();
 }
 
 int AbstractGraph::width() 

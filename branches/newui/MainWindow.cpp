@@ -86,7 +86,7 @@ void MainWindow::createActions()
 	zoomAction->setToolTip(QString("Shift+Click to zoom out"));
 	selectAction = new QAction("Select",this);	
 	selectAction->setToolTip(QString("Displays index and sequence information"));
-	//findAction = new QAction("&Find",this);	
+	findAction = new QAction("&Find",this);	
 	addAnnotationAction = new QAction("Add Annotation",this);	
 	//nextAnnotationAction = new QAction("Next Annotation",this);	
 	//prevAnnotationAction = new QAction("Previous Annotation",this);	
@@ -146,13 +146,13 @@ void MainWindow::createMenus()
 	toolMenu->addAction(resizeAction);
 	toolMenu->addAction(zoomAction);
 	toolMenu->addAction(selectAction);
-	//toolMenu->addAction(findAction);
+	toolMenu->addAction(findAction);
 	toolActionGroup = new QActionGroup(this);
 	toolActionGroup->addAction(moveAction);
 	toolActionGroup->addAction(resizeAction);
 	toolActionGroup->addAction(zoomAction);
 	toolActionGroup->addAction(selectAction);
-	//toolActionGroup->addAction(findAction);
+	toolActionGroup->addAction(findAction);
 	
 	QMenu* helpMenu = menuBar()->addMenu("&Help");
 	helpMenu->addAction(helpAction);
@@ -187,7 +187,7 @@ void MainWindow::createToolbars()
 	toolToolBar->addAction(resizeAction);
 	toolToolBar->addAction(zoomAction);
 	toolToolBar->addAction(selectAction);
-	//toolToolBar->addAction(findAction);
+	toolToolBar->addAction(findAction);
 	toolBarMenu->addAction(toolToolBar->toggleViewAction());
 	
 	settingToolBar = addToolBar("Global Settings");

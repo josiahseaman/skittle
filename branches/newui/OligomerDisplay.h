@@ -33,7 +33,7 @@ public:
 	GLuint render();
 	void freq_map();
 	int height();
-	void mouseClick(point2D pt);
+	string mouseClick(point2D pt);
 	
 	void display_freq();
 	void calculate(vector<color>& img, int vote_size);

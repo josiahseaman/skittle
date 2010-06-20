@@ -30,6 +30,9 @@ public slots:
 	void setHighlightSequence(const QString&);
 	void setPercentSimilarity(int);
 	
+signals:
+	void highlightChanged(const QString&);
+	
 private:
 	string target;
 	string reverseComplementTarget;
@@ -38,7 +41,7 @@ private:
 /*	
 public slots:	
 	void changeWidth(int w);
-	void mouseClick(point2D pt);
+	string mouseClick(point2D pt);
 	
 signals:
 

@@ -142,7 +142,7 @@ void AnnotationDisplay::stackEntry(vector<track_entry>& activeEntries, track_ent
 		activeEntries.push_back(item);
 }
 
-void AnnotationDisplay::mouseClick(point2D pt)
+string AnnotationDisplay::mouseClick(point2D pt)
 {
 	//range check
 	if( pt.x <= width() && pt.x >= 0 )
@@ -163,6 +163,7 @@ void AnnotationDisplay::mouseClick(point2D pt)
 			}
 		}
 	}
+	return string();
 }
 
 int AnnotationDisplay::width()

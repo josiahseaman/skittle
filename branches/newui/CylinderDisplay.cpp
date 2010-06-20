@@ -155,7 +155,7 @@ int CylinderDisplay::width()
 	return (int)(max_width / pi);
 }
 
-void CylinderDisplay::mouseClick(point2D pt){	}
+string CylinderDisplay::mouseClick(point2D pt){	}
 
 /******SLOTS*****/
 void CylinderDisplay::saySomething()

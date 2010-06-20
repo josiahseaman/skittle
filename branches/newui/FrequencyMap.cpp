@@ -242,7 +242,7 @@ void FrequencyMap::changeGraphWidth(int val)
 	}
 }	
 
-void FrequencyMap::mouseClick(point2D pt)
+string FrequencyMap::mouseClick(point2D pt)
 {
 	//range check
 	if( pt.x < (int)width() && pt.x >= 0 && pt.y <= height() )
@@ -263,6 +263,7 @@ void FrequencyMap::mouseClick(point2D pt)
 		
 		//ui->widthDial->setValue( pt.x);
 	}
+	return string();
 }
 
 /***Correlation***/

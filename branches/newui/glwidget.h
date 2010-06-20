@@ -89,6 +89,7 @@ public slots:
     void displayString(const string*);
     void on_moveButton_clicked();
     void on_selectButton_clicked();
+    void on_findButton_clicked();
     void on_resizeButton_clicked();
     void on_zoomButton_clicked();
     void setTool(int tool);
@@ -109,7 +110,7 @@ signals:
 	void addGraphMode(AbstractGraph*);
 	void addDivider();
 	void AnnotationDisplayAdded(AnnotationDisplay*);
-	void IveBeenClicked(GLWidget*);
+	//void IveBeenClicked(GLWidget*);
 	void displaySizeChanged();
 	void hideSettings(QFrame*);
 	void showSettings(QFrame*);

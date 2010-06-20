@@ -39,7 +39,7 @@ public:
 	
 public slots:	
 //	void changeWidth(int w);
-	void mouseClick(point2D pt);
+	string mouseClick(point2D pt);
 	
 signals:
 

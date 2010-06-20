@@ -46,6 +46,8 @@ QFrame* HighlightDisplay::settingsUi()
     //seqEdit->setMinimumWidth(400);
 	
 	connect( seqEdit, SIGNAL(textChanged(const QString&)), this, SLOT(setHighlightSequence(const QString&)));
+	connect(this, SIGNAL(highlightChanged(const QString&)), seqEdit, SLOT(setText(const QString&)) );
+	
     connect( similarityDial, SIGNAL(valueChanged(int)), this, SLOT(setPercentSimilarity(int)));     	
 	connect( reverseCheck, SIGNAL(released()), this, SLOT(invalidate()));
 	return settingsTab;
@@ -211,6 +213,8 @@ void HighlightDisplay::setHighlightSequence(const QString& high_C)
 	target = high;
 	reverseComplementTarget = reverseComplement(target);
 	
+	QString copy(high.c_str());
+	emit highlightChanged(copy);
 	invalidate();
 }
 

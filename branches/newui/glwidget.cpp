@@ -213,6 +213,13 @@ void GLWidget::on_selectButton_clicked()
 	setTool(SELECT_TOOL);
 }
 
+void GLWidget::on_findButton_clicked()
+{
+	setTool(FIND_TOOL);
+	if(highlight->hidden)
+		highlight->toggleVisibility();
+}
+
 void GLWidget::on_resizeButton_clicked()
 {
 	setTool(RESIZE_TOOL);
@@ -235,6 +242,7 @@ void GLWidget::setTool(int tool)
 		case RESIZE_TOOL:
 			changeCursor(Qt::SizeHorCursor);
 			break;
+		case FIND_TOOL:
 		case SELECT_TOOL:
 			changeCursor(Qt::CrossCursor);
 			break;
@@ -499,7 +507,7 @@ void GLWidget::paintGL()
 	    double zoom = getZoom();
 	    glScaled(zoom, zoom, zoom);
 	    glTranslated(border,0,0);//to get zoom working right
-	    if( tool() == SELECT_TOOL)
+	    if( tool() == SELECT_TOOL || tool() == FIND_TOOL)
 	    {
 			glCallList(marker);//possibly replace this with a blinking cursor
 		}	
@@ -543,9 +551,7 @@ void GLWidget::resizeGL(int width, int height)
 
 void GLWidget::mousePressEvent(QMouseEvent *event)
 {
-	//emit IveBeenClicked(this);
-	
-	if(tool() == SELECT_TOOL)
+	if(tool() == SELECT_TOOL || tool() == FIND_TOOL)
 		placeMarker(event->pos());
 	QPointF qp = pixelToGlCoords(event->pos());
 	int x = (int)(qp.x());
@@ -553,16 +559,28 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 		
 	point2D oglCoords = point2D(x,y);	
 	
-	if(tool() == SELECT_TOOL)
+	if(tool() == SELECT_TOOL || tool() == FIND_TOOL)
 	{
+		vector<string> responses;
 		/*Progressively decrement x based on the cumulative width of modules*/
 		/*The order here is important and should match the left to right display order*/
 		for(int i = 0; i < (int)graphs.size(); ++i)
 		{
 			if(!graphs[i]->hidden)
 			{
-				graphs[i]->mouseClick(oglCoords);
+				responses.push_back(graphs[i]->mouseClick(oglCoords));
 				oglCoords.x -= graphs[i]->width() + border;
+			}
+		}
+		if(tool() == FIND_TOOL)
+		{
+			for(int i = 0; i < (int)responses.size(); ++i)
+			{
+				if(!(responses[i].empty()))
+				{
+					QString copy(responses[i].c_str());
+					highlight->setHighlightSequence(copy);
+				}
 			}
 		}
 	}
@@ -603,7 +621,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
 	QPointF old = pixelToGlCoords(lastPos);
 	QPointF evn = pixelToGlCoords(QPoint(event->x(), event->y()));
-	if(tool() == SELECT_TOOL)
+	if(tool() == SELECT_TOOL || tool() == FIND_TOOL)
 		placeMarker(event->pos());
     double zoom = getZoom();
     float dx = (evn.x() - old.x()) * zoom;

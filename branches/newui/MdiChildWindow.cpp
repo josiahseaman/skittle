@@ -20,7 +20,7 @@ MdiChildWindow::MdiChildWindow(UiVariables gui, QSpinBox* pStart, QTabWidget* se
 	verticalScrollBar->setMaximum( 100 );
 	
 	setMouseTracking(true);
-    setFocusPolicy(Qt::ClickFocus);
+    //setFocusPolicy(Qt::ClickFocus);
 	subFrame = new QFrame(this);
 	glWidget = new GLWidget(ui, this);
 	QHBoxLayout* hLayout = new QHBoxLayout;

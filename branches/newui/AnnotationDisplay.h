@@ -25,7 +25,7 @@ public:
 	GLuint render();
 	void displayTrack(const vector<track_entry>& track);
 	void newTrack(vector<track_entry> track);
-	void mouseClick(point2D pt);
+	string mouseClick(point2D pt);
 	int width();
 	void setFileName(string gtfFileName);
 	string getFileName();
