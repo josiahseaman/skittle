@@ -165,7 +165,7 @@ string NucleotideDisplay::mouseClick(point2D pt)
 		//<<chromosome<<":"<<index<<"-"<<index+200<<"&pix=800&Submit=submit\">View in Genome Browser</a> [external link]";
 		//																											chr5			12389181	12390000
 		ui->print(ss.str().c_str());
-		return sequence->substr(index, 100);
+		return sequence->substr(index, 30);
 	}
 	else{
 		return string();

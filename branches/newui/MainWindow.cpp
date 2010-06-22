@@ -202,7 +202,7 @@ void MainWindow::createToolbars()
 	widthDial = new QSpinBox(this);
     widthDial->setMinimum(1);
     widthDial->setMaximum(1000000000);
-    widthDial->setValue(128);
+    widthDial->setValue(118);
     widthDial->setSuffix(" bp");
 	settingToolBar->addWidget(widthDial);
 
@@ -374,6 +374,10 @@ void MainWindow::openGtf()
 
 void MainWindow::changeScale(int newScale)
 {
+	//std::stringstream ss1;
+	//ss1 << "changeScale: " << newScale;
+	//textArea->append(QString( ss1.str().c_str() ));	
+
 	if(newScale < 1)
 		newScale = 1;
 	
@@ -384,8 +388,8 @@ void MainWindow::changeScale(int newScale)
 		display_width = max( 1, display_width);
 		int display_size = displayLength->value() / oldScale;
 		display_size = max( 1, display_size);
-		scale->setValue(newScale);
 		widthDial->setValue( display_width * newScale );
+		scale->setValue(newScale);
 		displayLength->setValue(display_size*newScale);
 		oldScale = newScale;
 	}

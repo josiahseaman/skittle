@@ -14,8 +14,8 @@ HighlightDisplay::HighlightDisplay(UiVariables* gui, GLWidget* gl)
 	actionTooltip = string("Highlights user specified sequences");
 	actionData = actionLabel; 
 	
-	target = 				  string("AAAAAAAAAAAA");
-	reverseComplementTarget = string("TTTTTTTTTTTT");
+	targets.push_back(string("AAAAAAAAAAAA"));
+	//targets.push_back(string("TTTTTTTTTTTT"));
 	percentage_match = 0.8;
 	frameCount = 0;
 	
@@ -29,24 +29,28 @@ QFrame* HighlightDisplay::settingsUi()
 {	
     settingsTab = new QFrame();    
     settingsTab->setWindowTitle(QString("Sequence Highlighter Settings"));
-	QFormLayout* formLayout = new QFormLayout;
+	formLayout = new QFormLayout;
 	formLayout->setRowWrapPolicy(QFormLayout::WrapLongRows);
 	settingsTab->setLayout(formLayout);
 	
-    QLineEdit* seqEdit = new QLineEdit(settingsTab);
-    seqEdit->setText("AAAAAAAAAAAA");
+    activeSeqEdit = new QLineEdit(settingsTab);
+    activeSeqEdit->setText("AAAAAAAAAAAA");
     QSpinBox* similarityDial = new QSpinBox(settingsTab);
     similarityDial->setValue(80);
     reverseCheck = new QCheckBox("Search Reverse Complement", settingsTab);
     reverseCheck->setChecked(true);
+    QPushButton* addButton = new QPushButton("Add a New Sequence", settingsTab);
     
     formLayout->addRow(reverseCheck);
     formLayout->addRow("Minimum Percent Similarity:", similarityDial);
-    formLayout->addRow("Highlighted Sequence:", seqEdit);
-    //seqEdit->setMinimumWidth(400);
+    formLayout->addRow(addButton);
+    formLayout->addRow("Sequence 1:", activeSeqEdit);
+    //activeSeqEdit->setMinimumWidth(400);
 	
-	connect( seqEdit, SIGNAL(textChanged(const QString&)), this, SLOT(setHighlightSequence(const QString&)));
-	connect(this, SIGNAL(highlightChanged(const QString&)), seqEdit, SLOT(setText(const QString&)) );
+	connect( addButton, SIGNAL(clicked()), this, SLOT(addNewSequence()));
+	
+	connect( activeSeqEdit, SIGNAL(textChanged(const QString&)), this, SLOT(setHighlightSequence(const QString&)));
+	connect(this, SIGNAL(highlightChanged(const QString&)), activeSeqEdit, SLOT(setText(const QString&)) );
 	
     connect( similarityDial, SIGNAL(valueChanged(int)), this, SLOT(setPercentSimilarity(int)));     	
 	connect( reverseCheck, SIGNAL(released()), this, SLOT(invalidate()));
@@ -60,15 +64,20 @@ void HighlightDisplay::display()
 	glScaled(1,-1,1);
 		if(!upToDate)
 		{
-			vector<int> forward = identifyMatches(target);
-			vector<int> reverse;
-			if(reverseCheck->isChecked())
-				reverse = identifyMatches(reverseComplementTarget);
-			combine(forward, reverse);
+			vector<vector<int> > results;
+			for(int i = 0; i < (int)targets.size(); i++)
+				results.push_back( identifyMatches(targets[i]) );
+			//vector<int> forward = identifyMatches(target);
+			//vector<int> reverse;
+			//if(reverseCheck->isChecked())
+			//	reverse = identifyMatches(reverseComplementTarget);
+			//combine(forward, reverse);
+			combine( results );
 			loadTextureCanvas();
 			upToDate = true;
 		}
-		textureBuffer->display();
+		if( !nucleotide_colors.empty())
+			textureBuffer->display();
 	glPopMatrix();
 }
 
@@ -143,9 +152,65 @@ vector<unsigned short int> HighlightDisplay::calculate(string find)
 	return scores;
 }
 
-void HighlightDisplay::combine(vector<int>& forward, vector<int>& reverse)
+void HighlightDisplay::combine(vector< vector<int> >& results)
 {
 /***HIGHLIGHT COLOR LEGEND***/
+	//VALUE		MEANING		COLOR
+	//0-255 	no match	grey scale
+	//256 		buffer 		(white)
+	//257		R mismatch	yellow   1 + 256
+	//258		F mismatch	blue     2 + 256
+	//259		R match		purple   3 + 256
+	//260		F match		green    4 + 256
+	
+	//ensure that forward and reverse are the same length
+	//unsigned int size = min( forward.size(), reverse.size() );
+	//forward.resize(size);
+	//reverse.resize(size);	
+	nucleotide_colors.clear();
+	
+	//ensure they're all the same length
+	int nSequences = results.size();
+	int length = results[0].size();
+	vector< vector<int>::iterator > iterators;
+	for(unsigned int i = 0; i < results.size(); ++i)
+	{
+		if( length != results[i].size() )
+		{
+			results[i].resize(length, 0 );
+			//ui->print("ERROR: Highlight Search strings were different lengths.");
+			//return;
+		}
+		iterators.push_back( results[i].begin() );
+	}
+	
+	color c = color(0,0,0);
+	for(int i = 0; i < length; i++)
+	{
+		int score = 0;
+		for(int k = 0; k < nSequences; ++k)
+		{
+			score = max(score, results[k][i]);//*(iterators[k]));
+			//score = *(iterators[k]);
+			//++iterators[k];
+		}
+			
+		if(score < 257)
+		{
+			 c = color(score, score, score);
+		}
+		else{
+			if( score == 257) c = color(255, 215, 0);	//257		R mismatch	yellow   1 + 256
+			if( score == 258) c = color(0, 0, 255);		//258		F mismatch	blue     2 + 256
+			if( score == 259) c = color(245, 0, 0);		//259		R match		purple   3 + 256
+			if( score == 260) c = color(0, 255, 0);		//260		F match		green    4 + 256
+		}
+		nucleotide_colors.push_back( c );
+	}
+}
+/*void HighlightDisplay::combine(vector<int>& forward, vector<int>& reverse)
+{
+///
 	//VALUE		MEANING		COLOR
 	//0-255 	no match	grey scale
 	//256 		buffer 		(white)
@@ -182,7 +247,7 @@ void HighlightDisplay::combine(vector<int>& forward, vector<int>& reverse)
 		nucleotide_colors.push_back( c );
 	}
 }
-
+*/
 inline char complement(char a)
 {
 	if(a == 'A') return 'T';
@@ -207,15 +272,38 @@ string HighlightDisplay::reverseComplement(string original)
 void HighlightDisplay::setHighlightSequence(const QString& high_C)
 {
 	string high = high_C.toStdString();
+	if( !targets.empty() && high.compare(targets[targets.size()-1]) == 0)
+		return;
+		
 	for(int l = 0; l < (int)high.size(); l++)
 		if(high[l] >= 97 && high[l] <= 122) high[l] -= 32;//cast to uppercase
 
-	target = high;
-	reverseComplementTarget = reverseComplement(target);
+	//targets.clear();
+	targets[targets.size()-1] = high;
+//	if(reverseCheck->isChecked())
+	//	targets.push_back( reverseComplement(high) );
+	//ui->print("Number of strings currently highlighted: ", targets.size());
+	
 	
 	QString copy(high.c_str());
 	emit highlightChanged(copy);
+	
 	invalidate();
+}
+
+void HighlightDisplay::addNewSequence()
+{	
+	disconnect( activeSeqEdit, SIGNAL(textChanged(const QString&)), this, SLOT(setHighlightSequence(const QString&)));	
+	disconnect(this, SIGNAL(highlightChanged(const QString&)), activeSeqEdit, SLOT(setText(const QString&)) );
+	
+    activeSeqEdit = new QLineEdit(settingsTab);	
+	std::stringstream ss1;
+	ss1 << "Sequence " << targets.size()+1;//Sequence number
+    formLayout->addRow(ss1.str().c_str(), activeSeqEdit);
+	targets.push_back( string() );
+	
+	connect( activeSeqEdit, SIGNAL(textChanged(const QString&)), this, SLOT(setHighlightSequence(const QString&)));
+	connect(this, SIGNAL(highlightChanged(const QString&)), activeSeqEdit, SLOT(setText(const QString&)) );
 }
 
 void HighlightDisplay::setPercentSimilarity(int percentile)

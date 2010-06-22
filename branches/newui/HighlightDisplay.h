@@ -10,6 +10,8 @@
 
 using namespace std;
 class QFrame;
+class QLineEdit;
+class QFormLayout;
 
 class HighlightDisplay : public NucleotideDisplay
 {
@@ -23,21 +25,23 @@ public:
 	GLuint render();
 	vector<int> identifyMatches(string find);
 	vector<unsigned short int> calculate(string find);
-	void combine(vector<int>& forward, vector<int>& reverse);
+	void combine(vector< vector<int> >& results);
 	string reverseComplement(string original);
 	
 public slots:
 	void setHighlightSequence(const QString&);
 	void setPercentSimilarity(int);
+	void addNewSequence();
 	
 signals:
 	void highlightChanged(const QString&);
 	
 private:
-	string target;
-	string reverseComplementTarget;
+	vector<string> targets;
 	double percentage_match;
 	QCheckBox* reverseCheck;
+	QLineEdit* activeSeqEdit;
+	QFormLayout* formLayout;
 /*	
 public slots:	
 	void changeWidth(int w);
