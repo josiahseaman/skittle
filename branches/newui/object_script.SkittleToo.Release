@@ -14,6 +14,7 @@ INPUT(
 ./release\MdiChildWindow.o
 ./release\NucleotideDisplay.o
 ./release\OligomerDisplay.o
+./release\SequenceEntry.o
 ./release\TextRender.o
 ./release\TextureCanvas.o
 ./release\UiVariables.o
@@ -31,6 +32,7 @@ INPUT(
 ./release\moc_MdiChildWindow.o
 ./release\moc_NucleotideDisplay.o
 ./release\moc_OligomerDisplay.o
+./release\moc_SequenceEntry.o
 ./release\moc_ViewManager.o
 ./release\qrc_resources.o
 );

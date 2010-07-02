@@ -63,9 +63,9 @@ void FrequencyMap::createConnections()
 	connect( ui->scaleDial, SIGNAL(valueChanged(int)), this, SLOT(changeScale(int)));
 }
 
-QFrame* FrequencyMap::settingsUi()
+QScrollArea* FrequencyMap::settingsUi()
 {	
-    settingsTab = new QFrame();    
+    settingsTab = new QScrollArea();    
     settingsTab->setWindowTitle(QString("Repeat Map Settings"));
 	QFormLayout* formLayout = new QFormLayout;
 	formLayout->setRowWrapPolicy(QFormLayout::WrapLongRows);

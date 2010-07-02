@@ -11,7 +11,7 @@
 */
 
 class GLWidget;
-class QFrame;
+class QScrollArea;
 class QAction;
 class UiVariables;
 
@@ -25,7 +25,7 @@ protected:
 	int Width;
 	int frameCount;
 	const string* sequence;
-	QFrame* settingsTab;
+	QScrollArea* settingsTab;
 
 public:
 	GLWidget* glWidget;
@@ -61,7 +61,7 @@ public:
 	virtual void setSequence(const string* seq);
 	virtual string mouseClick(point2D pt);
 	virtual string getFileName();
-	virtual QFrame* settingsUi();
+	virtual QScrollArea* settingsUi();
 	
 
 public slots:
@@ -74,8 +74,8 @@ public slots:
 	
 signals:
 	void displayChanged();
-	void hideSettings(QFrame*);
-	void showSettings(QFrame*);
+	void hideSettings(QScrollArea*);
+	void showSettings(QScrollArea*);
 	void scaleChanged(int);
 	void sizeChanged(int);	
 	void startChanged(int);

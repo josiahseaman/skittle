@@ -59,9 +59,9 @@ void OligomerDisplay::createConnections()
 }
 
 
-QFrame* OligomerDisplay::settingsUi()
+QScrollArea* OligomerDisplay::settingsUi()
 {	
-    settingsTab = new QFrame();    
+    settingsTab = new QScrollArea();    
     settingsTab->setWindowTitle(QString("Oligomer Settings"));
 	QFormLayout* formLayout = new QFormLayout;
 	formLayout->setRowWrapPolicy(QFormLayout::WrapLongRows);

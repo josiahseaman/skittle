@@ -96,10 +96,7 @@ private:
 	
 	QDockWidget *infoDock;
 	QTextEdit* textArea;
-	QSpinBox* similarityDial;
-	QLineEdit* seqEdit;
     QTabWidget *tabWidget;
-    QFrame *highlighterTab;
 	
 	QSpinBox *widthDial;
 	QPushButton *doubleDisplayWidth;

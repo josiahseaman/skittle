@@ -191,7 +191,7 @@ int AbstractGraph::width()
 	return Width / scale;
 }
 
-QFrame* AbstractGraph::settingsUi()
+QScrollArea* AbstractGraph::settingsUi()
 {//settingsUi should be called before toggleVisibility() the first time so that "settingsTab" will have a value
 	settingsTab = NULL;
 	return NULL;

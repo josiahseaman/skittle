@@ -9,9 +9,10 @@
 #include <vector>
 
 using namespace std;
-class QFrame;
+class QScrollArea;
 class QLineEdit;
-class QFormLayout;
+class QGridLayout;
+class SequenceEntry;
 
 class HighlightDisplay : public NucleotideDisplay
 {
@@ -20,7 +21,7 @@ class HighlightDisplay : public NucleotideDisplay
 public:	
 	HighlightDisplay(UiVariables* gui, GLWidget* gl);
 	~HighlightDisplay();
-	QFrame* settingsUi();
+	QScrollArea* settingsUi();
 	void display();
 	GLuint render();
 	vector<int> identifyMatches(string find);
@@ -30,18 +31,22 @@ public:
 	
 public slots:
 	void setHighlightSequence(const QString&);
-	void setPercentSimilarity(int);
 	void addNewSequence();
+	void removeEntry(SequenceEntry*);
+	void setPercentSimilarity(int);
 	
 signals:
 	void highlightChanged(const QString&);
 	
 private:
-	vector<string> targets;
+	int rowCount;
+	vector<SequenceEntry*> seqLines;
 	double percentage_match;
 	QCheckBox* reverseCheck;
 	QLineEdit* activeSeqEdit;
-	QFormLayout* formLayout;
+	QGridLayout* formLayout;
+	QFrame* settingsBox;
+	QPushButton* addButton;
 /*	
 public slots:	
 	void changeWidth(int w);

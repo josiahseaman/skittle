@@ -14,6 +14,7 @@ INPUT(
 ./debug\MdiChildWindow.o
 ./debug\NucleotideDisplay.o
 ./debug\OligomerDisplay.o
+./debug\SequenceEntry.o
 ./debug\TextRender.o
 ./debug\TextureCanvas.o
 ./debug\UiVariables.o
@@ -31,6 +32,7 @@ INPUT(
 ./debug\moc_MdiChildWindow.o
 ./debug\moc_NucleotideDisplay.o
 ./debug\moc_OligomerDisplay.o
+./debug\moc_SequenceEntry.o
 ./debug\moc_ViewManager.o
 ./debug\qrc_resources.o
 );

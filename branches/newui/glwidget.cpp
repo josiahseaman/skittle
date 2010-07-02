@@ -132,8 +132,8 @@ void GLWidget::createConnections()
    	for(int i = 0; i < graphs.size(); ++i)
    	{
    		connect( graphs[i], SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
-   		connect( graphs[i], SIGNAL(hideSettings(QFrame*)), this, SIGNAL(hideSettings(QFrame*)));
-   		connect( graphs[i], SIGNAL(showSettings(QFrame*)), this, SIGNAL(showSettings(QFrame*)));
+   		connect( graphs[i], SIGNAL(hideSettings(QScrollArea*)), this, SIGNAL(hideSettings(QScrollArea*)));
+   		connect( graphs[i], SIGNAL(showSettings(QScrollArea*)), this, SIGNAL(showSettings(QScrollArea*)));
    		//graphs[i]->createConnections();
 	}
 	
@@ -818,13 +818,13 @@ void GLWidget::loadFile(QString fileName)
 	reader->readFile(fileName);
 }
 
-vector<QFrame*> GLWidget::settingsUi()
+vector<QScrollArea*> GLWidget::settingsUi()
 {
-	vector<QFrame*> tabs;
+	vector<QScrollArea*> tabs;
 	
 	for(int i =0; i < (int)graphs.size(); ++i)
 	{
-		QFrame* tab = graphs[i]->settingsUi();
+		QScrollArea* tab = graphs[i]->settingsUi();
 		if(tab != NULL)
 			tabs.insert(tabs.begin(),tab);
 	}

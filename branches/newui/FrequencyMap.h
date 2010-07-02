@@ -24,7 +24,7 @@ public:
 	FrequencyMap(UiVariables* gui, GLWidget* gl);
 	~FrequencyMap();
 	void createConnections();
-	QFrame* settingsUi();
+	QScrollArea* settingsUi();
 	void display();
 	void link(NucleotideDisplay* nuc_display);
 	void load_canvas();

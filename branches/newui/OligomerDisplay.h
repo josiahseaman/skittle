@@ -26,7 +26,7 @@ public:
 	OligomerDisplay(UiVariables* gui, GLWidget* gl);
 	~OligomerDisplay();
 	void createConnections();
-	QFrame* settingsUi();
+	QScrollArea* settingsUi();
 	void checkVariables();
 	void display();
 	void load_canvas();

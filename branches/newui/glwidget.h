@@ -81,7 +81,7 @@ public:
     
     const string* seq();
 	
-	vector<QFrame*> settingsUi();
+	vector<QScrollArea*> settingsUi();
 
 
 public slots:
@@ -112,8 +112,8 @@ signals:
 	void AnnotationDisplayAdded(AnnotationDisplay*);
 	//void IveBeenClicked(GLWidget*);
 	void displaySizeChanged();
-	void hideSettings(QFrame*);
-	void showSettings(QFrame*);
+	void hideSettings(QScrollArea*);
+	void showSettings(QScrollArea*);
 
 protected:
 	void displayTrack(const vector<track_entry>& track);

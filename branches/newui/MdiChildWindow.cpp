@@ -116,23 +116,23 @@ void MdiChildWindow::createSettingsTabs()
 			//settingsDock->addTab(settingsTabs[i], settingsTabs[i]->windowTitle());
 			
 	}*/
-	connect( glWidget, SIGNAL(hideSettings(QFrame*)), this, SLOT(hideSettingsTab(QFrame*)));
-	connect( glWidget, SIGNAL(showSettings(QFrame*)), this, SLOT(showSettingsTab(QFrame*)));
+	connect( glWidget, SIGNAL(hideSettings(QScrollArea*)), this, SLOT(hideSettingsTab(QScrollArea*)));
+	connect( glWidget, SIGNAL(showSettings(QScrollArea*)), this, SLOT(showSettingsTab(QScrollArea*)));
 }
 
 //NOTE: The plural and singular forms of (hide/show)SettingsTab(s) are similar but not identical in where they get the pointer
-void MdiChildWindow::hideSettingsTab(QFrame* tab)
+void MdiChildWindow::hideSettingsTab(QScrollArea* tab)
 {
 	int index = settingsDock->indexOf(tab);
 	if(index > -1)
 	{
 		settingsDock->removeTab(index); 
-		vector<QFrame*>::iterator it;
+		vector<QScrollArea*>::iterator it;
 		it = std::find(settingsTabs.begin(), settingsTabs.end(), tab);
 		settingsTabs.erase(it);
 	}
 }
-void MdiChildWindow::showSettingsTab(QFrame* tab)
+void MdiChildWindow::showSettingsTab(QScrollArea* tab)
 {
 	settingsTabs.push_back(tab);
 	settingsDock->insertTab(1, tab, tab->windowTitle());

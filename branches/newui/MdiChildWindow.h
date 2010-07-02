@@ -11,6 +11,7 @@ class MainWindow;
 class QHBoxLayout;
 class QTabWidget;
 class QFrame;
+class QScrollArea;
 
 using std::vector;
 
@@ -40,8 +41,8 @@ public slots:
 	void setHorizontalWidth(int val);
 	void setOffsetStep(int val);
 	void setPageSize();
-	void hideSettingsTab(QFrame*);
-	void showSettingsTab(QFrame*);
+	void hideSettingsTab(QScrollArea*);
+	void showSettingsTab(QScrollArea*);
 
 signals:
 	void subWindowClosing(MdiChildWindow*);
@@ -50,7 +51,7 @@ signals:
 private:
 	QSpinBox* publicStart;
 	QTabWidget* settingsDock;
-	vector<QFrame*> settingsTabs;
+	vector<QScrollArea*> settingsTabs;
 	
 	void createSettingsTabs();
 };	
