@@ -48,12 +48,12 @@ ColorListEditor::ColorListEditor(QWidget *widget) : QComboBox(widget)
 
 QColor ColorListEditor::color() const
 {
-    return qVariantValue<QColor>(itemData(currentIndex(), Qt::DecorationRole));
+    return qVariantValue<QColor>(itemData(currentIndex(), Qt::WhatsThisRole));
 }
 
 void ColorListEditor::setColor(QColor color)
 {
-    setCurrentIndex(findData(color, int(Qt::DecorationRole)));
+    setCurrentIndex(findData(color, int(Qt::WhatsThisRole)));
 }
 
 void ColorListEditor::populateList()
@@ -61,11 +61,16 @@ void ColorListEditor::populateList()
 	srand(time(0));
     QStringList colorNames = QColor::colorNames();
 
-    for (int i = 0; i < colorNames.size(); ++i) {
+    for (int i = 0; i < colorNames.size(); ++i) 
+	{
         QColor color(colorNames[i]);
+		QPixmap pix(30,30);
+		pix.fill(color);
+		QIcon icon(pix);
 
-        insertItem(i, colorNames[i]);
-        setItemData(i, color, Qt::DecorationRole);
+        insertItem(i, icon, colorNames[i]);
+        setItemData(i, color, Qt::WhatsThisRole);
+        //setItemData(i, color, Qt::DisplayRole);//Qt::DecorationRole);
     }
     setCurrentIndex( rand() % count() );
 }

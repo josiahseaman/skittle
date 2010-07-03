@@ -110,9 +110,9 @@ vector<int> HighlightDisplay::identifyMatches(string find)
 		if(grey >= match_minimum)//count this as a starting position
 		{
 			offset = distance(scores.begin()+i, bestMatch);
-			remainingLength = findSize - scale +1;
+			remainingLength = findSize;// - scale;
 		}
-		if(remainingLength >= 1 && remainingLength >= scale)//trail after a match
+		if(remainingLength >= 1)//trail after a match
 		{//green if it matches, blue if it doesn't
 			if(seq[i+offset] == find[findSize - remainingLength])
 				pixelColor = 260;//green
@@ -137,7 +137,7 @@ vector<unsigned short int> HighlightDisplay::calculate(string find)
 	{
 			unsigned short int score = 0;
 			int start_h = start + h;
-			for(int l = 0; l < findSize; l++)
+			for(int l = 0; l < findSize; ++l)
 			{
 				if(seq[start_h + l] == find[l])//this is the innermost loop.  This line takes the most time
 					++score;
@@ -148,16 +148,7 @@ vector<unsigned short int> HighlightDisplay::calculate(string find)
 }
 
 void HighlightDisplay::combine(vector< vector<int> >& results)
-{
-/***HIGHLIGHT COLOR LEGEND***/
-	//VALUE		MEANING		COLOR
-	//0-255 	no match	grey scale
-	//256 		buffer 		(white)
-	//257		R mismatch	yellow   1 + 256
-	//258		F mismatch	blue     2 + 256
-	//259		R match		purple   3 + 256
-	//260		F match		green    4 + 256
-	
+{	
 	nucleotide_colors.clear();
 	
 	//ensure they're all the same length
@@ -174,17 +165,11 @@ void HighlightDisplay::combine(vector< vector<int> >& results)
 		}
 		iterators.push_back( results[i].begin() );
 	}
-	//color matchColor(0, 255, 0);
-	//color mismatchColor(0, 0, 255);
-	/*if(!seqLines.empty())
-	{
-		matchColor = seqLines[0]->matchColor;
-		mismatchColor = seqLines[0]->mismatchColor;
-	}*/
+	
 	color c = color(0,0,0);
+	int matchSeq = 0;
 	for(int i = 0; i < length; i++)
 	{
-		int matchSeq = 0;
 		int score = 0;
 		for(int k = 0; k < nSequences; ++k)
 		{
@@ -266,6 +251,7 @@ void HighlightDisplay::addNewSequence()
 	
 	connect(seqLines[seqLines.size()-1], SIGNAL( removeEntry(SequenceEntry*)), this, SLOT(removeEntry(SequenceEntry*)));
 	connect( activeSeqEdit, SIGNAL(textChanged(const QString&)), this, SLOT(invalidate()));
+	connect( entry, SIGNAL(colorChanged()), this, SLOT(invalidate()));
 	//connect(this, SIGNAL(highlightChanged(const QString&)), activeSeqEdit, SLOT(setText(const QString&)) );
 	invalidate();
 }

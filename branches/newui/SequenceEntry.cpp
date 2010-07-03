@@ -24,6 +24,7 @@ void SequenceEntry::changeColor()
 	val.getRgb(&r, &g, &b);
 	matchColor = color(r,g,b);
 	mismatchColor = matchColor * 0.4;
+	emit colorChanged();
 }
 
 void SequenceEntry::setHighlightSequence(const QString& high_C)

@@ -33,6 +33,7 @@ public slots:
 	void changeColor();
 	
 signals:
+	void colorChanged();
 	void removeEntry(SequenceEntry*);
 	
 };
