@@ -3,15 +3,27 @@
 #include <QtGui/QLineEdit>
 
 
-SequenceEntry::SequenceEntry(QLabel* Label, QLineEdit* line, QPushButton* remove, string sequence)
+SequenceEntry::SequenceEntry(QLabel* Label, QLineEdit* line)
 {
 	label = Label;
 	lineEdit = line;
-	removeButton = remove;
-	seq = sequence;
+	removeButton = new QPushButton("Delete");
+	seq = line->text().toStdString();
+	colorBox = new ColorListEditor(this);
+	changeColor();
 	
 	connect(removeButton, SIGNAL(clicked()), this, SLOT(removeSequence()) );
 	connect(lineEdit, SIGNAL(textChanged(const QString&)), this, SLOT(setHighlightSequence(const QString&)));
+	connect(colorBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeColor()));
+}
+
+void SequenceEntry::changeColor()
+{
+	QColor val = colorBox->color();
+	int r, g, b;
+	val.getRgb(&r, &g, &b);
+	matchColor = color(r,g,b);
+	mismatchColor = matchColor * 0.4;
 }
 
 void SequenceEntry::setHighlightSequence(const QString& high_C)
@@ -35,5 +47,6 @@ void SequenceEntry::setHighlightSequence(const QString& high_C)
 void SequenceEntry::removeSequence()
 {
 	emit removeEntry( this );
+	//delete this;
 }
 

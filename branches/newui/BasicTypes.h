@@ -22,7 +22,10 @@ public:
 	int r;
 	int g;
 	int b;
-	color(){}
+	color()
+	{
+		r = 0; g = 0; b = 0;
+	}
 	color(int red, int green, int blue){
 		r=red;
 		g=green;

@@ -139,7 +139,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Project]
-UnitCount=45
+UnitCount=47
 FileName=SkittleToo.dev
 Name=SkittleToo
 Type=0
@@ -490,6 +490,26 @@ BuildCmd=
 FileName=SequenceEntry.cpp
 CompileCpp=0
 Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit47]
+FileName=ColorListEditor.h
+CompileCpp=0
+Folder=SkittleToo
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit46]
+FileName=ColorListEditor.cpp
+CompileCpp=0
+Folder=SkittleToo
 Compile=1
 Link=1
 Priority=1000

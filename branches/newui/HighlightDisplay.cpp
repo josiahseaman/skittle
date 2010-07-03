@@ -111,19 +111,16 @@ vector<int> HighlightDisplay::identifyMatches(string find)
 		{
 			offset = distance(scores.begin()+i, bestMatch);
 			remainingLength = findSize - scale +1;
-			//pixelColor = 259;
 		}
-		//else{//TODO:DOUBLE CHECK AND MAKE SURE SEQUENCES SHOULDN'T BE ONE bp LONGER
-			if(remainingLength >= 1 && remainingLength >= scale)//trail after a match
-			{//green if it matches, blue if it doesn't
-				if(seq[i+offset] == find[findSize - remainingLength])
-					pixelColor = 260;//green
-				else
-					pixelColor = 258;//blue
-					
-				remainingLength = max(0, remainingLength - scale);
-			}
-		//}
+		if(remainingLength >= 1 && remainingLength >= scale)//trail after a match
+		{//green if it matches, blue if it doesn't
+			if(seq[i+offset] == find[findSize - remainingLength])
+				pixelColor = 260;//green
+			else
+				pixelColor = 258;//blue
+				
+			remainingLength = max(0, remainingLength - scale);
+		}
 		pixels.push_back( pixelColor );
 	}
 	return pixels;
@@ -134,7 +131,6 @@ vector<unsigned short int> HighlightDisplay::calculate(string find)
 {
 	vector<unsigned short int> scores;
 	int findSize = find.size();
-	//int count = 0;
 	int start = nucleotide_start;
 	const string& seq = *sequence;
 	for( int h = 0; h < display_size && h  < (int)seq.size() - start - (findSize-1); h++)
@@ -148,9 +144,6 @@ vector<unsigned short int> HighlightDisplay::calculate(string find)
 			}
 			scores.push_back(score);
 	}	
-//	stringstream outStream;//
-//	outStream << count << " matches to " << find << " at " << percentage_match * 100 << "% similarity" << endl;
-//	ui->print(outStream.str());
 	return scores;
 }
 
@@ -181,16 +174,30 @@ void HighlightDisplay::combine(vector< vector<int> >& results)
 		}
 		iterators.push_back( results[i].begin() );
 	}
-	
+	//color matchColor(0, 255, 0);
+	//color mismatchColor(0, 0, 255);
+	/*if(!seqLines.empty())
+	{
+		matchColor = seqLines[0]->matchColor;
+		mismatchColor = seqLines[0]->mismatchColor;
+	}*/
 	color c = color(0,0,0);
 	for(int i = 0; i < length; i++)
 	{
+		int matchSeq = 0;
 		int score = 0;
 		for(int k = 0; k < nSequences; ++k)
 		{
 			score = max(score, results[k][i]);//*(iterators[k]));
 			//score = *(iterators[k]);
 			//++iterators[k];
+			if(score > 256)
+			{
+				matchSeq = k;
+				if(reverseCheck->isChecked())
+					matchSeq /= 2;
+				break;
+			}/**/
 		}
 			
 		if(score < 257)
@@ -198,10 +205,8 @@ void HighlightDisplay::combine(vector< vector<int> >& results)
 			 c = color(score, score, score);
 		}
 		else{
-			if( score == 257) c = color(255, 215, 0);	//257		R mismatch	yellow   1 + 256
-			if( score == 258) c = color(0, 0, 255);		//258		F mismatch	blue     2 + 256
-			if( score == 259) c = color(245, 0, 0);		//259		R match		purple   3 + 256
-			if( score == 260) c = color(0, 255, 0);		//260		F match		green    4 + 256
+			if( score == 258) c = seqLines[matchSeq]->mismatchColor;		
+			if( score == 260) c = seqLines[matchSeq]->matchColor;
 		}
 		nucleotide_colors.push_back( c );
 	}
@@ -245,17 +250,19 @@ void HighlightDisplay::addNewSequence()
 		activeSeqEdit->setText("AAAAAAAAAAAA");	
 	std::stringstream ss1;
 	ss1 << "Sequence " << ++rowCount;//Sequence number
+	QLabel* label = new QLabel(ss1.str().c_str());
+	SequenceEntry* entry = new SequenceEntry(label, activeSeqEdit );
+	
 	int row = formLayout->rowCount();
 	formLayout->removeWidget(addButton);
-	QLabel* label = new QLabel(ss1.str().c_str());
     formLayout->addWidget(label, row, 0, Qt::AlignRight);
 	formLayout->addWidget(activeSeqEdit, row, 1);
-	QPushButton* removeButton = new QPushButton("Delete", settingsBox);
-	formLayout->addWidget(removeButton, row, 2);
+	formLayout->addWidget(entry->colorBox, row, 2);
+	formLayout->addWidget(entry->removeButton, row, 3);
 	formLayout->addWidget(addButton, row+1, 0);
 	
     settingsBox->setMinimumHeight(settingsBox->minimumHeight() + activeSeqEdit->minimumHeight());
-	seqLines.push_back( new SequenceEntry(label, activeSeqEdit, removeButton, activeSeqEdit->text().toStdString() ));
+	seqLines.push_back( entry );
 	
 	connect(seqLines[seqLines.size()-1], SIGNAL( removeEntry(SequenceEntry*)), this, SLOT(removeEntry(SequenceEntry*)));
 	connect( activeSeqEdit, SIGNAL(textChanged(const QString&)), this, SLOT(invalidate()));
@@ -269,6 +276,8 @@ void HighlightDisplay::removeEntry(SequenceEntry* entry)
 	formLayout->removeWidget(entry->label);
 	entry->lineEdit->hide();
 	formLayout->removeWidget(entry->lineEdit);
+	entry->colorBox->hide();
+	formLayout->removeWidget(entry->colorBox);
 	entry->removeButton->hide();
 	formLayout->removeWidget(entry->removeButton);
 	

@@ -2,6 +2,7 @@ INPUT(
 ./debug\AbstractGraph.o
 ./debug\AlignmentDisplay.o
 ./debug\AnnotationDisplay.o
+./debug\ColorListEditor.o
 ./debug\CylinderDisplay.o
 ./debug\NucleotideLinker.o
 ./debug\FastaReader.o
@@ -22,6 +23,7 @@ INPUT(
 ./debug\moc_AbstractGraph.o
 ./debug\moc_AlignmentDisplay.o
 ./debug\moc_AnnotationDisplay.o
+./debug\moc_ColorListEditor.o
 ./debug\moc_CylinderDisplay.o
 ./debug\moc_FastaReader.o
 ./debug\moc_FrequencyMap.o

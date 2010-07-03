@@ -5,6 +5,8 @@
 #include <QString>
 #include <string>
 #include <vector>
+#include "ColorListEditor.h"
+#include "BasicTypes.h"
 
 using std::string;
 class QLineEdit;
@@ -18,13 +20,17 @@ public:
 	QLabel* label;
 	QLineEdit* lineEdit;
 	QPushButton* removeButton;
+	ColorListEditor* colorBox;
 	string seq;
+	color matchColor;
+	color mismatchColor;
 	
-	SequenceEntry(QLabel* Label, QLineEdit* line, QPushButton* remove, string sequence);
+	SequenceEntry(QLabel* Label, QLineEdit* line);
 
 public slots:
 	void setHighlightSequence(const QString&);
 	void removeSequence();
+	void changeColor();
 	
 signals:
 	void removeEntry(SequenceEntry*);

@@ -16,6 +16,7 @@ HEADERS += AbstractGraph.h \
            AnnotationDisplay.h \
            BasicTypes.h \
            ui_BookmarkDialog.h \
+           ColorListEditor.h \
            CylinderDisplay.h \
            FastaReader.h \
            FrequencyMap.h \
@@ -36,6 +37,7 @@ HEADERS += AbstractGraph.h \
 SOURCES += AbstractGraph.cpp \
            AlignmentDisplay.cpp \
            AnnotationDisplay.cpp \
+           ColorListEditor.cpp \
            CylinderDisplay.cpp \
            NucleotideLinker.cpp \
            FastaReader.cpp \
