@@ -70,7 +70,6 @@ void ColorListEditor::populateList()
 
         insertItem(i, icon, colorNames[i]);
         setItemData(i, color, Qt::WhatsThisRole);
-        //setItemData(i, color, Qt::DisplayRole);//Qt::DecorationRole);
     }
     setCurrentIndex( rand() % count() );
 }

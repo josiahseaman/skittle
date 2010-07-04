@@ -43,12 +43,13 @@ QScrollArea* HighlightDisplay::settingsUi()
 	
     QSpinBox* similarityDial = new QSpinBox(settingsBox);
     similarityDial->setValue(80);
+    similarityDial->setSuffix("%");
     reverseCheck = new QCheckBox("Search Reverse Complement", settingsBox);
     reverseCheck->setChecked(true);
     addButton = new QPushButton("Add a New Sequence", settingsBox);
     
     formLayout->addWidget(reverseCheck, 0,0);
-    formLayout->addWidget(new QLabel("Minimum Percent Similarity:"), 1,0);
+    formLayout->addWidget(new QLabel("Minimum Similarity:"), 1,0);
 	formLayout->addWidget(similarityDial, 1,1);
     formLayout->addWidget(addButton, 2,0);
 	addNewSequence();
@@ -132,17 +133,29 @@ vector<unsigned short int> HighlightDisplay::calculate(string find)
 	vector<unsigned short int> scores;
 	int findSize = find.size();
 	int start = nucleotide_start;
+	unsigned short int maxMismatches = findSize - static_cast<unsigned short int>((float)findSize * percentage_match + .999);
+		//at 50%   1 = 0,  2 = 1, 3 = 1
 	const string& seq = *sequence;
 	for( int h = 0; h < display_size && h  < (int)seq.size() - start - (findSize-1); h++)
 	{
-			unsigned short int score = 0;
+			unsigned short int mismatches = 0;
+			int start_h = start + h;
+			unsigned short int l = 0;
+			while(mismatches <= maxMismatches && l < findSize)
+			{
+				if(seq[start_h + l] != find[l])//this is the innermost loop.  This line takes the most time
+					++mismatches;
+				++l;
+			}
+			scores.push_back(l - mismatches);
+			/*unsigned short int score = 0;
 			int start_h = start + h;
 			for(int l = 0; l < findSize; ++l)
 			{
 				if(seq[start_h + l] == find[l])//this is the innermost loop.  This line takes the most time
 					++score;
 			}
-			scores.push_back(score);
+			scores.push_back(score);*/
 	}	
 	return scores;
 }
