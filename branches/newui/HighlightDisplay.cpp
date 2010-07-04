@@ -44,6 +44,8 @@ QScrollArea* HighlightDisplay::settingsUi()
     QSpinBox* similarityDial = new QSpinBox(settingsBox);
     similarityDial->setValue(80);
     similarityDial->setSuffix("%");
+    similarityDial->setMinimum(20);
+    similarityDial->setMaximum(100);
     reverseCheck = new QCheckBox("Search Reverse Complement", settingsBox);
     reverseCheck->setChecked(true);
     addButton = new QPushButton("Add a New Sequence", settingsBox);
