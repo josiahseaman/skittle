@@ -43,6 +43,7 @@
 
 ColorListEditor::ColorListEditor(QWidget *widget) : QComboBox(widget)
 {
+	//srand(time(0));
     populateList();
 }
 
@@ -58,7 +59,6 @@ void ColorListEditor::setColor(QColor color)
 
 void ColorListEditor::populateList()
 {	
-	srand(time(0));
     QStringList colorNames = QColor::colorNames();
 
     for (int i = 0; i < colorNames.size(); ++i) 

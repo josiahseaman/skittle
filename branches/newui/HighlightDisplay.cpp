@@ -3,9 +3,12 @@
 #include "SequenceEntry.h"
 #include <sstream>
 #include <algorithm>
+#include <fstream>
 #include <QtGui/QScrollArea>
 #include <QtGui/QSpinBox>
 #include <QtGui/QGridLayout>
+
+using std::ifstream;
 
 HighlightDisplay::HighlightDisplay(UiVariables* gui, GLWidget* gl)
 :NucleotideDisplay(gui, gl)
@@ -48,15 +51,18 @@ QScrollArea* HighlightDisplay::settingsUi()
     similarityDial->setMaximum(100);
     reverseCheck = new QCheckBox("Search Reverse Complement", settingsBox);
     reverseCheck->setChecked(true);
+    QPushButton* OpenFileButton = new QPushButton("Open Query File", settingsBox);
     addButton = new QPushButton("Add a New Sequence", settingsBox);
     
     formLayout->addWidget(reverseCheck, 0,0);
+    formLayout->addWidget(OpenFileButton, 0,1);
     formLayout->addWidget(new QLabel("Minimum Similarity:"), 1,0);
 	formLayout->addWidget(similarityDial, 1,1);
     formLayout->addWidget(addButton, 2,0);
 	addNewSequence();
 	
 	connect( addButton, SIGNAL(clicked()), this, SLOT(addNewSequence()));
+	connect( OpenFileButton, SIGNAL(clicked()), this, SLOT(openSequence()));
 		
     connect( similarityDial, SIGNAL(valueChanged(int)), this, SLOT(setPercentSimilarity(int)));     	
 	connect( reverseCheck, SIGNAL(released()), this, SLOT(invalidate()));
@@ -242,12 +248,18 @@ void HighlightDisplay::setHighlightSequence(const QString& high_C)
 	
 	invalidate();
 }
-
 void HighlightDisplay::addNewSequence()
+{
+	if(seqLines.empty())  
+		addNewSequence(string("AAAAAAAAAAAA"));	
+	else 
+		addNewSequence(string());
+}
+
+void HighlightDisplay::addNewSequence(string startString)
 {	
 	activeSeqEdit = new QLineEdit(settingsBox);
-	if(seqLines.empty())  
-		activeSeqEdit->setText("AAAAAAAAAAAA");	
+	activeSeqEdit->setText(startString.c_str());//TODO: may be an empty string
 	std::stringstream ss1;
 	ss1 << "Sequence " << ++rowCount;//Sequence number
 	QLabel* label = new QLabel(ss1.str().c_str());
@@ -269,6 +281,31 @@ void HighlightDisplay::addNewSequence()
 	connect( entry, SIGNAL(colorChanged()), this, SLOT(invalidate()));
 	//connect(this, SIGNAL(highlightChanged(const QString&)), activeSeqEdit, SLOT(setText(const QString&)) );
 	invalidate();
+}
+
+void HighlightDisplay::openSequence()
+{
+	QString fileName = QFileDialog::getOpenFileName(
+		this,"Open Query File", 
+		"", 
+		"All files (*)");//FASTA files (*.fa);; 
+	
+    if (fileName.isEmpty()) 
+    	return;
+	ui->print(fileName.toStdString());
+
+	ifstream file;
+	file.open(fileName.toStdString().c_str(), ifstream::in | ifstream::binary);
+	if(file.fail())
+	{
+		ErrorBox msg("Could not read the file.");
+		return;
+	}
+	string line;
+	while( getline(file, line) )
+	{
+		addNewSequence(line);
+	}
 }
 
 void HighlightDisplay::removeEntry(SequenceEntry* entry)

@@ -32,6 +32,8 @@ public:
 public slots:
 	void setHighlightSequence(const QString&);
 	void addNewSequence();
+	void addNewSequence(string);
+	void openSequence();
 	void removeEntry(SequenceEntry*);
 	void setPercentSimilarity(int);
 	
