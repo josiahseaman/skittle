@@ -58,6 +58,7 @@ public:
     void setColor(QColor c);
 
 private:
+    bool notGreyScale(QColor col);
     void populateList();
 };
 //! [0]

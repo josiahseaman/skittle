@@ -52,10 +52,12 @@ QScrollArea* HighlightDisplay::settingsUi()
     reverseCheck = new QCheckBox("Search Reverse Complement", settingsBox);
     reverseCheck->setChecked(true);
     QPushButton* OpenFileButton = new QPushButton("Open Query File", settingsBox);
+    QPushButton* clearEntriesButton = new QPushButton("Clear All", settingsBox);
     addButton = new QPushButton("Add a New Sequence", settingsBox);
     
     formLayout->addWidget(reverseCheck, 0,0);
     formLayout->addWidget(OpenFileButton, 0,1);
+    formLayout->addWidget(clearEntriesButton, 0,2);
     formLayout->addWidget(new QLabel("Minimum Similarity:"), 1,0);
 	formLayout->addWidget(similarityDial, 1,1);
     formLayout->addWidget(addButton, 2,0);
@@ -63,6 +65,7 @@ QScrollArea* HighlightDisplay::settingsUi()
 	
 	connect( addButton, SIGNAL(clicked()), this, SLOT(addNewSequence()));
 	connect( OpenFileButton, SIGNAL(clicked()), this, SLOT(openSequence()));
+	connect( clearEntriesButton, SIGNAL(clicked()), this, SLOT(clearAllEntries()));
 		
     connect( similarityDial, SIGNAL(valueChanged(int)), this, SLOT(setPercentSimilarity(int)));     	
 	connect( reverseCheck, SIGNAL(released()), this, SLOT(invalidate()));
@@ -140,6 +143,9 @@ vector<unsigned short int> HighlightDisplay::calculate(string find)
 {
 	vector<unsigned short int> scores;
 	int findSize = find.size();
+	//if(findSize == 0)
+	//	return vector<unsigned short int>(display_size, 0);
+		
 	int start = nucleotide_start;
 	unsigned short int maxMismatches = findSize - static_cast<unsigned short int>((float)findSize * percentage_match + .999);
 		//at 50%   1 = 0,  2 = 1, 3 = 1
@@ -156,14 +162,6 @@ vector<unsigned short int> HighlightDisplay::calculate(string find)
 				++l;
 			}
 			scores.push_back(l - mismatches);
-			/*unsigned short int score = 0;
-			int start_h = start + h;
-			for(int l = 0; l < findSize; ++l)
-			{
-				if(seq[start_h + l] == find[l])//this is the innermost loop.  This line takes the most time
-					++score;
-			}
-			scores.push_back(score);*/
 	}	
 	return scores;
 }
@@ -224,7 +222,7 @@ inline char complement(char a)
 	if(a == 'C') return 'G';
 	if(a == 'G') return 'C';
 	if(a == 'T') return 'A';
-	return 'N';
+	return a;
 }
 
 string HighlightDisplay::reverseComplement(string original)
@@ -277,10 +275,11 @@ void HighlightDisplay::addNewSequence(string startString)
 	seqLines.push_back( entry );
 	
 	connect(seqLines[seqLines.size()-1], SIGNAL( removeEntry(SequenceEntry*)), this, SLOT(removeEntry(SequenceEntry*)));
+	connect(seqLines[seqLines.size()-1], SIGNAL( removeEntry(SequenceEntry*)), this, SLOT(invalidate()));
 	connect( activeSeqEdit, SIGNAL(textChanged(const QString&)), this, SLOT(invalidate()));
 	connect( entry, SIGNAL(colorChanged()), this, SLOT(invalidate()));
-	//connect(this, SIGNAL(highlightChanged(const QString&)), activeSeqEdit, SLOT(setText(const QString&)) );
-	invalidate();
+	
+	upToDate = false;
 }
 
 void HighlightDisplay::openSequence()
@@ -292,7 +291,7 @@ void HighlightDisplay::openSequence()
 	
     if (fileName.isEmpty()) 
     	return;
-	ui->print(fileName.toStdString());
+	ui->print("Searching entries in: " + fileName.toStdString());
 
 	ifstream file;
 	file.open(fileName.toStdString().c_str(), ifstream::in | ifstream::binary);
@@ -301,10 +300,12 @@ void HighlightDisplay::openSequence()
 		ErrorBox msg("Could not read the file.");
 		return;
 	}
+	clearAllEntries();
 	string line;
 	while( getline(file, line) )
 	{
-		addNewSequence(line);
+		if(!line.empty())
+			addNewSequence(line);
 	}
 }
 
@@ -321,6 +322,14 @@ void HighlightDisplay::removeEntry(SequenceEntry* entry)
 	
 	seqLines.erase( std::find(seqLines.begin(), seqLines.end(), entry) );
 
+	upToDate = false;
+}
+
+void HighlightDisplay::clearAllEntries()
+{
+	int nEntries = seqLines.size();
+	for(int i = nEntries-1; i >= 0; --i)
+		removeEntry(seqLines[i]);
 	invalidate();	
 }
 

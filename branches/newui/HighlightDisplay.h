@@ -35,6 +35,7 @@ public slots:
 	void addNewSequence(string);
 	void openSequence();
 	void removeEntry(SequenceEntry*);
+	void clearAllEntries();
 	void setPercentSimilarity(int);
 	
 signals:
@@ -49,6 +50,8 @@ private:
 	QGridLayout* formLayout;
 	QFrame* settingsBox;
 	QPushButton* addButton;
+	
+	
 /*	
 public slots:	
 	void changeWidth(int w);

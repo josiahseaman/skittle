@@ -57,19 +57,41 @@ void ColorListEditor::setColor(QColor color)
     setCurrentIndex(findData(color, int(Qt::WhatsThisRole)));
 }
 
+/*Gray scale colors have roughly the same r,g, and b values*/
+bool ColorListEditor::notGreyScale(QColor col)
+{
+	int red, green, blue;
+	col.getRgb(&red, &green, &blue);
+	float average = (red + green + blue) / 3.0;
+	int min = (int)(average * .8);
+	int max = (int)(average * 1.2);
+	if( red > max || red < min )
+		return true;
+	if( green > max || green < min )
+		return true;		
+	if( blue > max || blue < min )
+		return true;
+		
+	return false;
+}
+
 void ColorListEditor::populateList()
 {	
     QStringList colorNames = QColor::colorNames();
-
+	int k = 0;
     for (int i = 0; i < colorNames.size(); ++i) 
 	{
-        QColor color(colorNames[i]);
-		QPixmap pix(30,30);
-		pix.fill(color);
-		QIcon icon(pix);
+        QColor col(colorNames[i]);
+        if(notGreyScale(col))
+        {
+			QPixmap pix(30,30);
+			pix.fill(col);
+			QIcon icon(pix);
 
-        insertItem(i, icon, colorNames[i]);
-        setItemData(i, color, Qt::WhatsThisRole);
+        	insertItem(k, icon, colorNames[k]);
+        	setItemData(k, col, Qt::WhatsThisRole);
+        	k++;
+		}
     }
     setCurrentIndex( rand() % count() );
 }
