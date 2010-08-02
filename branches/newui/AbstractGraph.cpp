@@ -146,6 +146,12 @@ void AbstractGraph::invalidate()
 	emit displayChanged();
 }
 
+void AbstractGraph::ensureVisible()
+{
+	if(hidden)
+		toggleVisibility();
+}
+
 void AbstractGraph::toggleVisibility()
 {
 	hidden = !hidden;

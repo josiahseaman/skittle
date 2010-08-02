@@ -56,6 +56,7 @@ public:
 	virtual void display() = 0;
 	virtual void displayLegend(float canvasWidth, float canvasHeight);
 	virtual void checkVariables();
+	virtual void ensureVisible();
 	virtual GLuint render() = 0;
 	virtual void setButtonFont();
 	virtual void setSequence(const string* seq);

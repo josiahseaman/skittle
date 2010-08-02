@@ -1,6 +1,7 @@
 #include "HighlightDisplay.h"
 #include "glwidget.h"
 #include "SequenceEntry.h"
+//#include <ctype.h>
 #include <sstream>
 #include <algorithm>
 #include <fstream>
@@ -282,6 +283,17 @@ void HighlightDisplay::addNewSequence(string startString)
 	upToDate = false;
 }
 
+string stripWhiteSpace(string line)
+{
+	string::iterator it = line.begin();
+	for(; it < line.end(); ++it)
+	{
+		if(  *it == '\r' || (*it) == '\n' )
+			it = line.erase(it);
+	}
+	return line;
+}
+
 void HighlightDisplay::openSequence()
 {
 	QString fileName = QFileDialog::getOpenFileName(
@@ -304,8 +316,11 @@ void HighlightDisplay::openSequence()
 	string line;
 	while( getline(file, line) )
 	{
-		if(!line.empty())
+		if(!line.empty() && line[0] != '>')
+		{
+			line = stripWhiteSpace(line);
 			addNewSequence(line);
+		}
 	}
 }
 

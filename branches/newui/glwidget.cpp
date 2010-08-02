@@ -216,8 +216,7 @@ void GLWidget::on_selectButton_clicked()
 void GLWidget::on_findButton_clicked()
 {
 	setTool(FIND_TOOL);
-	if(highlight->hidden)
-		highlight->toggleVisibility();
+	highlight->ensureVisible();
 }
 
 void GLWidget::on_resizeButton_clicked()
