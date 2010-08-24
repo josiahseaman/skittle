@@ -15,7 +15,7 @@ Compiling on Linux:
 -- -- If qt3-dev-tools are installed, they will have to be removed, as this will not occur automatically.  Also, calling qt4's qmake statically will also resolve the issue this causes
 -- compiler/linker chain, including gcc/make
 -- OpenGL: this will probably be installed when you install qt4-dev-tools, if using Yast, Yum, or apt.  It's probably a depnedency
--- GLUT/Freeglut, in testing we've installed freeglut3 and freeglut3-dev and also glutg3 which is probably a psuedo package.
+-- GLUT/Freeglut, in testing we've installed freeglut3 and freeglut3-dev and also glutg3-dev which is probably a psuedo package.
 
 3. Open up a terminal in that directory and use:
 qmake SkittleToo.pro
