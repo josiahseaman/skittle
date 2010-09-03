@@ -60,6 +60,8 @@ public:
 private:
     bool notGreyScale(QColor col);
     void populateList();
+	void insertColorItem(int index, QColor col, QString name);
+	QIcon createIcon(QColor col);
 };
 //! [0]
 

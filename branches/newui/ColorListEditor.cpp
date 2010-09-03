@@ -75,21 +75,35 @@ bool ColorListEditor::notGreyScale(QColor col)
 	return false;
 }
 
+QIcon ColorListEditor::createIcon(QColor col)
+{
+	QPixmap pix(30,30);
+	pix.fill(col);
+	return QIcon(pix);
+}
+
+void ColorListEditor::insertColorItem(int index, QColor col, QString name)
+{
+	insertItem(index, createIcon(col), name);
+	setItemData(index, col, Qt::WhatsThisRole);
+}
+    
 void ColorListEditor::populateList()
 {	
     QStringList colorNames = QColor::colorNames();
-	int k = 0;
+    
+	insertColorItem(0, QColor(0,0,0), QString("Black"));
+	insertColorItem(1, QColor(255,0,0), QString("Red"));
+	insertColorItem(2, QColor(0,255,0), QString("Green"));
+	insertColorItem(3, QColor(0,0,255), QString("Blue"));
+	
+	int k = 4;
     for (int i = 0; i < colorNames.size(); ++i) 
 	{
         QColor col(colorNames[i]);
         if(notGreyScale(col))
         {
-			QPixmap pix(30,30);
-			pix.fill(col);
-			QIcon icon(pix);
-
-        	insertItem(k, icon, colorNames[k]);
-        	setItemData(k, col, Qt::WhatsThisRole);
+			insertColorItem(k, col, colorNames[k]);
         	k++;
 		}
     }
