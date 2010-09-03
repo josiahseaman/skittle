@@ -1,0 +1,34 @@
+To get the latest version of the source from SourceForge use:
+
+svn co https://skittle.svn.sourceforge.net/svnroot/skittle skittle
+
+
+0. Unpack or SVN CO the source files into the directory you want to work in.
+
+All of these are freely available for download.
+
+Compiling on Linux:
+1. Neccesary Packages
+
+-- qt4-dev-tools
+-- -- Also including qt4-qmake libqt4-dev if not installed. 
+-- -- If qt3-dev-tools are installed, they will have to be removed, as this will not occur automatically.  Also, calling qt4's qmake statically will also resolve the issue this causes
+-- compiler/linker chain, including gcc/make
+-- OpenGL: this will probably be installed when you install qt4-dev-tools, if using Yast, Yum, or apt.  It's probably a depnedency
+-- GLUT/Freeglut, in testing we've installed freeglut3 and freeglut3-dev and also glutg3-dev which is probably a psuedo package.
+
+3. Open up a terminal in that directory and use:
+qmake SkittleToo.pro
+
+3.5. If you want to add new source files you will need to update SkittleToo.pro manually or use:
+qmake -project SkittleToo.pro
+
+4. qmake often puts the OpenGL flags in the wrong order.  Open up Makefile.Release and Makefile.Debug and verify that your LIBS flags are in this order:
+REM -lqtmain -lQtOpenGL -lglut32 -lglu32 -lopengl32 -lQtGui <-- these are probably not neccesary on linux
+-lglut
+
+Don't remove any other flags, just ensure that the flags present are in the correct order.
+
+5. 'make' to compile the project.
+
+6. Execute SkittleToo using 'release/SkittleToo chrY-sample.fa'

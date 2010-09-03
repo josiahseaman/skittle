@@ -1,0 +1,8 @@
+
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>zoomIn.png</file>
+    <file>zoomOut.png</file>
+    <file>zoomIn-mask.png</file>
+</qresource>
+</RCC>
