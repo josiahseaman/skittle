@@ -22,8 +22,7 @@ TextureCanvas::TextureCanvas(vector<color> pixels, int w)
 	width = w;
 	height = pixels.size() / width;
 	int max_size;
-    glGetIntegerv(GL_MADESTUFUP, &max_size);
-    //glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_size);
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_size);
 	if(max_size > 0)
 	{
 		useTextures = true;
