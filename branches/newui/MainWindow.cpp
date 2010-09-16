@@ -88,6 +88,8 @@ void MainWindow::createActions()
 	selectAction->setToolTip(QString("Displays index and sequence information"));
 	findAction = new QAction("&Find",this);	
 	addAnnotationAction = new QAction("Add Annotation",this);	
+	useTexturesAction = new QAction("Use Hardware Acceleration", this);
+	useTexturesAction->setCheckable(true);
 	//nextAnnotationAction = new QAction("Next Annotation",this);	
 	//prevAnnotationAction = new QAction("Previous Annotation",this);	
 	//browseCommunityAction = new QAction("Browse Community Research",this);	
@@ -132,6 +134,7 @@ void MainWindow::createMenus()
 	searchMenu->addAction(findPrevAction);
 	searchMenu->addAction(hilightResultsAction);*/
 	viewMenu = menuBar()->addMenu("&View");
+	viewMenu->addAction(useTexturesAction);
 	toolBarMenu = viewMenu->addMenu("ToolBar");
 	presetMenu = viewMenu->addMenu("Presets");
 	
@@ -181,8 +184,8 @@ void MainWindow::createToolbars()
 	presetToolBar->setOrientation(Qt::Horizontal);
 	toolBarMenu->addAction(presetToolBar->toggleViewAction());
 	
-	toolToolBar = addToolBar("tools");
-	toolToolBar->setObjectName("tools");
+	toolToolBar = addToolBar("Tools");
+	toolToolBar->setObjectName("Tools");
 	toolToolBar->addAction(moveAction);
 	toolToolBar->addAction(resizeAction);
 	toolToolBar->addAction(zoomAction);

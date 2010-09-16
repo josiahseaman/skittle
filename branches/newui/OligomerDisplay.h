@@ -12,7 +12,6 @@
 #include "FrequencyMap.h"
 #include "UiVariables.h"
 #include "AbstractGraph.h"
-#include "TextureCanvas.h"
 
 class QSpinBox;
 
@@ -59,7 +58,6 @@ signals:
 	void wordLengthChanged(int);
 	
 private:
-	TextureCanvas* textureBuffer;
 	TextureCanvas* graphBuffer;
 	vector< vector<float> > freq;
 	vector<color> pixels;

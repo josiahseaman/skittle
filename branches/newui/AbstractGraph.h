@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include "BasicTypes.h"
+#include "TextureCanvas.h"
 /**
 *  This is the base class for all Grapher objects.  The constructor requires
 *  a Ui reference so that it can 'connect' to controls in the Ui.
@@ -30,7 +31,7 @@ protected:
 public:
 	GLWidget* glWidget;
 	UiVariables* ui;	
-	
+	TextureCanvas* textureBuffer;
 	
 	bool hidden;
 	bool upToDate;
@@ -44,13 +45,14 @@ public:
 	string actionTooltip;
 	string actionData; 
 	
+	AbstractGraph();
 	~AbstractGraph();
 	virtual int width();
 	
 	virtual void createConnections();
-	virtual point get_position(int index);
 	virtual int height();
 	virtual void paint_square(point position, color c);
+	virtual void storeDisplay(vector<color>& pixels, int width);
 	virtual bool updateInt(int& subject, int& value);
 	virtual bool updateVal(double& subject, double& value);
 	virtual void display() = 0;

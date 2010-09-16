@@ -7,7 +7,6 @@
 #include "BasicTypes.h"
 #include "UiVariables.h"
 #include "AbstractGraph.h"
-#include "TextureCanvas.h"
 
 using namespace std;
 
@@ -55,7 +54,6 @@ private:
 	int pSeqSize;
 
 	GLuint display_object;
-	TextureCanvas* textureBuffer;
 	GLWidget* glWidget;
 	
 };

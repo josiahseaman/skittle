@@ -11,7 +11,6 @@
 #include "BasicTypes.h"
 #include "AbstractGraph.h"
 #include "UiVariables.h"
-#include "TextureCanvas.h"
 
 using namespace std;
 
@@ -45,7 +44,6 @@ signals:
 
 protected:
 	GLuint display_object;
-	TextureCanvas* textureBuffer;
 };
 
 #endif

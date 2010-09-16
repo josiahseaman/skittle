@@ -12,7 +12,6 @@
 #include "AbstractGraph.h"
 #include "NucleotideDisplay.h"
 #include "UiVariables.h"
-#include "TextureCanvas.h"
 
 using namespace std;
 
@@ -51,7 +50,6 @@ protected:
 	NucleotideDisplay* nuc;
 	GLuint display_object;
 	vector< vector<float> > freq;
-	TextureCanvas* textureBuffer;
 	vector<color> pixels;
 	int F_width;
 	int F_start;

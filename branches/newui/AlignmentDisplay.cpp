@@ -71,9 +71,7 @@ void AlignmentDisplay::loadTexture()
 	for(int i = nucleotide_start; i < end; i+=scale)
 		alignment_colors.push_back( simpleAlignment(i) );
 
-	if(textureBuffer)
-		delete textureBuffer;
-	textureBuffer = new TextureCanvas( alignment_colors, width());
+	storeDisplay( alignment_colors, width());
 
 	upToDate = true;
 }
@@ -110,9 +108,7 @@ void AlignmentDisplay::VLRcheck(vector<point> matches)//alternative to loadTextu
 
 	mergeMatches( alignment_colors, matches );
 
-	if(textureBuffer)
-		delete textureBuffer;
-	textureBuffer = new TextureCanvas( alignment_colors, width());
+	storeDisplay( alignment_colors, width());
 
 	upToDate = true;
 }

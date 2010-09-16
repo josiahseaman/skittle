@@ -16,12 +16,11 @@ ViewManager::ViewManager(MainWindow* window, UiVariables gui)
 	activeWidget = NULL;
 	
 	setBackgroundRole(QPalette::Dark);
-	//glWidget = new GLWidget(ui, this);
-
 
 	createConnections();
 	
-	addNewView();//glWidget = 
+	addNewView();
+	views[0]->showMaximized();
 }
 
 void ViewManager::createConnections()

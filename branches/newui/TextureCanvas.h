@@ -36,9 +36,15 @@ private:
 	point2D grid_position(int i, int width, int height, int max_size );
 	GLuint loadTexture(textureTile& tile);
 	
+	point get_position(int index);
+	void paint_square(point position, color c);
+	void textureFreeRender();
+	
 	GLuint displayList;
 	int width;
 	int height;
 	vector< vector< textureTile > > canvas;
+	vector<color> colors;
+	bool useTextures;
 };
 #endif

@@ -150,9 +150,7 @@ void FrequencyMap::load_canvas()
 			pixels.push_back( color(grey, grey, grey) );
 		}
 	}
-	if(textureBuffer)
-		delete textureBuffer;
-	textureBuffer = new TextureCanvas( pixels, F_width );
+	storeDisplay(pixels, F_width);
 
 	upToDate = true;
 }

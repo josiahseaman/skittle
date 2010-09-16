@@ -98,13 +98,7 @@ void NucleotideDisplay::load_nucleotide()
 
 void NucleotideDisplay::loadTextureCanvas()
 {
-	if(textureBuffer != NULL)
-	{
-		delete textureBuffer;
-		textureBuffer = NULL;
-	}
-	//Width = ui->widthDial->value() / ui->scaleDial->value();
-	textureBuffer = new TextureCanvas( nucleotide_colors, width() );
+	storeDisplay( nucleotide_colors, width() );
 }	
 
 void NucleotideDisplay::color_compress()

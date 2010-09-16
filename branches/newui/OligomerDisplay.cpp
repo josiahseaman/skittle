@@ -12,7 +12,6 @@ OligomerDisplay::OligomerDisplay(UiVariables* gui, GLWidget* gl)
 	sequence = seq;
 	toggleButton = NULL;
 	graphBuffer = new TextureCanvas( );
-	textureBuffer = NULL;
 	hidden = true;
 	
 	nucleotide_start = 1;
@@ -184,9 +183,7 @@ void OligomerDisplay::load_canvas()
 	}
 	vector<color> chart = calculateBoundaries(pixels, F_width*widthMultiplier, similarityGraphWidth);	
 	
-	if(textureBuffer)
-		delete textureBuffer;
-	textureBuffer = new TextureCanvas( pixels, F_width*widthMultiplier );
+	storeDisplay( pixels, F_width*widthMultiplier );
 	
 	delete graphBuffer;
 	graphBuffer = new TextureCanvas( chart, similarityGraphWidth );

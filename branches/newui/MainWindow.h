@@ -113,6 +113,7 @@ private:
 	QAction *zoomAction;
 	QAction *selectAction;
 	QAction *findAction;
+	QAction* useTexturesAction;
 	QAction *addAnnotationAction;
 	QAction *nextAnnotationAction;
 	QAction *prevAnnotationAction;

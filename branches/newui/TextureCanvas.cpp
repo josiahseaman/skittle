@@ -1,12 +1,20 @@
 #include "TextureCanvas.h"
+#include "BasicTypes.h"
 
 TextureCanvas::TextureCanvas()
 {
+	useTextures = false;
 	canvas.push_back(vector<textureTile>());
+	int max_size;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_size);
+	if(max_size > 0)
+		useTextures = true;
 }
 
 TextureCanvas::TextureCanvas(vector<color> pixels, int w)
 {
+	useTextures = false;
+	colors = vector<color>(pixels);
 	//pad the end with white pixels, background color
 	for(int i = 0; i <= w; ++i)
 		pixels.push_back( color(128,128,128) );
@@ -14,28 +22,34 @@ TextureCanvas::TextureCanvas(vector<color> pixels, int w)
 	width = w;
 	height = pixels.size() / width;
 	int max_size;
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_size);
-	//determine the size of the texture canvas
-	int canvas_width = width / max_size + 1;
-	int canvas_height = height / max_size + 1;
-	createEmptyTiles(canvas_width, canvas_height, max_size);
-	
-	
-	for(int i = 0; i < pixels.size(); i++)
+    glGetIntegerv(GL_MADESTUFUP, &max_size);
+    //glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_size);
+	if(max_size > 0)
 	{
-		color c1 = pixels[i];
-		vector<unsigned char>& current = canvas[(i % width) / max_size][(i / width) / max_size].data;
-		current.push_back(c1.r);
-		current.push_back(c1.g);
-		current.push_back(c1.b);
-	}
+		useTextures = true;
 	
-	for(unsigned int x = 0; x < canvas.size(); ++x)
-	{
-		for(unsigned int y = 0; y < canvas[x].size(); ++y)
+		//determine the size of the texture canvas
+		int canvas_width = width / max_size + 1;
+		int canvas_height = height / max_size + 1;
+		createEmptyTiles(canvas_width, canvas_height, max_size);
+		
+	
+		for(int i = 0; i < pixels.size(); i++)
 		{
-			loadTexture(canvas[x][y]);//tex_ids.push_back(
-			canvas[x][y].data.clear();//the data has been loaded into the graphics card
+			color c1 = pixels[i];
+			vector<unsigned char>& current = canvas[(i % width) / max_size][(i / width) / max_size].data;
+			current.push_back(c1.r);
+			current.push_back(c1.g);
+			current.push_back(c1.b);
+		}
+	
+		for(unsigned int x = 0; x < canvas.size(); ++x)
+		{
+			for(unsigned int y = 0; y < canvas[x].size(); ++y)
+			{
+				loadTexture(canvas[x][y]);//tex_ids.push_back(
+				canvas[x][y].data.clear();//the data has been loaded into the graphics card
+			}
 		}
 	}
 }
@@ -63,7 +77,10 @@ void TextureCanvas::createEmptyTiles(int canvas_width, int canvas_height, int ma
 
 void TextureCanvas::display()
 {
-	drawTextureSquare();
+	if(	useTextures )
+		drawTextureSquare();
+	else
+		textureFreeRender();
 }
 
 void TextureCanvas::drawTextureSquare()//draws from canvas
@@ -117,4 +134,37 @@ GLuint TextureCanvas::loadTexture(textureTile& tile)
     //cout << "Load Texture: " << (unsigned int) tex_id << endl;
     tile.tex_id = tex_id;
     return tex_id;
+}
+
+point TextureCanvas::get_position(int index)
+{
+	int x = index % width;
+	int y = index / width;
+	return point(x, y, 0);
+}
+
+void TextureCanvas::paint_square(point position, color c)
+{	
+	glPushMatrix();
+    	glColor3d(c.r /255.0, c.g /255.0, c.b /255.0); 
+        glTranslated(position.x+1, position.y, position.z);
+        glBegin(GL_QUADS);
+	        glVertex3d(.0, .0, 0);
+	        glVertex3d(-1.0, .0, 0);
+	        glVertex3d(-1, -1, 0);
+	        glVertex3d(.0, -1, 0);
+	    glEnd();
+	glPopMatrix();
+}
+
+void TextureCanvas::textureFreeRender()
+{
+    glPushMatrix();
+	glTranslated(0,1,0);
+		for(int i = 0; i < (int)colors.size(); i++)
+		{
+			point p1 = get_position( i );
+			paint_square(p1, colors[i]);
+		}	
+	glPopMatrix();
 }

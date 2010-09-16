@@ -3,6 +3,11 @@
 #include "glwidget.h"
 #include <math.h>
 
+AbstractGraph::AbstractGraph()
+{
+	textureBuffer = new TextureCanvas();
+}
+
 AbstractGraph::~AbstractGraph()
 {
 	if(toggleButton != NULL)
@@ -37,24 +42,13 @@ void AbstractGraph::checkVariables()
 	changeSize(ui->sizeDial->value());
 }
 
-point AbstractGraph::get_position(int index)
-{
-	int x = index % Width;
-	int y = index / Width;
-	return point(x, y, 0);
-}
-
 int AbstractGraph::height()
 {
 	return display_size / Width;
 }
 
 void AbstractGraph::paint_square(point position, color c)
-{
-	int index = 0;
-	index = static_cast<int>((position.y * Width) + position.x);
-	if(index < 0) index = 0;
-	
+{	
 	glPushMatrix();
     	glColor3d(c.r /255.0, c.g /255.0, c.b /255.0); 
         glTranslated(position.x+1, position.y, position.z);
@@ -65,6 +59,13 @@ void AbstractGraph::paint_square(point position, color c)
 	        glVertex3d(.0, -1, 0);
 	    glEnd();
 	glPopMatrix();
+}
+
+void AbstractGraph::storeDisplay(vector<color>& pixels, int width)
+{
+	if(textureBuffer)
+		delete textureBuffer;
+	textureBuffer = new TextureCanvas( pixels, width );
 }
 
 bool AbstractGraph::updateInt(int& subject, int& value)
