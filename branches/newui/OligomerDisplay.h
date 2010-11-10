@@ -28,6 +28,9 @@ public:
 	QScrollArea* settingsUi();
 	void checkVariables();
 	void display();
+	void isochores();
+	void calculateHeatMap();
+	vector<color> calculateAverageSignature(int, int);
 	void load_canvas();
 	GLuint render();
 	void freq_map();
@@ -59,12 +62,22 @@ signals:
 	
 private:
 	TextureCanvas* graphBuffer;
+	TextureCanvas* avgBuffer;
+	TextureCanvas* heatMapBuffer;
 	vector< vector<float> > freq;
 	vector<color> pixels;
+	vector<int> boundaryIndices;
 	int wordLength;
+	int widthMultiplier;
 	int similarityGraphWidth;
 	double minDeltaBoundary;
+	double minimumCorrelation;
+	double upperCorrelation;
+	double averageCorrelation;
 	QSpinBox* oligDial;
+	float min_score;
+	float max_score;
+	float range;
 	int F_width;
 	int F_height;
 	
