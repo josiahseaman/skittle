@@ -3,6 +3,7 @@
 #include <sstream>
 #include <math.h>
 #include <QDoubleSpinBox>
+#include <algorithm>
 
 OligomerDisplay::OligomerDisplay(UiVariables* gui, GLWidget* gl)
 {	
@@ -14,6 +15,7 @@ OligomerDisplay::OligomerDisplay(UiVariables* gui, GLWidget* gl)
 	graphBuffer = new TextureCanvas( );
 	avgBuffer = new TextureCanvas();
 	heatMapBuffer = new TextureCanvas();
+	correlationBuffer = new TextureCanvas();
 	hidden = true;
 	
 	nucleotide_start = 1;
@@ -135,6 +137,7 @@ void OligomerDisplay::display()
 		load_canvas();
 		//isochores();
 		calculateHeatMap();
+		//selfCorrelationMap();
 	}
 	width();
 	glPushMatrix();
@@ -145,10 +148,12 @@ void OligomerDisplay::display()
 		//glTranslated(similarityGraphWidth + 4, 0,0);
 		//avgBuffer->display();
 		heatMapBuffer->display();
+		glTranslated(F_height + 2, 0, 0);
+		//correlationBuffer->display();
 	glPopMatrix();
 }
 
-vector<color> OligomerDisplay::calculateAverageSignature(int begin, int end)
+/*vector<color> OligomerDisplay::calculateAverageSignature(int begin, int end)
 {
 	vector<color> avg;
 	int regionSize = end - begin;
@@ -184,13 +189,88 @@ void OligomerDisplay::isochores()
 	//loadAveragedCanvas
 	delete avgBuffer;
 	avgBuffer = new TextureCanvas( averages, F_width* widthMultiplier );
-}
+}*/
 
 void OligomerDisplay::calculateHeatMap()
 {	
-	vector<color> heatMap;
+	scores.clear();
 	for(int y = 0; y < F_height; ++y)
+	{	
+		for(int x = y+1; x < F_height; ++x)
+		{
+			int row = F_width*widthMultiplier;
+			double score = correlate(pixels, y*row, x*row, row);
+			scores.push_back(score);
+		}	
+	}
+	
+	vector<color> heatMap = colorNormalized(scores);
+	delete heatMapBuffer;
+	heatMapBuffer = new TextureCanvas( heatMap, F_height );
+}
+//start: 20541380  width: 479304
+
+void OligomerDisplay::selfCorrelationMap()
+{
+	//create rotated scores
+	vector<double> rotated;
+	for(int x = 0; x < F_height; ++x)
+	{	
+		for(int y = 0; y < F_height; ++y)
+		{	
+			rotated.push_back(scores[ y*F_height + x ]);
+		}
+	}
+	vector<double> correlationScores;
+	for(int y = 0; y < F_height; ++y)
+	{	
+		for(int x = y+1; x < F_height; ++x)
+		{
+			int row = F_height;		
+			//inputs
+			vector<color> input1 = colorVectorRange(scores,  y*row, row); //row
+			vector<color> input2 = colorVectorRange(rotated, x*row, row); //column
+			input1.insert(input1.end(), input2.begin(), input2.end());
+			double score = correlate(input1, 0, row, row);
+			correlationScores.push_back(score);
+		}	
+	}
+	
+	vector<color> heatMap = colorNormalized(correlationScores);
+	delete correlationBuffer;
+	correlationBuffer = new TextureCanvas( heatMap, F_height );	
+}
+
+vector<color> OligomerDisplay::colorVectorRange(vector<double>& stuff, int index, int length)
+{
+	vector<color> input1;
+	for(int i = index; i < length + index; ++i)
 	{
+		double grey = (int)( (stuff[i] + 1.0) /2.0 );
+		input1.push_back( color( grey ) );
+	}
+	return input1;
+}
+
+vector<color> OligomerDisplay::colorNormalized(vector<double> heatData)
+{
+	vector<color> heatMap;
+	if(heatData.empty()) return heatMap;
+	
+	double averageCorrelation = 0;
+	vector<double> sortedScores = heatData;
+	sort(sortedScores.begin(), sortedScores.end());
+	double medianCorrelation = sortedScores[ sortedScores.size()/2 ];
+	averageCorrelation = medianCorrelation;/*/
+	averageCorrelation = averageCorrelation / (double)heatData.size();/**/
+	
+	double maxCorrelation = sortedScores[sortedScores.size()-1];//*(max_element(heatData.begin(), heatData.end()));
+	double minCorrelation = sortedScores[0];//*(min_element(heatData.begin(), heatData.end()));
+	//double midpoint = (maxCorrelation + minCorrelation)/2.0;
+	
+	int k = 0;
+	for(int y = 0; y < F_height; ++y)
+	{	
 		for(int x = 0; x < y; ++x)//filler
 		{
 			heatMap.push_back(heatMap[x*F_height + y]);
@@ -198,29 +278,23 @@ void OligomerDisplay::calculateHeatMap()
 		heatMap.push_back(color(255,00,00));		
 		for(int x = y+1; x < F_height; ++x)
 		{
-			int row = F_width*widthMultiplier;
-			int Y = y * row;
-			int X = x * row;
-			double score = correlate(pixels, Y, X, row);
-			if(score > averageCorrelation) heatMap.push_back(color(255,0,0));
-			else heatMap.push_back(color(0,0,255));
-		}
-	}	
-	//PART 2: 
-	//for each isochore
-	//   for each isochore
-	//      correlate(iso1, iso2)
-	//      if(val > thresh)  col = red
-	//		add single pixel
-	
-
-	delete heatMapBuffer;
-	heatMapBuffer = new TextureCanvas( heatMap, F_height );
-	
-	//rescale pixel grid based on size
-	
+			double normalized = (heatData[k++] - averageCorrelation);
+			if( maxCorrelation != averageCorrelation && minCorrelation != averageCorrelation )
+			{
+				if(normalized >= 0.0) normalized /= (maxCorrelation - averageCorrelation );
+				else normalized /= (averageCorrelation - minCorrelation);
+			}
+			heatMap.push_back(redBlueSpectrum(normalized));
+		}   //-1.0 / min / 0 / score / avg / max / 1.0
+	}
+	return heatMap;
 }
 
+color OligomerDisplay::redBlueSpectrum(double i)
+{
+	return color( (int)(max(0.0, i) * 255), 0, (int)(min(0.0, i) * -255));
+}
+ 
 void OligomerDisplay::load_canvas()
 {
 	pixels.clear();
@@ -252,12 +326,12 @@ void OligomerDisplay::load_canvas()
 				pixels.push_back( color(grey, grey, grey) );
 		}
 	}
-	vector<color> chart = calculateBoundaries(pixels, F_width*widthMultiplier, similarityGraphWidth);	
+	//vector<color> chart = calculateBoundaries(pixels, F_width*widthMultiplier, similarityGraphWidth);	
 	
 	storeDisplay( pixels, F_width*widthMultiplier );
 	
-	delete graphBuffer;
-	graphBuffer = new TextureCanvas( chart, similarityGraphWidth );
+	//delete graphBuffer;
+	//graphBuffer = new TextureCanvas( chart, similarityGraphWidth );
 
 	upToDate = true;
 }
@@ -332,9 +406,8 @@ color randomColor()
 	return color(r, g, b);
 }
 
-vector<color> OligomerDisplay::calculateBoundaries(vector<color>& img, int row_size, int graphWidth)
+/*vector<color> OligomerDisplay::calculateBoundaries(vector<color>& img, int row_size, int graphWidth)
 {
-	boundaryIndices.clear();
 	//compute average value
 	double average = 0.0;
 	vector<double> scores;
@@ -357,41 +430,9 @@ vector<color> OligomerDisplay::calculateBoundaries(vector<color>& img, int row_s
 	averageVariance /= (double)scores.size();
 	double standardDeviation = sqrt(averageVariance);
 		
-		
-	//swap colors everytime you find a value outside   (average +/- 2*standardDeviation)
-	vector<color> colorPalette;
-	colorPalette.push_back(color(255,0,0));
-	colorPalette.push_back(color(0,255,0));
-	colorPalette.push_back(color(0,0,255));
-//	for(int i = 0; i < 20; ++i)
-//		colorPalette.push_back(randomColor());
-		
-	int colorIndex = 0;
 	minimumCorrelation = average - minDeltaBoundary*standardDeviation;
 	upperCorrelation = average + minDeltaBoundary*standardDeviation;
 	averageCorrelation = average;
-	vector<color> comparisonScores;
-	for(int i = 0; i+1 < (int)scores.size(); ++i)
-	{
-		double score = scores[i];
-		if(score < minimumCorrelation)
-		{
-			boundaryIndices.push_back(i);
-			colorIndex = (colorIndex +1) % colorPalette.size();
-		}
-		
-		for(int x = 0; x<graphWidth; ++x)
-		{
-			if(x < fabs(score*graphWidth))
-				comparisonScores.push_back(colorPalette[colorIndex]);
-			else
-				comparisonScores.push_back(color(20,20,20));
-		}
-	}
-	boundaryIndices.push_back(scores.size()-1);	
-	//TODO: bootstrap results???
-	
-	return comparisonScores;
 }/**/
 
 double OligomerDisplay::correlate(vector<color>& img, int beginA, int beginB, int pixelsPerSample)//calculations for a single pixel
@@ -462,7 +503,7 @@ double OligomerDisplay::correlate(vector<color>& img, int beginA, int beginB, in
 
 int OligomerDisplay::width()
 {
-	widthMultiplier = 1;
+	widthMultiplier = 1;/*
 	if(wordLength < 3)
 	{
 		widthMultiplier = 4;
@@ -470,7 +511,7 @@ int OligomerDisplay::width()
 	else if(wordLength == 3)
 	{
 		widthMultiplier = 2;
-	}
+	}*/
 
-	return F_width*widthMultiplier + F_height + similarityGraphWidth + 10;
+	return F_width*widthMultiplier + F_height*2 +4 ;
 }

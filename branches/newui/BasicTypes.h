@@ -26,6 +26,15 @@ public:
 	{
 		r = 0; g = 0; b = 0;
 	}
+	color(int grey)
+	{
+		r = grey; g = grey; b = grey;
+	}
+	color(double zeroToOne)
+	{
+		int grey = (int)(zeroToOne*255);
+		r = grey; g = grey; b = grey;
+	}
 	color(int red, int green, int blue){
 		r=red;
 		g=green;
