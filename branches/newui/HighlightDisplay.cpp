@@ -217,27 +217,6 @@ void HighlightDisplay::combine(vector< vector<int> >& results)
 	}
 }
 
-inline char complement(char a)
-{
-	if(a == 'A') return 'T';
-	if(a == 'C') return 'G';
-	if(a == 'G') return 'C';
-	if(a == 'T') return 'A';
-	return a;
-}
-
-string HighlightDisplay::reverseComplement(string original)
-{
-	string rc;
-	int size = original.size();
-	rc.resize(size, 'N');
-	for(int x = 0; x < size; ++x)
-	{					
-		rc[x] = complement(original[size-x-1]);
-	}
-	return rc;
-}
-
 void HighlightDisplay::setHighlightSequence(const QString& high_C)
 {
 	if(seqLines.empty())

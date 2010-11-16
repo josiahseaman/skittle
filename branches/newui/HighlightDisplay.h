@@ -27,7 +27,6 @@ public:
 	vector<int> identifyMatches(string find);
 	vector<unsigned short int> calculate(string find);
 	void combine(vector< vector<int> >& results);
-	string reverseComplement(string original);
 	
 public slots:
 	void setHighlightSequence(const QString&);

@@ -31,13 +31,17 @@ public:
 	//vector<color> calculateAverageSignature(int, int);
 	//void isochores();
 	void calculateHeatMap();
+	vector<double> fillHalfMatrix(vector<double>& data);
+	vector<double> rotateSquareMatrix(vector<double>& data);
 	void selfCorrelationMap();
-	vector<color> colorVectorRange(vector<double>& stuff, int index, int length);
+	void superCorrelationMap();
+	vector<double> colorVectorRange(vector<double>& stuff, int index, int length);
 	vector<color> colorNormalized(vector<double> heatData);
 	color redBlueSpectrum(double i);
 	void load_canvas();
 	GLuint render();
 	void freq_map();
+	int oligNum(string a);
 	int height();
 	string mouseClick(point2D pt);
 	
@@ -45,6 +49,7 @@ public:
 	void calculate(vector<color>& img, int vote_size);
 	//vector<color> calculateBoundaries(vector<color>& img, int row_size, int graphWidth);
 	double correlate(vector<color>& img, int beginA, int beginB, int pixelsPerSample);
+	double correlate(vector<double>& img, int beginA, int beginB, int pixelsPerSample);
 	int width();
 	
 	inline int ACGT_num(char n)
@@ -53,7 +58,15 @@ public:
 		if(n == 'T') return 3;
 		if(n == 'C') return 1;
 		if(n == 'G') return 2;
+		return -100000;//handles up to 8-mer correctly
+	}
 	
+	inline int comp_num(char n)
+	{
+		if(n == 'T') return 0;
+		if(n == 'G') return 1;
+		if(n == 'C') return 2;
+		if(n == 'A') return 3;
 		return -100000;//handles up to 8-mer correctly
 	}
 	
@@ -69,10 +82,12 @@ private:
 	TextureCanvas* avgBuffer;
 	TextureCanvas* heatMapBuffer;
 	TextureCanvas* correlationBuffer;
+	TextureCanvas* superBuffer;
 	vector< vector<float> > freq;
 	vector<color> pixels;
 	vector<int> boundaryIndices;
 	vector<double> scores;
+	vector<double> correlationScores;
 	int wordLength;
 	int widthMultiplier;
 	int similarityGraphWidth;

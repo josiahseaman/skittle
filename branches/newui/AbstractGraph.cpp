@@ -203,3 +203,15 @@ QScrollArea* AbstractGraph::settingsUi()
 	settingsTab = NULL;
 	return NULL;
 }
+
+string AbstractGraph::reverseComplement(string original)
+{
+	string rc;
+	int size = original.size();
+	rc.resize(size, 'N');
+	for(int x = 0; x < size; ++x)
+	{					
+		rc[x] = complement(original[size-x-1]);
+	}
+	return rc;
+}

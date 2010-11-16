@@ -65,7 +65,16 @@ public:
 	virtual string mouseClick(point2D pt);
 	virtual string getFileName();
 	virtual QScrollArea* settingsUi();
+	string reverseComplement(string original);
 	
+inline char complement(char a)
+{
+	if(a == 'A') return 'T';
+	if(a == 'C') return 'G';
+	if(a == 'G') return 'C';
+	if(a == 'T') return 'A';
+	return a;
+}
 
 public slots:
 	void changeScale(int s);

@@ -16,6 +16,7 @@ OligomerDisplay::OligomerDisplay(UiVariables* gui, GLWidget* gl)
 	avgBuffer = new TextureCanvas();
 	heatMapBuffer = new TextureCanvas();
 	correlationBuffer = new TextureCanvas();
+	superBuffer = new TextureCanvas();
 	hidden = true;
 	
 	nucleotide_start = 1;
@@ -135,61 +136,22 @@ void OligomerDisplay::display()
 	{
 		freq_map();	
 		load_canvas();
-		//isochores();
 		calculateHeatMap();
-		//selfCorrelationMap();
+		selfCorrelationMap();
+		//superCorrelationMap();
 	}
 	width();
 	glPushMatrix();
 		glScaled(1,-1,1);
 		textureBuffer->display();
 		glTranslated(F_width*widthMultiplier + 2, 0, 0);
-		//graphBuffer->display();
-		//glTranslated(similarityGraphWidth + 4, 0,0);
-		//avgBuffer->display();
 		heatMapBuffer->display();
 		glTranslated(F_height + 2, 0, 0);
-		//correlationBuffer->display();
+		correlationBuffer->display();
+		//glTranslated(F_height + 2, 0, 0);
+		//superBuffer->display();
 	glPopMatrix();
 }
-
-/*vector<color> OligomerDisplay::calculateAverageSignature(int begin, int end)
-{
-	vector<color> avg;
-	int regionSize = end - begin;
-	for(int x = 0; x < F_width; ++x)
-	{
-		float total = 0;
-		for(int y = begin; y < end && y < (int)freq.size(); ++y)
-		{
-			total += freq[y][x];
-		}
-		total = total / regionSize;
-		int grey = static_cast<int>( ((total-min_score)/range) * 255 );
-		for(int m = 0; m < widthMultiplier; ++m)
-			avg.push_back(color( grey, grey, grey));
-	}
-	
-	return avg;
-}
-
-void OligomerDisplay::isochores()
-{//16839493
-	int prevBoundary = 0;
-	vector<color> averages;
-	for(int i=0; i < (int)boundaryIndices.size(); ++i)
-	{
-		vector<color> avg = calculateAverageSignature(prevBoundary, boundaryIndices[i]);
-		int regionSize = boundaryIndices[i] - prevBoundary;
-		for(int k = 0; k < regionSize; ++k)
-			averages.insert(averages.end(), avg.begin(), avg.end());
-		prevBoundary = boundaryIndices[i];
-	}
-	
-	//loadAveragedCanvas
-	delete avgBuffer;
-	avgBuffer = new TextureCanvas( averages, F_width* widthMultiplier );
-}*/
 
 void OligomerDisplay::calculateHeatMap()
 {	
@@ -210,26 +172,52 @@ void OligomerDisplay::calculateHeatMap()
 }
 //start: 20541380  width: 479304
 
-void OligomerDisplay::selfCorrelationMap()
+vector<double> OligomerDisplay::fillHalfMatrix(vector<double>& data)
 {
-	//create rotated scores
+	vector<double> filledScores;
+	int k = 0;
+	for(int y = 0; y < F_height; ++y)
+	{	
+		for(int x = 0; x < y; ++x)//filler
+		{
+			filledScores.push_back(filledScores[x*F_height + y]);
+		}
+		filledScores.push_back(1.0);		
+		for(int x = y+1; x < F_height; ++x)
+		{
+			filledScores.push_back(data[k++]);
+		}
+	}
+	return filledScores;
+}
+
+vector<double> OligomerDisplay::rotateSquareMatrix(vector<double>& data)
+{
 	vector<double> rotated;
 	for(int x = 0; x < F_height; ++x)
 	{	
 		for(int y = 0; y < F_height; ++y)
 		{	
-			rotated.push_back(scores[ y*F_height + x ]);
+			rotated.push_back(data[ y*F_height + x ]);
 		}
 	}
-	vector<double> correlationScores;
+	return rotated;
+}	
+
+void OligomerDisplay::selfCorrelationMap()
+{
+	vector<double> filledScores = fillHalfMatrix(scores);
+	vector<double> rotated = rotateSquareMatrix(filledScores);
+
+	correlationScores.clear();
 	for(int y = 0; y < F_height; ++y)
 	{	
 		for(int x = y+1; x < F_height; ++x)
 		{
 			int row = F_height;		
 			//inputs
-			vector<color> input1 = colorVectorRange(scores,  y*row, row); //row
-			vector<color> input2 = colorVectorRange(rotated, x*row, row); //column
+			vector<double> input1 = colorVectorRange(filledScores,  y*row, row); //row
+			vector<double> input2 = colorVectorRange(rotated, x*row, row); //column
 			input1.insert(input1.end(), input2.begin(), input2.end());
 			double score = correlate(input1, 0, row, row);
 			correlationScores.push_back(score);
@@ -241,13 +229,38 @@ void OligomerDisplay::selfCorrelationMap()
 	correlationBuffer = new TextureCanvas( heatMap, F_height );	
 }
 
-vector<color> OligomerDisplay::colorVectorRange(vector<double>& stuff, int index, int length)
+void OligomerDisplay::superCorrelationMap()
 {
-	vector<color> input1;
+	vector<double> fill = fillHalfMatrix(correlationScores);
+	vector<double> rotated = rotateSquareMatrix(fill);
+	
+	vector<double> superScores;
+	for(int y = 0; y < F_height; ++y)
+	{	
+		for(int x = y+1; x < F_height; ++x)
+		{
+			int row = F_height;		
+			//inputs
+			vector<double> input1 = colorVectorRange(fill,  y*row, row); //row
+			vector<double> input2 = colorVectorRange(rotated, x*row, row); //column
+			input1.insert(input1.end(), input2.begin(), input2.end());
+			double score = correlate(input1, 0, row, row);
+			superScores.push_back(score);
+		}	
+	}
+	
+	vector<color> heatMap = colorNormalized(superScores);
+	delete superBuffer;
+	superBuffer = new TextureCanvas( heatMap, F_height );	
+}
+
+
+vector<double> OligomerDisplay::colorVectorRange(vector<double>& stuff, int index, int length)
+{
+	vector<double> input1;
 	for(int i = index; i < length + index; ++i)
 	{
-		double grey = (int)( (stuff[i] + 1.0) /2.0 );
-		input1.push_back( color( grey ) );
+		input1.push_back( stuff[i]  );
 	}
 	return input1;
 }
@@ -352,13 +365,13 @@ void OligomerDisplay::freq_map()
 		int offset = h * Width;
 		for(int l = 0; l < Width; l++)
 		{	
-			int olig_index = 0;
+			int oligIndex = 0;
 			for(int c = 0; c < wordLength; ++c)
 			{
-				olig_index = olig_index * 4 + ACGT_num( genome[offset + l + c] );				
-			}
-			if( olig_index >= 0 )
-				++temp_map[olig_index];
+				oligIndex = oligIndex * 4 + ACGT_num( genome[offset + l + c] );				
+			}				
+			if( oligIndex >= 0 )
+				++temp_map[oligIndex];
 		}
 		for(int w = 0; w < F_width; w++)//load temp_map into freq
 		{
@@ -366,6 +379,16 @@ void OligomerDisplay::freq_map()
 		}
 	}	
 	upToDate = true;
+}
+
+int OligomerDisplay::oligNum(string a)
+{
+	int oligIndex = 0;
+	for(int c = 0; c < (int)a.size(); ++c)
+	{
+		oligIndex = oligIndex * 4 + ACGT_num( a[c] );				
+	}
+	return oligIndex;
 }
 
 int OligomerDisplay::height()
@@ -405,35 +428,6 @@ color randomColor()
 	volatile int b = (int)(((float)rand() / RAND_MAX)* 255);
 	return color(r, g, b);
 }
-
-/*vector<color> OligomerDisplay::calculateBoundaries(vector<color>& img, int row_size, int graphWidth)
-{
-	//compute average value
-	double average = 0.0;
-	vector<double> scores;
-	for(int i = 0; i+row_size < (int)img.size(); i+=row_size)
-	{
-		double score = correlate(img, i, i+row_size, row_size);
-		average += score;
-		scores.push_back( score ); 
-	}	
-	average = average / (double)scores.size();
-	
-	//list squared variance from average, and average variance (which is confusing)
-	double averageVariance = 0.0;
-	for(int i = 0; i+1 < (int)scores.size(); ++i)
-	{
-		double variant = scores[i] - average;
-		variant = variant * variant;// square value
-		averageVariance += variant;
-	}
-	averageVariance /= (double)scores.size();
-	double standardDeviation = sqrt(averageVariance);
-		
-	minimumCorrelation = average - minDeltaBoundary*standardDeviation;
-	upperCorrelation = average + minDeltaBoundary*standardDeviation;
-	averageCorrelation = average;
-}/**/
 
 double OligomerDisplay::correlate(vector<color>& img, int beginA, int beginB, int pixelsPerSample)//calculations for a single pixel
 {//correlation will be a value between -1 and 1 representing how closley related 2 sequences are
@@ -501,6 +495,49 @@ double OligomerDisplay::correlate(vector<color>& img, int beginA, int beginB, in
 	return (answer_R + answer_G + answer_B)/3;//return the average of RGB correlation
 }
 
+double OligomerDisplay::correlate(vector<double>& img, int beginA, int beginB, int pixelsPerSample)//calculations for a single pixel
+{//correlation will be a value between -1 and 1 representing how closley related 2 sequences are
+	//calculation variables!!!  should all be double to prevent overflow
+	double N = pixelsPerSample;
+	double AVal;		double BVal;
+	
+	double ARedsum = 0;   //our tuple of color sums
+	double BRedsum = 0;   //our tuple of color sums
+	double ASquaredRed = 0;  //this is Aij^2
+	double BSquaredRed = 0;  //this is Bij^2	
+	double ABRed = 0;	//this is A[]*B[]
+
+	for (int k = 0; k < pixelsPerSample; k++)
+	{//3 color shades RGB,  2 samples A and B
+		//reds
+		AVal = img[beginA + k];
+		BVal = img[beginB + k];
+		ARedsum += AVal;					BRedsum += BVal;
+		ASquaredRed += (AVal*AVal);			BSquaredRed += (BVal*BVal);
+		ABRed += (AVal * BVal);						
+	}   
+	
+	//calculation time
+	double AbarRed = 0;  //A-tuple for color means
+	double BbarRed = 0;  //B-tuple for color means
+	AbarRed = ARedsum / N;
+	BbarRed = BRedsum / N;
+	
+	double numerator_R = ABRed   - BbarRed   * ARedsum   - AbarRed * BRedsum     + AbarRed   * BbarRed   * N;	
+	double denom_R1 = (sqrt(ASquaredRed   - ((ARedsum   * ARedsum)  /N)));
+	double denom_R2 = (sqrt(BSquaredRed   - ((BRedsum   * BRedsum)  /N)));
+	
+	double backup = sqrt(1 - (1/N));//if we have 0 instances of a color it will be / 0  div0
+	if(denom_R1 == 0) denom_R1 = backup;
+	if(denom_R2 == 0) denom_R2 = backup;
+
+	double answer_R = numerator_R / (denom_R1 * denom_R2);
+
+	return answer_R ;
+}
+
+
+
 int OligomerDisplay::width()
 {
 	widthMultiplier = 1;/*
@@ -513,5 +550,72 @@ int OligomerDisplay::width()
 		widthMultiplier = 2;
 	}*/
 
-	return F_width*widthMultiplier + F_height*2 +4 ;
+	return F_width*widthMultiplier + (F_height+2)*2;
 }
+
+/*vector<color> OligomerDisplay::calculateAverageSignature(int begin, int end)
+{
+	vector<color> avg;
+	int regionSize = end - begin;
+	for(int x = 0; x < F_width; ++x)
+	{
+		float total = 0;
+		for(int y = begin; y < end && y < (int)freq.size(); ++y)
+		{
+			total += freq[y][x];
+		}
+		total = total / regionSize;
+		int grey = static_cast<int>( ((total-min_score)/range) * 255 );
+		for(int m = 0; m < widthMultiplier; ++m)
+			avg.push_back(color( grey, grey, grey));
+	}
+	
+	return avg;
+}
+
+void OligomerDisplay::isochores()
+{//16839493
+	int prevBoundary = 0;
+	vector<color> averages;
+	for(int i=0; i < (int)boundaryIndices.size(); ++i)
+	{
+		vector<color> avg = calculateAverageSignature(prevBoundary, boundaryIndices[i]);
+		int regionSize = boundaryIndices[i] - prevBoundary;
+		for(int k = 0; k < regionSize; ++k)
+			averages.insert(averages.end(), avg.begin(), avg.end());
+		prevBoundary = boundaryIndices[i];
+	}
+	
+	//loadAveragedCanvas
+	delete avgBuffer;
+	avgBuffer = new TextureCanvas( averages, F_width* widthMultiplier );
+}*/
+
+/*vector<color> OligomerDisplay::calculateBoundaries(vector<color>& img, int row_size, int graphWidth)
+{
+	//compute average value
+	double average = 0.0;
+	vector<double> scores;
+	for(int i = 0; i+row_size < (int)img.size(); i+=row_size)
+	{
+		double score = correlate(img, i, i+row_size, row_size);
+		average += score;
+		scores.push_back( score ); 
+	}	
+	average = average / (double)scores.size();
+	
+	//list squared variance from average, and average variance (which is confusing)
+	double averageVariance = 0.0;
+	for(int i = 0; i+1 < (int)scores.size(); ++i)
+	{
+		double variant = scores[i] - average;
+		variant = variant * variant;// square value
+		averageVariance += variant;
+	}
+	averageVariance /= (double)scores.size();
+	double standardDeviation = sqrt(averageVariance);
+		
+	minimumCorrelation = average - minDeltaBoundary*standardDeviation;
+	upperCorrelation = average + minDeltaBoundary*standardDeviation;
+	averageCorrelation = average;
+}/**/
