@@ -16,7 +16,6 @@ OligomerDisplay::OligomerDisplay(UiVariables* gui, GLWidget* gl)
 	avgBuffer = new TextureCanvas();
 	heatMapBuffer = new TextureCanvas();
 	correlationBuffer = new TextureCanvas();
-	superBuffer = new TextureCanvas();
 	hidden = true;
 	
 	nucleotide_start = 1;
@@ -119,10 +118,10 @@ void OligomerDisplay::changeWordLength(int w)
 	{
 		F_width = (int)pow(4, wordLength);
 		freq.clear();
-		freq = vector< vector<float> >();
+		freq = vector< vector<double> >();
 		for(int i = 0; i < 400; i++)
 		{
-			freq.push_back( vector<float>(F_width, 0.0) );
+			freq.push_back( vector<double>(F_width, 0.0) );
 		}
 		//invalidate();
 		emit wordLengthChanged(w);
@@ -138,7 +137,6 @@ void OligomerDisplay::display()
 		load_canvas();
 		calculateHeatMap();
 		selfCorrelationMap();
-		//superCorrelationMap();
 	}
 	width();
 	glPushMatrix();
@@ -148,8 +146,6 @@ void OligomerDisplay::display()
 		heatMapBuffer->display();
 		glTranslated(F_height + 2, 0, 0);
 		correlationBuffer->display();
-		//glTranslated(F_height + 2, 0, 0);
-		//superBuffer->display();
 	glPopMatrix();
 }
 
@@ -160,8 +156,9 @@ void OligomerDisplay::calculateHeatMap()
 	{	
 		for(int x = y+1; x < F_height; ++x)
 		{
-			int row = F_width*widthMultiplier;
-			double score = correlate(pixels, y*row, x*row, row);
+			int row = F_width*widthMultiplier;/**/
+			double score = correlate(pixels, x*row, y*row, row);/*/
+			double score = spearmanCorrelation(freq[y], freq[x]);/**/
 			scores.push_back(score);
 		}	
 	}
@@ -216,10 +213,12 @@ void OligomerDisplay::selfCorrelationMap()
 		{
 			int row = F_height;		
 			//inputs
-			vector<double> input1 = colorVectorRange(filledScores,  y*row, row); //row
-			vector<double> input2 = colorVectorRange(rotated, x*row, row); //column
+			vector<double> input1 = copyVectorRange(filledScores,  y*row, row); //row
+			vector<double> input2 = copyVectorRange(rotated, x*row, row); //column
+			/**/
 			input1.insert(input1.end(), input2.begin(), input2.end());
-			double score = correlate(input1, 0, row, row);
+			double score = correlate(input1, 0, row, row); /*/
+			double score = spearmanCorrelation(input1, input2);/**/
 			correlationScores.push_back(score);
 		}	
 	}
@@ -229,33 +228,7 @@ void OligomerDisplay::selfCorrelationMap()
 	correlationBuffer = new TextureCanvas( heatMap, F_height );	
 }
 
-void OligomerDisplay::superCorrelationMap()
-{
-	vector<double> fill = fillHalfMatrix(correlationScores);
-	vector<double> rotated = rotateSquareMatrix(fill);
-	
-	vector<double> superScores;
-	for(int y = 0; y < F_height; ++y)
-	{	
-		for(int x = y+1; x < F_height; ++x)
-		{
-			int row = F_height;		
-			//inputs
-			vector<double> input1 = colorVectorRange(fill,  y*row, row); //row
-			vector<double> input2 = colorVectorRange(rotated, x*row, row); //column
-			input1.insert(input1.end(), input2.begin(), input2.end());
-			double score = correlate(input1, 0, row, row);
-			superScores.push_back(score);
-		}	
-	}
-	
-	vector<color> heatMap = colorNormalized(superScores);
-	delete superBuffer;
-	superBuffer = new TextureCanvas( heatMap, F_height );	
-}
-
-
-vector<double> OligomerDisplay::colorVectorRange(vector<double>& stuff, int index, int length)
+vector<double> OligomerDisplay::copyVectorRange(vector<double>& stuff, int index, int length)
 {
 	vector<double> input1;
 	for(int i = index; i < length + index; ++i)
@@ -495,7 +468,8 @@ double OligomerDisplay::correlate(vector<color>& img, int beginA, int beginB, in
 	return (answer_R + answer_G + answer_B)/3;//return the average of RGB correlation
 }
 
-double OligomerDisplay::correlate(vector<double>& img, int beginA, int beginB, int pixelsPerSample)//calculations for a single pixel
+//Pearson Correlation
+double OligomerDisplay::correlate(vector<double>& img, int beginA, int beginB, int pixelsPerSample)
 {//correlation will be a value between -1 and 1 representing how closley related 2 sequences are
 	//calculation variables!!!  should all be double to prevent overflow
 	double N = pixelsPerSample;
@@ -536,8 +510,99 @@ double OligomerDisplay::correlate(vector<double>& img, int beginA, int beginB, i
 	return answer_R ;
 }
 
+bool orderByValue(point A, point B)
+{
+	return (A.x < B.x);
+}
 
+bool orderByPosition(point A, point B)
+{
+	return (A.y < B.y);
+}
 
+void averageRanksOfEqualValue(vector<point>& temp, int& i)
+{
+	int startingRank = i;
+	int endingRank = i;
+	while(temp[i].x == temp[i+1].x)//detect equal values and average ranks
+	{
+		endingRank = i+1;
+		++i;
+		if(i < (int)temp.size()-1)
+			break;
+	}
+	if( startingRank != endingRank)
+	{
+		double averageRank = (startingRank + endingRank) / 2.0;
+		for(int k = startingRank; k <= endingRank; ++k)
+		{
+			temp[k].z = averageRank;
+		}
+	}
+}
+
+void OligomerDisplay::assignRanks(vector<point>& temp)
+{
+	for(int i = 0; i < (int)temp.size()-1; ++i)
+	{
+		temp[i].z = i;
+		//averageRanksOfEqualValue(temp, i);
+	}
+	temp[temp.size()-1].z = temp.size()-1;//assign last position
+}
+
+double OligomerDisplay::spearmanCorrelation(vector<double>& apples, vector<double>& oranges)
+{
+	vector<point> tempA;
+	vector<point> tempB;
+	int valsPerSample = min(apples.size(), oranges.size());
+	//create triplets of numbers  <x,y> = <value, original position, rank>
+	for(int i = 0; i < valsPerSample; ++i)
+	{
+		tempA.push_back(point(apples[i], i, 0 ) );
+		tempB.push_back(point(oranges[i], i, 0 ) );
+	}
+	//sort pairs = sort by value...
+	sort(tempA.begin(), tempA.end(), orderByValue);
+	sort(tempB.begin(), tempB.end(), orderByValue);
+	
+	//assign ranks = count upwards, detect equal values
+	assignRanks(tempA);
+	assignRanks(tempB);
+
+	//resort back to original order = sort by original position
+	sort(tempA.begin(), tempA.end(), orderByPosition);
+	sort(tempB.begin(), tempB.end(), orderByPosition);
+	//vector<double> of ranks
+	vector<double> ranks;
+	for(int i = 0; i < (int)tempA.size(); ++i)
+		ranks.push_back( tempA[i].z );
+	for(int i = 0; i < (int)tempB.size(); ++i)
+		ranks.push_back( tempB[i].z );	
+		
+	//Pearson Correlation on ranks
+	return correlate(ranks, 0, valsPerSample, valsPerSample);	
+}
+/*	vector<point> temp;
+	//create triplets of numbers  <x,y> = <value, original position, rank>
+	for(int i = 0; i + beginA < (int)img.size(); ++i)
+		temp.push_back(point(img[i+beginA], i, 0 ) );
+	//sort pairs = sort by value...
+	sort(temp.begin(), temp.end(), orderByValue);
+	//assign ranks = count upwards, detect equal values
+	for(int i = 0; i < (int)temp.size(); ++i)
+		temp[i].z = i;//TODO: detect equal values and average ranks
+
+	//resort back to original order = sort by original position
+	sort(temp.begin(), temp.end(), orderByPosition);
+	//vector<double> of ranks
+	vector<double> ranks;
+	for(int i = 0; i < (int)temp.size(); ++i)
+		ranks.push_back( temp[i].z );
+	//Pearson Correlation on ranks
+	
+	return correlate(ranks, beginA, beginB, pixelsPerSample);	*/
+	
 int OligomerDisplay::width()
 {
 	widthMultiplier = 1;/*
@@ -619,3 +684,6 @@ void OligomerDisplay::isochores()
 	upperCorrelation = average + minDeltaBoundary*standardDeviation;
 	averageCorrelation = average;
 }/**/
+
+
+//start: 20541380  width: 479304

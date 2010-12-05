@@ -35,7 +35,7 @@ public:
 	vector<double> rotateSquareMatrix(vector<double>& data);
 	void selfCorrelationMap();
 	void superCorrelationMap();
-	vector<double> colorVectorRange(vector<double>& stuff, int index, int length);
+	vector<double> copyVectorRange(vector<double>& stuff, int index, int length);
 	vector<color> colorNormalized(vector<double> heatData);
 	color redBlueSpectrum(double i);
 	void load_canvas();
@@ -50,6 +50,8 @@ public:
 	//vector<color> calculateBoundaries(vector<color>& img, int row_size, int graphWidth);
 	double correlate(vector<color>& img, int beginA, int beginB, int pixelsPerSample);
 	double correlate(vector<double>& img, int beginA, int beginB, int pixelsPerSample);
+	void assignRanks(vector<point>& temp);
+	double spearmanCorrelation(vector<double>& apples, vector<double>& oranges);
 	int width();
 	
 	inline int ACGT_num(char n)
@@ -83,7 +85,7 @@ private:
 	TextureCanvas* heatMapBuffer;
 	TextureCanvas* correlationBuffer;
 	TextureCanvas* superBuffer;
-	vector< vector<float> > freq;
+	vector< vector<double> > freq;
 	vector<color> pixels;
 	vector<int> boundaryIndices;
 	vector<double> scores;
@@ -93,9 +95,9 @@ private:
 	int similarityGraphWidth;
 	double minDeltaBoundary;
 	QSpinBox* oligDial;
-	float min_score;
-	float max_score;
-	float range;
+	double min_score;
+	double max_score;
+	double range;
 	int F_width;
 	int F_height;
 	
