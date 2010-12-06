@@ -5,6 +5,8 @@
 #include <QDoubleSpinBox>
 #include <algorithm>
 
+double valueForN = -2.0;
+
 OligomerDisplay::OligomerDisplay(UiVariables* gui, GLWidget* gl)
 {	
 	glWidget = gl;
@@ -157,7 +159,7 @@ void OligomerDisplay::calculateHeatMap()
 		for(int x = y+1; x < F_height; ++x)
 		{
 			int row = F_width*widthMultiplier;/**/
-			double score = correlate(pixels, x*row, y*row, row);/*/
+			double score = correlate(freq[y], freq[x]);/*/ //pixels, x*row, y*row, row
 			double score = spearmanCorrelation(freq[y], freq[x]);/**/
 			scores.push_back(score);
 		}	
@@ -216,8 +218,7 @@ void OligomerDisplay::selfCorrelationMap()
 			vector<double> input1 = copyVectorRange(filledScores,  y*row, row); //row
 			vector<double> input2 = copyVectorRange(rotated, x*row, row); //column
 			/**/
-			input1.insert(input1.end(), input2.begin(), input2.end());
-			double score = correlate(input1, 0, row, row); /*/
+			double score = correlate(input1, input2); /*/ // 0, row, row
 			double score = spearmanCorrelation(input1, input2);/**/
 			correlationScores.push_back(score);
 		}	
@@ -243,16 +244,16 @@ vector<color> OligomerDisplay::colorNormalized(vector<double> heatData)
 	vector<color> heatMap;
 	if(heatData.empty()) return heatMap;
 	
-	double averageCorrelation = 0;
 	vector<double> sortedScores = heatData;
 	sort(sortedScores.begin(), sortedScores.end());
-	double medianCorrelation = sortedScores[ sortedScores.size()/2 ];
-	averageCorrelation = medianCorrelation;/*/
-	averageCorrelation = averageCorrelation / (double)heatData.size();/**/
-	
+
 	double maxCorrelation = sortedScores[sortedScores.size()-1];//*(max_element(heatData.begin(), heatData.end()));
-	double minCorrelation = sortedScores[0];//*(min_element(heatData.begin(), heatData.end()));
-	//double midpoint = (maxCorrelation + minCorrelation)/2.0;
+	double minCorrelation = sortedScores[0];
+	int i = 0; 
+	while(minCorrelation == valueForN && i < sortedScores.size()-1)
+			minCorrelation = sortedScores[++i];//scan for a value other than valueForN
+	double medianCorrelation = sortedScores[ (sortedScores.size()-i)/2 + i ];
+	
 	
 	int k = 0;
 	for(int y = 0; y < F_height; ++y)
@@ -264,13 +265,18 @@ vector<color> OligomerDisplay::colorNormalized(vector<double> heatData)
 		heatMap.push_back(color(255,00,00));		
 		for(int x = y+1; x < F_height; ++x)
 		{
-			double normalized = (heatData[k++] - averageCorrelation);
-			if( maxCorrelation != averageCorrelation && minCorrelation != averageCorrelation )
+			double val = heatData[k++];
+			if(val != valueForN)
 			{
-				if(normalized >= 0.0) normalized /= (maxCorrelation - averageCorrelation );
-				else normalized /= (averageCorrelation - minCorrelation);
+				double normalized = (val - medianCorrelation);
+				if( maxCorrelation != medianCorrelation && minCorrelation != medianCorrelation )
+				{
+					if(normalized >= 0.0) normalized /= (maxCorrelation - medianCorrelation );
+					else normalized /= (medianCorrelation - minCorrelation);
+				}
+				heatMap.push_back(redBlueSpectrum(normalized));
 			}
-			heatMap.push_back(redBlueSpectrum(normalized));
+			else heatMap.push_back(color(150,150,150));
 		}   //-1.0 / min / 0 / score / avg / max / 1.0
 	}
 	return heatMap;
@@ -287,14 +293,15 @@ void OligomerDisplay::load_canvas()
 	height();
 	
 	//set scaling
-	min_score = freq[0][0];
+	min_score = freq[0][0];//TODO: if value is -1 this will throw everything off
 	max_score = freq[0][0];
 	for( int h = 0; h < F_height; h++)
 	{		
 		for(int w = 0; w < F_width; w++)
 		{
 			if( freq[h][w] < min_score)
-				min_score = freq[h][w];
+				if(freq[h][w] >= 0)
+					min_score = freq[h][w];
 			if( freq[h][w] > max_score)
 				max_score = freq[h][w];
 		}
@@ -304,20 +311,21 @@ void OligomerDisplay::load_canvas()
 	range = max_score - min_score;		
 		
 	for( int h = 0; h < F_height; h++)
-	{		
+	{
 		for(int w = 0; w < F_width; w++)
 		{
-			int grey = static_cast<int>( ((freq[h][w]-min_score)/range) * 255 );
+			double grey = freq[h][w];
+			if( grey >= 0)
+			{
+				grey = static_cast<int>( ((grey-min_score)/range) * 255 );
+			}
+			else grey = 150;
 			for(int m = 0; m < widthMultiplier; ++m)
 				pixels.push_back( color(grey, grey, grey) );
 		}
 	}
-	//vector<color> chart = calculateBoundaries(pixels, F_width*widthMultiplier, similarityGraphWidth);	
 	
 	storeDisplay( pixels, F_width*widthMultiplier );
-	
-	//delete graphBuffer;
-	//graphBuffer = new TextureCanvas( chart, similarityGraphWidth );
 
 	upToDate = true;
 }
@@ -336,19 +344,30 @@ void OligomerDisplay::freq_map()
 	{
 		vector<int> temp_map = vector<int>(F_width, 0);
 		int offset = h * Width;
-		for(int l = 0; l < Width; l++)
-		{	
-			int oligIndex = 0;
-			for(int c = 0; c < wordLength; ++c)
-			{
-				oligIndex = oligIndex * 4 + ACGT_num( genome[offset + l + c] );				
-			}				
-			if( oligIndex >= 0 )
-				++temp_map[oligIndex];
-		}
-		for(int w = 0; w < F_width; w++)//load temp_map into freq
+		
+		if(genome[offset] != 'N' && genome[offset+Width] != 'N')
 		{
-			freq[h][w] = temp_map[w];
+			for(int l = 0; l < Width; l++)
+			{	
+				int oligIndex = 0;
+				for(int c = 0; c < wordLength; ++c)
+				{
+					oligIndex = oligIndex * 4 + ACGT_num( genome[offset + l + c] );
+				}
+				if( oligIndex >= 0 )
+					++temp_map[oligIndex];
+			}
+			for(int w = 0; w < F_width; w++)//load temp_map into freq
+			{
+				freq[h][w] = temp_map[w];
+			}
+		}
+		else
+		{
+			for(int w = 0; w < F_width; w++)
+			{
+				freq[h][w] = valueForN;
+			}
 		}
 	}	
 	upToDate = true;
@@ -402,112 +421,49 @@ color randomColor()
 	return color(r, g, b);
 }
 
-double OligomerDisplay::correlate(vector<color>& img, int beginA, int beginB, int pixelsPerSample)//calculations for a single pixel
-{//correlation will be a value between -1 and 1 representing how closley related 2 sequences are
-	//calculation variables!!!  should all be double to prevent overflow
-	double N = pixelsPerSample;
-	int AVal;		int BVal;
-	
-	double ARedsum = 0,	AGreensum = 0,		ABluesum = 0;   //our tuple of color sums
-	double BRedsum = 0,	BGreensum = 0,		BBluesum = 0;   //our tuple of color sums
-	double ASquaredRed = 0,	ASquaredGreen = 0,	ASquaredBlue = 0;  //this is Aij^2
-	double BSquaredRed = 0,	BSquaredGreen = 0,	BSquaredBlue = 0;  //this is Bij^2	
-	double ABRed = 0, 	ABGreen =0,		ABBlue =0;	//this is A[]*B[]
-
-	for (int k = 0; k < pixelsPerSample; k++)
-	{//3 color shades RGB,  2 samples A and B
-		//reds
-		color A = img[beginA + k];
-		color B = img[beginB + k];
-		AVal = A.r;							BVal = B.r;
-		ARedsum += AVal;					BRedsum += BVal;
-		ASquaredRed += (AVal*AVal);			BSquaredRed += (BVal*BVal);
-		ABRed += (AVal * BVal);
-		//Greens
-		AVal = A.g;							BVal = B.g;
-		AGreensum += AVal;					BGreensum += BVal;
-		ASquaredGreen += (AVal*AVal);		BSquaredGreen += (BVal*BVal);
-		ABGreen += (AVal * BVal);
-		//Blues
-		AVal = A.b;							BVal = B.b;
-		ABluesum += AVal;					BBluesum += BVal;
-		ASquaredBlue += (AVal*AVal);		BSquaredBlue += (BVal*BVal);
-		ABBlue += (AVal * BVal);				
-						
-	}   
-	
-	//calculation time
-	double AbarRed = 0,	AbarGreen = 0,			AbarBlue = 0;  //A-tuple for color means
-	double BbarRed = 0,	BbarGreen = 0,			BbarBlue = 0;  //B-tuple for color means
-	AbarRed = ARedsum / N;	AbarGreen = AGreensum / N;	AbarBlue = ABluesum / N;
-	BbarRed = BRedsum / N;	BbarGreen = BGreensum / N;	BbarBlue = BBluesum / N;
-	
-	double numerator_R = ABRed   - BbarRed   * ARedsum   - AbarRed * BRedsum     + AbarRed   * BbarRed   * N;
-	double numerator_G = ABGreen - BbarGreen * AGreensum - AbarGreen * BGreensum + AbarGreen * BbarGreen * N;
-	double numerator_B = ABBlue  - BbarBlue  * ABluesum  - AbarBlue * BBluesum   + AbarBlue  * BbarBlue  * N;	
-	
-	double denom_R1 = (sqrt(ASquaredRed   - ((ARedsum   * ARedsum)  /N)));
-	double denom_R2 = (sqrt(BSquaredRed   - ((BRedsum   * BRedsum)  /N)));
-	double denom_G1 = (sqrt(ASquaredGreen - ((AGreensum * AGreensum)/N)));
-	double denom_G2 = (sqrt(BSquaredGreen - ((BGreensum * BGreensum)/N)));
-	double denom_B1 = (sqrt(ASquaredBlue  - ((ABluesum  * ABluesum) /N)));
-	double denom_B2 = (sqrt(BSquaredBlue  - ((BBluesum  * BBluesum) /N)));
-	
-	double backup = sqrt(1 - (1/N));//if we have 0 instances of a color it will be / 0  div0
-	if(denom_R1 == 0) denom_R1 = backup;
-	if(denom_R2 == 0) denom_R2 = backup;
-	if(denom_G1 == 0) denom_G1 = backup;
-	if(denom_G2 == 0) denom_G2 = backup;
-	if(denom_B1 == 0) denom_B1 = backup;
-	if(denom_B2 == 0) denom_B2 = backup;
-
-	double answer_R = numerator_R / (denom_R1 * denom_R2);
-	double answer_G = numerator_G / (denom_G1 * denom_G2);
-	double answer_B = numerator_B / (denom_B1 * denom_B2);
-
-	return (answer_R + answer_G + answer_B)/3;//return the average of RGB correlation
-}
-
 //Pearson Correlation
-double OligomerDisplay::correlate(vector<double>& img, int beginA, int beginB, int pixelsPerSample)
-{//correlation will be a value between -1 and 1 representing how closley related 2 sequences are
-	//calculation variables!!!  should all be double to prevent overflow
+double OligomerDisplay::correlate(vector<double>& apples, vector<double>& oranges)
+{
+	int pixelsPerSample = (int) min(apples.size(), oranges.size());
 	double N = pixelsPerSample;
 	double AVal;		double BVal;
 	
-	double ARedsum = 0;   //our tuple of color sums
-	double BRedsum = 0;   //our tuple of color sums
-	double ASquaredRed = 0;  //this is Aij^2
-	double BSquaredRed = 0;  //this is Bij^2	
-	double ABRed = 0;	//this is A[]*B[]
+	double Asum = 0;   
+	double Bsum = 0;   
+	double ASquared = 0;  //this is Aij^2
+	double BSquared = 0;  //this is Bij^2	
+	double AB = 0;	//this is A[]*B[]
 
 	for (int k = 0; k < pixelsPerSample; k++)
-	{//3 color shades RGB,  2 samples A and B
-		//reds
-		AVal = img[beginA + k];
-		BVal = img[beginB + k];
-		ARedsum += AVal;					BRedsum += BVal;
-		ASquaredRed += (AVal*AVal);			BSquaredRed += (BVal*BVal);
-		ABRed += (AVal * BVal);						
-	}   
+	{
+		AVal = apples [k];
+		BVal = oranges[k];
+		if(AVal == valueForN || BVal == valueForN)
+		{
+			--N;
+		}
+		else
+		{
+			Asum += AVal;                   Bsum += BVal;
+			ASquared += (AVal*AVal);        BSquared += (BVal*BVal);
+			AB += (AVal * BVal);						
+		}
+	}  
+	if( N <= 0)
+		return valueForN;//no data to report on
+		
+	double Abar = 0;  
+	double Bbar = 0;
+	Abar = Asum / N;
+	Bbar = Bsum / N;
 	
-	//calculation time
-	double AbarRed = 0;  //A-tuple for color means
-	double BbarRed = 0;  //B-tuple for color means
-	AbarRed = ARedsum / N;
-	BbarRed = BRedsum / N;
-	
-	double numerator_R = ABRed   - BbarRed   * ARedsum   - AbarRed * BRedsum     + AbarRed   * BbarRed   * N;	
-	double denom_R1 = (sqrt(ASquaredRed   - ((ARedsum   * ARedsum)  /N)));
-	double denom_R2 = (sqrt(BSquaredRed   - ((BRedsum   * BRedsum)  /N)));
-	
-	double backup = sqrt(1 - (1/N));//if we have 0 instances of a color it will be / 0  div0
-	if(denom_R1 == 0) denom_R1 = backup;
-	if(denom_R2 == 0) denom_R2 = backup;
+	double numerator = AB   - Bbar   * Asum   - Abar * Bsum     + Abar   * Bbar   * N;	
+	double denom_1 = sqrt(ASquared   - ((Asum   * Asum)  /N));
+	double denom_2 = sqrt(BSquared   - ((Bsum   * Bsum)  /N));
 
-	double answer_R = numerator_R / (denom_R1 * denom_R2);
+	double answer = numerator / (denom_1 * denom_2);
 
-	return answer_R ;
+	return answer;
 }
 
 bool orderByValue(point A, point B)
@@ -573,47 +529,22 @@ double OligomerDisplay::spearmanCorrelation(vector<double>& apples, vector<doubl
 	//resort back to original order = sort by original position
 	sort(tempA.begin(), tempA.end(), orderByPosition);
 	sort(tempB.begin(), tempB.end(), orderByPosition);
-	//vector<double> of ranks
-	vector<double> ranks;
+
+	vector<double> ranks1;
 	for(int i = 0; i < (int)tempA.size(); ++i)
-		ranks.push_back( tempA[i].z );
+		ranks1.push_back( tempA[i].z );
+	
+	vector<double> ranks2;
 	for(int i = 0; i < (int)tempB.size(); ++i)
-		ranks.push_back( tempB[i].z );	
+		ranks2.push_back( tempB[i].z );	
 		
 	//Pearson Correlation on ranks
-	return correlate(ranks, 0, valsPerSample, valsPerSample);	
+	return correlate(ranks1, ranks2);	
 }
-/*	vector<point> temp;
-	//create triplets of numbers  <x,y> = <value, original position, rank>
-	for(int i = 0; i + beginA < (int)img.size(); ++i)
-		temp.push_back(point(img[i+beginA], i, 0 ) );
-	//sort pairs = sort by value...
-	sort(temp.begin(), temp.end(), orderByValue);
-	//assign ranks = count upwards, detect equal values
-	for(int i = 0; i < (int)temp.size(); ++i)
-		temp[i].z = i;//TODO: detect equal values and average ranks
-
-	//resort back to original order = sort by original position
-	sort(temp.begin(), temp.end(), orderByPosition);
-	//vector<double> of ranks
-	vector<double> ranks;
-	for(int i = 0; i < (int)temp.size(); ++i)
-		ranks.push_back( temp[i].z );
-	//Pearson Correlation on ranks
-	
-	return correlate(ranks, beginA, beginB, pixelsPerSample);	*/
 	
 int OligomerDisplay::width()
 {
-	widthMultiplier = 1;/*
-	if(wordLength < 3)
-	{
-		widthMultiplier = 4;
-	}
-	else if(wordLength == 3)
-	{
-		widthMultiplier = 2;
-	}*/
+	widthMultiplier = 1;
 
 	return F_width*widthMultiplier + (F_height+2)*2;
 }

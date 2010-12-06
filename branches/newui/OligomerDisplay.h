@@ -47,9 +47,7 @@ public:
 	
 	void display_freq();
 	void calculate(vector<color>& img, int vote_size);
-	//vector<color> calculateBoundaries(vector<color>& img, int row_size, int graphWidth);
-	double correlate(vector<color>& img, int beginA, int beginB, int pixelsPerSample);
-	double correlate(vector<double>& img, int beginA, int beginB, int pixelsPerSample);
+	double correlate(vector<double>& apples, vector<double>& oranges);
 	void assignRanks(vector<point>& temp);
 	double spearmanCorrelation(vector<double>& apples, vector<double>& oranges);
 	int width();
