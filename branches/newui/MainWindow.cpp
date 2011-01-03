@@ -207,6 +207,7 @@ void MainWindow::createToolbars()
     widthDial->setMaximum(1000000000);
     widthDial->setValue(128);
     widthDial->setSuffix(" bp");
+    widthDial->setButtonSymbols(QAbstractSpinBox::NoButtons);
 	settingToolBar->addWidget(widthDial);
 
 	doubleDisplayWidth = new QPushButton("x2",this);
@@ -221,6 +222,7 @@ void MainWindow::createToolbars()
     scale->setValue(1);
     scale->setSingleStep(4);	
     scale->setSuffix(" bp/pixel");
+    scale->setButtonSymbols(QAbstractSpinBox::NoButtons);
 	settingToolBar->addWidget(scale);
 	
 	settingToolBar->addWidget(new QLabel("Zoom"));
@@ -229,6 +231,7 @@ void MainWindow::createToolbars()
     zoom->setMaximum(100000);
     zoom->setSingleStep(10);
     zoom->setValue(100);	
+    zoom->setButtonSymbols(QAbstractSpinBox::NoButtons);
 	settingToolBar->addWidget(zoom);
 	
 	settingToolBar->addWidget(new QLabel("Start Index"));
@@ -236,6 +239,7 @@ void MainWindow::createToolbars()
     startOffset->setMinimum(1);
     startOffset->setMaximum(400000000);
     startOffset->setValue(1);
+    startOffset->setButtonSymbols(QAbstractSpinBox::NoButtons);
 	settingToolBar->addWidget(startOffset);
 	
 	settingToolBar->addWidget(new QLabel("Display Length"));
@@ -245,6 +249,7 @@ void MainWindow::createToolbars()
     displayLength->setSingleStep(1000);
     displayLength->setValue(10000);	
     displayLength->setSuffix(" bp");
+    displayLength->setButtonSymbols(QAbstractSpinBox::NoButtons);
 	settingToolBar->addWidget(displayLength);
 
 	
@@ -317,10 +322,12 @@ void MainWindow::createUiConnections()
 	connect( scale, SIGNAL(valueChanged(int)), this, SLOT(changeScale(int)));
 	
 	connect( doubleDisplayWidth, SIGNAL(clicked()), this, SLOT(doubleWidth()));
-	connect( halveDisplayWidth, SIGNAL(clicked()), this, SLOT(halveWidth()));	
+	connect( halveDisplayWidth, SIGNAL(clicked()), this, SLOT(halveWidth()));
+	
 }
 void MainWindow::createFileConnections()
 {
+	//Consider making this a function-call chain.... or handling this specifically, in a thread.
     connect(openAction, SIGNAL(triggered()), this, SLOT(open()));
     connect(this, SIGNAL(newFileOpen(QString)), viewManager, SLOT(changeFile(QString)));
 
@@ -401,11 +408,13 @@ void MainWindow::changeScale(int newScale)
 void MainWindow::doubleWidth()
 {
 		widthDial->setValue( 2 * widthDial->value() );
+		viewManager->updateCurrentDisplay();
 }
 
 void MainWindow::halveWidth()
 {
 		widthDial->setValue( (int)(0.5 * widthDial->value()) );
+		viewManager->updateCurrentDisplay();
 }
 
 
@@ -504,4 +513,8 @@ void MainWindow::print(const char* str)
 {
 	if(textArea != NULL)
 		textArea->append(QString(str));
+}
+
+void MainWindow::reportFinished(){
+	print("Report Finished");
 }

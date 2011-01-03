@@ -85,6 +85,7 @@ public:
 
 
 public slots:
+	void reportOnFinish();
     void changeZoom(int z);
     void displayString(const string*);
     void on_moveButton_clicked();
@@ -101,6 +102,7 @@ public slots:
 	void addTrackEntry(track_entry entry, string gtfFileName);
 	void loadFile(QString);
 	void useHardwareAcceleration(bool);
+	//void setUi(UiVariables);
     
 signals:
 	void scaleChanged(int);

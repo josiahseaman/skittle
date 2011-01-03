@@ -55,6 +55,9 @@ public slots:
 	void addDisplayDivider();
 	void helpDialog();
 	
+	//testing:
+	void reportFinished();
+	
 signals:
 	void newFileOpen(QString name);
 	void newGtfFileOpen(QString name);
@@ -106,6 +109,7 @@ private:
 	QSpinBox *startOffset;
 	QSpinBox *displayLength;
 	QCheckBox* syncCheckBox;
+	QPushButton* changeSettings;
 	
 	
 	QAction *moveAction;

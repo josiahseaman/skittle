@@ -74,7 +74,9 @@ GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
 	
 	setupColorTable();
 	reader = new FastaReader(this, &ui);
+	//this needs to be moved .... somewhere
 	connect(reader, SIGNAL(newFileRead(const string*)), this, SLOT(displayString(const string*)));
+	
     trackReader = new GtfReader(ui);
 	
     nuc = new NucleotideDisplay(&ui, this);
@@ -98,7 +100,7 @@ GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
     changeZoom(100);
     canvasWidth = 1;
 	canvasHeight = 1;
-	setTool(RESIZE_TOOL);
+	setTool(SELECT_TOOL);
     setMouseTracking(true);
     setFocusPolicy(Qt::ClickFocus);
    	createConnections();
@@ -139,7 +141,10 @@ void GLWidget::createConnections()
 	}
 	
 	connect(trackReader,SIGNAL(BookmarkAdded(track_entry,string)), this,SLOT(addTrackEntry(track_entry,string)));
-	
+
+	/****CONNECT LOCAL VARIABLES*******/ 
+	connect(ui.zoomDial,  SIGNAL(valueChanged(int)), this, SLOT(changeZoom(int)));
+	connect(ui.scaleDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
 }
 
 QSize GLWidget::minimumSizeHint() const
@@ -261,7 +266,7 @@ void GLWidget::slideHorizontal(int x)
 	{
 		xPosition = x;
 		emit xOffsetChange((int)(x));
-		redraw();
+		updateDisplay();
 	}
 }
 
@@ -592,8 +597,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 	if(tool() == ZOOM_TOOL)
 	{
 		float zoomFactor = 1.2;
-		if(event->modifiers() & Qt::SHIFT)
-			zoomFactor = .8;
+		if(event->modifiers() & Qt::SHIFT) zoomFactor = .8;
 			
 		int scale = ui.scaleDial->value();//take current scale
 		int index = oglCoords.y * (ui.widthDial->value()/scale) + oglCoords.x;
@@ -618,6 +622,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 			else
 				ui.scaleDial->setValue(newScale);//set scale to the new value
 		}
+		this->updateDisplay();
 	}
     lastPos = event->pos();
 }
@@ -646,7 +651,9 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 				translate(0, dy);//still scroll up/down
 				int value = static_cast<int>(dx * ui.scaleDial->value()*2.0 + ui.widthDial->value() + 0.5);
 				ui.widthDial->setValue(value);
+				
 			}
+			updateDisplay();
 		}
     } 
     lastPos = event->pos();
@@ -698,7 +705,7 @@ void GLWidget::placeMarker(QPoint pixelCoords)
 		nuc->paint_square(point(x, -y, 0), color(255,255,0));
 	glEndList();
 
-    redraw();
+    updateDisplay();
 }
 
 void GLWidget::redraw()
@@ -856,3 +863,14 @@ void GLWidget::createCursors()
 	}
 	zoomOutCursor = QCursor( pic2, mask);  
 }
+
+void GLWidget::reportOnFinish(){
+	ui.print("The Editing has Finished");
+}
+/****************************************
+ * Rethinking this strategy:
+ ****************************************/
+//~ void setUi(UiVariables master = NULL){
+	//~ if (NULL == master) return;
+	//~ ui = master
+//~}

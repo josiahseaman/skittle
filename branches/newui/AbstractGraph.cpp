@@ -13,8 +13,16 @@ AbstractGraph::~AbstractGraph()
 	if(toggleButton != NULL)
 		emit deleteButton(toggleButton);
 }
-
-void AbstractGraph::createConnections()
+/****************************************
+ * NOTE: Unused code:
+ * 
+ * At Present, Nothing seems to be calling 
+ * this. There is a commented call in 
+ * GLWidget::createConnections(), but
+ * that is the only way that it is being 
+ * called.  
+ ***************************************/
+void AbstractGraph::createConnections() 
 {
 	connect( this, SIGNAL(widthChanged(int)), this, SIGNAL(displayChanged()));
 	connect( this, SIGNAL(startChanged(int)), this, SIGNAL(displayChanged()));

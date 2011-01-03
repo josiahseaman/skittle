@@ -44,7 +44,10 @@ OligomerDisplay::~OligomerDisplay()
 }
 
 /**IMPORTANT: When referring to the parent ui->glWidget, it is not fully constructed yet.
-*** these connections should be placed in glWidget's constructor.    ***/
+*** these connections should be placed in glWidget's constructor.    
+* 
+* See note in AbstractGraph::createConnections.
+* ***/
 void OligomerDisplay::createConnections()
 {		
 			//TODO: Currently, createConnections is not called by anything

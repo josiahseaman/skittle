@@ -27,20 +27,42 @@ void ViewManager::createConnections()
 {	
 	connect(mainWindow->addViewAction, SIGNAL(triggered()), this, SLOT(addNewView()));
 	connect(mainWindow->syncCheckBox, SIGNAL(stateChanged(int)), this, SLOT(handleWindowSync()));
+	
+	/****CONNECT ui VARIABLES*******/ 
+	
+	connect(ui.widthDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
+	connect(ui.zoomDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
+	connect(ui.scaleDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
+	connect(ui.startDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
+	connect(ui.sizeDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
+	
+	connect(ui.widthDial, SIGNAL(valueChanged()), this, SLOT(widthChanged()));
+	connect(ui.zoomDial,  SIGNAL(valueChanged()), this, SLOT(zoomChanged()));
+	connect(ui.scaleDial, SIGNAL(valueChanged()), this, SLOT(scaleChanged()));
+	connect(ui.startDial, SIGNAL(valueChanged()), this, SLOT(offsetChanged()));
+	connect(ui.sizeDial,  SIGNAL(valueChanged()), this, SLOT(sizeChanged()));
+	
+	
+	
 }
 
 void ViewManager::connectLocalCopy(GLWidget* active, UiVariables local)
 {	
-	/****CONNECT LOCAL VARIABLES*******/
-	connect(local.widthDial, SIGNAL(valueChanged(int)), active, SLOT(updateDisplaySize()));
-	connect(local.zoomDial,  SIGNAL(valueChanged(int)), active, SLOT(changeZoom(int)));
-	connect(local.widthDial, SIGNAL(valueChanged(int)), active, SLOT(updateDisplay()));
-	connect(local.zoomDial,  SIGNAL(valueChanged(int)), active, SLOT(updateDisplay()));
-	connect(local.scaleDial, SIGNAL(valueChanged(int)), active, SLOT(updateDisplay()));
-	connect(local.scaleDial, SIGNAL(valueChanged(int)), active, SLOT(updateDisplaySize()));
-	connect(local.startDial, SIGNAL(valueChanged(int)), active, SLOT(updateDisplay()));
-	connect(local.sizeDial,  SIGNAL(valueChanged(int)), active, SLOT(updateDisplay()));
-    
+	//The Following has been moved to GLWidget::createConnections()
+	//testing
+	//~ connect(local.widthDial, SIGNAL(editingFinished ()), active, SLOT(reportOnFinish()));
+	
+	/****CONNECT LOCAL VARIABLES*******/ 
+	//this should be handled internally by glwidget, in the constructor, or anytime a view is added to the glwidget, not here.
+	//~ connect(local.widthDial, SIGNAL(editingFinished()), active, SLOT(updateDisplaySize()));
+	//~ connect(local.widthDial, SIGNAL(editingFinished()), active, SLOT(updateDisplay()));
+	//~ connect(local.zoomDial,  SIGNAL(valueChanged(int)), active, SLOT(changeZoom(int)));
+	//~ connect(local.zoomDial,  SIGNAL(editingFinished()), active, SLOT(updateDisplay()));
+	//~ connect(local.scaleDial, SIGNAL(editingFinished()), active, SLOT(updateDisplay()));
+	//~ connect(local.scaleDial, SIGNAL(valueChanged(int)), active, SLOT(updateDisplaySize()));
+	//~ connect(local.startDial, SIGNAL(editingFinished()), active, SLOT(updateDisplay()));
+	//~ connect(local.sizeDial,  SIGNAL(editingFinished()), active, SLOT(updateDisplay()));
+ 
 }
 
 void ViewManager::uiToGlwidgetConnections(GLWidget* active)
@@ -57,7 +79,7 @@ void ViewManager::uiToGlwidgetConnections(GLWidget* active)
 	connect( active, SIGNAL(addGraphMode(AbstractGraph*)), mainWindow, SLOT(addDisplayActions(AbstractGraph*)));
 	
 	connect( active, SIGNAL(addDivider()), mainWindow, SLOT(addDisplayDivider()));
-	active->createButtons();	
+	active->createButtons();
 
 }
 
@@ -262,6 +284,8 @@ void ViewManager::printNum2(int num)
 	ui.print("Local:   ", num);
 }
 
+//the mother load!
+//implement in glWidget
 void ViewManager::connectVariables(GLWidget* active, UiVariables local)
 {
 	connect(local.sizeDial	, SIGNAL(valueChanged(int)), ui.sizeDial	, SLOT(setValue(int)));
@@ -312,3 +336,8 @@ UiVariables ViewManager::vars(GLWidget* active)
 {
 	return dynamic_cast<MdiChildWindow*>(active->parent)->ui;
 }
+void ViewManager::updateCurrentDisplay(){
+	//activeWidget->reportOnFinish();
+	activeWidget->updateDisplay();
+}
+

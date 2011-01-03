@@ -167,9 +167,9 @@ void AlignmentDisplay::displayLegend(float canvasWidth, float canvasHeight)
 		}
 		TextRender textOutput = TextRender();
 		glColor3d(0,0,0);
-		textOutput.range_labels(1, 250, point(0.5,2,.3), point(250.5,2,.3), 16);
+		//textOutput.range_labels(1, 250, point(0.5,2,.3), point(250.5,2,.3), 16);
 		glColor3d(1,1,1);
-		textOutput.range_labels(1, 250, point(0,1.5,.5), point(250,1.5,.5), 16);
+		//textOutput.range_labels(1, 250, point(0,1.5,.5), point(250,1.5,.5), 16);
 	glPopMatrix();
 	/**/
 }

@@ -35,7 +35,7 @@ NucleotideDisplay::NucleotideDisplay(UiVariables* gui, GLWidget* gl)
 NucleotideDisplay::~NucleotideDisplay(){
     glDeleteLists(display_object, 1);
 }
-
+//see note in AbstractGraph::createConnections
 void NucleotideDisplay::createConnections()
 {
 	connect( this, SIGNAL(widthChanged(int)), this, SIGNAL(displayChanged()));

@@ -29,7 +29,7 @@ CylinderDisplay::CylinderDisplay(UiVariables* gui, GLWidget* gl)
 CylinderDisplay::~CylinderDisplay(){
     glDeleteLists(display_object, 1);
 }
-
+//SEE note in AbstractGraph::createConnections
 void CylinderDisplay::createConnections()
 {
 	connect( this, SIGNAL(widthChanged(int)), this, SIGNAL(displayChanged()));
