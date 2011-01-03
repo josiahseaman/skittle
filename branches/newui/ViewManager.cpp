@@ -338,6 +338,15 @@ UiVariables ViewManager::vars(GLWidget* active)
 }
 void ViewManager::updateCurrentDisplay(){
 	//activeWidget->reportOnFinish();
-	activeWidget->updateDisplay();
+	
+	if (mainWindow->syncCheckBox->isChecked()){
+		
+		for(int i = 0; i < (int)views.size(); ++i) {
+			views[i]->glWidget->updateDisplay();
+		}
+	}
+	else {
+		activeWidget->updateDisplay();
+	}
 }
 

@@ -145,6 +145,7 @@ void GLWidget::createConnections()
 	/****CONNECT LOCAL VARIABLES*******/ 
 	connect(ui.zoomDial,  SIGNAL(valueChanged(int)), this, SLOT(changeZoom(int)));
 	connect(ui.scaleDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
+	connect(ui.widthDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
 }
 
 QSize GLWidget::minimumSizeHint() const
