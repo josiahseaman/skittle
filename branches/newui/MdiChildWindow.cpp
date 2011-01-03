@@ -41,6 +41,7 @@ MdiChildWindow::MdiChildWindow(UiVariables gui, QSpinBox* pStart, QTabWidget* se
 	connect(glWidget, SIGNAL(displaySizeChanged()), this, SLOT(setPageSize()) );
 	//connect(ui.sizeDial, SIGNAL(valueChanged(int)), this, SLOT(setPageSize()) );	
 	connect(verticalScrollBar, SIGNAL(valueChanged(int)), ui.startDial, SLOT(setValue(int)));
+	connect(verticalScrollBar, SIGNAL(sliderReleased()), glWidget, SLOT(updateDisplay()));
 	connect(ui.startDial, SIGNAL(valueChanged(int)), verticalScrollBar, SLOT(setValue(int)));
 	/**/
 	createSettingsTabs();

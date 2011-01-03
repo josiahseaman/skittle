@@ -428,6 +428,7 @@ void GLWidget::keyPressEvent( QKeyEvent *event )
 			return;
 	}
 	event->accept();
+	updateDisplay();
 }
 
 void GLWidget::keyReleaseEvent( QKeyEvent *event )
