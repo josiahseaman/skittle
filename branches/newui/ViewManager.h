@@ -38,6 +38,7 @@ public slots:
 	void printNum(int num);
 	void printNum2(int num);
 	void updateCurrentDisplay();
+    void scaleChangedSmart(int);
 	
 	
 private:

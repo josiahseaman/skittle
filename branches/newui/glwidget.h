@@ -106,6 +106,7 @@ public slots:
     
 signals:
 	void scaleChanged(int);
+    void scaleChangedSmart(int);
 	void totalWidthChanged(int);
 	void xOffsetChange(int);
 	void printText(QString);

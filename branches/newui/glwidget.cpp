@@ -133,7 +133,7 @@ void GLWidget::createConnections()
 {
    	for(int i = 0; i < graphs.size(); ++i)
    	{
-   		connect( graphs[i], SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
+   		//connect( graphs[i], SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
    		connect( this, SIGNAL(useTextures(bool)), graphs[i], SLOT(useTextures(bool)) );
    		connect( graphs[i], SIGNAL(hideSettings(QScrollArea*)), this, SIGNAL(hideSettings(QScrollArea*)));
    		connect( graphs[i], SIGNAL(showSettings(QScrollArea*)), this, SIGNAL(showSettings(QScrollArea*)));
@@ -344,6 +344,7 @@ AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fName)
 	AnnotationDisplay* tempTrackDisplay = findMatchingAnnotationDisplay(fileName);
 	if( tempTrackDisplay != NULL)
 	{
+		ErrorBox msg("The file is already open");
 	}
 	else
 	{
@@ -615,7 +616,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 			if(scale == 1)
 				ui.zoomDial->setValue( zoom * zoomFactor );
 			else
-				ui.scaleDial->setValue(newScale);//set scale to the new value
+                emit scaleChangedSmart(newScale); //ui.scaleDial->setValue(newScale);//set scale to the new value
 		}
 		else//zooming out
 		{

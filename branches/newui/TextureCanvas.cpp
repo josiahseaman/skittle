@@ -1,14 +1,18 @@
 #include "TextureCanvas.h"
 #include "BasicTypes.h"
+#include <iostream>
+
+using namespace std;
 
 TextureCanvas::TextureCanvas()
 {
 	useTextures = false;
 	canvas.push_back(vector<textureTile>());
+    //verify that textures can be allocated
 	int max_size;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_size);
-	if(max_size > 0)
-		useTextures = true;
+    
+	if(max_size > 0) useTextures = true;
 }
 
 TextureCanvas::TextureCanvas(vector<color> pixels, int w)
@@ -18,9 +22,11 @@ TextureCanvas::TextureCanvas(vector<color> pixels, int w)
 	//pad the end with white pixels, background color
 	for(int i = 0; i <= w; ++i)
 		pixels.push_back( color(128,128,128) );
-		
-	width = w;
+    
+    width = w;
 	height = pixels.size() / width;
+    
+    //verify that textures can be allocated
 	int max_size;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_size);
 	if(max_size > 0)
@@ -28,15 +34,27 @@ TextureCanvas::TextureCanvas(vector<color> pixels, int w)
 		useTextures = true;
 	
 		//determine the size of the texture canvas
-		int canvas_width = width / max_size + 1;
+		int canvas_width = width / max_size + 1; //AKA ciel();
+        //cout << "Initial Canvas Width:  " << canvas_width;
+        canvas_width = min((maxSaneWidth / max_size + 1),canvas_width);
+        //cout << " Sanity Checked:  " << canvas_width << endl;
+        
+        
 		int canvas_height = height / max_size + 1;
 		createEmptyTiles(canvas_width, canvas_height, max_size);
 		
 	
 		for(int i = 0; i < pixels.size(); i++)
 		{
+            
 			color c1 = pixels[i];
-			vector<unsigned char>& current = canvas[(i % width) / max_size][(i / width) / max_size].data;
+            
+            int x = (i % width) / max_size; //(horizontal Index)
+            int y = (i / width) / max_size; //(vertical Index)
+            
+            if (x >= canvas.size() || y >= canvas.size()) continue;
+            
+			vector<unsigned char>& current = canvas[x][y].data;
 			current.push_back(c1.r);
 			current.push_back(c1.g);
 			current.push_back(c1.b);
@@ -61,7 +79,8 @@ TextureCanvas::~TextureCanvas()
 }
 
 void TextureCanvas::createEmptyTiles(int canvas_width, int canvas_height, int max_size)
-{	
+{
+    
 	for(int x = 0; x < canvas_width ; ++x)//populate canvas
 	{
 		canvas.push_back( vector< textureTile >() );	

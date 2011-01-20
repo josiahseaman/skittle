@@ -30,17 +30,17 @@ void ViewManager::createConnections()
 	
 	/****CONNECT ui VARIABLES*******/ 
 	
-	connect(ui.widthDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
-	connect(ui.zoomDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
+	connect(ui.widthDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));	connect(ui.zoomDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
 	connect(ui.scaleDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
 	connect(ui.startDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
 	connect(ui.sizeDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
 	
-	connect(ui.widthDial, SIGNAL(valueChanged()), this, SLOT(widthChanged()));
-	connect(ui.zoomDial,  SIGNAL(valueChanged()), this, SLOT(zoomChanged()));
-	connect(ui.scaleDial, SIGNAL(valueChanged()), this, SLOT(scaleChanged()));
-	connect(ui.startDial, SIGNAL(valueChanged()), this, SLOT(offsetChanged()));
-	connect(ui.sizeDial,  SIGNAL(valueChanged()), this, SLOT(sizeChanged()));
+	//TODO: find where these belong;
+    //~ connect(ui.widthDial, SIGNAL(valueChanged(int)), this, SLOT(widthChanged(int)));
+	//~ connect(ui.zoomDial,  SIGNAL(valueChanged(int)), this, SLOT(zoomChanged(int)));
+	//~ connect(ui.scaleDial, SIGNAL(valueChanged(int)), this, SLOT(scaleChanged(int)));
+	//~ connect(ui.startDial, SIGNAL(valueChanged(int)), this, SLOT(offsetChanged(int)));
+	//~ connect(ui.sizeDial,  SIGNAL(valueChanged(int)), this, SLOT(sizeChanged(int)));
 	
 	
 	
@@ -308,6 +308,7 @@ void ViewManager::connectVariables(GLWidget* active, UiVariables local)
 
 	connect(local.zoomDial	, SIGNAL(valueChanged(int)), ui.zoomDial	, SLOT(setValue(int)));
 	connect(ui.zoomDial		, SIGNAL(valueChanged(int)), local.zoomDial	, SLOT(setValue(int)));
+    connect(active, SIGNAL(scaleChangedSmart(int)), this, SLOT(scaleChangedSmart(int)));
 }
 
 void ViewManager::disconnectVariables(GLWidget* active, UiVariables local)
@@ -350,3 +351,6 @@ void ViewManager::updateCurrentDisplay(){
 	}
 }
 
+void ViewManager::scaleChangedSmart(int newScale){
+    mainWindow->changeScale(newScale);
+}

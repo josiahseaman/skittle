@@ -29,7 +29,8 @@ public:
 	TextureCanvas(vector<color> pixels, int width);
 	~TextureCanvas();
 	void display();
-	
+    static int const maxSaneWidth = 4000;
+    
 private:
 	void createEmptyTiles(int canvas_width, int canvas_height, int max_size);
 	void drawTextureSquare();	
@@ -47,4 +48,6 @@ private:
 	vector<color> colors;
 	bool useTextures;
 };
+
 #endif
+

@@ -20,6 +20,8 @@
 #include "OligomerDisplay.h"
 #include "HighlightDisplay.h"
 #include "ViewManager.h"
+#include "TextureCanvas.h"
+
 
 MainWindow::MainWindow()
 {
@@ -33,6 +35,7 @@ MainWindow::MainWindow()
 	createStatusBar();
 	createUiConnections();
 	oldScale = 1;
+    oldWidth = 128;
 	
 	viewManager	= new ViewManager(this, getDisplayVariables());
 	setCentralWidget(viewManager);  
@@ -88,8 +91,8 @@ void MainWindow::createActions()
 	selectAction->setToolTip(QString("Displays index and sequence information"));
 	findAction = new QAction("&Find",this);	
 	addAnnotationAction = new QAction("Add Annotation",this);	
-	useTexturesAction = new QAction("Use Hardware Acceleration", this);
-	useTexturesAction->setCheckable(true);
+	//useTexturesAction = new QAction("Use Hardware Acceleration", this);
+	//useTexturesAction->setCheckable(true);
 	//nextAnnotationAction = new QAction("Next Annotation",this);	
 	//prevAnnotationAction = new QAction("Previous Annotation",this);	
 	//browseCommunityAction = new QAction("Browse Community Research",this);	
@@ -134,7 +137,7 @@ void MainWindow::createMenus()
 	searchMenu->addAction(findPrevAction);
 	searchMenu->addAction(hilightResultsAction);*/
 	viewMenu = menuBar()->addMenu("&View");
-	viewMenu->addAction(useTexturesAction);
+	//viewMenu->addAction(useTexturesAction);
 	toolBarMenu = viewMenu->addMenu("ToolBar");
 	presetMenu = viewMenu->addMenu("Presets");
 	
@@ -319,10 +322,14 @@ void MainWindow::createUiConnections()
     connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
     connect(helpAction, SIGNAL(triggered()), this, SLOT(helpDialog()));
     
-	connect( scale, SIGNAL(valueChanged(int)), this, SLOT(changeScale(int)));
-	
+	//connect( scale, SIGNAL(valueChanged(int)),this, SLOT(changeScale(int)));
+    connect( scale, SIGNAL(editingFinished()), this, SLOT(changeScale()));
+    
 	connect( doubleDisplayWidth, SIGNAL(clicked()), this, SLOT(doubleWidth()));
 	connect( halveDisplayWidth, SIGNAL(clicked()), this, SLOT(halveWidth()));
+    connect( widthDial, SIGNAL(editingFinished()), this, SLOT(changeWidth()));
+    connect( halveDisplayWidth, SIGNAL(clicked()), widthDial, SIGNAL(editingFinished()));
+    connect( doubleDisplayWidth, SIGNAL(clicked()), widthDial, SIGNAL(editingFinished()));
 	
 }
 void MainWindow::createFileConnections()
@@ -381,7 +388,27 @@ void MainWindow::openGtf()
     if (!fileName.isEmpty()) 
 		 emit newGtfFileOpen(fileName);
 }
-
+void MainWindow::changeWidth(int newWidth){
+    if (newWidth != oldWidth){
+        int widthChange = abs(newWidth - oldWidth);
+        
+        int newScale = 1;
+        int displayWidth = newWidth / scale->value();
+        if ( displayWidth < 1 || displayWidth > TextureCanvas::maxSaneWidth){
+            
+            newScale = int(max(double(1.0),double(oldScale) * ( double(newWidth) / double(oldWidth))));
+            scale->setValue(newScale);
+            oldScale = newScale;
+        }
+        
+        widthDial->setValue(newWidth);
+    }
+    oldWidth = newWidth;
+    
+}
+void MainWindow::changeWidth(){
+    changeWidth(widthDial->value());
+}
 void MainWindow::changeScale(int newScale)
 {
 	//std::stringstream ss1;
@@ -393,28 +420,37 @@ void MainWindow::changeScale(int newScale)
 	
 	if(oldScale != newScale)
 	{
-		widthDial->setSingleStep(newScale);		
+		//increment the width step by scale
+        widthDial->setSingleStep(newScale);		
+        
+        //
 		int display_width = widthDial->value() / oldScale;
+                
 		display_width = max( 1, display_width);
 		int display_size = displayLength->value() / oldScale;
 		display_size = max( 1, display_size);
+        
 		widthDial->setValue( display_width * newScale );
 		scale->setValue(newScale);
 		displayLength->setValue(display_size*newScale);
 		oldScale = newScale;
 	}
 }
+void MainWindow::changeScale()
+{
+    changeScale(scale->value());
+}
 
 void MainWindow::doubleWidth()
 {
 		widthDial->setValue( 2 * widthDial->value() );
-		viewManager->updateCurrentDisplay();
+		//viewManager->updateCurrentDisplay();
 }
 
 void MainWindow::halveWidth()
 {
 		widthDial->setValue( (int)(0.5 * widthDial->value()) );
-		viewManager->updateCurrentDisplay();
+		//viewManager->updateCurrentDisplay();
 }
 
 
@@ -513,6 +549,11 @@ void MainWindow::print(const char* str)
 {
 	if(textArea != NULL)
 		textArea->append(QString(str));
+}
+void MainWindow::print(QString str)
+{
+    if(textArea != NULL)
+		textArea->append(str);
 }
 
 void MainWindow::reportFinished(){

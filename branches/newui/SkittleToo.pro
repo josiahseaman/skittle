@@ -7,6 +7,7 @@ TARGET =
 FORMS = BookmarkDialog.ui
 RESOURCES = resources.qrc
 DEPENDPATH += .
+LIBS += -lglut
 INCLUDEPATH += .
 QT           += opengl
 

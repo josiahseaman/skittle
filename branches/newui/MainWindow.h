@@ -48,7 +48,10 @@ public slots:
 	void updateStatus(QString);
 	void changeWindowName(std::string name);
 	void openGtf();
+    void changeWidth(int newWidth);
+    void changeWidth();
 	void changeScale(int newScale);
+    void changeScale();
 	void doubleWidth();
 	void halveWidth();
 	void addDisplayActions(AbstractGraph*);
@@ -80,6 +83,7 @@ private:
 	void readSettings();
 	void writeSettings();
 	void print(const char* str);
+    void print(QString);
 	
 	ViewManager* viewManager;
 	QMenu *annotationMenu;
@@ -138,6 +142,7 @@ private:
 	//QProgressBar *processStatus;
 	//QLabel *processState;
 	int oldScale;
+    int oldWidth;
 	
 };
 
