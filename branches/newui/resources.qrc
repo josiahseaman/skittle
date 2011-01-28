@@ -4,5 +4,6 @@
     <file>zoomIn.png</file>
     <file>zoomOut.png</file>
     <file>zoomIn-mask.png</file>
+    <file>skittle.svg</file>
 </qresource>
 </RCC>
