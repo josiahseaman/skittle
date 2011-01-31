@@ -42,6 +42,7 @@ MainWindow::MainWindow()
 	createFileConnections();
 
 	readSettings();
+    setWindowIcon(QIcon(":/skittle.svg"));
 	
 	//openAction->trigger();
 }

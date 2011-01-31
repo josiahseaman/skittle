@@ -1,7 +1,7 @@
 //AlignmentDisplay.cpp
 #include <sstream>
 #include "AlignmentDisplay.h"
-#include "TextRender.h"
+//#include "TextRender.h"
 #include "glwidget.h"
 
 AlignmentDisplay::AlignmentDisplay(UiVariables* gui, GLWidget* gl)
@@ -165,7 +165,7 @@ void AlignmentDisplay::displayLegend(float canvasWidth, float canvasHeight)
 			    glEnd();
 			glPopMatrix();
 		}
-		TextRender textOutput = TextRender();
+		//TextRender textOutput = TextRender();
 		glColor3d(0,0,0);
 		//textOutput.range_labels(1, 250, point(0.5,2,.3), point(250.5,2,.3), 16);
 		glColor3d(1,1,1);

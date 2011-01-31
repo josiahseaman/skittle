@@ -1,7 +1,8 @@
 #ifndef NLINK
 #define NLINK
 
-#include <GL/glut.h>
+//#include <GL/glut.h>
+#include <QtOpenGL/QGLWidget>
 #include <vector>
 #include <string>
 #include <list>

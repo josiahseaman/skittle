@@ -2,7 +2,7 @@
 #ifndef ALIGNMENT_DISP
 #define ALIGNMENT_DISP
 
-#include <QGLWidget>
+#include <QtOpenGL/QGLWidget>
 #include <vector>
 #include "BasicTypes.h"
 #include "UiVariables.h"

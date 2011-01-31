@@ -3,7 +3,9 @@
 
 #include <vector>
 #include <iostream>
-#include <GL/glut.h>
+//#include <GL/glut.h>
+#include <QtOpenGL/QGLWidget>
+#include <QtOpenGL/QGLWidget>
 #include "BasicTypes.h"
 
 using namespace std;
@@ -14,8 +16,7 @@ public:
 	int height;
 	GLuint tex_id;
 	vector< unsigned char > data;
-	textureTile(int w, int h)
-	{
+	textureTile(int w, int h) {
 		width = w;
 		height = h;
 	}

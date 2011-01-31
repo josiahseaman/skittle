@@ -1,7 +1,8 @@
 #ifndef TRACK_DISP
 #define TRACK_DISP
 
-#include <GL/glut.h>
+//#include <GL/glut.h>
+#include <QtOpenGL/QGLWidget>
 #include <math.h>
 #include <stdlib.h>
 #include <string>

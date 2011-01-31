@@ -1,7 +1,8 @@
 #ifndef OLIG_DISP
 #define OLIG_DISP
 
-#include <GL/glut.h>
+//#include <GL/glut.h>
+#include <QtOpenGL/QGLWidget>
 #include <math.h>
 #include <stdlib.h>
 #include <string>
