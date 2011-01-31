@@ -31,7 +31,6 @@ HEADERS += AbstractGraph.h \
            NucleotideLink.h \
            OligomerDisplay.h \
            SequenceEntry.h \
-           TextRender.h \
            TextureCanvas.h \
            ViewManager.h \
            UiVariables.h
@@ -52,7 +51,6 @@ SOURCES += AbstractGraph.cpp \
            NucleotideDisplay.cpp \
            OligomerDisplay.cpp \
            SequenceEntry.cpp \
-           TextRender.cpp \
            TextureCanvas.cpp \
            UiVariables.cpp \
            ViewManager.cpp
