@@ -26,8 +26,7 @@ ViewManager::ViewManager(MainWindow* window, UiVariables gui)
 void ViewManager::createConnections()
 {	
 	connect(mainWindow->addViewAction, SIGNAL(triggered()), this, SLOT(addNewView()));
-	connect(mainWindow->syncCheckBox, SIGNAL(stateChanged(int)), this, SLOT(handleWindowSync()));
-	
+    connect(mainWindow->syncCheckBox, SIGNAL(stateChanged(int)), this, SLOT(handleWindowSync()));
 	/****CONNECT ui VARIABLES*******/ 
 	
 	connect(ui.widthDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));	connect(ui.zoomDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
@@ -75,6 +74,7 @@ void ViewManager::uiToGlwidgetConnections(GLWidget* active)
     connect(mainWindow->findAction, SIGNAL(triggered()), active, SLOT(on_findButton_clicked()));
     connect(mainWindow->resizeAction, SIGNAL(triggered()), active, SLOT(on_resizeButton_clicked()));
     connect(mainWindow->zoomAction, SIGNAL(triggered()), active, SLOT(on_zoomButton_clicked()));
+    connect(mainWindow->useTexturesAction, SIGNAL(toggled(bool)), active, SLOT(useCurves(bool)));
 	
 	connect( active, SIGNAL(addGraphMode(AbstractGraph*)), mainWindow, SLOT(addDisplayActions(AbstractGraph*)));
 	

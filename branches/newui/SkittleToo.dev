@@ -109,26 +109,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit19]
-FileName=TextRender.cpp
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit20]
-FileName=TextRender.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit21]
 FileName=GtfReader.cpp
 CompileCpp=0
 Folder=
@@ -138,8 +118,28 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit20]
+FileName=GtfReader.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit21]
+FileName=AnnotationDisplay.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Project]
-UnitCount=47
+UnitCount=45
 FileName=SkittleToo.dev
 Name=SkittleToo
 Type=0
@@ -188,26 +188,6 @@ ProductVersion=
 AutoIncBuildNr=0
 
 [Unit22]
-FileName=GtfReader.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit23]
-FileName=AnnotationDisplay.h
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-CompileCpp=0
-
-[Unit24]
 FileName=AnnotationDisplay.cpp
 CompileCpp=0
 Folder=
@@ -217,17 +197,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit25]
+[Unit23]
 FileName=CylinderDisplay.cpp
-CompileCpp=0
 Folder=
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+CompileCpp=0
 
-[Unit26]
+[Unit24]
 FileName=CylinderDisplay.h
 CompileCpp=0
 Folder=
@@ -237,7 +217,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit27]
+[Unit25]
 FileName=NucleotideLinker.h
 CompileCpp=0
 Folder=
@@ -247,17 +227,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit29]
-FileName=NucleotideLink.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit28]
+[Unit26]
 FileName=NucleotideLinker.cpp
 CompileCpp=0
 Folder=
@@ -267,8 +237,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit30]
-FileName=UiVariables.h
+[Unit27]
+FileName=NucleotideLink.h
 CompileCpp=0
 Folder=
 Compile=1
@@ -277,7 +247,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit31]
+[Unit29]
 FileName=MainWindow.cpp
 CompileCpp=0
 Folder=SkittleToo
@@ -287,7 +257,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit32]
+[Unit28]
+FileName=UiVariables.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit30]
 FileName=MainWindow.h
 CompileCpp=0
 Folder=SkittleToo
@@ -297,7 +277,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit33]
+[Unit31]
 FileName=MainPanel.cpp
 CompileCpp=0
 Folder=
@@ -307,7 +287,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit34]
+[Unit32]
 FileName=HighlightDisplay.cpp
 CompileCpp=0
 Folder=SkittleToo
@@ -317,7 +297,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit35]
+[Unit33]
 FileName=HighlightDisplay.h
 CompileCpp=0
 Folder=SkittleToo
@@ -327,7 +307,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit36]
+[Unit34]
 FileName=OligomerDisplay.cpp
 CompileCpp=0
 Folder=SkittleToo
@@ -337,27 +317,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit38]
-FileName=ViewManager.cpp
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit39]
-FileName=ViewManager.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit37]
+[Unit35]
 FileName=OligomerDisplay.h
 CompileCpp=0
 Folder=SkittleToo
@@ -367,8 +327,48 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit40]
+[Unit36]
+FileName=ViewManager.cpp
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit38]
 FileName=MdiChildWindow.cpp
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit39]
+FileName=MdiChildWindow.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit37]
+FileName=ViewManager.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit40]
+FileName=UiVariables.cpp
 CompileCpp=0
 Folder=
 Compile=1
@@ -428,7 +428,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit41]
-FileName=MdiChildWindow.h
+FileName=resources.qrc
 CompileCpp=0
 Folder=
 Compile=1
@@ -438,7 +438,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit42]
-FileName=UiVariables.cpp
+FileName=SequenceEntry.h
 CompileCpp=0
 Folder=
 Compile=1
@@ -448,13 +448,14 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit43]
-FileName=resources.qrc
+FileName=SequenceEntry.cpp
 Folder=
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+CompileCpp=0
 
 [Unit1]
 FileName=AbstractGraph.h
@@ -477,9 +478,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit44]
-FileName=SequenceEntry.h
+FileName=ColorListEditor.cpp
 CompileCpp=0
-Folder=
+Folder=SkittleToo
 Compile=1
 Link=1
 Priority=1000
@@ -487,9 +488,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit45]
-FileName=SequenceEntry.cpp
+FileName=ColorListEditor.h
 CompileCpp=0
-Folder=
+Folder=SkittleToo
 Compile=1
 Link=1
 Priority=1000

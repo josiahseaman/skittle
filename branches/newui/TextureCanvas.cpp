@@ -7,6 +7,7 @@ using namespace std;
 TextureCanvas::TextureCanvas()
 {
 	useTextures = false;
+    useHilbert = false;
 	canvas.push_back(vector<textureTile>());
     //verify that textures can be allocated
 	int max_size;
@@ -18,6 +19,7 @@ TextureCanvas::TextureCanvas()
 TextureCanvas::TextureCanvas(vector<color> pixels, int w)
 {
 	useTextures = false;
+    useHilbert = false;
 	colors = vector<color>(pixels);
 	//pad the end with white pixels, background color
 	for(int i = 0; i <= w; ++i)
@@ -32,42 +34,7 @@ TextureCanvas::TextureCanvas(vector<color> pixels, int w)
 	if(max_size > 0)
 	{
 		useTextures = true;
-	
-		//determine the size of the texture canvas
-		int canvas_width = width / max_size + 1; //AKA ciel();
-        //cout << "Initial Canvas Width:  " << canvas_width;
-        canvas_width = min((maxSaneWidth / max_size + 1),canvas_width);
-        //cout << " Sanity Checked:  " << canvas_width << endl;
-        
-        
-		int canvas_height = height / max_size + 1;
-		createEmptyTiles(canvas_width, canvas_height, max_size);
-		
-	
-		for(int i = 0; i < pixels.size(); i++)
-		{
-            
-			color c1 = pixels[i];
-            
-            int x = (i % width) / max_size; //(horizontal Index)
-            int y = (i / width) / max_size; //(vertical Index)
-            
-            if (x >= canvas.size() || y >= canvas.size()) continue;
-            
-			vector<unsigned char>& current = canvas[x][y].data;
-			current.push_back(c1.r);
-			current.push_back(c1.g);
-			current.push_back(c1.b);
-		}
-	
-		for(unsigned int x = 0; x < canvas.size(); ++x)
-		{
-			for(unsigned int y = 0; y < canvas[x].size(); ++y)
-			{
-				loadTexture(canvas[x][y]);//tex_ids.push_back(
-				canvas[x][y].data.clear();//the data has been loaded into the graphics card
-			}
-		}
+        loadPixelsToCard(pixels, max_size);
 	}
 }
 
@@ -76,6 +43,46 @@ TextureCanvas::~TextureCanvas()
 	for(unsigned int i = 0; i < canvas.size(); ++i)
 		for(unsigned int k = 0; k < canvas[i].size(); ++k)
 			glDeleteTextures(1, &canvas[i][k].tex_id );	
+}
+
+void TextureCanvas::loadPixelsToCard(vector<color> pixels, int max_size)
+{
+    //determine the size of the texture canvas
+    int canvas_width = width / max_size + 1; //AKA ciel();
+    //cout << "Initial Canvas Width:  " << canvas_width;
+    canvas_width = min((maxSaneWidth / max_size + 1),canvas_width);
+    //cout << " Sanity Checked:  " << canvas_width << endl;
+
+
+    int canvas_height = height / max_size + 1;
+    createEmptyTiles(canvas_width, canvas_height, max_size);
+
+
+    for(int i = 0; i < pixels.size(); i++)
+    {
+
+        color c1 = pixels[i];
+
+        int x = (i % width) / max_size; //(horizontal Index)
+        int y = (i / width) / max_size; //(vertical Index)
+
+        if (x >= canvas.size() || y >= canvas.size()) continue;
+
+        vector<unsigned char>& current = canvas[x][y].data;
+        current.push_back(c1.r);
+        current.push_back(c1.g);
+        current.push_back(c1.b);
+    }
+
+    for(unsigned int x = 0; x < canvas.size(); ++x)
+    {
+        for(unsigned int y = 0; y < canvas[x].size(); ++y)
+        {
+            loadTexture(canvas[x][y]);//tex_ids.push_back(
+            canvas[x][y].data.clear();//the data has been loaded into the graphics card
+        }
+    }
+
 }
 
 void TextureCanvas::createEmptyTiles(int canvas_width, int canvas_height, int max_size)
@@ -95,10 +102,10 @@ void TextureCanvas::createEmptyTiles(int canvas_width, int canvas_height, int ma
 
 void TextureCanvas::display()
 {
-	if(	useTextures )
-		drawTextureSquare();
-	else
-		textureFreeRender();
+    if(	!useTextures | useHilbert)
+        textureFreeRender();
+    else
+        drawTextureSquare();
 }
 
 void TextureCanvas::drawTextureSquare()//draws from canvas
@@ -179,10 +186,128 @@ void TextureCanvas::textureFreeRender()
 {
     glPushMatrix();
 	glTranslated(0,1,0);
+
+    if(!useHilbert){
 		for(int i = 0; i < (int)colors.size(); i++)
 		{
-			point p1 = get_position( i );
+            point p1 = get_position( i );
 			paint_square(p1, colors[i]);
 		}	
+    }
+    else{
+        string path = build_peano_string((int)colors.size());
+        point prev = point(0,0,1);//using p1.z to store facing
+        int index = 0;
+        for(int i = 0; i < (int)colors.size(); i++)
+        {
+            point p1 = peano_position(index, path, prev);
+            point t1 = p1*2;
+            point t2 = t1.interpolate(prev*2, .5);
+            paint_square(t1, colors[i]);
+            paint_square(t2, colors[i]);
+            prev = p1;
+        }
+//        for(int i = 0; i < (int)colors.size(); i++)//Hilbert loop
+//        {
+//            int rx = 0;
+//            point p1 = hilbert_position(i, rx);
+//            p1.x = p1.x * 2;
+//            p1.y = p1.y * 2;
+//            paint_square(p1, colors[i]);
+//            point p2 = p1.interpolate(prev, .5);
+//            paint_square(p2, colors[i]);
+//            prev = p1;
+//        }
+    }
 	glPopMatrix();
+}
+
+string TextureCanvas::build_peano_string(int length)
+{
+    string path = string("F");
+    while(path.size() < length)
+    {
+        string next;
+        for(int i = 0; i < (int)path.size(); ++i)
+        {
+            if(path[i] == 'F')
+                next.append("F+F+F-F-F");// my own version based on Aubrey
+//                next.append("FF+F+F+FF+F+F-F"); from math power point
+//                next.append("F+F-F-F-F+F+F+F-F"); //stack overflow suggestion
+            else
+                next.append(1, path[i]);
+        }
+        path = next;
+    }
+    cout << endl;
+    cout << endl;
+    cout << path << endl;
+    return path;
+}
+
+point TextureCanvas::peano_position(int& index, string& path, point start)
+{
+    while(index < (int)path.size() && path[index] != 'F' )
+    {
+        if(path[index]== '-')
+            start.z = ((int)start.z + 1) % 4;
+        if(path[index]== '+')
+            start.z = ((int)start.z +3) % 4;//actually -1 but C++ doesn't had -1%4 correctly
+        ++index;
+    }
+    //handle "F"
+    switch((int)start.z)
+    {
+    case 0: start.x++; break;
+    case 1: start.y++; break;
+    case 2: start.x--; break;
+    case 3: start.y--; break;
+    }
+    ++index;
+
+    return start;
+}
+
+point TextureCanvas::hilbert_position(int index)
+{
+    int x = 0;
+    int y = 0;
+    int display_width = (int)sqrt(width);
+    display_width = (int)pow(display_width, 2);//ensure power of 2
+    hilbert_coords(display_width, index, x, y);
+
+    return point(x,y,0);
+}
+
+//convert d to (x,y)
+void TextureCanvas::hilbert_coords(int n, int d, int& x, int& y)
+{
+    int rx, ry, s, t=d;
+    x = y = 0;
+    for (s=1; s<n; s*=2)
+    {
+        rx = 1 & (t/2);//bool =  t == odd
+        ry = 1 & (t ^ rx);//bool ry = !rx
+        rotate_hilbert_coords(s, x, y, rx, ry);
+        x += s * rx;
+        y += s * ry;
+        t /= 4;
+    }
+}
+
+//rotate/flip a quadrant appropriately
+void TextureCanvas::rotate_hilbert_coords(int n, int& x, int& y, int rx, int ry)
+{
+    if (ry == 0) {
+        if (rx == 1)
+        {
+            x = n-1 - x;
+            y = n-1 - y;
+        }
+
+        //Swap x and y
+        int tempt  = x;
+        x = y;
+        y = tempt;
+    }
 }

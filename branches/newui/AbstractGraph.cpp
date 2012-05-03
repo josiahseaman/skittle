@@ -175,6 +175,13 @@ void AbstractGraph::toggleVisibility()
 	emit displayChanged();
 }
 
+void AbstractGraph::useHilbert(bool t)
+{
+    cout << "Textures: " << (t?"true":"false") << "  textureBuffer: " << textureBuffer << endl;
+    if(textureBuffer)
+        textureBuffer->useHilbert = t;
+}
+
 void AbstractGraph::setButtonFont()
 {
 	if(toggleButton != NULL)

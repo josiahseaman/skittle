@@ -92,8 +92,9 @@ void MainWindow::createActions()
 	selectAction->setToolTip(QString("Displays index and sequence information"));
 	findAction = new QAction("&Find",this);	
 	addAnnotationAction = new QAction("Add Annotation",this);	
-	//useTexturesAction = new QAction("Use Hardware Acceleration", this);
-	//useTexturesAction->setCheckable(true);
+    useTexturesAction = new QAction("Use Hardware Acceleration", this);
+    useTexturesAction->setCheckable(true);
+    useTexturesAction->setChecked(true);
 	//nextAnnotationAction = new QAction("Next Annotation",this);	
 	//prevAnnotationAction = new QAction("Previous Annotation",this);	
 	//browseCommunityAction = new QAction("Browse Community Research",this);	
@@ -138,7 +139,7 @@ void MainWindow::createMenus()
 	searchMenu->addAction(findPrevAction);
 	searchMenu->addAction(hilightResultsAction);*/
 	viewMenu = menuBar()->addMenu("&View");
-	//viewMenu->addAction(useTexturesAction);
+    viewMenu->addAction(useTexturesAction);
 	toolBarMenu = viewMenu->addMenu("ToolBar");
 	presetMenu = viewMenu->addMenu("Presets");
 	

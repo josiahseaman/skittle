@@ -113,7 +113,7 @@ GLuint CylinderDisplay::render()
 			glScaled(1,-1,1);
 			for(int i = 0; i < display_size && y < 200; i++)
 			{
-				if(i >= width_list.size())
+                if(i >= (int)width_list.size())
 				{
 					local_width = Width;
 				}
@@ -155,7 +155,10 @@ int CylinderDisplay::width()
 	return (int)(max_width / pi);
 }
 
-string CylinderDisplay::mouseClick(point2D pt){	}
+string CylinderDisplay::mouseClick(point2D pt)
+{
+    return string("");//TODO: Not yet implemented.
+}
 
 /******SLOTS*****/
 void CylinderDisplay::saySomething()

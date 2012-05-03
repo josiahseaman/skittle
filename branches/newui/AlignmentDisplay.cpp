@@ -117,11 +117,11 @@ void AlignmentDisplay::mergeMatches(vector<color>& original, vector<point>& vlr)
 {
 	int start = 250 / ui->scaleDial->value();
 	start = max( 10, start);
-	for( int i = 0; i < vlr.size(); ++i)
+    for( int i = 0; i < (int)vlr.size(); ++i)
 	{
 		if((vlr[i].y > start) && (vlr[i].x > .7))
 		{
-			for(int k = i * width(); k < (i+1) * width() && k < original.size(); ++k)
+            for(int k = i * width(); k < (i+1) * width() && k < (int)original.size(); ++k)
 			{
 				//original[k] = (original[k]/3) + (alignment_color( vlr[i].x*scale, vlr[i].y)*2.0/3.0);// * scale 
 				original[k] = alignment_color( vlr[i].x*scale, vlr[i].y);

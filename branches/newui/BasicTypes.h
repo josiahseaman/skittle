@@ -82,10 +82,20 @@ public:
 	{
 		return point( (x + other.x), (y + other.y), (z + other.z) );
 	}
+    point operator * (int mul)
+    {
+        return point( x*mul, y*mul, z*mul );
+    }
 	point operator / (int div)
 	{
 		return point( x/div, y/div, z/div );
 	}
+    void operator *= (double mul)
+    {
+        x = x*mul;
+        y = y*mul;
+        z = z*mul;
+    }
 	point interpolate(point p3, double progress)//progress goes from 0.0 p1  to 1.0 p2
 	{
 		double inverse = 1.0 - progress;

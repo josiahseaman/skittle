@@ -16,7 +16,6 @@ INPUT(
 ./debug\NucleotideDisplay.o
 ./debug\OligomerDisplay.o
 ./debug\SequenceEntry.o
-./debug\TextRender.o
 ./debug\TextureCanvas.o
 ./debug\UiVariables.o
 ./debug\ViewManager.o

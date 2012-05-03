@@ -31,7 +31,7 @@ protected:
 public:
 	GLWidget* glWidget;
 	UiVariables* ui;	
-	TextureCanvas* textureBuffer;
+    TextureCanvas* textureBuffer;
 	
 	bool hidden;
 	bool upToDate;
@@ -83,6 +83,7 @@ public slots:
 	void changeWidth(int w);
 	void invalidate();
 	void toggleVisibility();
+    void useHilbert(bool);
 	
 signals:
 	void displayChanged();

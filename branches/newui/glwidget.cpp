@@ -39,6 +39,14 @@
 #include <QtOpenGL>
 #include <QBitmap>
 //#include <QCursor>
+#if defined(Q_WS_MAC)
+#include <OpenGL/glu.h>
+#else
+#ifndef QT_LINUXBASE
+#   include <GL/glu.h>
+#endif
+#endif
+
 
 #include <math.h>
 #include <sstream>
@@ -100,7 +108,7 @@ GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
     changeZoom(100);
     canvasWidth = 1;
 	canvasHeight = 1;
-	setTool(SELECT_TOOL);
+    setTool(RESIZE_TOOL);
     setMouseTracking(true);
     setFocusPolicy(Qt::ClickFocus);
    	createConnections();
@@ -134,7 +142,7 @@ void GLWidget::createConnections()
    	for(int i = 0; i < graphs.size(); ++i)
    	{
    		//connect( graphs[i], SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
-   		connect( this, SIGNAL(useTextures(bool)), graphs[i], SLOT(useTextures(bool)) );
+        connect( this, SIGNAL(useHilbert(bool)), graphs[i], SLOT(useHilbert(bool)) );
    		connect( graphs[i], SIGNAL(hideSettings(QScrollArea*)), this, SIGNAL(hideSettings(QScrollArea*)));
    		connect( graphs[i], SIGNAL(showSettings(QScrollArea*)), this, SIGNAL(showSettings(QScrollArea*)));
    		//graphs[i]->createConnections();
@@ -386,9 +394,9 @@ void GLWidget::addTrackEntry(track_entry entry, string gtfFileName)
 	}
 }
 
-void GLWidget::useHardwareAcceleration(bool b)
+void GLWidget::useCurves(bool b)
 {
-	emit useTextures(b);
+    emit useHilbert(b);
 }
 
 /*****************FUNCTIONS*******************/
@@ -405,7 +413,7 @@ void GLWidget::keyPressEvent( QKeyEvent *event )
 		setCursor(zoomOutCursor);
 		
 	int step = 10;	
-	int tenLines = ui.widthDial->value() * step;
+    int tenLines = ui.widthDial->value() * step;
     switch ( event->key() )//the keys should be passed directly to the widgets
     {
 		case Qt::Key_Down:
@@ -553,9 +561,9 @@ void GLWidget::resizeGL(int width, int height)
 	float bottom = top - height / pixelToGridRatio;
 	glOrtho(left, right, bottom, top, 0, 5000);
 	
-	gluLookAt(0, 0, 40, 					//position and direction
-	      0, 0, 0,
-		  0, 1, 0);
+    gluLookAt(0, 0, 40, 					//position and direction
+          0, 0, 0,
+          0, 1, 0);
     
     glMatrixMode(GL_MODELVIEW);
     setTotalDisplayWidth();
