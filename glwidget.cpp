@@ -623,7 +623,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 		else//zooming out
 		{
 			if(zoom > 100)
-				ui.zoomDial->setValue( zoom * zoomFactor );
+                ui.zoomDial->setValue( max(100, ((int) (zoom * zoomFactor))) );
 			else
 				ui.scaleDial->setValue(newScale);//set scale to the new value
 		}
