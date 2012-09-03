@@ -176,11 +176,6 @@ void AbstractGraph::toggleVisibility()
 	emit displayChanged();
 }
 
-void AbstractGraph::useTextures(bool t)
-{
-    usingTextures = t;
-}
-
 void AbstractGraph::setButtonFont()
 {
 	if(toggleButton != NULL)

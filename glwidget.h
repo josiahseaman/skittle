@@ -117,7 +117,6 @@ signals:
 	void displaySizeChanged();
 	void hideSettings(QScrollArea*);
     void showSettings(QScrollArea*);
-    void useTextures(bool);
 
 protected:
 	void displayTrack(const vector<track_entry>& track);

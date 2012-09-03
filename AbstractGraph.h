@@ -84,7 +84,6 @@ public slots:
 	void changeWidth(int w);
 	void invalidate();
     void toggleVisibility();
-    void useTextures(bool);
 	
 signals:
 	void displayChanged();

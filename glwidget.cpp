@@ -142,7 +142,6 @@ void GLWidget::createConnections()
    	for(int i = 0; i < graphs.size(); ++i)
    	{
         connect( graphs[i], SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
-        connect( this, SIGNAL(useTextures(bool)), graphs[i], SLOT(useTextures(bool)) );
    		connect( graphs[i], SIGNAL(hideSettings(QScrollArea*)), this, SIGNAL(hideSettings(QScrollArea*)));
    		connect( graphs[i], SIGNAL(showSettings(QScrollArea*)), this, SIGNAL(showSettings(QScrollArea*)));
    		//graphs[i]->createConnections();
