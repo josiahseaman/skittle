@@ -142,7 +142,7 @@ void GLWidget::createConnections()
    	for(int i = 0; i < graphs.size(); ++i)
    	{
    		//connect( graphs[i], SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
-        connect( this, SIGNAL(useHilbert(bool)), graphs[i], SLOT(useHilbert(bool)) );
+        connect( this, SIGNAL(useTextures(bool)), graphs[i], SLOT(useTextures(bool)) );
    		connect( graphs[i], SIGNAL(hideSettings(QScrollArea*)), this, SIGNAL(hideSettings(QScrollArea*)));
    		connect( graphs[i], SIGNAL(showSettings(QScrollArea*)), this, SIGNAL(showSettings(QScrollArea*)));
    		//graphs[i]->createConnections();
@@ -339,7 +339,7 @@ void GLWidget::updateDisplaySize()
 		}
 	}
 	return tempTrackDisplay;
-}/**/
+}*/
 
 AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fName)
 {
@@ -392,11 +392,6 @@ void GLWidget::addTrackEntry(track_entry entry, string gtfFileName)
 	{
 		trackDisplay->addEntry(entry);
 	}
-}
-
-void GLWidget::useCurves(bool b)
-{
-    emit useHilbert(b);
 }
 
 /*****************FUNCTIONS*******************/
@@ -518,7 +513,7 @@ void GLWidget::paintGL()
 				return;
 			}
 		}
-	}/**/  
+    }*/
 	//ui.print("Frame: ", ++frame);
     glMatrixMode(GL_MODELVIEW);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

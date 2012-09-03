@@ -35,6 +35,7 @@ public:
 	
 	bool hidden;
 	bool upToDate;
+    bool usingTextures;
 	QAction* toggleButton;
 	
 	int display_size;
@@ -82,8 +83,8 @@ public slots:
 	void changeStart(int s);
 	void changeWidth(int w);
 	void invalidate();
-	void toggleVisibility();
-    void useHilbert(bool);
+    void toggleVisibility();
+    void useTextures(bool);
 	
 signals:
 	void displayChanged();
@@ -93,7 +94,7 @@ signals:
 	void sizeChanged(int);	
 	void startChanged(int);
 	void widthChanged(int);	
-	void deleteButton(QAction*);
+    void deleteButton(QAction*);
 	
 };
 

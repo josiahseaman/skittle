@@ -100,8 +100,7 @@ public slots:
 	AnnotationDisplay* addAnnotationDisplay(QString fileName);
 	AnnotationDisplay* findMatchingAnnotationDisplay(string fileName);
 	void addTrackEntry(track_entry entry, string gtfFileName);
-	void loadFile(QString);
-	void useCurves(bool);
+    void loadFile(QString);
 	//void setUi(UiVariables);
     
 signals:
@@ -117,8 +116,8 @@ signals:
 	//void IveBeenClicked(GLWidget*);
 	void displaySizeChanged();
 	void hideSettings(QScrollArea*);
-	void showSettings(QScrollArea*);
-    void useHilbert(bool);
+    void showSettings(QScrollArea*);
+    void useTextures(bool);
 
 protected:
 	void displayTrack(const vector<track_entry>& track);

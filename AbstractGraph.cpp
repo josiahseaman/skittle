@@ -5,6 +5,7 @@
 
 AbstractGraph::AbstractGraph()
 {
+    usingTextures = true;
 	textureBuffer = new TextureCanvas();
 }
 
@@ -175,11 +176,9 @@ void AbstractGraph::toggleVisibility()
 	emit displayChanged();
 }
 
-void AbstractGraph::useHilbert(bool t)
+void AbstractGraph::useTextures(bool t)
 {
-    cout << "Textures: " << (t?"true":"false") << "  textureBuffer: " << textureBuffer << endl;
-    if(textureBuffer)
-        textureBuffer->useHilbert = t;
+    usingTextures = t;
 }
 
 void AbstractGraph::setButtonFont()
