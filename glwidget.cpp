@@ -132,14 +132,14 @@ GLWidget::~GLWidget()
 
 void GLWidget::createButtons()
 {
-   	for(int i = 0; i < graphs.size(); ++i)
+    for(int i = 0; i < (int)graphs.size(); ++i)
    		emit addGraphMode( graphs[i] );
    	emit addDivider();
 }
 
 void GLWidget::createConnections()
 {
-   	for(int i = 0; i < graphs.size(); ++i)
+    for(int i = 0; i < (int)graphs.size(); ++i)
    	{
         connect( graphs[i], SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
    		connect( graphs[i], SIGNAL(hideSettings(QScrollArea*)), this, SIGNAL(hideSettings(QScrollArea*)));
