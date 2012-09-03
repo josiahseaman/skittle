@@ -20,6 +20,7 @@ HEADERS += AbstractGraph.h \
            ColorListEditor.h \
            CylinderDisplay.h \
            FastaReader.h \
+           FrequencyMap.h \
            glwidget.h \
            GtfReader.h \
            HighlightDisplay.h \
@@ -29,11 +30,10 @@ HEADERS += AbstractGraph.h \
            NucleotideLinker.h \
            NucleotideLink.h \
            OligomerDisplay.h \
-           RepeatMap.h \
            SequenceEntry.h \
            TextureCanvas.h \
            ViewManager.h \
-           UiVariables.h 
+           UiVariables.h
 SOURCES += AbstractGraph.cpp \
            AlignmentDisplay.cpp \
            AnnotationDisplay.cpp \
@@ -49,8 +49,8 @@ SOURCES += AbstractGraph.cpp \
            MdiChildWindow.cpp \
            NucleotideDisplay.cpp \
            OligomerDisplay.cpp \
-           RepeatMap.cpp \
            SequenceEntry.cpp \
            TextureCanvas.cpp \
            UiVariables.cpp \
-           ViewManager.cpp
+           ViewManager.cpp \
+    RepeatMap.cpp
