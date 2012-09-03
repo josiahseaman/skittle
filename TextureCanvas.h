@@ -44,9 +44,6 @@ private:
 	point get_position(int index);
 	void paint_square(point position, color c);
 	void textureFreeRender();
-
-    string build_peano_string(int length);
-    point peano_position(int& index, string& path, point start);
 	
 	GLuint displayList;
 	int width;

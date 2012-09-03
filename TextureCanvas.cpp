@@ -99,7 +99,7 @@ void TextureCanvas::createEmptyTiles(int canvas_width, int canvas_height, int ma
 
 void TextureCanvas::display()
 {
-    if(	!useTextures )
+    if(	!useTextures  )
         textureFreeRender();
     else
         drawTextureSquare();
@@ -182,75 +182,16 @@ void TextureCanvas::paint_square(point position, color c)
 void TextureCanvas::textureFreeRender()
 {
     glPushMatrix();
-	glTranslated(0,1,0);
+    glTranslated(0,1,0);
 
-    if(!useTextures){
-		for(int i = 0; i < (int)colors.size(); i++)
-		{
-            point p1 = get_position( i );
-			paint_square(p1, colors[i]);
-		}	
+    for(int i = 0; i < (int)colors.size(); i++)
+    {
+        point p1 = get_position( i );
+        paint_square(p1, colors[i]);
     }
-    else{
-        string path = build_peano_string((int)colors.size());
-        point prev = point(0,0,1);//using p1.z to store facing
-        int index = 0;
-        for(int i = 0; i < (int)colors.size(); i++)
-        {
-            point p1 = peano_position(index, path, prev);
-            point t1 = p1*2;
-            point t2 = t1.interpolate(prev*2, .5);
-            paint_square(t1, colors[i]);
-            paint_square(t2, colors[i]);
-            prev = p1;
-        }
-    }
+
 	glPopMatrix();
 }
 
-string TextureCanvas::build_peano_string(int length)
-{
-    string path = string("F");
-    while(path.size() < length)
-    {
-        string next;
-        for(int i = 0; i < (int)path.size(); ++i)
-        {
-            if(path[i] == 'F')
-                next.append("F+F+F-F-F");// my own version based on Aubrey
-//                next.append("FF+F+F+FF+F+F-F"); from math power point
-//                next.append("F+F-F-F-F+F+F+F-F"); //stack overflow suggestion
-            else
-                next.append(1, path[i]);
-        }
-        path = next;
-    }
-    cout << endl;
-    cout << endl;
-    cout << path << endl;
-    return path;
-}
 
-point TextureCanvas::peano_position(int& index, string& path, point start)
-{
-    while(index < (int)path.size() && path[index] != 'F' )
-    {
-        if(path[index]== '-')
-            start.z = ((int)start.z + 1) % 4;
-        if(path[index]== '+')
-            start.z = ((int)start.z +3) % 4;//actually -1 but C++ doesn't had -1%4 correctly
-        ++index;
-    }
-    //handle "F"
-    switch((int)start.z)
-    {
-    case 0: start.x++; break;
-    case 1: start.y++; break;
-    case 2: start.x--; break;
-    case 3: start.y--; break;
-    }
-    ++index;
-
-    return start;
-}
 

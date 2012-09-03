@@ -168,7 +168,7 @@ string AnnotationDisplay::mouseClick(point2D pt)
 
 int AnnotationDisplay::width()
 {
-	return (int)max_width*2;
+    return max_width*2;
 }
 
 
