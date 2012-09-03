@@ -174,7 +174,7 @@ void GLWidget::setTotalDisplayWidth()
 {	
 	//ui.print("SetWidth: ", ui.widthDial->value());
 	int total_width = border;
-	for(int i = 0; i < graphs.size(); ++i)
+    for(int i = 0; i < (int)graphs.size(); ++i)
 	{
 		if(graphs[i]->hidden == false)
 	   		total_width += graphs[i]->width() + border;
@@ -203,7 +203,7 @@ void GLWidget::displayString(const string* seq)
 {
 	ui.print("New sequence received.  Size:", seq->size());
 
-	for(int i = 0; i < graphs.size(); ++i)
+    for(int i = 0; i < (int)graphs.size(); ++i)
 	{
 		graphs[i]->setSequence(seq);
 		graphs[i]->invalidate();
@@ -372,7 +372,7 @@ AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fName)
 AnnotationDisplay* GLWidget::findMatchingAnnotationDisplay(string fileName)
 {
 	AnnotationDisplay* tempTrackDisplay = NULL;
-	for ( int n = 0; n < graphs.size(); n++)
+    for ( int n = 0; n < (int)graphs.size(); n++)
 	{
 		AnnotationDisplay* testPtr = dynamic_cast<AnnotationDisplay*>(graphs[n]);
 		if ( testPtr != NULL && testPtr->getFileName().compare(fileName) == 0 )
@@ -482,7 +482,7 @@ QPointF GLWidget::pixelToGlCoords(QPoint pCoords, double z)
 
 void GLWidget::initializeGL()
 {
-	for(int i = 0; i < graphs.size(); ++i)
+    for(int i = 0; i < (int)graphs.size(); ++i)
 		graphs[i]->setSequence(seq());
 	
     qglClearColor(QColor::fromRgbF(0.5, 0.5, 0.5));

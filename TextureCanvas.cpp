@@ -55,7 +55,7 @@ void TextureCanvas::loadPixelsToCard(vector<color> pixels, int max_size)
     createEmptyTiles(canvas_width, canvas_height, max_size);
 
 
-    for(int i = 0; i < pixels.size(); i++)
+    for(int i = 0; i < (int)pixels.size(); i++)
     {
 
         color c1 = pixels[i];
@@ -63,7 +63,7 @@ void TextureCanvas::loadPixelsToCard(vector<color> pixels, int max_size)
         int x = (i % width) / max_size; //(horizontal Index)
         int y = (i / width) / max_size; //(vertical Index)
 
-        if (x >= canvas.size() || y >= canvas.size()) continue;
+        if (x >= (int)canvas.size() || y >= (int)canvas.size()) continue;
 
         vector<unsigned char>& current = canvas[x][y].data;
         current.push_back(c1.r);

@@ -166,7 +166,7 @@ void GtfReader::snipAnnotatedSequence()
 		fout << seq->substr(annotation_track[i].start, annotation_track[i].stop - annotation_track[i].start);
 	}
 	fout.close();
-}/**/
+}*/
 	
 color GtfReader::color_entry()
 {

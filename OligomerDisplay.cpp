@@ -161,9 +161,8 @@ void OligomerDisplay::calculateHeatMap()
 	{	
 		for(int x = y+1; x < F_height; ++x)
 		{
-			int row = F_width*widthMultiplier;/**/
 			double score = correlate(freq[y], freq[x]);/*/ //pixels, x*row, y*row, row
-			double score = spearmanCorrelation(freq[y], freq[x]);/**/
+            double score = spearmanCorrelation(freq[y], freq[x]);*/
 			scores.push_back(score);
 		}	
 	}
@@ -222,7 +221,7 @@ void OligomerDisplay::selfCorrelationMap()
 			vector<double> input2 = copyVectorRange(rotated, x*row, row); //column
 			/**/
 			double score = correlate(input1, input2); /*/ // 0, row, row
-			double score = spearmanCorrelation(input1, input2);/**/
+            double score = spearmanCorrelation(input1, input2);*/
 			correlationScores.push_back(score);
 		}	
 	}
@@ -253,7 +252,7 @@ vector<color> OligomerDisplay::colorNormalized(vector<double> heatData)
 	double maxCorrelation = sortedScores[sortedScores.size()-1];//*(max_element(heatData.begin(), heatData.end()));
 	double minCorrelation = sortedScores[0];
 	int i = 0; 
-	while(minCorrelation == valueForN && i < sortedScores.size()-1)
+    while(minCorrelation == valueForN && i < (int)sortedScores.size()-1)
 			minCorrelation = sortedScores[++i];//scan for a value other than valueForN
 	double medianCorrelation = sortedScores[ (sortedScores.size()-i)/2 + i ];
 	
@@ -617,7 +616,7 @@ void OligomerDisplay::isochores()
 	minimumCorrelation = average - minDeltaBoundary*standardDeviation;
 	upperCorrelation = average + minDeltaBoundary*standardDeviation;
 	averageCorrelation = average;
-}/**/
+}*/
 
 
 //start: 20541380  width: 479304

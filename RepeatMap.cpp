@@ -255,7 +255,7 @@ string RepeatMap::mouseClick(point2D pt)
 		index = index + nucleotide_start;
 		int index2 = index + pt.x + F_start;
 		int w = min( 100, ui->widthDial->value() );
-		if( index2 + w < sequence->size() )
+        if( index2 + w < (int)sequence->size() )
 		{
 			stringstream ss;
 			ss << "Offset: "<<pt.x+ F_start<<" #" << index << " compared with #" << index2 << "  \n"

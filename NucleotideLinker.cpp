@@ -10,7 +10,7 @@ NucleotideLinker::NucleotideLinker()
 void NucleotideLinker::display()
 {
 	vector<NucleotideLink>::iterator iter;
-	for(iter = links.begin(); iter != links.end() && iter->start < min_width; ++iter)
+    for(iter = links.begin(); iter != links.end() && (int)iter->start < min_width; ++iter)
 	{
 			NucleotideLink link = *iter;
 			
@@ -78,7 +78,7 @@ void NucleotideLinker::calculate(string sequence, int minimum_width)
 
 	links.clear();
 	const char* word;
-	for(int i = 0; i+9+F_width < sequence.size(); i+=1)
+    for(int i = 0; i+9+F_width < (int)sequence.size(); i+=1)
 	{
 		NucleotideLink match = NucleotideLink();
 		word = sequence.c_str() + i;
@@ -110,20 +110,20 @@ void NucleotideLinker::calculate(string sequence, int minimum_width)
 		}// end if lowered_reqs
 		if(match.match_dist != 0)
 		{
-			if(match.match_dist < min_width)
+            if((int)match.match_dist < min_width)
 				match.match_dist *= (int)((float)min_width / match.match_dist + 0.99999);
 			match = multiples_check(sequence, match, consensus_width);
 			links.push_back(match);
 		}
 		
 		//consensus handling
-		if(match.match_dist != consensus_width)//didn't add something that matched
+        if((int)match.match_dist != consensus_width)//didn't add something that matched
 		{
 			--consensus_strength;
 		}
 		if(match.match_dist != 0)//I did add something
 		{
-			if(match.match_dist == consensus_width)
+            if((int)match.match_dist == consensus_width)
 				++consensus_strength;						
 			if(consensus_strength <= 0)
 			{
@@ -146,9 +146,9 @@ NucleotideLink NucleotideLinker::multiples_check(const string& seq, NucleotideLi
 	}
 	NucleotideLink two = NucleotideLink();
 	NucleotideLink three = NucleotideLink();
-	if(match.match_dist/2 >= min_width)
+    if((int)match.match_dist/2 >= min_width)
 		two = localized_search(seq, match.start, match.match_dist/2, 2);
-	if(match.match_dist/3 >= min_width)
+    if((int)match.match_dist/3 >= min_width)
 		three = localized_search(seq, match.start, match.match_dist/3, 2);
 		
 	if(three.match_dist != 0)
@@ -167,7 +167,7 @@ NucleotideLink NucleotideLinker::localized_search(const string& seq, int index, 
 	short int max = 0;
 	int best_distance = 0;
 	
-	while( plus - start_dist <= range && (plus < seq.size()-8 && minus >= 1))
+    while( plus - start_dist <= (int)range && (plus < (int)seq.size()-8 && minus >= 1))
 	{
 		check_for_max(seq,  plus, index, max, best_distance);
 		check_for_max(seq, minus, index, max, best_distance);
@@ -210,7 +210,7 @@ vector<float> NucleotideLinker::smooth( int default_width, int blur_size)
 	int last_pos = links[links.size()-1].start + links[links.size()-1].match_dist;
 	vector<map<int,int> > votes;
 	votes.resize(last_pos, map<int,int>() );
-	for(int i = 0; i < votes.size(); ++i)
+    for(int i = 0; i < (int)votes.size(); ++i)
 		votes[i] = map<int,int>();
 		
 	//cast votes
@@ -219,7 +219,7 @@ vector<float> NucleotideLinker::smooth( int default_width, int blur_size)
 	{	
 		int start = it->start;
 		int dist = it->match_dist;
-		for(int k = start; k < start + dist + 8 && k < votes.size(); ++k)//vote at all these positions
+        for(int k = start; k < start + dist + 8 && k < (int)votes.size(); ++k)//vote at all these positions
 		{
 			votes[k][dist] = votes[k][dist] + 1;
 		}
@@ -227,7 +227,7 @@ vector<float> NucleotideLinker::smooth( int default_width, int blur_size)
 	//tally votes
 	//cout << "Tally" << endl;
 	int width = default_width;//if there are no votes the width stays the same as the previous winner
-	for(int i = 0; i < votes.size(); ++i)
+    for(int i = 0; i < (int)votes.size(); ++i)
 	{//votes and widths have a 1:1 relationship	
 		int max_votes = 0;
 		for(map<int,int>::iterator tally = votes[i].begin(); tally != votes[i].end(); ++tally)//for each vote
