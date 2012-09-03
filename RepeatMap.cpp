@@ -1,4 +1,4 @@
-#include "FrequencyMap.h"
+#include "RepeatMap.h"
 #include "glwidget.h"
 #include <sstream>
 #include <QFrame>

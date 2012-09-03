@@ -32,7 +32,7 @@ class UiVariables;
 class FastaReader;
 class AbstractGraph;
 class NucleotideDisplay;
-class FrequencyMap;
+class RepeatMap;
 class AnnotationDisplay;
 class CylinderDisplay;
 class AlignmentDisplay;
@@ -54,7 +54,7 @@ public:
 	FastaReader* reader;
 	GtfReader*	trackReader;
 	NucleotideDisplay* nuc;//make this private
-	FrequencyMap* freq;
+    RepeatMap* freq;
 	AnnotationDisplay* gtfTrack;
 	CylinderDisplay* cylinder;
    	AlignmentDisplay* align;

@@ -57,7 +57,7 @@
 
 #include "glwidget.h"
 #include "NucleotideDisplay.h"
-#include "FrequencyMap.h"
+#include "RepeatMap.h"
 #include "AnnotationDisplay.h"
 #include "CylinderDisplay.h"
 #include "AlignmentDisplay.h"
@@ -88,7 +88,7 @@ GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
     trackReader = new GtfReader(ui);
 	
     nuc = new NucleotideDisplay(&ui, this);
-    freq = new FrequencyMap(&ui, this);
+    freq = new RepeatMap(&ui, this);
     freq->link(nuc);
     cylinder = new CylinderDisplay(&ui, this);
    	align = new AlignmentDisplay(&ui, this);

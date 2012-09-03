@@ -13,7 +13,7 @@
 #include "glwidget.h"
 #include "AbstractGraph.h"
 #include "NucleotideDisplay.h"
-#include "FrequencyMap.h"
+#include "RepeatMap.h"
 #include "AnnotationDisplay.h"
 #include "CylinderDisplay.h"
 #include "AlignmentDisplay.h"

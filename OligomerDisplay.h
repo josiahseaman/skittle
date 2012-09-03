@@ -10,7 +10,7 @@
 
 #include <QGLWidget>
 #include "BasicTypes.h"
-#include "FrequencyMap.h"
+#include "RepeatMap.h"
 #include "UiVariables.h"
 #include "AbstractGraph.h"
 
@@ -18,7 +18,7 @@ class QSpinBox;
 
 using namespace std;
 
-class OligomerDisplay : public AbstractGraph//: public FrequencyMap// 
+class OligomerDisplay : public AbstractGraph//: public RepeatMap//
 {
     Q_OBJECT
     
