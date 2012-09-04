@@ -16,7 +16,7 @@
 #include "RepeatMap.h"
 #include "AnnotationDisplay.h"
 #include "CylinderDisplay.h"
-#include "AlignmentDisplay.h"
+#include "RepeatOverviewDisplay.h"
 #include "OligomerDisplay.h"
 #include "HighlightDisplay.h"
 #include "ViewManager.h"

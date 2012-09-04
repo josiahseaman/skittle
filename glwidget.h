@@ -35,7 +35,7 @@ class NucleotideDisplay;
 class RepeatMap;
 class AnnotationDisplay;
 class CylinderDisplay;
-class AlignmentDisplay;
+class RepeatOverviewDisplay;
 class OligomerDisplay;
 class HighlightDisplay;
 class GtfReader;
@@ -57,7 +57,7 @@ public:
     RepeatMap* freq;
 	AnnotationDisplay* gtfTrack;
 	CylinderDisplay* cylinder;
-   	AlignmentDisplay* align;
+   	RepeatOverviewDisplay* align;
    	OligomerDisplay* olig;
    	HighlightDisplay* highlight;
    	

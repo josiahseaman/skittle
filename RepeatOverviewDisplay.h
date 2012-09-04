@@ -1,4 +1,4 @@
-//AlignmentDisplay.h
+//RepeatOverviewDisplay.h
 #ifndef ALIGNMENT_DISP
 #define ALIGNMENT_DISP
 
@@ -10,13 +10,13 @@
 
 using namespace std;
 
-class AlignmentDisplay : public AbstractGraph
+class RepeatOverviewDisplay : public AbstractGraph
 {
     Q_OBJECT
     
 public:
 	
-	AlignmentDisplay(UiVariables*, GLWidget* gl);
+	RepeatOverviewDisplay(UiVariables*, GLWidget* gl);
 	void display();
 	void loadTexture();//calls simple alignment
 	GLuint render();//creates display list using loadTexture
@@ -59,14 +59,14 @@ private:
 };
 
 inline
-long int& AlignmentDisplay::accessLI(int index)
+long int& RepeatOverviewDisplay::accessLI(int index)
 {
 	unsigned char* ptr = &(packSeq[pSeqSize - index - sizeof(long int)]);	
 	return  *( (long int*)(ptr) );
 }
 
 inline
-long int AlignmentDisplay::sequenceLI(int index)
+long int RepeatOverviewDisplay::sequenceLI(int index)
 {
 	int sub_index = index % charPerIndex;
 	index /= charPerIndex;
@@ -84,7 +84,7 @@ long int AlignmentDisplay::sequenceLI(int index)
 }
 
 inline
-int AlignmentDisplay::countMatches(long int bits)
+int RepeatOverviewDisplay::countMatches(long int bits)
 {
 	//TODO: can I do this by pointer casting?
 	int c = countTable[ (unsigned short int)bits ];

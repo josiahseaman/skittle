@@ -13,7 +13,7 @@ QT           += opengl
 
 # Input
 HEADERS += AbstractGraph.h \
-           AlignmentDisplay.h \
+           RepeatOverviewDisplay.h \
            AnnotationDisplay.h \
            BasicTypes.h \
            ui_BookmarkDialog.h \
@@ -35,7 +35,7 @@ HEADERS += AbstractGraph.h \
            ViewManager.h \
            UiVariables.h 
 SOURCES += AbstractGraph.cpp \
-           AlignmentDisplay.cpp \
+           RepeatOverviewDisplay.cpp \
            AnnotationDisplay.cpp \
            ColorListEditor.cpp \
            CylinderDisplay.cpp \

@@ -60,7 +60,7 @@
 #include "RepeatMap.h"
 #include "AnnotationDisplay.h"
 #include "CylinderDisplay.h"
-#include "AlignmentDisplay.h"
+#include "RepeatOverviewDisplay.h"
 #include "OligomerDisplay.h"
 #include "HighlightDisplay.h"
 #include "GtfReader.h"
@@ -91,7 +91,7 @@ GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
     freq = new RepeatMap(&ui, this);
     freq->link(nuc);
     cylinder = new CylinderDisplay(&ui, this);
-   	align = new AlignmentDisplay(&ui, this);
+    align = new RepeatOverviewDisplay(&ui, this);
    	olig = new OligomerDisplay(&ui, this);
 	highlight = new HighlightDisplay(&ui, this);
    	
@@ -497,7 +497,7 @@ void GLWidget::initializeGL()
 void GLWidget::paintGL()
 {
 	/** /
-	if(!align->hidden)//TODO: move this inside AlignmentDisplay
+    if(!align->hidden)//TODO: move this inside RepeatOverviewDisplay
 	{
 		int scale = ui.scaleDial->value();
 		int rem = scale % 4;

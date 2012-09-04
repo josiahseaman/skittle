@@ -1,10 +1,10 @@
-//AlignmentDisplay.cpp
+//RepeatOverviewDisplay.cpp
 #include <sstream>
-#include "AlignmentDisplay.h"
+#include "RepeatOverviewDisplay.h"
 //#include "TextRender.h"
 #include "glwidget.h"
 
-AlignmentDisplay::AlignmentDisplay(UiVariables* gui, GLWidget* gl)
+RepeatOverviewDisplay::RepeatOverviewDisplay(UiVariables* gui, GLWidget* gl)
 {	
 	glWidget = gl;
 	string* seq = new string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");
@@ -40,7 +40,7 @@ AlignmentDisplay::AlignmentDisplay(UiVariables* gui, GLWidget* gl)
 	actionData = actionLabel; 
 }
 
-void AlignmentDisplay::display()
+void RepeatOverviewDisplay::display()
 {
 	checkVariables();
     glPushMatrix();
@@ -53,7 +53,7 @@ void AlignmentDisplay::display()
 	glPopMatrix();
 }
 
-void AlignmentDisplay::loadTexture()
+void RepeatOverviewDisplay::loadTexture()
 {
 	/**/
 	int s = ui->scaleDial->value();
@@ -76,7 +76,7 @@ void AlignmentDisplay::loadTexture()
 	upToDate = true;
 }
 
-GLuint AlignmentDisplay::render()
+GLuint RepeatOverviewDisplay::render()
 {
 	GLuint list = glGenLists(1);
     glNewList(list, GL_COMPILE);
@@ -93,7 +93,7 @@ GLuint AlignmentDisplay::render()
     return list;
 }
 
-void AlignmentDisplay::VLRcheck(vector<point> matches)//alternative to loadTexture
+void RepeatOverviewDisplay::VLRcheck(vector<point> matches)//alternative to loadTexture
 {
 	/*int s = ui->scaleDial->value();
 	s = max(4, (s / 4) * 4);//enforces scale is a multiple of 4
@@ -113,7 +113,7 @@ void AlignmentDisplay::VLRcheck(vector<point> matches)//alternative to loadTextu
 	upToDate = true;
 }
 
-void AlignmentDisplay::mergeMatches(vector<color>& original, vector<point>& vlr)
+void RepeatOverviewDisplay::mergeMatches(vector<color>& original, vector<point>& vlr)
 {
 	int start = 250 / ui->scaleDial->value();
 	start = max( 10, start);
@@ -130,7 +130,7 @@ void AlignmentDisplay::mergeMatches(vector<color>& original, vector<point>& vlr)
 	}
 }
 
-void AlignmentDisplay::displayLegend(float canvasWidth, float canvasHeight)
+void RepeatOverviewDisplay::displayLegend(float canvasWidth, float canvasHeight)
 {
 	/** /
 	glPushMatrix();
@@ -175,7 +175,7 @@ void AlignmentDisplay::displayLegend(float canvasWidth, float canvasHeight)
 }
 
 
-color AlignmentDisplay::alignment_color(int score, int frequency)
+color RepeatOverviewDisplay::alignment_color(int score, int frequency)
 {
 	color c = glWidget->spectrum((double)(frequency) / 250.0);//
 	color black = color(0,0,0);
@@ -184,7 +184,7 @@ color AlignmentDisplay::alignment_color(int score, int frequency)
 	return c;
 }
 
-color AlignmentDisplay::interpolate(color p1, color p3, double progress)//progress goes from 0.0 p1  to 1.0 p2
+color RepeatOverviewDisplay::interpolate(color p1, color p3, double progress)//progress goes from 0.0 p1  to 1.0 p2
 {
 	double inverse = 1.0 - progress;
 	int x2 = (int)(p1.r * inverse + p3.r * progress + .5);
@@ -193,7 +193,7 @@ color AlignmentDisplay::interpolate(color p1, color p3, double progress)//progre
 	return color(x2, y2, z2);
 }
 
-int AlignmentDisplay::countMatchesShort(unsigned short int bits)
+int RepeatOverviewDisplay::countMatchesShort(unsigned short int bits)
 {
 	int c = 0;
 	for(int i = 0; i < (int)(sizeof(unsigned short int) * 4); ++i)
@@ -204,7 +204,7 @@ int AlignmentDisplay::countMatchesShort(unsigned short int bits)
 	return c;
 }
 
-int AlignmentDisplay::countMatchesChar(unsigned char bits)
+int RepeatOverviewDisplay::countMatchesChar(unsigned char bits)
 {
 	int c = 0;
 	for(int i = 0; i < 4; ++i)
@@ -215,7 +215,7 @@ int AlignmentDisplay::countMatchesChar(unsigned char bits)
 	return c;
 }
 
-void AlignmentDisplay::calcMatchTable()
+void RepeatOverviewDisplay::calcMatchTable()
 {
 	countTableShort = new int[65536];
 	for(unsigned short int index = 0; true; ++index)
@@ -234,7 +234,7 @@ void AlignmentDisplay::calcMatchTable()
 	}
 }
 
-void AlignmentDisplay::normalPack(const string* seq)
+void RepeatOverviewDisplay::normalPack(const string* seq)
 {
 	if(packSeq)
 		delete [] packSeq;
@@ -260,7 +260,7 @@ void AlignmentDisplay::normalPack(const string* seq)
 	//cout << "Finished packing bits" << endl;	
 }
 
-void AlignmentDisplay::shiftMask(char* str, int size)
+void RepeatOverviewDisplay::shiftMask(char* str, int size)
 {
 	for(int i = size -1; i != -1; --i)
 	{
@@ -276,7 +276,7 @@ void AlignmentDisplay::shiftMask(char* str, int size)
 		str[0] = 192;//the bit mask should start growing from 0
 }
 
-void AlignmentDisplay::shiftString(unsigned char* str, int size)
+void RepeatOverviewDisplay::shiftString(unsigned char* str, int size)
 {
 	str[size-1] = str[size-1] >> 2;
 	for(int i = size -2; i != -1; --i)
@@ -286,7 +286,7 @@ void AlignmentDisplay::shiftString(unsigned char* str, int size)
 	}	
 }
 
-color AlignmentDisplay::simpleAlignment(int index)
+color RepeatOverviewDisplay::simpleAlignment(int index)
 {
 	if(packSeq[index/4] == 0)
 		return color(0,0,0);
@@ -375,19 +375,19 @@ color AlignmentDisplay::simpleAlignment(int index)
 	//return color(240,240,17);
 }
 
-void AlignmentDisplay::setSequence(const string* seq)
+void RepeatOverviewDisplay::setSequence(const string* seq)
 {
 	sequence = seq;	
 	normalPack(seq);
 }
 
-void AlignmentDisplay::changeScale(int s)
+void RepeatOverviewDisplay::changeScale(int s)
 {
-	ui->print("AlignmentDisplay::changeScale ", s);
+    ui->print("RepeatOverviewDisplay::changeScale ", s);
 	AbstractGraph::changeScale(s);
 }
 
-void AlignmentDisplay::toggleVisibility()
+void RepeatOverviewDisplay::toggleVisibility()
 {
 	if(hidden)
 	{
