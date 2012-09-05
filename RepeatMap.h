@@ -38,10 +38,12 @@ public:
 	void calculate(vector<color>& img, int vote_size);
 	double correlate(vector<color>& img, int beginA, int beginB, int pixelsPerSample);
 	int width();
-	
-public slots:	
+
+    vector<vector<float> > emptyCopy(vector<vector<float> > starter);
+public slots:
 	void changeFStart(int val);
 	void changeGraphWidth(int val);
+    void toggleDoubleSample(bool d);
 	
 signals:
 	void fStartChanged(int);
@@ -58,6 +60,7 @@ protected:
 	
 	int freq_map_count;
 	int calculate_count;
+    bool usingDoubleSampling;
 };
 
 #endif

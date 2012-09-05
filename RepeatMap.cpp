@@ -21,6 +21,7 @@ RepeatMap::RepeatMap(UiVariables* gui, GLWidget* gl)
 	F_height = 0;
 	Width = ui->widthDial->value();
 	changeSize(ui->sizeDial->value());
+    usingDoubleSampling = false;
 	upToDate = false;
 
 	freq = vector< vector<float> >();
@@ -95,6 +96,11 @@ QScrollArea* RepeatMap::settingsUi()
 	connect( graphWidthDial, SIGNAL(valueChanged(int)), this, SLOT(changeGraphWidth(int)));
 	connect( this, SIGNAL(graphWidthChanged(int)), graphWidthDial, SLOT(setValue(int)));
 	connect( this, SIGNAL(graphWidthChanged(int)), this, SIGNAL(displayChanged()));
+
+    QCheckBox* doubleSample = new QCheckBox(settingsTab);
+    doubleSample->setChecked(false);
+    formLayout->addRow("Check for matches upstream and downstream (increases contrast)", doubleSample);
+    connect( doubleSample, SIGNAL(toggled(bool)), this, SLOT(toggleDoubleSample(bool)));
 	
 	return settingsTab;
 }
@@ -179,33 +185,55 @@ GLuint RepeatMap::render()
 
 void RepeatMap::freq_map()
 {
-	//glWidget->print("Freq_map: ", ++freq_map_count);
 	const char* genome = sequence->c_str() + nucleotide_start;
+    vector<vector<float> > freq_maxOfSample;
+    if(usingDoubleSampling)
+        freq_maxOfSample = emptyCopy(freq);
 	for( int h = 0; h < height(); h++)
-	{
-		int offset = h * Width;
-		/*int end = offset+Width-1;
-		//NOTE: This statement is just an optional speed up
-		if(genome[offset] == 'N' || genome[offset] == 'n' || genome[end] == 'N' || genome[end] == 'n')
-		{//check the first and last of the reference string
-			for(int w = 1; w <= F_width; w++)
-				freq[h][w] = 0;//set whole row to zero
-		}
-		else
-		{*/	
-			for(int w = 1; w <= F_width; w++)//calculate across widths 1-F_width
-			{
-				int score = 0;
-				for(int l = 0; l < Width; l++)
-				{					
-					if(genome[offset + l] == genome[offset + w + F_start*scale + l])				
-						score += 1; //pixel matches the one above it			
-				}
-				freq[h][w] = float(score) / Width;
-			}
-		//}
-	}	
+    {
+        int offset = h * Width;
+        /*int end = offset+Width-1;
+        //NOTE: This statement is just an optional speed up
+        if(genome[offset] == 'N' || genome[offset] == 'n' || genome[end] == 'N' || genome[end] == 'n')
+        {//check the first and last of the reference string
+            for(int w = 1; w <= F_width; w++)
+                freq[h][w] = 0;//set whole row to zero
+        }
+        else
+        {*/
+        for(int w = 1; w <= F_width; w++)//calculate across widths 1-F_width
+        {
+            int score = 0;
+            for(int l = 0; l < Width; l++)
+            {
+                if(genome[offset + l] == genome[offset + w + F_start*scale + l])
+                    score += 1; //pixel matches the one above it
+            }
+            freq[h][w] = float(score) / Width;
+        }
+        if(usingDoubleSampling)
+        {
+            if(h > 0)
+            {
+                for(int w = 1; w <= F_width; w++)
+                {
+                    freq_maxOfSample[h][w] = max(freq[h][w], freq[h-1][w]);
+                }
+            }
+        }
+    }
+    if(usingDoubleSampling) freq = freq_maxOfSample;
 	upToDate = true;
+}
+
+vector<vector<float> > RepeatMap::emptyCopy(vector<vector<float> > starter)//TODO: is there a shorter way of allocating this?
+{
+    vector<vector<float> > emptyCopy;
+    for(vector<vector<float> >::iterator iter = starter.begin(); iter != starter.end(); iter++)
+    {
+        emptyCopy.push_back(vector<float>(iter->size(), 0));//adds a new vector of the same size filled with zeros.
+    }
+    return emptyCopy;
 }
 
 int RepeatMap::height()
@@ -243,6 +271,13 @@ void RepeatMap::changeGraphWidth(int val)
 		emit graphWidthChanged(F_width);
 	}
 }	
+
+
+void RepeatMap::toggleDoubleSample(bool d)
+{
+    usingDoubleSampling = d;
+    invalidate();
+}
 
 string RepeatMap::mouseClick(point2D pt)
 {
