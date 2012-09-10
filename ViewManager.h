@@ -20,9 +20,8 @@ public:
 	GLWidget* activeWidget;
 	
 	ViewManager(MainWindow* window, UiVariables gui);
-	void createConnections();
-	void connectLocalCopy(GLWidget* active, UiVariables local);
-	void uiToGlwidgetConnections(GLWidget* active);
+    void createConnections();
+    void uiToGlwidgetConnections(GLWidget* active);
 
 signals:
 	
@@ -33,7 +32,7 @@ public slots:
 	void changeFile(QString);
 	void addAnnotationDisplay(QString);
 	void addBookmark();
-	void handleWindowSync();	
+    void handleWindowSync();
 	void changePublicStart(int val);
 	void printNum(int num);
 	void printNum2(int num);
@@ -48,9 +47,7 @@ private:
 	
 	void broadcastLocalValues(UiVariables local);
 	void broadcastPublicValues(UiVariables local);
-	UiVariables copyUi();
-//	void connectOffset(GLWidget* active, UiVariables local);
-//	void disconnectOffset(GLWidget* active, UiVariables local);
+    UiVariables copyUi();
 	void connectVariables(GLWidget*, UiVariables);
 	void disconnectVariables(GLWidget*, UiVariables);
 	UiVariables vars(GLWidget* active);

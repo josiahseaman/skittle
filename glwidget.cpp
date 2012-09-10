@@ -82,7 +82,7 @@ GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
 	
 	setupColorTable();
 	reader = new FastaReader(this, &ui);
-	//this needs to be moved .... somewhere
+    //TODO:this needs to be moved .... somewhere
 	connect(reader, SIGNAL(newFileRead(const string*)), this, SLOT(displayString(const string*)));
 	
     trackReader = new GtfReader(ui);
@@ -149,7 +149,7 @@ void GLWidget::createConnections()
 	
 	connect(trackReader,SIGNAL(BookmarkAdded(track_entry,string)), this,SLOT(addTrackEntry(track_entry,string)));
 
-	/****CONNECT LOCAL VARIABLES*******/ 
+    /****CONNECT LOCAL VARIABLES*******/
 	connect(ui.zoomDial,  SIGNAL(valueChanged(int)), this, SLOT(changeZoom(int)));
 	connect(ui.scaleDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
 	connect(ui.widthDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
@@ -282,7 +282,7 @@ void GLWidget::updateDisplay()
 {
 	setTotalDisplayWidth();
 	//updateDisplaySize();
-	//ui.print("UpdateGL");
+    //ui.print("UpdateGL");
 	redraw();
 }
 
@@ -869,8 +869,9 @@ void GLWidget::createCursors()
 	zoomOutCursor = QCursor( pic2, mask);  
 }
 
-void GLWidget::reportOnFinish(){
+void GLWidget::reportOnFinish(int i){
 	ui.print("The Editing has Finished");
+    ui.printNum(i);
 }
 /****************************************
  * Rethinking this strategy:

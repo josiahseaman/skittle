@@ -24,44 +24,16 @@ ViewManager::ViewManager(MainWindow* window, UiVariables gui)
 }
 
 void ViewManager::createConnections()
-{	
+{
 	connect(mainWindow->addViewAction, SIGNAL(triggered()), this, SLOT(addNewView()));
     connect(mainWindow->syncCheckBox, SIGNAL(stateChanged(int)), this, SLOT(handleWindowSync()));
 	/****CONNECT ui VARIABLES*******/ 
 	
-	connect(ui.widthDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));	connect(ui.zoomDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
+    connect(ui.widthDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
+    connect(ui.zoomDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
 	connect(ui.scaleDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
 	connect(ui.startDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
 	connect(ui.sizeDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
-	
-	//TODO: find where these belong;
-    //~ connect(ui.widthDial, SIGNAL(valueChanged(int)), this, SLOT(widthChanged(int)));
-	//~ connect(ui.zoomDial,  SIGNAL(valueChanged(int)), this, SLOT(zoomChanged(int)));
-	//~ connect(ui.scaleDial, SIGNAL(valueChanged(int)), this, SLOT(scaleChanged(int)));
-	//~ connect(ui.startDial, SIGNAL(valueChanged(int)), this, SLOT(offsetChanged(int)));
-	//~ connect(ui.sizeDial,  SIGNAL(valueChanged(int)), this, SLOT(sizeChanged(int)));
-	
-	
-	
-}
-
-void ViewManager::connectLocalCopy(GLWidget* active, UiVariables local)
-{	
-	//The Following has been moved to GLWidget::createConnections()
-	//testing
-	//~ connect(local.widthDial, SIGNAL(editingFinished ()), active, SLOT(reportOnFinish()));
-	
-	/****CONNECT LOCAL VARIABLES*******/ 
-	//this should be handled internally by glwidget, in the constructor, or anytime a view is added to the glwidget, not here.
-	//~ connect(local.widthDial, SIGNAL(editingFinished()), active, SLOT(updateDisplaySize()));
-	//~ connect(local.widthDial, SIGNAL(editingFinished()), active, SLOT(updateDisplay()));
-	//~ connect(local.zoomDial,  SIGNAL(valueChanged(int)), active, SLOT(changeZoom(int)));
-	//~ connect(local.zoomDial,  SIGNAL(editingFinished()), active, SLOT(updateDisplay()));
-	//~ connect(local.scaleDial, SIGNAL(editingFinished()), active, SLOT(updateDisplay()));
-	//~ connect(local.scaleDial, SIGNAL(valueChanged(int)), active, SLOT(updateDisplaySize()));
-	//~ connect(local.startDial, SIGNAL(editingFinished()), active, SLOT(updateDisplay()));
-	//~ connect(local.sizeDial,  SIGNAL(editingFinished()), active, SLOT(updateDisplay()));
- 
 }
 
 void ViewManager::uiToGlwidgetConnections(GLWidget* active)
@@ -94,8 +66,7 @@ GLWidget* ViewManager::addNewView(bool suppressOpen)
     child->show();
     views.push_back(child);
 	
-	GLWidget* newGlWidget = child->glWidget;
-	connectLocalCopy(newGlWidget,  localDials);
+    GLWidget* newGlWidget = child->glWidget;
 	uiToGlwidgetConnections(newGlWidget);
 	connectVariables(newGlWidget, localDials);
 	
@@ -303,11 +274,11 @@ void ViewManager::connectVariables(GLWidget* active, UiVariables local)
 
 	connect(local.scaleDial	, SIGNAL(valueChanged(int)), ui.scaleDial	, SLOT(setValue(int)));
 	connect(ui.scaleDial	, SIGNAL(valueChanged(int)), local.scaleDial, SLOT(setValue(int)));
-	connect(active,           SIGNAL(scaleChanged(int)), local.scaleDial,    SLOT(setValue(int)));
+    connect(active,           SIGNAL(scaleChanged(int)), local.scaleDial, SLOT(setValue(int)));
 
 	connect(local.zoomDial	, SIGNAL(valueChanged(int)), ui.zoomDial	, SLOT(setValue(int)));
 	connect(ui.zoomDial		, SIGNAL(valueChanged(int)), local.zoomDial	, SLOT(setValue(int)));
-    connect(active, SIGNAL(scaleChangedSmart(int)), this, SLOT(scaleChangedSmart(int)));
+    connect(active, SIGNAL(scaleChangedSmart(int)),      this,            SLOT(scaleChangedSmart(int)));
 }
 
 void ViewManager::disconnectVariables(GLWidget* active, UiVariables local)
@@ -336,13 +307,13 @@ UiVariables ViewManager::vars(GLWidget* active)
 {
 	return dynamic_cast<MdiChildWindow*>(active->parent)->ui;
 }
+
 void ViewManager::updateCurrentDisplay(){
-	//activeWidget->reportOnFinish();
-	
-	if (mainWindow->syncCheckBox->isChecked()){
-		
-		for(int i = 0; i < (int)views.size(); ++i) {
-			views[i]->glWidget->updateDisplay();
+    if (mainWindow->syncCheckBox->isChecked())
+    {
+        for(int i = 0; i < (int)views.size(); ++i) {
+            views[i]->glWidget->updateDisplay();
+            activeWidget->reportOnFinish(i);
 		}
 	}
 	else {

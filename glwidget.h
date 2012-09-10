@@ -85,7 +85,7 @@ public:
 
 
 public slots:
-	void reportOnFinish();
+    void reportOnFinish(int);
     void changeZoom(int z);
     void displayString(const string*);
     void on_moveButton_clicked();
@@ -112,8 +112,7 @@ signals:
 	void printHtml(QString);
 	void addGraphMode(AbstractGraph*);
 	void addDivider();
-	void AnnotationDisplayAdded(AnnotationDisplay*);
-	//void IveBeenClicked(GLWidget*);
+    void AnnotationDisplayAdded(AnnotationDisplay*);
 	void displaySizeChanged();
 	void hideSettings(QScrollArea*);
     void showSettings(QScrollArea*);

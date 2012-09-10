@@ -7,8 +7,7 @@
 #include "BasicTypes.h"
 #include "TextureCanvas.h"
 /**
-*  This is the base class for all Grapher objects.  The constructor requires
-*  a Ui reference so that it can 'connect' to controls in the Ui.
+*  This is the base class for all Grapher objects.
 */
 
 class GLWidget;

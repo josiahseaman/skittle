@@ -3,6 +3,15 @@
 #include "glwidget.h"
 #include <math.h>
 
+
+/*******************
+  Abstract Graph is the abstract class that all of the Graphs inherit from.
+  Graph are the main workhorses of Skittle.  The are different ways of
+  displaying the genome sequence.  This class should contain all of the
+  universal functionality of the graphs like receiving data, sending signals,
+  handling variable changes and painting using a TextureCanvas.  The constructor requires
+*  a Ui reference so that it can 'connect' to controls in the Ui.
+  */
 AbstractGraph::AbstractGraph()
 {
     usingTextures = true;
