@@ -4,7 +4,7 @@
 #include <math.h>
 
 
-/*******************
+/** *****************
   Abstract Graph is the abstract class that all of the Graphs inherit from.
   Graph are the main workhorses of Skittle.  The are different ways of
   displaying the genome sequence.  This class should contain all of the

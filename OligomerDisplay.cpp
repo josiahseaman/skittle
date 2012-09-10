@@ -7,6 +7,20 @@
 
 double valueForN = -2.0;
 
+/** *************************************************
+OligomerDisplay shows the abundance of oligomers for each line on the screen (based on width).
+Oligomers are short sequences of nucleotides (between length 1-5bp in this case).  This class
+computes an exhaustive list of every possible oligomer of a given length, then counts how many
+of each oligomer appear on each line (width). Oligomers are arranged alphabetically.
+This information is stored in vector< vector<double> > freq. For example freq[10][2] would be
+number of 'AAG' oligomers on the 11th line of the screen.
+
+There are 3 subviews controlled by OligomerDisplay.  The first on the left, is a grey scale map
+where each column represents one oligomer, arranged in alphabetical order. The scale is normalized
+to the largest value being white.
+
+  ***************************************************/
+
 OligomerDisplay::OligomerDisplay(UiVariables* gui, GLWidget* gl)
 {	
 	glWidget = gl;

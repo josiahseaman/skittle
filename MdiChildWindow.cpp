@@ -6,6 +6,24 @@
 
 using std::find;
 
+/** ************************************************
+MdiChildWindow acts as the interface between ViewManager and GLWidget. It means that a subwindow
+inside of skittle can be minimized, restored, and closed.  Multiple files can be laid out side by
+side for comparison.  ViewManager and MdiChildWindow handle the synchronization of variables between
+windows.  When MainWindow::syncCheckBox is checked variable updates from the user propagate to all
+windows.  Each window that is created makes a new ui.offsetDial that manages the relative offset between
+the local and global start position (positive or negative).  The other function of MdiChildWindow
+is to ensure that the correct settings tabs for the active window are displayed on the Information Display
+QDockWidget *infoDock.
+
+Window Hierarchy:
+MainWindow -> (1) Viewmanager -> (many) MdiChildWindow -> (1) GLWidget -> (1)FastaReader -> (1)File
+MainWindow is at the top of a window hierarchy.  The center widget of MainWindow is a single
+ViewManager which inherits from MdiArea.  The multiple document interface (MDI) can have multiple
+MdiChildWindows.  Each MdiChildWindow has only one GLWidget tied to one file.  MainWindow is
+the primary owner of the UiVariables object that is passed for signals all throughout the program.
+*************************************************/
+
 MdiChildWindow::MdiChildWindow(UiVariables gui, QSpinBox* pStart, QTabWidget* settings)
 	: ui(gui)
 {

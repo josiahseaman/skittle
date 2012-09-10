@@ -22,6 +22,25 @@
 #include "ViewManager.h"
 #include "TextureCanvas.h"
 
+/** *******************************************
+MainWindow is the primary UI frame for Qt Widgets.  It is the master window
+that the OS interfaces with.  It contains a series of QToolBar with the UI elements
+that can be moved around by the user (Visualization Graphs, Mouse Tools,
+Sequence View Settings, File Actions, Information Display).
+These same buttons are tied to actions which can be triggered from the standard window
+menu bar in all applications.  The arrangement of buttons on the screen is remembered
+between instances of the program as a user preference.
+
+In addition to the actions, buttons and layout, all the logic for internal connections
+is within: createUiConnections(), createFileConnections() and addDisplayActions().
+
+Window Hierarchy:
+MainWindow -> (1) Viewmanager -> (many) MdiChildWindow -> (1) GLWidget -> (1)FastaReader -> (1)File
+MainWindow is at the top of a window hierarchy.  The center widget of MainWindow is a single
+ViewManager which inherits from MdiArea.  The multiple document interface (MDI) can have multiple
+MdiChildWindows.  Each MdiChildWindow has only one GLWidget tied to one file.  MainWindow is
+the primary owner of the UiVariables object that is passed for signals all throughout the program.
+********************************************/
 
 MainWindow::MainWindow()
 {
@@ -137,7 +156,7 @@ void MainWindow::createMenus()
 	searchMenu->addAction(hilightResultsAction);*/
     viewMenu = menuBar()->addMenu("&View");
 	toolBarMenu = viewMenu->addMenu("ToolBar");
-	presetMenu = viewMenu->addMenu("Presets");
+    presetMenu = viewMenu->addMenu("Visualization Graphs");
 	
 	annotationMenu = menuBar()->addMenu("&Annotations");
 	annotationMenu->addAction(addAnnotationAction);
@@ -169,7 +188,7 @@ void MainWindow::createToolbars()
 	QFont boldFont = QFont();
 	boldFont.setBold(true);
 
-	annotationToolBar = addToolBar("Files");
+    annotationToolBar = addToolBar("File Actions");
 	annotationToolBar->setObjectName("file");
 	annotationToolBar->addAction(openAction);
 	annotationToolBar->addAction(addViewAction);
@@ -180,13 +199,13 @@ void MainWindow::createToolbars()
 	//annotationToolBar->addAction(delAnnotationAction);
 	toolBarMenu->addAction(annotationToolBar->toggleViewAction());
 	
-	presetToolBar = new QToolBar("Presets");
-	presetToolBar->setObjectName("presets");
+    presetToolBar = new QToolBar("Visualization Graphs");
+    presetToolBar->setObjectName("Visualization Graphs");
 	presetToolBar->setOrientation(Qt::Horizontal);
 	toolBarMenu->addAction(presetToolBar->toggleViewAction());
 	
-	toolToolBar = addToolBar("Tools");
-	toolToolBar->setObjectName("Tools");
+    toolToolBar = addToolBar("Mouse Tools");
+    toolToolBar->setObjectName("Mouse Tools");
 	toolToolBar->addAction(moveAction);
 	toolToolBar->addAction(resizeAction);
 	toolToolBar->addAction(zoomAction);
@@ -194,8 +213,8 @@ void MainWindow::createToolbars()
 	toolToolBar->addAction(findAction);
 	toolBarMenu->addAction(toolToolBar->toggleViewAction());
 	
-	settingToolBar = addToolBar("Global Settings");
-	settingToolBar->setObjectName("setting");
+    settingToolBar = addToolBar("Sequence View Settings");
+    settingToolBar->setObjectName("Sequence View Settings");
 
 	QLabel* activeW = new QLabel("Active Window:");
 	activeW->setFont(boldFont);	

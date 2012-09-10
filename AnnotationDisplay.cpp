@@ -2,7 +2,19 @@
 #include "glwidget.h"
 #include <sstream>
 #include <algorithm>
+/** **********************
+  This class is a Graph class that is designed to visualize annotation files.
+  This is the most unusual of the graphs except for Cylinder.  It makes a slender bar
+  on the far right of the screen with colored bars that correspond to each of the entries
+  in the annotation.
 
+  Annotations are marked by a beginning an end, and a text string describing what the element is.
+  AnnotationDisplay uses a helper class called track_entry that stores this information.
+  The beginning and end coordinates are matched up with the nucleotide index in all other views.
+  A main issue that the AnnotationDisplay needs to overcome is that annotations can overlap.
+  In cases of overlap, it adds another parallel lane and places additional annotation side by side.
+  The logic for parallel lanes is in displayTrack().
+  **********************/
 AnnotationDisplay::AnnotationDisplay(UiVariables* gui, GLWidget* gl, string gtfFileName)
 {	
 	glWidget = gl;
@@ -112,7 +124,7 @@ void AnnotationDisplay::displayTrack(const vector<track_entry>& track)
 		{
 			color c;
 			if(activeEntries[x].isBlank())
-				c = color(200,200,200); 
+                c = color(200,200,200);
 			else	
 				c = activeEntries[x].col;
 				

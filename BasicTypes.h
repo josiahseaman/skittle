@@ -7,6 +7,18 @@
 
 using namespace std;
 
+/*******************
+  BasicTypes is a catch-all file for the many Plain-Old-Data helper objects that Skittle uses.
+  It's membership is:
+  * ErrorBox - a convenience constructor for QMessageBox
+  * color - rgb triplet with a lot of operators for color logic
+  * point (and point2D) - xyz with interpolation and operators
+  * track_entry - used mainly by AnnotationDisplay
+
+  BasicTypes exists mainly for ease of importing.  It could be broken into multiple files for compliance.
+
+*********************/
+
 class ErrorBox{
 public:
 	ErrorBox(const char* msg)

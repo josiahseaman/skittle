@@ -11,6 +11,24 @@
 
 using std::ifstream;
 
+/** **************************************
+  HighlightDisplay is a Graph class (AbstractGraph) that display a set of search sequences
+  highlighted in their own colors.  All non-matching sequence is shown on grey-scale
+  according to how closely they almost matched a search sequence ( max(match1, match2) ).
+  The user can add new sequences to highlight through the settingsUi() tab.  By popular
+  demand, the sequence highlighter also has the ability to read in an entire query file
+  where each line is a search sequence.  This is accessed through the button OpenFileButton
+  and the method openQueryFile().  Zooming out to higher scales offers a unique problem with
+  HighlightDisplay since the useful information is sparse data.  The scaling method ensures
+  that each identified sequence doesn't drop below 1 pixel unless it collides with a larger
+  search sequence match.
+
+  Development: Unlike NucleotideDisplay and RepeatMap, HighlightDisplay takes up linearly more
+  processing time proportional to the size of the sequence.  It does not have any performance
+  optimization for large sizes.  Adding a BLAST-like performance optimization would make this
+  view more useful for mapping out genome element distributions.  Issue #32
+****************************************/
+
 HighlightDisplay::HighlightDisplay(UiVariables* gui, GLWidget* gl)
 :NucleotideDisplay(gui, gl)
 {	
@@ -65,7 +83,7 @@ QScrollArea* HighlightDisplay::settingsUi()
 	addNewSequence();
 	
 	connect( addButton, SIGNAL(clicked()), this, SLOT(addNewSequence()));
-	connect( OpenFileButton, SIGNAL(clicked()), this, SLOT(openSequence()));
+    connect( OpenFileButton, SIGNAL(clicked()), this, SLOT(openQueryFile()));
 	connect( clearEntriesButton, SIGNAL(clicked()), this, SLOT(clearAllEntries()));
 		
     connect( similarityDial, SIGNAL(valueChanged(int)), this, SLOT(setPercentSimilarity(int)));     	
@@ -273,7 +291,7 @@ string stripWhiteSpace(string line)
 	return line;
 }
 
-void HighlightDisplay::openSequence()
+void HighlightDisplay::openQueryFile()
 {
 	QString fileName = QFileDialog::getOpenFileName(
 		this,"Open Query File", 

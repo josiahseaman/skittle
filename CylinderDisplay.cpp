@@ -2,6 +2,23 @@
 #include "glwidget.h"
 #include <sstream>
 
+/** *******************
+  CylinderDisplay is a 3D Graph class that is designed to bring all tandem repeats
+  on the screen into alignment simultaneously.  It does this by dynamically changing
+  the circumference of each line of the cylinder based on the sequence content.  This
+  means that it has to decide the optimum width for every few nucleotides.  This is fairly
+  processor intensive.  Adding 3D rendering on top of that makes this a complicated class.
+
+  The algorithm for calculating continuous alignment has been offloaded to the NucleotideLinker
+  class, while the logic for 3D rotation and display exists in CylinderDisplay.
+
+  Development: Historically, CylinderDisplay was designed to model a hypothesis for DNA folding inside of
+  the nucleus.  Thus the 3D display.  If the purpose is simply to show all repeats in alignment,
+  then this Graph should be succeeded by a 2D Ragged Edge Graph that uses similar algorithms.
+  2D would be better in that the user could see all of the sequence and simpler to render.
+
+*********************/
+
 CylinderDisplay::CylinderDisplay(UiVariables* gui, GLWidget* gl)
 {	
 	glWidget = gl;

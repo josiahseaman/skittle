@@ -14,6 +14,26 @@
 
 using namespace QtConcurrent;
 
+/** *********************
+  FastaReader is the file reader for sequence files (FASTA format) usually ending in .fa.
+  The first line starts with > and a name then the rest of the file is ACGT or acgt.  The
+  character N is used to fill in unsequenced regions.  Capitalization is discarded by default
+  since it is meant to mark "junk sequences".  All letters are capitalized for easy reading and
+  so that equivalence checks A == a work in the rest of the program.
+
+  FastaReader uses a progress bar dialog and is optimized for reading large files quickly.  It reads
+  an entire file into memory, which makes reading the full 3GB human genome a big memory hog.
+  FastaReader provides a string pointer (string*) to the rest of the program through the seq() method.
+  The string is not ever copied, as it may be very large.  There are several unused read methods left
+  over from experimentation with optimal memory management.
+
+  FastaReader is created inside the constructor of glWidget so that there is a reader for
+  every mdiChildWindow.  Each reader can only have one file open at a time.
+  The actions:  openAction and addViewAction in MainWindow start a cascade that leads to the creation
+  of a new FastaReader.
+
+  *********************/
+
 FastaReader::FastaReader( GLWidget* gl, UiVariables* gui) 
 {	
 	glWidget = gl;
@@ -225,6 +245,9 @@ const string* FastaReader::seq()
 	return &sequence;
 }
 
+/** Currently a hard coded logo is used to start up a new FastaReader.  This ensures that if the user
+  selects cancel on the open file dialog the display is not left blank.
+*/
 string FastaReader::logo()
 {
 	return string(

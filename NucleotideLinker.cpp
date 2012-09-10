@@ -1,6 +1,24 @@
 //NucleotideLinker.cpp
 #include "NucleotideLinker.h"
 
+/** ***********************
+  NucleotideLinker contains all of the connection and alignment logic for CylinderDisplay.
+  The algorithm works by scanning for initial seed matches and then expanding the alignment
+  as far as it will go.  The process is based on how ice crystals form in a pond then
+  grow until they link together.  The initial seed must be a set of 4 nucleotides that match
+  perfectly with another 4 downstream.  This seed is expanded until the edge drops below
+  some similarity threshhold.  It uses the global widthDial display width to determine the
+  minimum distance to align to.
+
+  NucleotideLinker generates a "widthList" for CylinderDisplay.  There are a number of tweak
+  functions (multiples_check, smooth, tie_up_loose_ends) that make the cylinder look better.
+
+Development: One currently neglected feature is the DrawArc function.  This was originally another Graph
+  inspired by "The Shape of Song" http://www.turbulence.org/Works/song/index.html  The idea
+  is to have arcs contecting repeated motifs along the length of the DNA sequence.
+
+*************************/
+
 NucleotideLinker::NucleotideLinker()
 {	
 	F_width = 250;

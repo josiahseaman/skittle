@@ -32,7 +32,7 @@ public slots:
 	void setHighlightSequence(const QString&);
 	void addNewSequence();
 	void addNewSequence(string);
-	void openSequence();
+    void openQueryFile();
 	void removeEntry(SequenceEntry*);
 	void clearAllEntries();
 	void setPercentSimilarity(int);
