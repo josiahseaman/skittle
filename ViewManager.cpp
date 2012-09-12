@@ -336,7 +336,7 @@ void ViewManager::updateCurrentDisplay(){
     {
         for(int i = 0; i < (int)views.size(); ++i) {
             views[i]->glWidget->updateDisplay();
-            activeWidget->reportOnFinish(i);
+            //activeWidget->reportOnFinish(i);
 		}
 	}
 	else {
