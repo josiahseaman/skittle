@@ -193,6 +193,7 @@ void MainWindow::createToolbars()
 	annotationToolBar->addAction(openAction);
 	annotationToolBar->addAction(addViewAction);
 	annotationToolBar->addAction(addAnnotationAction);
+    annotationToolBar->addAction(importAction);
 	//annotationToolBar->addAction(nextAnnotationAction);
 	//annotationToolBar->addAction(prevAnnotationAction);
 	//annotationToolBar->addAction(browseCommunityAction);
