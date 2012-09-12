@@ -21,6 +21,7 @@
 
 #include "glwidget.h"
 #include "NucleotideDisplay.h"
+#include "BiasDisplay.h"
 #include "RepeatMap.h"
 #include "AnnotationDisplay.h"
 #include "CylinderDisplay.h"
@@ -76,6 +77,7 @@ GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
     trackReader = new GtfReader(ui);
 	
     nuc = new NucleotideDisplay(&ui, this);
+    bias = new BiasDisplay(&ui, this);
     freq = new RepeatMap(&ui, this);
     freq->link(nuc);
     cylinder = new CylinderDisplay(&ui, this);
@@ -84,11 +86,12 @@ GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
 	highlight = new HighlightDisplay(&ui, this);
    	
    	graphs.push_back(cylinder);
-   	graphs.push_back(nuc);
-   	graphs.push_back(olig);
-   	graphs.push_back(align);
-   	graphs.push_back(freq);
-   	graphs.push_back(highlight);
+    graphs.push_back(nuc);
+    graphs.push_back(highlight);
+    graphs.push_back(bias);
+    graphs.push_back(freq);
+    graphs.push_back(align);
+    graphs.push_back(olig);
    	
 	border = 10;    
     xPosition = 0;
@@ -760,7 +763,7 @@ void GLWidget::setupColorTable()
 	colorTable[ (int)'C' ] = color(255, 0, 0);//RED - Cytosine
 	colorTable[ (int)'G' ] = color(0, 255, 0);//GREEN - Guanine
 	colorTable[ (int)'T' ] = color(0, 0, 255);//BLUE - Thymine
-	colorTable[ (int)'N' ] = color( 50, 50, 50);//not sequenced*/
+    colorTable[ (int)'N' ] = color( 50, 50, 50);//not sequenced
 
 }
 
