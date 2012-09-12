@@ -2,6 +2,13 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QLineEdit>
 
+/** ***************************************
+SequenceEntry is a minor helper class used exclusively by HighlightDisplay.
+Each SequenceEntry widget is one line in the HighlightDisplay::settingsUi()
+tab.  The constructor is called by HighlightDisplay::addNewSequence().
+The class keeps track of its sequence, its color, and whether or not it has
+been removed.
+******************************************/
 
 SequenceEntry::SequenceEntry(QLabel* Label, QLineEdit* line)
 {

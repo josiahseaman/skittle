@@ -3,7 +3,42 @@
 #include <sstream>
 #include <QFrame>
 
+/** ***************************************
+RepeatMap is designed to make finding tandem repeats much easier than randomly
+scrolling around with NucleotideDisplay.  It was the second Graph model designed
+and can reveal any tandem repeat with a frequency bewteen 1-250bp.  RepeatMap is
+a grey scale Graph, with the y-axis progressing along the length of the sequence
+matched to NucleotideDisplay.  The x-axis, on the other hand, is in frequency space.
+The first column of pixels on the left represents an offset (or width) of 1.
+Columns progressing to the right represent repeats at increasing longer distances
+or longer monomer lengths.
 
+The easiest way to think of RepeatMap is as a summary of a series of NucleotideDisplays.
+Tandem repeats appear as a series of vertical bars when the NucleotideDisplay is set to
+a width matching the frequency of the tandem repeat.  So RepeatMap is looking for vertical
+bars at a given width.
+For each horizontal line of pixels on the screen, it makes a NucleotideDisplay starting
+at a width of one. To get the score, it counts the number of time where the pixel below
+ is the same color as the pixel on that line.  There is about a 25% chance of 2 pixels
+being the same color if they are not in a repeat.  Inside of a tandem repeat, displayed
+at the correct width, there is closer to 90% similarity between the current line and the
+line below.  For example, if you have the five character monomer GAACT and the frequency
+is 5,10, or 15... then the first character on each line will always be a G. This would mean
+a score of 1.0 (100%) and would be displayed as a white pixel in RepeatMap.  The next four
+lines will be dark grey, and then the next multiple (10bp) will also be white.  Thus,
+tandem repeats appear as a series of white stripes on the RepeatMap, regardless of the
+display width.  The size of the gap between white lines is the size of the repeat monomer.
+
+At scale 1, RepeatMap uses a simple equivalence check A==B?.  At scales greater than 1, it
+switches to using the color averaged sequence from NucleotideDisplay instead of the base
+sequence.  This has the nice property that RepeatMap always computes in constant time, regardless
+of scale.  The size of repeats it is scanning for is proportional to the number of nucleotides
+(not pixels) on the screen.
+This change in behavior requires a change in the equivalence check, since no two stretches of
+1,000bp are exactly the same.  Instead, RepeatMap uses a correlation score between the two RGB
+values using: double correlate().  This is the same method as above, but more mathematically
+sophisticated.
+*******************************************/
 RepeatMap::RepeatMap(UiVariables* gui, GLWidget* gl)
 {	
 	glWidget = gl;
@@ -201,6 +236,8 @@ void RepeatMap::freq_map()
         }
         else
         {*/
+        /** This is the core algorithm of RepeatMap.  For each line, for each width,
+          check the line below and see if it matches.         */
         for(int w = 1; w <= F_width; w++)//calculate across widths 1-F_width
         {
             int score = 0;

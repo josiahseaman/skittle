@@ -1,8 +1,66 @@
 //RepeatOverviewDisplay.cpp
 #include <sstream>
 #include "RepeatOverviewDisplay.h"
-//#include "TextRender.h"
 #include "glwidget.h"
+
+/** ******************************  Graph Class
+Repeat Overview is the next step beyond RepeatMap.  As RepeatMap is a summary
+of NucleotideDisplay, so RepeatOverview is a summary of RepeatMap.  Each pixel
+of RepeatOverview represents the "best match" from a RepeatMap row.  The size
+of string that it tries to match is based on the ui->scaleDial variable.  For
+example, at scale 10 each pixel represent 10bp.  The result is the equivalent
+of setting RepeatMap at width 10 (10bp per line) and finding the highest score
+for that line.  The highest score will be a single number between 1 and 250
+(the default scan range).  That number is the frequency of the tandem reapeat.
+The frequency is then represented with a hue mapped along a rainbow: 1 = blue,
+250 = cyan.  Of course not all sequences are tandem repeats.  The brightness of
+the pixel indicates the highest score, making non-repetitive areas dark colored.
+
+The fundamental difficulty in coding RepeatOverview is that it is designed to
+work best at large scales, whereas all other Graphs start at scale 1 and work
+up.  RepeatOverview at scale 1 is not terribly meaningful.  ((I suppose each pixel
+would represent the number of nucleotides until that nucleotide was repeated.
+So given the sequence ACCAGG... the answer would be 31--1-...))  RepeatOverview
+is also very CPU intensive.  The current optimization packs 4 letters into one byte
+then does comparisons in groups of four.  This requires a lot of bit level logic
+and forces the scale to be a multiple of four.  This means that RepeatOverview
+is the only Graph mode that must push values back to the global ui, causing update
+challenges.  Example: RepeatOverviewDisplay::toggleVisibility()
+
+It is important to realize that RepeatOverview is the most difficult because it is
+the most ambitious, not because it is badly written.  The computational complexity
+of the base problem is higher than anything else in Skittle:
+Big(O) = N * Scale * 250
+N = number of pixels
+250 = default scan range = number of RepeatMap comparisons
+This means that regardless of how "zoomed out" the user is, RepeatOverview computes
+over every letter of the file in the visible region.  This is necessary in order to
+maintain the ability to detect 3bp frequency repeats at the scale of a whole chromosome.
+So for Human Chromosome 1 which is 246 million letters, Skittle performs
+246 million * 250 = 61 billion equivalence tests in order to display a single frame
+of the RepeatOver, updated in real-time.  THAT is why it's laggy.
+
+Performance Optimizations: Since there are only 4 possible nucleotides, RepeatOverview
+packs 4bp into the 8 bits of a byte.  This is stored in unsigned char* packSeq.  This
+garners a 4x speed increase.  Furthermore, the comparisons are done using operations
+over the size of one long int, which is at least 64 bits.  This is at least another
+16x increase in performance, however it incurs overhead.  In order to work with these
+packed data types the header file contains a set of methods labeled "Optimized Long Int Accessors"
+and "Optimized Packed Sequence Methods".
+
+The bit logic in methods like countMatchesShort() bears explaining.  With four possibilities,
+a nucleotide take up two bits.  With one bit words, the number of 1's in an XOR will tell you
+the number of differences between two strings.  However, with nucleotides an XOR result of
+11, 10, and 01 all count as 1 difference.  This means that you have to look at 2 bits at a time
+instead of simply counting.  So 1101 is 2 differences, 0110 is 2 differences and 0011 is one
+difference.
+
+Development:
+*Add text to the spectrum legend.
+*Make it useful at scale = 1.  Issue #33
+*Make the CPU optimization less buggy.
+*Make the scaleDial feedback for multiples of 4 unnecessary.
+*************************************/
 
 RepeatOverviewDisplay::RepeatOverviewDisplay(UiVariables* gui, GLWidget* gl)
 {	
@@ -293,7 +351,7 @@ color RepeatOverviewDisplay::simpleAlignment(int index)
 		
 	//scale % 4 == 0 always
 	int reference_size = scale / 4 + 2;//sequence bytes = scale / 4.  1 byte of padding for shifts. 1 byte for sub_index. 
-	int bitmask_size = reference_size + sizeof(long int);
+    int bitmask_size = reference_size + sizeof(long int);
 	int pack_index = index / 4;
 	int sub_index = index % 4;
 	int max_score = 0;

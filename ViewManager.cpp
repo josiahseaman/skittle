@@ -8,6 +8,29 @@
 #include <QtGui/QScrollBar>
 #include <algorithm>
 
+/** *******************************************
+ViewManager is the 'Multiple Document Interface' responsible for coordinating the existance of
+multiple windows being open inside Skittle at any one time.  Each window is tied to one file.
+The user has the option of keeping all windows in sync with each other or treating them as
+different instances of the program through the mainWindow->syncCheckBox.
+
+In the case wherethe windows are synced, changes to the dials are connected to each window and
+propagate to display updates.  In the case where they are not synced, switching between active
+windows actually changes the values of the dials to stored values.  This requires the creation
+of local copies of UiVariables, one for each window (MdiChildWindow).  The conditional connections
+go from the Global UiVariables set to each othe local UiVariables.  When a new window becomes
+active, the old variables must be disconnected, the globals are updated, and the new active
+variables are connected to them.  ViewManager contains all the logic for this dance of connections,
+values, and updates.  Look at addNewView() to see what happens when a new player comes on stage.
+
+Window Hierarchy:
+MainWindow -> (1) Viewmanager -> (many) MdiChildWindow -> (1) GLWidget -> (1)FastaReader -> (1)File
+MainWindow is at the top of a window hierarchy.  The center widget of MainWindow is a single
+ViewManager which inherits from MdiArea.  The multiple document interface (MDI) can have multiple
+MdiChildWindows.  Each MdiChildWindow has only one GLWidget tied to one file.  MainWindow is
+the primary owner of the UiVariables object that is passed for signals all throughout the program.
+********************************************/
+
 ViewManager::ViewManager(MainWindow* window, UiVariables gui)
 	: QMdiArea(window),
 	ui(gui)

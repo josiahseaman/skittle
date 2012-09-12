@@ -4,6 +4,22 @@
 
 using namespace std;
 
+/** *****************************************
+TextureCanvas is the display workhorse for all classes that inherit AbstractGraph.
+It interacts more directly with the graphics card through OpenGL in order to display
+Skittle's large Pixels.  It does this by creating a polygon (or series of) and
+mapping a Texture onto that polygon.  Texture interpolation and smoothing is disabled
+to ensure that the pixels are displayed as sharp squares.
+
+TextureCanvas first checks for a graphics driver by trying to fetch the maximum size
+of a texture.  If it does not find a graphics driver, then it defaults to paint each
+pixel as a colored polygon, which is slower.  With a driver, it breaks the requested
+display surface into multiple textureTile if the area is wider than the maximum
+texture size( stored in vector< vector< textureTile > > canvas).  All the data
+passed from the Graph class owner is stored in vector<color> colors and is passed
+in through the constructor.  This means a new TextureCanvas is generated every frame.
+********************************************/
+
 TextureCanvas::TextureCanvas()
 {
 	canvas.push_back(vector<textureTile>());
@@ -42,6 +58,9 @@ int TextureCanvas::checkForDisplayDriver()
     return max_size;
 }
 
+/** The method parses vector<> colors into the appropriate textureTile, turns it into an
+unsigned char (required by OpenGL) then loads it onto the graphics card as a texture
+and deletes the old data. */
 void TextureCanvas::loadPixelsToCard(vector<color> pixels, int max_size)
 {
     //determine the size of the texture canvas

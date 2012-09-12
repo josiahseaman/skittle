@@ -4,6 +4,17 @@
 #include <sstream>
 #include "UiVariables.h"
 
+/** *******************************
+This class is a container class for the set of 5 global dials that affect all
+Graph visualizations.  Those dials are: start, width, size, scale, and zoom.
+It also contains a pointer to the local offsetDial for multiple windows.
+Finally, UiVariables has a pointer to the textArea of "Information Display"
+and convenience functions for printing out information to the text area.  This
+is useful for writing debugging notes since cout is generally unavailable.
+You should also use the print functions to provide data to the user in a format
+that can be copy and pasted without the need to write a file.
+**********************************/
+
 UiVariables::UiVariables()
 {
 	textArea = NULL;

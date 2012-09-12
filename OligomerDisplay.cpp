@@ -19,7 +19,7 @@ There are 3 subviews controlled by OligomerDisplay.  The first on the left, is a
 where each column represents one oligomer, arranged in alphabetical order. The scale is normalized
 to the largest value being white.
 
-  ***************************************************/
+*****************************************************/
 
 OligomerDisplay::OligomerDisplay(UiVariables* gui, GLWidget* gl)
 {	

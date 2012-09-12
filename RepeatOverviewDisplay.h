@@ -28,10 +28,12 @@ public:
 	color alignment_color(int score, int frequency);
 	color interpolate(color p1, color p3, double progress);
 	
+    /** Optimized Long Int Accessors*/
 	long int& accessLI(int index);
 	long int sequenceLI(int index);
 	int countMatches(long int bits);
-		
+
+    /** Optimized Packed Sequence Methods*/
 	int countMatchesShort(unsigned short int bits);
 	int countMatchesChar(unsigned char bits);
 	void calcMatchTable();
