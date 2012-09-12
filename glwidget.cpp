@@ -71,7 +71,7 @@ GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
 	setupColorTable();
 	reader = new FastaReader(this, &ui);
     //TODO:this needs to be moved .... somewhere
-	connect(reader, SIGNAL(newFileRead(const string*)), this, SLOT(displayString(const string*)));
+    connect(reader, SIGNAL(newFileRead(const string*)), this, SLOT(displayString(const string*)));
 	
     trackReader = new GtfReader(ui);
 	
@@ -203,6 +203,10 @@ void GLWidget::displayString(const string* seq)
 	ui.scaleDial->setValue( newScale );*/
 	
 	emit displaySizeChanged();
+    ui.zoomDial->setValue(ui.zoomDial->value() + 1);
+    this->updateDisplay();
+    ui.zoomDial->setValue(ui.zoomDial->value() - 1);
+    this->updateDisplay();
 }
 
 void GLWidget::on_moveButton_clicked()
@@ -288,7 +292,6 @@ void GLWidget::updateDisplaySize()
 	{
 		ui.sizeDial->setValue( w * display_lines );
 		emit displaySizeChanged();
-		//updateDisplay();
 	}
 }
 
@@ -426,7 +429,7 @@ void GLWidget::keyReleaseEvent( QKeyEvent *event )
 {
 	if( event->key() == Qt::Key_Shift && tool() == ZOOM_TOOL)
 	{
-		setCursor(zoomInCursor);		
+        setCursor(zoomInCursor);
 		event->accept();
 	}
 	else{
