@@ -132,7 +132,7 @@ void MainWindow::createActions()
 	openAction = new QAction("&Open File",this);
 	openAction->setStatusTip("Open a Sequence File");
 	
-	importAction = new QAction("&Import GTF Annotation File",this);
+    importAction = new QAction("Open Annotation",this);
 	importAction->setStatusTip("Open GTF / GFF Annotation File");
 	
 	exitAction = new QAction("E&xit",this);
