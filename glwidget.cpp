@@ -593,7 +593,16 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 	if(tool() == ZOOM_TOOL)
 	{
 		float zoomFactor = 1.2;
-		if(event->modifiers() & Qt::SHIFT) zoomFactor = .8;
+        if(event->modifiers() & Qt::SHIFT) zoomFactor = 0.8;
+        else if(event->button() == Qt::RightButton)
+        {
+            setCursor(zoomOutCursor);
+            zoomFactor = 0.8;
+        }
+        else
+        {
+            setCursor(zoomInCursor);
+        }
 			
 		int scale = ui.scaleDial->value();//take current scale
 		int index = oglCoords.y * (ui.widthDial->value()/scale) + oglCoords.x;
@@ -611,7 +620,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 			else
                 emit scaleChangedSmart(newScale); //ui.scaleDial->setValue(newScale);//set scale to the new value
 		}
-		else//zooming out
+        else //zooming out
 		{
 			if(zoom > 100)
                 ui.zoomDial->setValue( max(100, ((int) (zoom * zoomFactor))) );
