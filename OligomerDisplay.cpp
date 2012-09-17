@@ -183,7 +183,7 @@ void OligomerDisplay::calculateHeatMap()
 	
 	vector<color> heatMap = colorNormalized(scores);
 	delete heatMapBuffer;
-	heatMapBuffer = new TextureCanvas( heatMap, F_height );
+    heatMapBuffer = new TextureCanvas( heatMap, height() );
 }
 //start: 20541380  width: 479304
 
@@ -400,13 +400,10 @@ int OligomerDisplay::oligNum(string a)
 }
 
 int OligomerDisplay::height()
-{	
-	//Width = ui->widthDial->value();	
-	//if(Width < 1) Width = 1;
-		
+{
 	F_height = (display_size - wordLength ) / Width;
 
-	F_height = max(0, min(400, F_height) );
+    F_height = max(1, min(400, F_height) );
 	
 	return F_height;
 }

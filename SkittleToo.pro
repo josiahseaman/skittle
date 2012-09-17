@@ -33,7 +33,8 @@ HEADERS += AbstractGraph.h \
            SequenceEntry.h \
            TextureCanvas.h \
            ViewManager.h \
-           UiVariables.h 
+           UiVariables.h \ 
+    BiasDisplay.h
 SOURCES += AbstractGraph.cpp \
            RepeatOverviewDisplay.cpp \
            AnnotationDisplay.cpp \
@@ -53,4 +54,5 @@ SOURCES += AbstractGraph.cpp \
            SequenceEntry.cpp \
            TextureCanvas.cpp \
            UiVariables.cpp \
-           ViewManager.cpp
+           ViewManager.cpp \
+    BiasDisplay.cpp

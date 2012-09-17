@@ -37,7 +37,7 @@ public:
     bool usingTextures;
 	QAction* toggleButton;
 	
-	int display_size;
+    int display_size;
 	int max_display_size;
 	int nucleotide_start;
 	int scale;

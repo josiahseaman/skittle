@@ -112,15 +112,8 @@ GLuint NucleotideDisplay::render()
 
 void NucleotideDisplay::load_nucleotide()
 {
-	nucleotide_colors.clear();
 	const char* genome = sequence->c_str() + nucleotide_start;
-	if(scale > 1)
-		color_compress();
-	else
-	{
-		for(int i = 0; i < display_size; ++i)
-			nucleotide_colors.push_back( glWidget->colors(genome[i]) );//TODO: Optimize pointer function call
-	}
+    sequenceToColors(genome);
 	
 	loadTextureCanvas();
 	upToDate = true;
@@ -129,12 +122,22 @@ void NucleotideDisplay::load_nucleotide()
 void NucleotideDisplay::loadTextureCanvas()
 {
 	storeDisplay( nucleotide_colors, width() );
-}	
+}
+
+void NucleotideDisplay::sequenceToColors(const char* genome)
+{
+    nucleotide_colors.clear();
+    if(scale > 1)
+        color_compress();
+    else
+    {
+        for(int i = 0; i < display_size; ++i)
+            nucleotide_colors.push_back( glWidget->colors(genome[i]) );//TODO: Optimize pointer function call
+    }
+}
 
 void NucleotideDisplay::color_compress()
 {
-	nucleotide_colors.clear();
-	
 	int r = 0;
 	int g = 0;
 	int b = 0;

@@ -34,7 +34,8 @@ public:
 	virtual GLuint render();
 	void load_nucleotide();
 	void loadTextureCanvas();
-	void color_compress();
+    virtual void sequenceToColors(const char* genome);
+    virtual void color_compress();
 	int widthInBp();//Nucleotide Display changes Width internally to w/scale
 	
 public slots:	

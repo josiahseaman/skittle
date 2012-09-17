@@ -32,7 +32,7 @@ TextureCanvas::TextureCanvas(vector<color> pixels, int w)
 	for(int i = 0; i <= w; ++i)
 		pixels.push_back( color(128,128,128) );
     
-    width = w;
+    width = max(1, w);//don't divide by zero
 	height = pixels.size() / width;
 
     int max_size = checkForDisplayDriver();
