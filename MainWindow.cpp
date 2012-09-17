@@ -437,9 +437,9 @@ void MainWindow::changeScale(int newScale)
 	if(oldScale != newScale)
 	{
 		//increment the width step by scale
-        widthDial->setSingleStep(newScale);		
-        
-        //
+        widthDial->setSingleStep(newScale);
+        widthDial->setMinimum(newScale);
+
 		int display_width = widthDial->value() / oldScale;
                 
 		display_width = max( 1, display_width);
@@ -448,6 +448,7 @@ void MainWindow::changeScale(int newScale)
         
 		widthDial->setValue( display_width * newScale );
 		scale->setValue(newScale);
+        displayLength->setMinimum(scale->value() * 500);
 		displayLength->setValue(display_size*newScale);
 		oldScale = newScale;
 	}

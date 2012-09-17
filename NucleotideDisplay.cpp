@@ -122,7 +122,7 @@ void NucleotideDisplay::load_nucleotide()
 void NucleotideDisplay::loadTextureCanvas()
 {
 	storeDisplay( nucleotide_colors, width() );
-}	
+}
 
 void NucleotideDisplay::sequenceToColors(const char* genome)
 {

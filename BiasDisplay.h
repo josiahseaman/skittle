@@ -11,10 +11,14 @@ class BiasDisplay : public NucleotideDisplay
 {
     Q_OBJECT
 public:
+    int display_width;
+
     BiasDisplay(UiVariables* gui, GLWidget* gl);
     QScrollArea* settingsUi();
     void load_nucleotide();
     void sequenceToColors(const char* genome);
+    vector<color> drawBar(int size, color barColor);
+    virtual int width();
     
     inline int ACGT_num(char n)
     {
