@@ -74,6 +74,9 @@ public:
 public slots:	
 	void changeMinDelta(double mD);	
 	void changeWordLength(int);
+    void graphOneDisplay(int);
+    void graphTwoDisplay(int);
+    void graphThreeDisplay(int);
 
 signals:
 	void wordLengthChanged(int);
@@ -99,6 +102,12 @@ private:
 	double range;
 	int F_width;
 	int F_height;
+    bool graphOneOn;
+    bool graphTwoOn;
+    bool graphThreeOn;
+    QCheckBox *graphOne;
+    QCheckBox *graphTwo;
+    QCheckBox *graphThree;
 	
 };
 

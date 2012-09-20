@@ -49,6 +49,10 @@ OligomerDisplay::OligomerDisplay(UiVariables* gui, GLWidget* gl)
 	actionData = actionLabel; 
 	wordLength = 2;
 	changeWordLength(3);
+
+    graphOneOn = true;
+    graphTwoOn = true;
+    graphThreeOn = false;
 	
 	connect( this, SIGNAL(wordLengthChanged(int)), this, SIGNAL(displayChanged()));//either this line or changeWordLength::invalidate()
 }
@@ -110,6 +114,24 @@ QScrollArea* OligomerDisplay::settingsUi()
     formLayout->addRow("Isochore Boundary Threshhold", threshholdDial);
 	
 	connect( threshholdDial, SIGNAL(valueChanged(double)), this, SLOT(changeMinDelta(double)));	
+
+    //Three check boxes for the three graphs
+    //Create the checkboxes
+    graphOne = new QCheckBox("Oligomer Counts", settingsTab);
+    graphTwo = new QCheckBox("Heat Map", settingsTab);
+    graphThree = new QCheckBox("Correlation Map", settingsTab);
+    //Add the three checkboxes to the formLayout for the settingsTab on new rows
+    formLayout->addRow(graphOne);
+    formLayout->addRow(graphTwo);
+    formLayout->addRow(graphThree);
+    //Set the checkboxes to be checked
+    graphOne->setChecked(true);
+    graphTwo->setChecked(true);
+    graphThree->setChecked(false);
+    //Connect the checkboxes to the change graphs method
+    connect(graphOne, SIGNAL(stateChanged(int)), this, SLOT(graphOneDisplay(int)));
+    connect(graphTwo, SIGNAL(stateChanged(int)), this, SLOT(graphTwoDisplay(int)));
+    connect(graphThree, SIGNAL(stateChanged(int)), this, SLOT(graphThreeDisplay(int)));
 	
 	return settingsTab;
 }
@@ -121,6 +143,84 @@ void OligomerDisplay::checkVariables()
 	changeStart(ui->startDial->value());
 	changeSize(ui->sizeDial->value());
 	changeWordLength(oligDial->value());
+}
+
+void OligomerDisplay::graphOneDisplay(int state)
+{
+    graphOneOn = state;
+
+    if(!state)
+    {
+        graphThreeOn = false;
+        graphThree->setChecked(false);
+        delete correlationBuffer;
+        graphTwoOn = false;
+        graphTwo->setChecked(false);
+        delete heatMapBuffer;
+        delete textureBuffer;
+    }
+    else
+    {
+        textureBuffer->display();
+    }
+
+    upToDate = false;
+    emit displayChanged();
+}
+
+void OligomerDisplay::graphTwoDisplay(int state)
+{
+    graphTwoOn = state;
+
+    if(!state)
+    {
+        graphThreeOn = false;
+        graphThree->setChecked(false);
+        delete correlationBuffer;
+        delete heatMapBuffer;
+    }
+    else
+    {
+        if(!graphOneOn)
+        {
+            graphOneOn = true;
+            graphOne->setChecked(true);
+            textureBuffer->display();
+        }
+        heatMapBuffer->display();
+    }
+
+    upToDate = false;
+    emit displayChanged();
+}
+
+void OligomerDisplay::graphThreeDisplay(int state)
+{
+    graphThreeOn = state;
+
+    if(!state)
+    {
+        delete correlationBuffer;
+    }
+    else
+    {
+        if(!graphOneOn)
+        {
+            graphOneOn = true;
+            graphOne->setChecked(true);
+            textureBuffer->display();
+        }
+        if(!graphTwoOn)
+        {
+            graphTwoOn = true;
+            graphTwo->setChecked(true);
+            heatMapBuffer->display();
+        }
+        correlationBuffer->display();
+    }
+
+    upToDate = false;
+    emit displayChanged();
 }
 
 void OligomerDisplay::changeMinDelta(double mD)
@@ -152,10 +252,19 @@ void OligomerDisplay::display()
 	checkVariables();
 	if(! upToDate )
 	{
-		freq_map();	
-		load_canvas();
-		calculateHeatMap();
-		selfCorrelationMap();
+        if(graphOneOn)
+        {
+            freq_map();
+        }
+        if(graphTwoOn)
+        {
+            calculateHeatMap();
+        }
+        if(graphThreeOn)
+        {
+            selfCorrelationMap();
+        }
+        load_canvas();
 	}
 	width();
 	glPushMatrix();

@@ -1,0 +1,52 @@
+Total size of all *.fa files in directory: 2861343840 
+Goal: 715335960 
+Attempting different compression tools on all *.fa files in the directory...
+
+Starting gzip compression at: 1347944963
+It took 457 seconds to compress all the *.fa files into a gzip format.
+The gzip compressed size of all the *.fa files is: 804543060 
+	Size Difference: + 89207100 
+	Compression Percent: 112.4706
+
+Starting bzip2 compression at: 1347945420
+It took 380 seconds to compress all the *.fa files into a bzip2 format.
+The bzip2 compressed size of all the *.fa files is: 736651440 
+	Size Difference: + 21315480 
+	Compression Percent: 102.9797
+
+Starting zip compression at: 1347945800
+It took 3996 seconds to compress all the *.fa files into a zip format.
+The zip compressed size of all the *.fa files is: 769515602 
+	Size Difference: + 54179642 
+	Compression Percent: 107.5740
+
+Starting solid rar compression at: 1347949796
+It took 369 seconds to compress all the *.fa files into a solid rar format.
+The solid rar compressed size of all the *.fa files is: 659468669 
+	Size Difference: - 55867291 
+	Compression Percent: 92.1900
+
+Starting unsolid rar compression at: 1347950165
+It took 329 seconds to compress all the *.fa files into an unsolid rar format.
+The unsolid rar compressed size of all the *.fa files is: 661064516 
+	Size Difference: - 54271444 
+	Compression Percent: 92.4131
+
+Starting cab compression at: 1347950494
+It took 233 seconds to compress all the *.fa files into an cab format.
+The cab compressed size of all the *.fa files is: 665 
+	Size Difference: - 715335295 
+	Compression Percent: 0 - FAILED
+
+Starting 7zip compression at: 1347950727
+It took 4297 seconds to compress all the *.fa files into a 7zip format.
+The 7zip compressed size of all the *.fa files is: 650292599 
+	Size Difference: - 65043361 
+	Compression Percent: 90.9072
+
+Starting nanozip compression at: 1347976516
+It took 4845 seconds to compress all the *.fa files into a nanozip format.
+The nanozip compressed size of all the *.fa files is: 627396215
+        Size Difference: - 87939745
+        Compression Percent: 87.7065
+ 
