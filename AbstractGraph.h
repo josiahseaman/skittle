@@ -52,7 +52,7 @@ public:
 	virtual void createConnections();
 	virtual int height();
 	virtual void paint_square(point position, color c);
-	virtual void storeDisplay(vector<color>& pixels, int width);
+    virtual void storeDisplay(vector<color>& pixels, int width, bool raggedEdge = false);
 	virtual bool updateInt(int& subject, int& value);
 	virtual bool updateVal(double& subject, double& value);
 	virtual void display() = 0;

@@ -18,8 +18,9 @@ int main(int argc, char *argv[])
     {
 		window.open(QString(argv[1]));
 	}
-	else{
-		window.open();
+    else{
+        window.open();
+//        window.open(QString("C:\\Users\\Josiah\\Documents\\Genomes\\Human Genome\\chr18.fa"));
 	}	
     return app.exec();
 }

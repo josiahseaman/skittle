@@ -79,11 +79,11 @@ void AbstractGraph::paint_square(point position, color c)
 	glPopMatrix();
 }
 
-void AbstractGraph::storeDisplay(vector<color>& pixels, int width)
+void AbstractGraph::storeDisplay(vector<color>& pixels, int width, bool raggedEdge)
 {
 	if(textureBuffer)
 		delete textureBuffer;
-	textureBuffer = new TextureCanvas( pixels, width );
+    textureBuffer = new TextureCanvas( pixels, width, raggedEdge );
 }
 
 bool AbstractGraph::updateInt(int& subject, int& value)

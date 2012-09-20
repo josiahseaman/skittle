@@ -446,7 +446,7 @@ QPointF GLWidget::pixelToGlCoords(QPoint pCoords, double z)
     glLoadIdentity();
 	GLdouble position[3];
 	GLdouble modelMatrix[16];
-	glGetDoublev(GL_MODELVIEW_MATRIX,modelMatrix);
+    glGetDoublev(GL_MODELVIEW_MATRIX,modelMatrix);
 	GLdouble projMatrix[16];
 	glGetDoublev(GL_PROJECTION_MATRIX,projMatrix);
 	int viewport[4];
@@ -479,7 +479,7 @@ void GLWidget::initializeGL()
     for(int i = 0; i < (int)graphs.size(); ++i)
 		graphs[i]->setSequence(seq());
 	
-    qglClearColor(QColor::fromRgbF(0.5, 0.5, 0.5));
+    qglClearColor(QColor::fromRgbF(0.5, 0.5, 0.5));//50% grey
     glShadeModel(GL_FLAT);
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);

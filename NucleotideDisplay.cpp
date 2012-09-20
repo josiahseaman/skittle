@@ -114,14 +114,13 @@ void NucleotideDisplay::load_nucleotide()
 {
 	const char* genome = sequence->c_str() + nucleotide_start;
     sequenceToColors(genome);
-	
 	loadTextureCanvas();
 	upToDate = true;
 }
 
-void NucleotideDisplay::loadTextureCanvas()
+void NucleotideDisplay::loadTextureCanvas(bool raggedEdge)
 {
-	storeDisplay( nucleotide_colors, width() );
+    storeDisplay( nucleotide_colors, width(), raggedEdge );
 }
 
 void NucleotideDisplay::sequenceToColors(const char* genome)
