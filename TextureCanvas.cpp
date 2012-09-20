@@ -25,9 +25,10 @@ TextureCanvas::TextureCanvas()
 	canvas.push_back(vector<textureTile>());
 }
 
-TextureCanvas::TextureCanvas(vector<color> pixels, int w)
+TextureCanvas::TextureCanvas(vector<color> pixels, int w, bool raggedEdge)
 {
 	colors = vector<color>(pixels);
+    ragged = raggedEdge;
 	//pad the end with white pixels, background color
 	for(int i = 0; i <= w; ++i)
 		pixels.push_back( color(128,128,128) );
@@ -58,18 +59,18 @@ int TextureCanvas::checkForDisplayDriver()
     return max_size;
 }
 
-/** The method parses vector<> colors into the appropriate textureTile, turns it into an
+/** The method parses vector<color> pixels into the appropriate textureTile, turns it into an
 unsigned char (required by OpenGL) then loads it onto the graphics card as a texture
 and deletes the old data. */
 void TextureCanvas::loadPixelsToCard(vector<color> pixels, int max_size)
 {
     //determine the size of the texture canvas
-    int canvas_width = width / max_size + 1; //AKA ciel();
+    int canvas_width = width / max_size + 1; //canvas width can be wider than one tile width
     //cout << "Initial Canvas Width:  " << canvas_width;
     canvas_width = min((maxSaneWidth / max_size + 1),canvas_width);
     //cout << " Sanity Checked:  " << canvas_width << endl;
 
-
+    //this canvas_width and canvas_height determine the number of tiles that need to be made
     int canvas_height = height / max_size + 1;
     createEmptyTiles(canvas_width, canvas_height, max_size);
 

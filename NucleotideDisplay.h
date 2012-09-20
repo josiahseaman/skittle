@@ -32,8 +32,8 @@ public:
 	void createConnections();
 	virtual void display();
 	virtual GLuint render();
-	void load_nucleotide();
-	void loadTextureCanvas();
+    virtual void load_nucleotide();
+    virtual void loadTextureCanvas(bool raggedEdge = false);
     virtual void sequenceToColors(const char* genome);
     virtual void color_compress();
 	int widthInBp();//Nucleotide Display changes Width internally to w/scale
