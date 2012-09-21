@@ -52,7 +52,6 @@ int TextureCanvas::checkForDisplayDriver()
 {
     useTextures = false;
     //verify that textures can be allocated
-    int max_size;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_size);
 
     if(max_size > 0) useTextures = true;
@@ -211,6 +210,11 @@ void TextureCanvas::textureFreeRender()
     }
 
 	glPopMatrix();
+}
+
+int TextureCanvas::getMaxSize()
+{
+    return max_size;
 }
 
 

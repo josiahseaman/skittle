@@ -32,8 +32,10 @@ public:
 	void display();
     static int const maxSaneWidth = 4000;
     bool ragged;
+    int getMaxSize();
     
 private:
+    int max_size;
     int checkForDisplayDriver();
     void loadPixelsToCard(vector<color> pixels, int w);
 	void createEmptyTiles(int canvas_width, int canvas_height, int max_size);

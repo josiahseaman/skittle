@@ -151,17 +151,12 @@ void OligomerDisplay::graphOneDisplay(int state)
 
     if(!state)
     {
-        graphThreeOn = false;
-        graphThree->setChecked(false);
-        delete correlationBuffer;
-        graphTwoOn = false;
-        graphTwo->setChecked(false);
-        delete heatMapBuffer;
         delete textureBuffer;
+        textureBuffer = NULL;
     }
     else
     {
-        textureBuffer->display();
+        freq_map();
     }
 
     upToDate = false;
@@ -174,20 +169,12 @@ void OligomerDisplay::graphTwoDisplay(int state)
 
     if(!state)
     {
-        graphThreeOn = false;
-        graphThree->setChecked(false);
-        delete correlationBuffer;
         delete heatMapBuffer;
+        heatMapBuffer = NULL;
     }
     else
     {
-        if(!graphOneOn)
-        {
-            graphOneOn = true;
-            graphOne->setChecked(true);
-            textureBuffer->display();
-        }
-        heatMapBuffer->display();
+        calculateHeatMap();
     }
 
     upToDate = false;
@@ -201,22 +188,11 @@ void OligomerDisplay::graphThreeDisplay(int state)
     if(!state)
     {
         delete correlationBuffer;
+        correlationBuffer = NULL;
     }
     else
     {
-        if(!graphOneOn)
-        {
-            graphOneOn = true;
-            graphOne->setChecked(true);
-            textureBuffer->display();
-        }
-        if(!graphTwoOn)
-        {
-            graphTwoOn = true;
-            graphTwo->setChecked(true);
-            heatMapBuffer->display();
-        }
-        correlationBuffer->display();
+        selfCorrelationMap();
     }
 
     upToDate = false;
@@ -252,28 +228,50 @@ void OligomerDisplay::display()
 	checkVariables();
 	if(! upToDate )
 	{
-        if(graphOneOn)
-        {
-            freq_map();
-        }
-        if(graphTwoOn)
-        {
-            calculateHeatMap();
-        }
         if(graphThreeOn)
         {
+            freq_map();
+            calculateHeatMap();
             selfCorrelationMap();
+        }
+        else if(graphTwoOn)
+        {
+            freq_map();
+            calculateHeatMap();
+        }
+        else
+        {
+            freq_map();
         }
         load_canvas();
 	}
 	width();
 	glPushMatrix();
 		glScaled(1,-1,1);
-		textureBuffer->display();
-		glTranslated(F_width*widthMultiplier + 2, 0, 0);
-		heatMapBuffer->display();
-		glTranslated(F_height + 2, 0, 0);
-		correlationBuffer->display();
+        if(graphOneOn)
+        {
+            textureBuffer->display();
+        }
+        if(graphTwoOn)
+        {
+            if(graphOneOn)
+            {
+                glTranslated(F_width*widthMultiplier + 2, 0, 0);
+            }
+            heatMapBuffer->display();
+        }
+        if(graphThreeOn)
+        {
+            if(graphTwoOn)
+            {
+                glTranslated(F_height + 2, 0, 0);
+            }
+            else if(graphOneOn)
+            {
+                glTranslated(F_width*widthMultiplier + 2, 0, 0);
+            }
+            correlationBuffer->display();
+        }
 	glPopMatrix();
 }
 
@@ -350,7 +348,10 @@ void OligomerDisplay::selfCorrelationMap()
 	}
 	
 	vector<color> heatMap = colorNormalized(correlationScores);
-	delete correlationBuffer;
+    if(correlationBuffer != NULL)
+    {
+        delete correlationBuffer;
+    }
 	correlationBuffer = new TextureCanvas( heatMap, F_height );	
 }
 
@@ -666,7 +667,7 @@ double OligomerDisplay::spearmanCorrelation(vector<double>& apples, vector<doubl
 	
 int OligomerDisplay::width()
 {
-	widthMultiplier = 1;
+    widthMultiplier = 1;
 
 	return F_width*widthMultiplier + (F_height+2)*2;
 }
