@@ -1,0 +1,10 @@
+Statically builiding Skittle using Qt Creator:
+http://doc.qt.digia.com/4.7/deployment-windows.html
+
+
+Disables mingwm10.dll dependency:  -fexceptions   in CXXFLAGS sent to compiler mingw.exe
+Skittle is computation intensive and should use optimization:   -O3
+
+
+
+
