@@ -22,6 +22,11 @@ public class MainWindow extends javax.swing.JFrame {
      * If the Skittle program is currently installed on the computer
      */
     private boolean installed;
+    
+    /**
+     * Path to a file that Skittle should open on launch
+     */
+    private String openFilePath;
 
     /**
      * If we should run the update process or not.
@@ -34,10 +39,11 @@ public class MainWindow extends javax.swing.JFrame {
      * 
      * @param installed if we have detected if Skittle is installed in the user folder or not
      */
-    public MainWindow(boolean installed, boolean update) {
+    public MainWindow(boolean installed, String openFilePath, boolean update) {
         //Setup all of the graphical components
         initComponents();
         this.installed = installed;
+        this.openFilePath = openFilePath;
         this.update = update;
 
         //Hide all buttons and update status items
@@ -159,10 +165,10 @@ public class MainWindow extends javax.swing.JFrame {
             //Setup the Skittle program with it's own little process to call home
             //process = runtime.exec(skittlePathExe);
             if(update){
-                process = new ProcessBuilder(skittlePathExe, "update").start();
+                process = new ProcessBuilder(skittlePathExe, openFilePath, "update").start();
             }
             else{
-                process = new ProcessBuilder(skittlePathExe).start();
+                process = new ProcessBuilder(skittlePathExe, openFilePath).start();
             }
                 
             //Exit the launcher

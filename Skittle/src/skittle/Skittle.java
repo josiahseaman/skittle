@@ -36,13 +36,25 @@ public class Skittle {
         File skittleExe = new File(skittlePath + "SkittleToo.exe");
         installed = skittleExe.exists();
         
+        String openFilePath = "";
         boolean update = false;
-        if(args.length != 0 && args[0].equalsIgnoreCase("update")){
-            update = true;
+        if(args.length != 0){
+            if(args[0].equalsIgnoreCase("update")){
+                update = true;
+            }
+            else{
+                openFilePath = args[0];
+            }
+            
+            if(args.length > 1){
+                if(args[1].equalsIgnoreCase("update")){
+                    update = true;
+                }
+            }
         }
         
         /* Create and display the Main Window */
-        window = new MainWindow(installed, update);
+        window = new MainWindow(installed, openFilePath, update);
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 window.setVisible(true);
