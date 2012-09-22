@@ -87,15 +87,12 @@ public class Update implements Runnable {
                 fileInfoSplit = fileInfo.split(" ");
                 
                 //Make sure that the listed file exists, then continue
-                if(new File(skittlePath + "/" + fileInfoSplit[1]).exists()){
+                if(new File(skittlePath + "/" + fileInfoSplit[2]).exists()){
                     //Generate an MD5 of the local file and compare to remote MD5
                     MessageDigest md = MessageDigest.getInstance("MD5");
-                    InputStream is = new FileInputStream(skittlePath + "/" + fileInfoSplit[1]);
-                    is = new DigestInputStream(is, md);
-                    is.close();
-                    byte[] localHash = md.digest();
-                
-                    if(localHash.toString().compareTo(fileInfoSplit[0]) != 0){
+                    String localHash = getMD5(new FileInputStream(skittlePath + "/" + fileInfoSplit[2]), md, 2048);
+                    
+                    if(localHash.compareTo(fileInfoSplit[0]) != 0){
                         //Hashes aren't equal, so there is an update
                         update = true;
                         break;
@@ -150,22 +147,22 @@ public class Update implements Runnable {
                 fileInfoSplit = fileInfo.split(" ");
                 
                 //Make sure that the listed file exists, then continue
-                if(new File(skittlePath + "/" + fileInfoSplit[1]).exists()){
+                if(new File(skittlePath + "/" + fileInfoSplit[2]).exists()){
                     //Generate an MD5 of the local file and compare to remote MD5
                     MessageDigest md = MessageDigest.getInstance("MD5");
-                    InputStream is = new FileInputStream(skittlePath + "/" + fileInfoSplit[1]);
+                    InputStream is = new FileInputStream(skittlePath + "/" + fileInfoSplit[2]);
                     is = new DigestInputStream(is, md);
                     is.close();
                     byte[] localHash = md.digest();
                 
                     if(localHash.toString().compareTo(fileInfoSplit[0]) != 0){
                         //Hashes aren't equal, so there is an update
-                        downloadFile(fileInfoSplit[1]);
+                        downloadFile(fileInfoSplit[2]);
                     }
                 }
                 else{
                     //Remote file doesn't exist locally, so there is an update
-                    downloadFile(fileInfoSplit[1]);
+                    downloadFile(fileInfoSplit[2]);
                 }
                 
                 window.SetProgressBarPercent(window.GetProgressBarPercent() + percentInterval);
@@ -220,5 +217,36 @@ public class Update implements Runnable {
         catch(Exception e){
             
         }
+    }
+    
+    /**
+     * Generate the MD5 of the given file,
+     * convert it to Hex,
+     * and return as a string
+     * 
+     * @param is The input stream that is reading the file to be summed
+     * @param md MessageDigest set to the hash type you want
+     * @param byteArraySize 2048
+     * @return The calculated and converted hash sum
+     */
+    private String getMD5(InputStream is, MessageDigest md, int byteArraySize){
+        md.reset();
+        byte[] bytes = new byte[byteArraySize];
+        int numBytes;
+        try{
+            while((numBytes = is.read(bytes)) != -1){
+                md.update(bytes, 0, numBytes);
+            }
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(window, "Error generating MD5 sum during update check. \n" + e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+        }
+        byte[] digest = md.digest();
+        //String result = new String(Hex.encodeHex(digest));
+        StringBuffer hex = new StringBuffer();
+        for(int i = 0; i < digest.length; i++){
+            hex.append(Integer.toString((digest[i] & 0xFF) + 0x100, 16).substring(1));
+        }
+        return hex.toString();
     }
 }
