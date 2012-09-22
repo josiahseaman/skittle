@@ -1,6 +1,7 @@
 package skittle;
 
 import java.awt.Color;
+import javax.swing.JOptionPane;
 
 /**
  * Main GUI Window for the Skittle Launcher
@@ -168,7 +169,7 @@ public class MainWindow extends javax.swing.JFrame {
             System.exit(0);
         }
         catch(Exception e){
-            //TODO: Handle an error here
+            JOptionPane.showMessageDialog(this, "Error launching the Skittle Executable. \n" + e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
             System.exit(2);
         }
     }

@@ -17,6 +17,7 @@ import java.net.URLConnection;
 import java.nio.charset.MalformedInputException;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
+import javax.swing.JOptionPane;
 
 /**
  * The Updater for Skittle
@@ -108,7 +109,7 @@ public class Update implements Runnable {
             }
         }
         catch(Exception e){
-            //TODO: Handle error
+            JOptionPane.showMessageDialog(window, "Error checking for updates. \n" + e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
             System.exit(2);
         }
         
@@ -171,7 +172,7 @@ public class Update implements Runnable {
             }
         }
         catch(Exception e){
-            //TODO: Handle error
+            JOptionPane.showMessageDialog(window, "Error performing update. \n" + e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
             System.exit(2);
         }
         
@@ -209,11 +210,11 @@ public class Update implements Runnable {
             bis.close();
         }
         catch(MalformedInputException e){
-            //TODO: HAndle error
+            JOptionPane.showMessageDialog(window, "Malformed Packet when downloading a file during update. \n" + e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
             System.exit(2);
         }
         catch(IOException e){
-            //TODO: HAndle error
+            JOptionPane.showMessageDialog(window, "Error writing downloaded file during update. \n" + e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
             System.exit(2);
         }
         catch(Exception e){

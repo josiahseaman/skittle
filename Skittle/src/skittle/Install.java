@@ -14,6 +14,7 @@ import java.io.LineNumberReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.MalformedInputException;
+import javax.swing.JOptionPane;
 
 /**
  * The Installer for Skittle.
@@ -63,7 +64,7 @@ public class Install implements Runnable {
             success = skittlePath.mkdirs();
             
             if(!success){
-                //TODO: Handle error
+                JOptionPane.showMessageDialog(window, "Error creating installation directory for Skittle.", "Error!", JOptionPane.ERROR_MESSAGE);
                 System.exit(2);
             }
         }
@@ -94,7 +95,6 @@ public class Install implements Runnable {
             
             File file = new File(skittlePath + "/" + filename);
             BufferedInputStream bis = new BufferedInputStream(con.getInputStream());
-            //BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file.getName()));
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
             
             while((i = bis.read()) != -1){
@@ -105,11 +105,11 @@ public class Install implements Runnable {
             bis.close();
         }
         catch(MalformedInputException e){
-            //TODO: HAndle error
+            JOptionPane.showMessageDialog(window, "Malformed packet when downloading file during install. \n" + e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
             System.exit(2);
         }
         catch(IOException e){
-            //TODO: HAndle error
+            JOptionPane.showMessageDialog(window, "Error writing downloaded file during install. \n" + e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
             System.exit(2);
         }
     }
@@ -156,7 +156,7 @@ public class Install implements Runnable {
             in.close();
         }
         catch(Exception e){
-            //TODO: Handle error
+            JOptionPane.showMessageDialog(window, "Error performing installation. \n" + e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
         
         window.ChangeInstallState(true);
