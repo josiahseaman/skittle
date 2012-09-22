@@ -40,7 +40,9 @@ public:
 	MainWindow();
 
 public slots:
-	void removeButton(QAction* presetAction);
+    void showUpdateButton();
+    void closeAndUpdateSkittle();
+	void removeGraphButton(QAction* presetAction);
 	void open();
 	void open(QString fileName);
 	void updateProgress(int);

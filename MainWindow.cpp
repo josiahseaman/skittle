@@ -76,7 +76,7 @@ void MainWindow::addDisplayActions(AbstractGraph* display)
 		//presetAction->setData(QString(display->actionData.c_str()));
 		display->toggleButton = presetAction;
 		connect(presetAction,SIGNAL(triggered()),display, SLOT(toggleVisibility()));
-		connect(display, SIGNAL(deleteButton(QAction*)), this, SLOT(removeButton(QAction*)));
+        connect(display, SIGNAL(deleteButton(QAction*)), this, SLOT(removeGraphButton(QAction*)));
 	
 		presetMenu->addAction(presetAction);
 		presetToolBar->addAction(presetAction);
@@ -88,7 +88,22 @@ void MainWindow::addDisplayActions(AbstractGraph* display)
 	}
 }
 
-void MainWindow::removeButton(QAction* presetAction)
+void MainWindow::showUpdateButton()
+{
+    QAction* updateSkittle =new QAction(QString("Click here to update"), this);
+    const QFont font = QFont(QString("Century Gothic"), 14, QFont::Bold );
+    updateSkittle->setFont(font);
+    menuBar()->addAction ( updateSkittle );
+    connect(updateSkittle, SIGNAL(triggered()), this, SLOT(closeAndUpdateSkittle()));
+}
+
+void MainWindow::closeAndUpdateSkittle()
+{
+    print("Update command received.");
+    //TODO: connect updateSkittle to call the Skittle update function here
+}
+
+void MainWindow::removeGraphButton(QAction* presetAction)
 {
 	presetMenu->removeAction(presetAction);
 	presetToolBar->removeAction(presetAction);

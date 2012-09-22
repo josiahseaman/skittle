@@ -186,12 +186,12 @@ string NucleotideDisplay::mouseClick(point2D pt)
 //			ui->print("Index: ", index);
 		string chromosome = glWidget->chromosomeName;
 		stringstream ss;
-		ss << "Index: " << index << "  Sequence: " << sequence->substr(index, 100);
+        ss << "Index: " << index << "  Sequence: " << sequence->substr(index, Width);
 		//ss<< "   <a href=\"http://genome.ucsc.edu/cgi-bin/hgTracks?hgsid=132202298&clade=mammal&org=Human&db=hg18&position="
 		//<<chromosome<<":"<<index<<"-"<<index+200<<"&pix=800&Submit=submit\">View in Genome Browser</a> [external link]";
 		//																											chr5			12389181	12390000
 		ui->print(ss.str().c_str());
-		return sequence->substr(index, 30);
+        return sequence->substr(index, min(1000, Width));
 	}
 	else{
 		return string();
