@@ -147,7 +147,7 @@ public class Install implements Runnable {
                 fileInfoSplit = fileInfo.split(" ");
                 
                 //Download the file
-                downloadFile(fileInfoSplit[0]);
+                downloadFile(fileInfoSplit[1]);
                 
                 //Update the progress bar
                 window.SetProgressBarPercent(window.GetProgressBarPercent() + percentInterval);

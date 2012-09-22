@@ -86,15 +86,15 @@ public class Update implements Runnable {
                 fileInfoSplit = fileInfo.split(" ");
                 
                 //Make sure that the listed file exists, then continue
-                if(new File(skittlePath + "/" + fileInfoSplit[0]).exists()){
+                if(new File(skittlePath + "/" + fileInfoSplit[1]).exists()){
                     //Generate an MD5 of the local file and compare to remote MD5
                     MessageDigest md = MessageDigest.getInstance("MD5");
-                    InputStream is = new FileInputStream(skittlePath + "/" + fileInfoSplit[0]);
+                    InputStream is = new FileInputStream(skittlePath + "/" + fileInfoSplit[1]);
                     is = new DigestInputStream(is, md);
                     is.close();
                     byte[] localHash = md.digest();
                 
-                    if(localHash.toString().compareTo(fileInfoSplit[1]) != 0){
+                    if(localHash.toString().compareTo(fileInfoSplit[0]) != 0){
                         //Hashes aren't equal, so there is an update
                         update = true;
                         break;
@@ -149,22 +149,22 @@ public class Update implements Runnable {
                 fileInfoSplit = fileInfo.split(" ");
                 
                 //Make sure that the listed file exists, then continue
-                if(new File(skittlePath + "/" + fileInfoSplit[0]).exists()){
+                if(new File(skittlePath + "/" + fileInfoSplit[1]).exists()){
                     //Generate an MD5 of the local file and compare to remote MD5
                     MessageDigest md = MessageDigest.getInstance("MD5");
-                    InputStream is = new FileInputStream(skittlePath + "/" + fileInfoSplit[0]);
+                    InputStream is = new FileInputStream(skittlePath + "/" + fileInfoSplit[1]);
                     is = new DigestInputStream(is, md);
                     is.close();
                     byte[] localHash = md.digest();
                 
-                    if(localHash.toString().compareTo(fileInfoSplit[1]) != 0){
+                    if(localHash.toString().compareTo(fileInfoSplit[0]) != 0){
                         //Hashes aren't equal, so there is an update
-                        downloadFile(fileInfoSplit[0]);
+                        downloadFile(fileInfoSplit[1]);
                     }
                 }
                 else{
                     //Remote file doesn't exist locally, so there is an update
-                    downloadFile(fileInfoSplit[0]);
+                    downloadFile(fileInfoSplit[1]);
                 }
                 
                 window.SetProgressBarPercent(window.GetProgressBarPercent() + percentInterval);
