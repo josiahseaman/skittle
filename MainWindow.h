@@ -123,6 +123,7 @@ private:
 	QAction *zoomAction;
 	QAction *selectAction;
     QAction *findAction;
+    QAction* updateSkittle;
 	QAction *addAnnotationAction;
 	QAction *nextAnnotationAction;
 	QAction *prevAnnotationAction;

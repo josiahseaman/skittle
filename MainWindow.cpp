@@ -90,10 +90,7 @@ void MainWindow::addDisplayActions(AbstractGraph* display)
 
 void MainWindow::showUpdateButton()
 {
-    QAction* updateSkittle =new QAction(QString("Click here to update"), this);
-    const QFont font = QFont(QString("Century Gothic"), 14, QFont::Bold );
-    updateSkittle->setFont(font);
-    menuBar()->addAction ( updateSkittle );
+    updateSkittle->setVisible(true);
     connect(updateSkittle, SIGNAL(triggered()), this, SLOT(closeAndUpdateSkittle()));
 }
 
@@ -142,6 +139,11 @@ void MainWindow::createActions()
 	hilightResultsAction->setStatusTip("Highlight All copies of Current Sequence");
 	hilightResultsAction->setCheckable(true);
 	
+
+    QIcon uIcon = QIcon(":/updatebutton.png");
+    updateSkittle =new QAction(uIcon, QString("Click here to update"), this);
+    updateSkittle->setVisible(false);
+
 	addViewAction = new QAction("New Window",this);	
 	
 	openAction = new QAction("&Open File",this);
@@ -173,7 +175,7 @@ void MainWindow::createMenus()
 	toolBarMenu = viewMenu->addMenu("ToolBar");
     presetMenu = viewMenu->addMenu("Visualization Graphs");
 	
-	annotationMenu = menuBar()->addMenu("&Annotations");
+    annotationMenu = menuBar()->addMenu("&Annotations");
 	annotationMenu->addAction(addAnnotationAction);
 	//annotationMenu->addAction(nextAnnotationAction);
 	//annotationMenu->addAction(prevAnnotationAction);
@@ -204,7 +206,9 @@ void MainWindow::createToolbars()
 	boldFont.setBold(true);
 
     annotationToolBar = addToolBar("File Actions");
-	annotationToolBar->setObjectName("file");
+    annotationToolBar->setObjectName("file");
+    annotationToolBar->setIconSize( QSize( 100, 20 ) );
+    annotationToolBar->addAction(updateSkittle);
 	annotationToolBar->addAction(openAction);
 	annotationToolBar->addAction(addViewAction);
 	annotationToolBar->addAction(addAnnotationAction);
