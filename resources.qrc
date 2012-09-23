@@ -1,9 +1,9 @@
-
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-    <file>zoomIn.png</file>
-    <file>zoomOut.png</file>
-    <file>zoomIn-mask.png</file>
-    <file>skittle.svg</file>
-</qresource>
+<RCC>
+    <qresource prefix="/">
+        <file>zoomIn.png</file>
+        <file>zoomOut.png</file>
+        <file>zoomIn-mask.png</file>
+        <file>skittle.svg</file>
+        <file>updatebutton.png</file>
+    </qresource>
 </RCC>
