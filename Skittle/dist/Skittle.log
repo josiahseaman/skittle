@@ -29,7 +29,7 @@ errors(0), warnings(0), notes(0); bytes(14485), time  0.04
  33% done, 4/6 to go: Skittle.jar:/skittle/Skittle$1.class
 errors(0), warnings(0), notes(0); bytes(3921), time  0.00
  50% done, 3/6 to go: Skittle.jar:/skittle/MainWindow.class
-errors(0), warnings(0), notes(0); bytes(124032), time  0.13
+errors(0), warnings(0), notes(0); bytes(124032), time  0.12
  66% done, 2/6 to go: Skittle.jar:/skittle/MainWindow$1.class
 errors(0), warnings(0), notes(0); bytes(9073), time  0.01
  83% done, 1/6 to go: Skittle.jar:/skittle/Install.class
@@ -45,9 +45,9 @@ files: 6  errors: 0  warnings: 0  notices: 0
 XDS Link Version 2.19.0 Copyright (c) Excelsior 1995-2011.
 No errors, no warnings
 
-Link time 0:00.18
+Link time 0:00.17
 
-Total compilation time 0:01.80
+Total compilation time 0:01.82
 Startup Accelerator Helper Version 1.0 Copyright (c) Excelsior 2010.
 
 Running application:

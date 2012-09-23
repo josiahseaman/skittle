@@ -40,6 +40,6 @@
   -optimize=all
 !end
 
-!module ../../SkittleToo.ico
 !module ./Skittle.usg
+!module ../../skittle.ico
 
