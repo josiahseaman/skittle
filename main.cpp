@@ -21,6 +21,7 @@ bool checkUpdateFlag(int& argc, char *argv[])
         string argument = string(argv[i]);
         if(argument.compare(string("update")) == 0)//0 if strings are equivalent
         {
+            string happy("Found update flag");//TODO: delete this later
             return true;
         }
     }
