@@ -2,18 +2,10 @@
 #include <QDebug>
 #include <string>
 #include <stdio.h>
-//#include <conio.h>
 #include <windows.h>
-using std::string;
 #include "MainWindow.h"
 
-/** *******************
-  This is the main loop that starts the MainWindow class used in Skittle
-  and every other Qt application.
-  Argv[1] is passed to window.open() so that Skittle can be used by the OS
-  to open FASTA files directly.  This connection is setup by making Skittle
-  the associated program with .fa and .fasta file extensions.
-**********************/
+using std::string;
 
 bool checkForSkittleTemp()
 {
@@ -73,13 +65,24 @@ bool checkUpdateFlag(int& argc, char *argv[])
     return false;
 }
 
+/** *******************
+  This file is the main loop that starts the MainWindow class used in Skittle
+  and every other Qt application.
+  Argv[1] is passed to window.open() so that Skittle can be used by the OS
+  to open FASTA files directly.  This connection is setup by making Skittle
+  the associated program with .fa and .fasta file extensions.
+  Additionally, main handles the update functionality linked to the Skittle
+  Launcher.  Case 1: launcher passes the update argument to SkittleToo.exe and
+  the update button is placed in the UI.  Case 2: The launcher places a new
+  version of itself in SkittleTemp.exe and needs to be renamed by this program.
+**********************/
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     MainWindow window;
-    checkForLauncherUpdate();
+    checkForLauncherUpdate();//case 2
     window.show();
-    if(argc > 1)
+    if(argc > 1)//case1
     {
         if(checkUpdateFlag(argc, argv))//update flag should be the last argument
         {
