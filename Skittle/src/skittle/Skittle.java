@@ -55,6 +55,14 @@ public class Skittle {
         
         /* Create and display the Main Window */
         window = new MainWindow(installed, openFilePath, update);
+        if(update){
+            try{
+                Thread.sleep(2000);
+            }
+            catch(Exception e){
+                
+            }
+        }
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 window.setVisible(true);

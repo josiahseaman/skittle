@@ -101,6 +101,7 @@ public class Update implements Runnable {
                 else{
                     //Remote file doesn't exist locally, so there is an update
                     update = true;
+                    startUpdateNow();
                     break;
                 }
             }
@@ -150,12 +151,9 @@ public class Update implements Runnable {
                 if(new File(skittlePath + "/" + fileInfoSplit[2]).exists()){
                     //Generate an MD5 of the local file and compare to remote MD5
                     MessageDigest md = MessageDigest.getInstance("MD5");
-                    InputStream is = new FileInputStream(skittlePath + "/" + fileInfoSplit[2]);
-                    is = new DigestInputStream(is, md);
-                    is.close();
-                    byte[] localHash = md.digest();
-                
-                    if(localHash.toString().compareTo(fileInfoSplit[0]) != 0){
+                    String localHash = getMD5(new FileInputStream(skittlePath + "/" + fileInfoSplit[2]), md, 2048);
+                    
+                    if(localHash.compareTo(fileInfoSplit[0]) != 0){
                         //Hashes aren't equal, so there is an update
                         downloadFile(fileInfoSplit[2]);
                     }
@@ -178,6 +176,13 @@ public class Update implements Runnable {
     }
     
     /**
+     * Call back to the main window to launch the update process NOW.
+     */
+    private void startUpdateNow(){
+        window.DoUpdates();
+    }
+    
+    /**
      * Function to grab a specified file from the server via http
      * 
      * @param filename the name of the file to pull from the Skittle server
@@ -190,11 +195,17 @@ public class Update implements Runnable {
         int i;
         
         //Get the file list from the server
+        File file;
         try{
             url = new URL(skittleServer + filename);
             con = url.openConnection();
             
-            File file = new File(skittlePath + "/" + filename);
+            if(filename.compareToIgnoreCase("Skittle.exe") !=0){
+                file = new File(skittlePath + "/" + filename);
+            }
+            else{
+                file = new File(skittlePath + "/" + "SkittleTemp.exe");
+            }
             BufferedInputStream bis = new BufferedInputStream(con.getInputStream());
             //BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file.getName()));
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));

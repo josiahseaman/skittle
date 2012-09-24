@@ -66,7 +66,7 @@ public class MainWindow extends javax.swing.JFrame {
                 skittleInstalled.setText("UPDATE AVAILABLE");
                 skittleInstalled.setForeground(Color.orange);
                 
-                doUpdates();
+                DoUpdates();
             }
             else{
                 skittleInstalled.setText("INSTALLED");
@@ -181,6 +181,27 @@ public class MainWindow extends javax.swing.JFrame {
     }
     
     /**
+     * Start the update process
+     */
+    public void DoUpdates(){
+        actionButton.setVisible(false);
+        statusText.setText("Updating");
+        statusText.setForeground(Color.orange);
+        statusText.setVisible(true);
+        statusProgress.setText(":");
+        statusProgress.setVisible(true);
+        progressBar.setVisible(true);
+        this.setVisible(true);
+        
+        //Setup a new thread to run the installer.
+        //The download process must be on a different thread than the event dispatcher so the UI can update
+        Update updater = new Update(this);
+        new Thread(updater).start();
+        
+        updater.DoUpdates();
+    }
+    
+    /**
      * Setup a new Update thread and check if there are updates available
      * 
      * @return If there are updates available for Skittle
@@ -210,25 +231,6 @@ public class MainWindow extends javax.swing.JFrame {
         //Setup a new thread to run the installer.
         //The download process must be on a different thread than the event dispatcher so the UI can update
         new Thread(new Install(this)).start();
-    }
-    
-    /**
-     * Start the update process
-     */
-    private void doUpdates(){
-        actionButton.setVisible(false);
-        statusText.setText("Updating");
-        statusText.setVisible(true);
-        statusProgress.setText(":");
-        statusProgress.setVisible(true);
-        progressBar.setVisible(true);
-        
-        //Setup a new thread to run the installer.
-        //The download process must be on a different thread than the event dispatcher so the UI can update
-        Update updater = new Update(this);
-        new Thread(updater).start();
-        
-        updater.DoUpdates();
     }
 
     /**
