@@ -2,6 +2,8 @@
 #include <QScrollArea>
 #include <QtGui/QScrollBar>
 #include <QtGui/QCheckBox>
+#include <QtCore/QProcess>
+#include <QtCore/QStringList>
 
 #include <iostream>
 #include <string>
@@ -97,7 +99,15 @@ void MainWindow::showUpdateButton()
 void MainWindow::closeAndUpdateSkittle()
 {
     print("Update command received.");
-    //TODO: connect updateSkittle to call the Skittle update function here
+    QString program = QString("Skittle.exe");
+    QStringList arguments;
+    arguments<<"update";
+
+    /* Create a QProcess instance. It does not matter if it is created on the stack or
+         * on the heap. - Ahem, I tested it on Linux only. :-)*/
+    QProcess* updateProcess = new QProcess();
+    updateProcess->start(program, arguments);
+    this->close();
 }
 
 void MainWindow::removeGraphButton(QAction* presetAction)
@@ -197,7 +207,6 @@ void MainWindow::createMenus()
 	QMenu* helpMenu = menuBar()->addMenu("&Help");
 	helpMenu->addAction(helpAction);
 	helpMenu->addAction(aboutQtAct);
-	
 }
 
 void MainWindow::createToolbars()
