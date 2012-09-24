@@ -1,5 +1,9 @@
 #include <QApplication>
+#include <QDebug>
 #include <string>
+#include <stdio.h>
+//#include <conio.h>
+#include <windows.h>
 using std::string;
 #include "MainWindow.h"
 
@@ -10,6 +14,47 @@ using std::string;
   to open FASTA files directly.  This connection is setup by making Skittle
   the associated program with .fa and .fasta file extensions.
 **********************/
+
+bool checkForSkittleTemp()
+{
+    //check for SkittleTemp.exe
+    char buffer[1024];
+    FILE* fd = popen("dir /B SkittleTemp.exe", "r");
+    if (fd == NULL) {
+        return false;//error occured
+    }
+    bool found = false;
+    while(NULL != fgets(buffer, sizeof(buffer), fd))
+    {
+        QString s = QString(buffer).trimmed();
+        qDebug() << s;
+        if( s.compare(s,QString("SkittleTemp.exe"), Qt::CaseInsensitive) == 0)
+            found = true;
+    }
+    fclose (fd);
+    return found;
+}
+
+/** In case the Launcher itself needs to be updated, it will download a new version
+  of itself and name it SkittleTemp.exe.  It will then launch the SkittleToo and close.
+  This program (SkittleToo) needs to check for the temporary file and rename it if it
+  exists.*/
+void checkForLauncherUpdate()
+{
+//    bool found = checkForSkittleTemp();
+//    if(found)//rename SkittleTemp to Skittle
+    if(checkForSkittleTemp())
+    {
+        Sleep(5000);
+        qDebug("Found Launcher update.");
+        system("del Skittle.exe");
+        system("rename SkittleTemp.exe Skittle.exe");
+    }
+    else
+        qDebug("Launcher update not found.");
+}
+
+
 
 /** The launcher will check the server for an update, and if there is an update
   it will launch skittle with a flag 'update' in the last argument.  MainWindow
@@ -32,6 +77,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     MainWindow window;
+    checkForLauncherUpdate();
     window.show();
     if(argc > 1)
     {
