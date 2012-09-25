@@ -54,11 +54,10 @@ MainWindow::MainWindow()
 	createToolbars();
 	createDocks();
 	createStatusBar();
-	createUiConnections();
-	oldScale = 1;
-    oldWidth = 128;
+    createUiVariables();
+    createUiConnections();
 	
-	viewManager	= new ViewManager(this, getDisplayVariables());
+    viewManager	= new ViewManager(this, UiVariables(ui));
 	setCentralWidget(viewManager);  
 	createFileConnections();
 
@@ -265,23 +264,23 @@ void MainWindow::createToolbars()
 	settingToolBar->addWidget(halveDisplayWidth);
 	
 	settingToolBar->addWidget(new QLabel("Scale"));
-	scale = new QSpinBox(this);
-    scale->setMinimum(1);
-    scale->setMaximum(100000);
-    scale->setValue(1);
-    scale->setSingleStep(4);	
-    scale->setSuffix(" bp/pixel");
-    scale->setButtonSymbols(QAbstractSpinBox::NoButtons);
-	settingToolBar->addWidget(scale);
+    scaleDial = new QSpinBox(this);
+    scaleDial->setMinimum(1);
+    scaleDial->setMaximum(100000);
+    scaleDial->setValue(1);
+    scaleDial->setSingleStep(4);
+    scaleDial->setSuffix(" bp/pixel");
+    scaleDial->setButtonSymbols(QAbstractSpinBox::NoButtons);
+    settingToolBar->addWidget(scaleDial);
 	
 	settingToolBar->addWidget(new QLabel("Zoom"));
-	zoom = new QSpinBox(this);
-    zoom->setMinimum(1);
-    zoom->setMaximum(100000);
-    zoom->setSingleStep(10);
-    zoom->setValue(100);	
-    zoom->setButtonSymbols(QAbstractSpinBox::NoButtons);
-	settingToolBar->addWidget(zoom);
+    zoomDial = new QSpinBox(this);
+    zoomDial->setMinimum(1);
+    zoomDial->setMaximum(100000);
+    zoomDial->setSingleStep(10);
+    zoomDial->setValue(100);
+    zoomDial->setButtonSymbols(QAbstractSpinBox::NoButtons);
+    settingToolBar->addWidget(zoomDial);
 	
 	settingToolBar->addWidget(new QLabel("Start Index"));
 	startOffset = new QSpinBox(this);
@@ -292,14 +291,14 @@ void MainWindow::createToolbars()
 	settingToolBar->addWidget(startOffset);
 	
 	settingToolBar->addWidget(new QLabel("Display Length"));
-	displayLength = new QSpinBox(this);
-    displayLength->setMinimum(1000);
-    displayLength->setMaximum(400000000);//something very large MAX_INT?
-    displayLength->setSingleStep(1000);
-    displayLength->setValue(10000);	
-    displayLength->setSuffix(" bp");
-    displayLength->setButtonSymbols(QAbstractSpinBox::NoButtons);
-	settingToolBar->addWidget(displayLength);
+    sizeDial = new QSpinBox(this);
+    sizeDial->setMinimum(1000);
+    sizeDial->setMaximum(400000000);//something very large MAX_INT?
+    sizeDial->setSingleStep(1000);
+    sizeDial->setValue(10000);
+    sizeDial->setSuffix(" bp");
+    sizeDial->setButtonSymbols(QAbstractSpinBox::NoButtons);
+    settingToolBar->addWidget(sizeDial);
 
 	
 	//settingToolBar->addSeparator();
@@ -367,15 +366,12 @@ void MainWindow::createUiConnections()
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close())); 
     connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
     connect(helpAction, SIGNAL(triggered()), this, SLOT(helpDialog()));
-    
-	//connect( scale, SIGNAL(valueChanged(int)),this, SLOT(changeScale(int)));
-    connect( scale, SIGNAL(editingFinished()), this, SLOT(changeScale()));
+
+    connect( scaleDial, SIGNAL(editingFinished()), this, SLOT(changeScale()));
     
 	connect( doubleDisplayWidth, SIGNAL(clicked()), this, SLOT(doubleWidth()));
-	connect( halveDisplayWidth, SIGNAL(clicked()), this, SLOT(halveWidth()));
+    connect( halveDisplayWidth, SIGNAL(clicked()), this, SLOT(halveWidth()));
     connect( widthDial, SIGNAL(editingFinished()), this, SLOT(changeWidth()));
-    connect( halveDisplayWidth, SIGNAL(clicked()), widthDial, SIGNAL(editingFinished()));
-    connect( doubleDisplayWidth, SIGNAL(clicked()), widthDial, SIGNAL(editingFinished()));
 	
 }
 void MainWindow::createFileConnections()
@@ -389,17 +385,15 @@ void MainWindow::createFileConnections()
 	connect(addAnnotationAction, SIGNAL(triggered()), viewManager, SLOT(addBookmark()));
 }
 
-UiVariables MainWindow::getDisplayVariables()
+void MainWindow::createUiVariables()
 {
-	UiVariables var(textArea);
+    ui = UiVariables(textArea);
 
-	var.sizeDial = displayLength;
-    var.widthDial = widthDial;
-    var.startDial = startOffset;
-    var.scaleDial = scale;
-    var.zoomDial = zoom;
-    
-    return var;
+    ui.sizeDial = sizeDial;
+    ui.widthDial = widthDial;
+    ui.startDial = startOffset;
+    ui.scaleDial = scaleDial;
+    ui.zoomDial = zoomDial;
 }
 
 void MainWindow::open()
@@ -434,68 +428,25 @@ void MainWindow::openGtf()
     if (!fileName.isEmpty()) 
 		 emit newGtfFileOpen(fileName);
 }
-void MainWindow::changeWidth(int newWidth){
-    if (newWidth != oldWidth){       
-        int newScale = 1;
-        int displayWidth = newWidth / scale->value();
-        if ( displayWidth < 1 || displayWidth > TextureCanvas::maxSaneWidth){
-            
-            newScale = int(max(double(1.0),double(oldScale) * ( double(newWidth) / double(oldWidth))));
-            scale->setValue(newScale);
-            oldScale = newScale;
-        }
-        
-        widthDial->setValue(newWidth);
-    }
-    oldWidth = newWidth;
-    
-}
-void MainWindow::changeWidth(){
-    changeWidth(widthDial->value());
-}
-void MainWindow::changeScale(int newScale)
-{
-	//std::stringstream ss1;
-	//ss1 << "changeScale: " << newScale;
-	//textArea->append(QString( ss1.str().c_str() ));	
 
-	if(newScale < 1)
-		newScale = 1;
-	
-	if(oldScale != newScale)
-	{
-		//increment the width step by scale
-        widthDial->setSingleStep(newScale);
-        widthDial->setMinimum(newScale);
-
-		int display_width = widthDial->value() / oldScale;
-                
-		display_width = max( 1, display_width);
-		int display_size = displayLength->value() / oldScale;
-		display_size = max( 1, display_size);
-        
-		widthDial->setValue( display_width * newScale );
-		scale->setValue(newScale);
-        displayLength->setMinimum(scale->value() * 500);
-		displayLength->setValue(display_size*newScale);
-		oldScale = newScale;
-	}
-}
 void MainWindow::changeScale()
 {
-    changeScale(scale->value());
+    ui.changeScale();
+}
+
+void MainWindow::changeWidth()
+{
+    ui.changeWidth();
 }
 
 void MainWindow::doubleWidth()
 {
-		widthDial->setValue( 2 * widthDial->value() );
-		//viewManager->updateCurrentDisplay();
+    ui.changeWidth( 2 * widthDial->value() );
 }
 
 void MainWindow::halveWidth()
 {
-		widthDial->setValue( (int)(0.5 * widthDial->value()) );
-		//viewManager->updateCurrentDisplay();
+    ui.changeWidth( (int)(0.5 * widthDial->value()) );
 }
 
 

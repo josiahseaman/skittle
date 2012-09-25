@@ -300,8 +300,7 @@ void ViewManager::connectVariables(GLWidget* active, UiVariables local)
     connect(active,           SIGNAL(scaleChanged(int)), local.scaleDial, SLOT(setValue(int)));
 
 	connect(local.zoomDial	, SIGNAL(valueChanged(int)), ui.zoomDial	, SLOT(setValue(int)));
-	connect(ui.zoomDial		, SIGNAL(valueChanged(int)), local.zoomDial	, SLOT(setValue(int)));
-    connect(active, SIGNAL(scaleChangedSmart(int)),      this,            SLOT(scaleChangedSmart(int)));
+    connect(ui.zoomDial		, SIGNAL(valueChanged(int)), local.zoomDial	, SLOT(setValue(int)));
 }
 
 void ViewManager::disconnectVariables(GLWidget* active, UiVariables local)
@@ -342,8 +341,4 @@ void ViewManager::updateCurrentDisplay(){
 	else {
 		activeWidget->updateDisplay();
 	}
-}
-
-void ViewManager::scaleChangedSmart(int newScale){
-    mainWindow->changeScale(newScale);
 }

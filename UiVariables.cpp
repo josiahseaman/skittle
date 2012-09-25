@@ -2,11 +2,13 @@
 #include <QtGui/QSpinBox>
 #include <QString>
 #include <sstream>
+#include <algorithm>
 #include "UiVariables.h"
 
+using std::max;
 /** *******************************
 This class is a container class for the set of 5 global dials that affect all
-Graph visualizations.  Those dials are: start, width, size, scale, and zoom.
+Graph visualizations.  Those dials are: start, width, size, scaleDial, and zoom.
 It also contains a pointer to the local offsetDial for multiple windows.
 Finally, UiVariables has a pointer to the textArea of "Information Display"
 and convenience functions for printing out information to the text area.  This
@@ -24,6 +26,8 @@ UiVariables::UiVariables()
     scaleDial = NULL;
     zoomDial = NULL;
     offsetDial = NULL;
+    oldScale = 1;
+    oldWidth = 128;
 }
 
 UiVariables::UiVariables(QTextEdit* text)
@@ -36,6 +40,8 @@ UiVariables::UiVariables(QTextEdit* text)
     scaleDial = NULL;
     zoomDial = NULL;
     offsetDial = NULL;
+    oldScale = 1;
+    oldWidth = 128;
 }
 
 UiVariables::UiVariables(const UiVariables& copy)
@@ -47,6 +53,8 @@ UiVariables::UiVariables(const UiVariables& copy)
     scaleDial = copy.scaleDial;
     zoomDial  = copy.zoomDial;
     offsetDial= copy.offsetDial;
+    oldWidth  = copy.oldWidth;
+    oldScale  = copy.oldScale;
 }
 
 void UiVariables::print(char const * s)
@@ -92,4 +100,51 @@ void UiVariables::print(int num1, int num2)
 
 	textArea->append(QString( ss1.str().c_str() ));	
 }*/
+
+void UiVariables::changeWidth(int newWidth){
+    if (newWidth != oldWidth){
+        int newScale = 1;
+        int displayWidth = newWidth / scaleDial->value();
+        if ( displayWidth < 1 || displayWidth > maxSaneWidth){
+
+            newScale = int(max(double(1.0), double(oldScale) * ( double(newWidth) / double(oldWidth))));
+            scaleDial->setValue(newScale);
+            oldScale = newScale;
+        }
+
+        widthDial->setValue(newWidth);
+    }
+    oldWidth = newWidth;
+
+}
+void UiVariables::changeWidth(){
+    changeWidth(widthDial->value());
+}
+void UiVariables::changeScale(int newScale)
+{
+    if(newScale < 1)
+        newScale = 1;
+
+    if(oldScale != newScale)
+    {
+        int display_width = max( 1, widthDial->value() / oldScale);
+
+        int display_size = sizeDial->value() / oldScale;
+        display_size = max( 1, display_size);
+
+        widthDial->setValue( display_width * newScale );
+        scaleDial->setValue(newScale);
+        sizeDial->setMinimum(scaleDial->value() * 500);
+        sizeDial->setValue(display_size*newScale);
+        oldScale = newScale;
+
+        widthDial->setSingleStep(newScale);//increment the width step by scaleDial
+        widthDial->setMinimum(newScale);
+    }
+}
+void UiVariables::changeScale()
+{
+    changeScale(scaleDial->value());
+}
+
 

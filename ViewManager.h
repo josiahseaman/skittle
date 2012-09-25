@@ -36,8 +36,7 @@ public slots:
 	void changePublicStart(int val);
 	void printNum(int num);
 	void printNum2(int num);
-	void updateCurrentDisplay();
-    void scaleChangedSmart(int);
+    void updateCurrentDisplay();
 	
 	
 private:

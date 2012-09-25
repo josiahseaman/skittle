@@ -202,8 +202,8 @@ void AbstractGraph::setButtonFont()
 
 void AbstractGraph::setSequence(const string* seq)
 {
-	sequence = seq;	
-	changeSize(ui->sizeDial->value());
+    sequence = seq;
+    changeSize(ui->sizeDial->value());//TODO: is this accomplishing anything on a new file read?
 }
 
 string AbstractGraph::mouseClick(point2D pt)

@@ -49,11 +49,7 @@ public slots:
 	void updateState(QString);
 	void updateStatus(QString);
 	void changeWindowName(std::string name);
-	void openGtf();
-    void changeWidth(int newWidth);
-    void changeWidth();
-	void changeScale(int newScale);
-    void changeScale();
+    void openGtf();
 	void doubleWidth();
 	void halveWidth();
 	void addDisplayActions(AbstractGraph*);
@@ -80,13 +76,16 @@ private:
 	void createStatusBar();
 	void createUiConnections();
 	void createFileConnections();
-	UiVariables getDisplayVariables();
+    void createUiVariables();
 	bool loadfile(const QString &filename);
 	void readSettings();
 	void writeSettings();
+    void changeScale();
+    void changeWidth();
 	void print(const char* str);
     void print(QString);
 	
+    UiVariables ui;
 	ViewManager* viewManager;
 	QMenu *annotationMenu;
 	QMenu *fileMenu;
@@ -106,16 +105,15 @@ private:
 	QDockWidget *infoDock;
 	QTextEdit* textArea;
     QTabWidget *tabWidget;
-	
-	QSpinBox *widthDial;
-	QPushButton *doubleDisplayWidth;
-	QPushButton *halveDisplayWidth;
-	QSpinBox *scale;
-	QSpinBox* zoom;
-	QSpinBox *startOffset;
-	QSpinBox *displayLength;
-	QCheckBox* syncCheckBox;
-	QPushButton* changeSettings;
+
+    QPushButton *doubleDisplayWidth;
+    QPushButton *halveDisplayWidth;
+    QSpinBox *widthDial;
+    QSpinBox *scaleDial;
+    QSpinBox* zoomDial;
+    QSpinBox *sizeDial;
+    QSpinBox *startOffset;
+    QCheckBox* syncCheckBox;
 	
 	
 	QAction *moveAction;
@@ -142,9 +140,7 @@ private:
 	
 	QLabel *statusTip;
 	//QProgressBar *processStatus;
-	//QLabel *processState;
-	int oldScale;
-    int oldWidth;
+    //QLabel *processState;
 	
 };
 

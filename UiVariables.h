@@ -9,7 +9,7 @@ class QSpinBox;
 
 class UiVariables// : public QObject
 {
-	//Q_OBJECT
+    //Q_OBJECT
 		
 public:
     QSpinBox* sizeDial;
@@ -22,8 +22,7 @@ public:
 
 	UiVariables();
 	UiVariables(QTextEdit*);
-	UiVariables(const UiVariables& copy);
-
+    UiVariables(const UiVariables& copy);
 
 	void print(const char*);
 	void print(std::string s);
@@ -31,6 +30,17 @@ public:
 	void print(const char* s, int num);
 	void printNum(int num);
 	//void print(int num1, int num2); 
+
+    void changeWidth(int newWidth);
+    void changeWidth();
+    void changeScale(int newScale);
+    void changeScale();
+
+private:
+    int oldScale;
+    int oldWidth;
+    static int const maxSaneWidth = 4000;
+
 
 };
 #endif

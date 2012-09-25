@@ -106,8 +106,7 @@ public slots:
 	//void setUi(UiVariables);
     
 signals:
-	void scaleChanged(int);
-    void scaleChangedSmart(int);
+    void scaleChanged(int);
 	void totalWidthChanged(int);
 	void xOffsetChange(int);
 	void printText(QString);

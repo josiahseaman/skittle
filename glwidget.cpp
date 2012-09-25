@@ -197,20 +197,21 @@ void GLWidget::displayString(const string* seq)
 
     for(int i = 0; i < (int)graphs.size(); ++i)
 	{
-		graphs[i]->setSequence(seq);
-		graphs[i]->invalidate();
-	}
-	//ui.startDial->setValue(2);//TODO: bit of a cludge to reset the start position
-	ui.startDial->setValue(1);
-	/*float multiplier = seq->size() / (float)ui.sizeDial->value();
-	int newScale = max(1, (int)(ui.scaleDial->value() * multiplier) );
-	ui.scaleDial->setValue( newScale );*/
+        graphs[i]->setSequence(seq);
+        graphs[i]->invalidate();
+    }
+    ui.startDial->setValue(1);
+    ui.widthDial->setValue(128);
+    float multiplier = seq->size() / (float)ui.widthDial->value() / height();
+    int newScale = max(1, (int)(multiplier) );
+//    ui.scaleDial->setValue( newScale );
+    ui.changeScale(newScale);
 	
-	emit displaySizeChanged();
-    ui.zoomDial->setValue(ui.zoomDial->value() + 1);
-    this->updateDisplay();
-    ui.zoomDial->setValue(ui.zoomDial->value() - 1);
-    this->updateDisplay();
+//	emit displaySizeChanged();
+//    ui.zoomDial->setValue(ui.zoomDial->value() + 1);
+//    this->updateDisplay();
+//    ui.zoomDial->setValue(ui.zoomDial->value() - 1);
+//    this->updateDisplay();
 }
 
 void GLWidget::on_moveButton_clicked()
@@ -477,9 +478,6 @@ QPointF GLWidget::pixelToGlCoords(QPoint pCoords, double z)
 
 void GLWidget::initializeGL()
 {
-    for(int i = 0; i < (int)graphs.size(); ++i)
-		graphs[i]->setSequence(seq());
-	
     qglClearColor(QColor::fromRgbF(0.5, 0.5, 0.5));//50% grey
     glShadeModel(GL_FLAT);
     glEnable(GL_DEPTH_TEST);
@@ -487,6 +485,8 @@ void GLWidget::initializeGL()
     
    	marker = 0;//glGenLists(1);
 
+    for(int i = 0; i < (int)graphs.size(); ++i)
+        graphs[i]->setSequence(seq());
 }
 
 void GLWidget::paintGL()
@@ -622,7 +622,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 			if(scale == 1)
 				ui.zoomDial->setValue( zoom * zoomFactor );
 			else
-                emit scaleChangedSmart(newScale); //ui.scaleDial->setValue(newScale);//set scale to the new value
+                ui.changeScale(newScale);
 		}
         else //zooming out
 		{
