@@ -48,8 +48,7 @@ public:
 	AbstractGraph();
 	~AbstractGraph();
 	virtual int width();
-	
-	virtual void createConnections();
+
 	virtual int height();
 	virtual void paint_square(point position, color c);
     virtual void storeDisplay(vector<color>& pixels, int width, bool raggedEdge = false);

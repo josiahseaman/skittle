@@ -28,8 +28,7 @@ public:
 	bool T;	
 	
 	NucleotideDisplay(UiVariables* gui, GLWidget* gl);
-	~NucleotideDisplay();
-	void createConnections();
+    ~NucleotideDisplay();
 	virtual void display();
 	virtual GLuint render();
     virtual void load_nucleotide();

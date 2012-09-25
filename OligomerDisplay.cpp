@@ -61,30 +61,6 @@ OligomerDisplay::~OligomerDisplay()
 {
 }
 
-/**IMPORTANT: When referring to the parent ui->glWidget, it is not fully constructed yet.
-*** these connections should be placed in glWidget's constructor.    
-* 
-* See note in AbstractGraph::createConnections.
-* ***/
-void OligomerDisplay::createConnections()
-{		
-			//TODO: Currently, createConnections is not called by anything
-	connect( this, SIGNAL(widthChanged(int)), this, SIGNAL(displayChanged()));
-	connect( this, SIGNAL(startChanged(int)), this, SIGNAL(displayChanged()));
-	connect( this, SIGNAL(sizeChanged(int)), this, SIGNAL(displayChanged()));
-	//connect( this, SIGNAL(wordLengthChanged(int)), this, SIGNAL(displayChanged()));
-	
-	connect( ui->widthDial, SIGNAL(valueChanged(int)), this, SLOT(changeWidth(int)));
-	//connect( this, SIGNAL(widthChanged(int)), ui->widthDial, SLOT(setValue(int)));//width dial = Width
-	
-	connect( ui->startDial, SIGNAL(valueChanged(int)), this, SLOT(changeStart(int)));
-	connect( this, SIGNAL(startChanged(int)), ui->startDial, SLOT(setValue(int)));
-	
-	connect( ui->sizeDial, SIGNAL(valueChanged(int)), this, SLOT(changeSize(int)));
-	connect( this, SIGNAL(sizeChanged(int)), ui->sizeDial, SLOT(setValue(int)));
-}
-
-
 QScrollArea* OligomerDisplay::settingsUi()
 {	
     settingsTab = new QScrollArea();    

@@ -23,34 +23,6 @@ AbstractGraph::~AbstractGraph()
 	if(toggleButton != NULL)
 		emit deleteButton(toggleButton);
 }
-/****************************************
- * NOTE: Unused code:
- * 
- * At Present, Nothing seems to be calling 
- * this. There is a commented call in 
- * GLWidget::createConnections(), but
- * that is the only way that it is being 
- * called.  
- ***************************************/
-void AbstractGraph::createConnections() 
-{
-	connect( this, SIGNAL(widthChanged(int)), this, SIGNAL(displayChanged()));
-	connect( this, SIGNAL(startChanged(int)), this, SIGNAL(displayChanged()));
-	connect( this, SIGNAL(sizeChanged(int)), this, SIGNAL(displayChanged()));
-	
-	connect( ui->widthDial, SIGNAL(valueChanged(int)), this, SLOT(changeWidth(int)));
-	connect( this, SIGNAL(widthChanged(int)), ui->widthDial, SLOT(setValue(int)));
-	
-	connect( ui->startDial, SIGNAL(valueChanged(int)), this, SLOT(changeStart(int)));
-	connect( this, SIGNAL(startChanged(int)), ui->startDial, SLOT(setValue(int)));
-	
-	connect( ui->sizeDial, SIGNAL(valueChanged(int)), this, SLOT(changeSize(int)));
-	connect( this, SIGNAL(sizeChanged(int)), ui->sizeDial, SLOT(setValue(int)));
-
-	connect( ui->scaleDial, SIGNAL(valueChanged(int)), this, SLOT(changeScale(int)));
-	connect( this, SIGNAL(scaleChanged(int)), ui->scaleDial, SLOT(setValue(int)));
-	//NOTE: the above line may resolve a synchronization loop issue
-}
 
 void AbstractGraph::checkVariables()
 {

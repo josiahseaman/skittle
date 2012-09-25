@@ -24,8 +24,7 @@ class OligomerDisplay : public AbstractGraph//: public RepeatMap//
     
 public:
 	OligomerDisplay(UiVariables* gui, GLWidget* gl);
-	~OligomerDisplay();
-	void createConnections();
+    ~OligomerDisplay();
 	QScrollArea* settingsUi();
 	void checkVariables();
 	void display();

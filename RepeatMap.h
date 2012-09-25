@@ -22,8 +22,7 @@ class RepeatMap : public AbstractGraph
     
 public:	
 	RepeatMap(UiVariables* gui, GLWidget* gl);
-	~RepeatMap();
-	void createConnections();
+    ~RepeatMap();
 	QScrollArea* settingsUi();
 	void display();
 	void link(NucleotideDisplay* nuc_display);

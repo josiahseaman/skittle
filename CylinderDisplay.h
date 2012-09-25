@@ -22,8 +22,7 @@ class CylinderDisplay : public AbstractGraph
 
 public:
 	CylinderDisplay(UiVariables* gui, GLWidget* gl);
-	~CylinderDisplay();
-	void createConnections();
+    ~CylinderDisplay();
 	void createSquare();
 	void quickSquare();
 	void display();

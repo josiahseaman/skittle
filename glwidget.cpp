@@ -135,8 +135,7 @@ void GLWidget::createConnections()
    	{
         connect( graphs[i], SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
    		connect( graphs[i], SIGNAL(hideSettings(QScrollArea*)), this, SIGNAL(hideSettings(QScrollArea*)));
-   		connect( graphs[i], SIGNAL(showSettings(QScrollArea*)), this, SIGNAL(showSettings(QScrollArea*)));
-   		//graphs[i]->createConnections();
+        connect( graphs[i], SIGNAL(showSettings(QScrollArea*)), this, SIGNAL(showSettings(QScrollArea*)));\
 	}
 	
 	connect(trackReader,SIGNAL(BookmarkAdded(track_entry,string)), this,SLOT(addTrackEntry(track_entry,string)));

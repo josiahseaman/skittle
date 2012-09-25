@@ -28,8 +28,7 @@ public:
 	UiVariables ui;
 	
 	MdiChildWindow(UiVariables gui, QSpinBox* pStart, QTabWidget* settings);
-	void closeEvent(QCloseEvent *event);
-	//createConnections();
+    void closeEvent(QCloseEvent *event);
 	void connectWidget();
 	void hideSettingsTabs();
 	void showSettingsTabs();
