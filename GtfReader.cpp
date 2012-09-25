@@ -4,6 +4,7 @@
 #include "BasicTypes.h"
 #include "UiVariables.h"
 #include "ui_BookmarkDialog.h"
+#include "glwidget.h"
 
 #include <QDebug>
 #include <QThread>
@@ -41,8 +42,7 @@ using namespace std;
 
 **************************************/
 
-GtfReader::GtfReader(UiVariables gui)
-	:ui(gui)
+GtfReader::GtfReader(UiVariables* gui, GLWidget* gl)
 {	
 	//ui = gui;
 	inputFilename = string("blank.fa");
@@ -135,6 +135,7 @@ string GtfReader::trimFilename(string path)
 
 vector<track_entry>  GtfReader::readFile(QString filename)
 {
+
 	vector<track_entry> annotation_track;
 	inputFilename = filename.toStdString();
 	if( inputFilename.empty() || !initFile(inputFilename) )

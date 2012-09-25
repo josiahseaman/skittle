@@ -74,7 +74,8 @@ GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
     //TODO:this needs to be moved .... somewhere
     connect(reader, SIGNAL(newFileRead(const string*)), this, SLOT(displayString(const string*)));
 	
-    trackReader = new GtfReader(ui);
+
+    trackReader = new GtfReader(&ui, this);
 	
     nuc = new NucleotideDisplay(&ui, this);
     bias = new BiasDisplay(&ui, this);
