@@ -154,22 +154,34 @@ vector<track_entry>  GtfReader::readFile(QString filename)
 		int stop = 0;
 		//string repClass;
 		
-		lineStr.ignore(10000, '\t');//1
-		lineStr.ignore(10000, '\t');//2
-		lineStr.ignore(10000, '\t');//3
-		/*
-		lineStr.ignore(10000, '\t');//4
-		lineStr.ignore(10000, '\t');//5
-		lineStr.ignore(10000, '\t');//6*/
-		//getline(lineStr, repClass, '\t');//repClass - type
-		lineStr >> start >> stop;//genoStart	//genoEnd	
-		color c = color_entry();//repClass);
-		if(!lineStr.fail())
-		{
-			annotation_track.push_back( track_entry(start, stop, c, line) );
-			int last_entry = annotation_track.size() -1;
-			annotation_track[last_entry].index = last_entry;
-		}
+        //Get name of chromosome from the beginning of the line and make sure that it matches the current viewed chromosome file
+        string chromosomeRead;
+        string chrDelim = "chr";
+        int chrStart = chrName.find(chrDelim);
+        int chrEnd = chrName.find(".fa");
+        chromosomeRead = chrName.substr((chrStart + chrDelim.length()), (chrEnd - (chrStart + chrDelim.length())));
+        string chromosomeAnnotation;
+        lineStr >> chromosomeAnnotation;
+
+        if(chromosomeRead.compare(chromosomeAnnotation) == 0)
+        {
+            lineStr.ignore(10000, '\t');//1
+            lineStr.ignore(10000, '\t');//2
+            lineStr.ignore(10000, '\t');//3
+            /*
+            lineStr.ignore(10000, '\t');//4
+            lineStr.ignore(10000, '\t');//5
+            lineStr.ignore(10000, '\t');//6*/
+            //getline(lineStr, repClass, '\t');//repClass - type
+            lineStr >> start >> stop;//genoStart	//genoEnd
+            color c = color_entry();//repClass);
+            if(!lineStr.fail())
+            {
+                annotation_track.push_back( track_entry(start, stop, c, line) );
+                int last_entry = annotation_track.size() -1;
+                annotation_track[last_entry].index = last_entry;
+            }
+        }
 	}	
 	file.close();	
 	return annotation_track;
