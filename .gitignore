@@ -1,6 +1,8 @@
 SkittleToo.pro.user
 *.user
 *.autosave
+*.gff
+*.gtf
 
 #################
 ## Eclipse
