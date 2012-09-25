@@ -52,8 +52,8 @@ RepeatMap::RepeatMap(UiVariables* gui, GLWidget* gl)
 
 	nucleotide_start = 1;
 	F_width = 250;
-	F_start = 0;
-	F_height = 0;
+    F_start = 1;
+    F_height = 1;
 	Width = ui->widthDial->value();
 	changeSize(ui->sizeDial->value());
     usingDoubleSampling = false;
@@ -146,7 +146,7 @@ void RepeatMap::display()
 	int displayWidth = ui->widthDial->value() / ui->scaleDial->value(); 
 	glPushMatrix();
 		glColor4f(1,0,0, 1);//red
-	    glTranslated(displayWidth - F_start -1, 202, 0);
+        glTranslated(displayWidth - F_start, 202, 0);
 	    glScaled(.5, 410, 1);
 	    paint_square(point(-1, 0, .25), color(255,0,0));
 	    paint_square(point(1, 0, .25), color(255,0,0));
@@ -216,9 +216,9 @@ void RepeatMap::freq_map()
         for(int w = 1; w <= F_width; w++)//calculate across widths 1-F_width
         {
             int score = 0;
-            for(int l = 0; l < Width; l++)
+            for(int line_length = 0; line_length < Width; line_length++)
             {
-                if(genome[offset + l] == genome[offset + w + F_start*scale + l])
+                if(genome[offset + line_length] == genome[offset + w + (F_start-1) + line_length])
                     score += 1; //pixel matches the one above it
             }
             freq[h][w] = float(score) / Width;
@@ -250,7 +250,7 @@ vector<vector<float> > RepeatMap::emptyCopy(vector<vector<float> > starter)//TOD
 
 int RepeatMap::height()
 {		
-	F_height = (((long int)display_size) - F_start*scale - F_width*scale ) / Width;
+    F_height = (((long int)display_size) - (F_start-1)*scale - F_width*scale ) / Width;
 
 	F_height = max(0, min(400, F_height) );
 	

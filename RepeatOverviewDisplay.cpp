@@ -98,7 +98,7 @@ RepeatOverviewDisplay::RepeatOverviewDisplay(UiVariables* gui, GLWidget* gl)
 	actionData = actionLabel; 
 }
 
-void RepeatOverviewDisplay::display()
+void RepeatOverviewDisplay::display()//TODO: Delete this whole method since it is redundant with AbstractGraph
 {
 	checkVariables();
     glPushMatrix();
@@ -121,7 +121,25 @@ void RepeatOverviewDisplay::loadTexture()
 	}
 	//s = max(4, (s / 4) * 4);//enforces scale is a multiple of 4
 	//ui->scaleDial->setValue(s);
-	checkVariables();/**/
+    /* /
+    if(!align->hidden)
+    {
+        int scale = ui.scaleDial->value();
+        int rem = scale % 4;
+        scale = scale - rem;//enforces scale is a multiple of 4
+        scale = max(4, scale);
+        if(scale != ui.scaleDial->value())
+        {
+            if(rand() % 10 != 1)
+            {
+                ui.print("GLWidget::paintGL ", scale);
+                emit scaleChanged(scale);//ui.scaleDial->setValue(
+                return;
+            }
+        }
+    }*/
+
+    checkVariables();
 	//return if changed?
 
 	vector<color> alignment_colors;
