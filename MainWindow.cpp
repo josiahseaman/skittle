@@ -429,7 +429,7 @@ void MainWindow::changeWindowName(std::string name)
 
 void MainWindow::openGtf()
 {
-	QString fileName = QFileDialog::getOpenFileName(this,"Open GTF File", "", tr("Annotation files (*.gtf);; Any files (*)"));
+    QString fileName = QFileDialog::getOpenFileName(this,"Open GTF File", "", tr("Annotation files (*.gtf *.gff);; Any files (*)"));
     
     if (!fileName.isEmpty()) 
 		 emit newGtfFileOpen(fileName);
