@@ -9,8 +9,6 @@
 #include "BasicTypes.h"
 #include "UiVariables.h"
 
-class GLWidget;
-
 using namespace std;
 
 class QProgressDialog;
@@ -23,7 +21,7 @@ public:
 	string inputFilename;
 	string chrName;
 	
-    GtfReader(UiVariables *ui, GLWidget *gl);
+    GtfReader(UiVariables *ui);
 	vector<track_entry> readFile(QString name);
 	string outputFile();
 	string trimFilename(string path);

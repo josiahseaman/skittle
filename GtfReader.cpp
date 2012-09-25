@@ -4,7 +4,6 @@
 #include "BasicTypes.h"
 #include "UiVariables.h"
 #include "ui_BookmarkDialog.h"
-#include "glwidget.h"
 
 #include <QDebug>
 #include <QThread>
@@ -42,7 +41,7 @@ using namespace std;
 
 **************************************/
 
-GtfReader::GtfReader(UiVariables* gui, GLWidget* gl)
+GtfReader::GtfReader(UiVariables* gui)
 {	
 	//ui = gui;
 	inputFilename = string("blank.fa");
