@@ -3,6 +3,9 @@ SkittleToo.pro.user
 *.autosave
 *.gff
 *.gtf
+*.fasta
+*.fa
+testFiles/
 
 #################
 ## Eclipse
