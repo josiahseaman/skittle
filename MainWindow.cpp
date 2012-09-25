@@ -407,7 +407,7 @@ void MainWindow::open()
 	QString fileName = QFileDialog::getOpenFileName(
 		this,"Open Sequence File", 
 		"", 
-		"FASTA files (*.fa);; Image files (*.png *.xpm *.jpg);; Text files (*.txt);; All files (*)"
+        "FASTA files (*.fa *.fasta);; Image files (*.png *.xpm *.jpg);; Text files (*.txt);; All files (*)"
 	);
 	
     if (!fileName.isEmpty()) 
