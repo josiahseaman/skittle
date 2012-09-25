@@ -190,18 +190,18 @@ const string* GLWidget::seq()
 	return reader->seq();
 }
 
-void GLWidget::displayString(const string* seq)
+void GLWidget::displayString(const string* sequence)
 {
-	ui.print("New sequence received.  Size:", seq->size());
+    ui.print("New sequence received.  Size:", sequence->size());
 
     for(int i = 0; i < (int)graphs.size(); ++i)
 	{
-        graphs[i]->setSequence(seq);
+        graphs[i]->setSequence(sequence);
         graphs[i]->invalidate();
     }
     ui.startDial->setValue(1);
     ui.widthDial->setValue(128);
-    float multiplier = seq->size() / (float)ui.widthDial->value() / height();
+    float multiplier = sequence->size() / (float)ui.widthDial->value() / (display_height()-10);
     int newScale = max(1, (int)(multiplier) );
 //    ui.scaleDial->setValue( newScale );
     ui.changeScale(newScale);
@@ -277,19 +277,17 @@ void GLWidget::slideHorizontal(int x)
 void GLWidget::updateDisplay()
 {
 	setTotalDisplayWidth();
-	//updateDisplaySize();
-    //ui.print("UpdateGL");
+    //updateDisplaySize();
 	redraw();
 }
 
 void GLWidget::updateDisplaySize()
 {
-	//ui.print("Updating Size: ", ui.sizeDial->value());
 	QSize dimensions = size();
 	double pixelHeight = dimensions.height();
 	int w = ui.widthDial->value();
 	double zoom = 100.0 / ui.zoomDial->value();
-	int display_lines = static_cast<int>(pixelHeight / 3.0 * zoom + 0.5);
+    int display_lines = static_cast<int>(pixelHeight / 3.0 * zoom + 0.5);//TODO this can be replaced with display_height?
 	
 	ui.sizeDial->setSingleStep(w * 10);
 	if(ui.sizeDial->value() !=  w * display_lines )
@@ -475,6 +473,17 @@ QPointF GLWidget::pixelToGlCoords(QPoint pCoords, double z)
 	return QPointF(x, y);
 }
 
+int GLWidget::display_height()
+{
+    /** the height that resizeGL receives is the height of the draw area
+      in pixels.  canvasHeight is the height of the canvas in the Skittle
+      colors grid assuming zoom = 100 (these are OpenGL coordinates).
+      display_height() account for the zoom as well and gives the closest
+      OpenGL grid coordinates.*/
+
+    return canvasHeight / getZoom();
+}
+
 void GLWidget::initializeGL()
 {
     qglClearColor(QColor::fromRgbF(0.5, 0.5, 0.5));//50% grey
@@ -490,23 +499,6 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
-	/** /
-    if(!align->hidden)//TODO: move this inside RepeatOverviewDisplay
-	{
-		int scale = ui.scaleDial->value();
-		int rem = scale % 4;
-		scale = scale - rem;//enforces scale is a multiple of 4
-		scale = max(4, scale);
-		if(scale != ui.scaleDial->value())
-		{
-			if(rand() % 10 != 1)
-			{
-				ui.print("GLWidget::paintGL ", scale);
-				emit scaleChanged(scale);//ui.scaleDial->setValue(
-				return;
-			}
-		}
-    }*/
 	//ui.print("Frame: ", ++frame);
     glMatrixMode(GL_MODELVIEW);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -534,15 +526,14 @@ void GLWidget::paintGL()
 
 void GLWidget::resizeGL(int width, int height)
 {
-	
 	glViewport(0, 0, width, height);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 	
-	float pixelToGridRatio = 6.0;
+    float pixelToGridRatio = 6.0;
 	canvasWidth = width / pixelToGridRatio;
-	canvasHeight = (height / pixelToGridRatio);
+    canvasHeight = height / pixelToGridRatio;
 	float left = 0;
 	float right = left + width / pixelToGridRatio;
 	float top = 0;
@@ -718,7 +709,7 @@ void GLWidget::placeMarker(QPoint pixelCoords)
 
 void GLWidget::redraw()
 {
-	updateGL();
+    updateGL();
 }
 
 /******COLOR MANAGEMENT**************/

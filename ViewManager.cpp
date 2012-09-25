@@ -196,16 +196,6 @@ void ViewManager::changePublicStart(int val)
 }
 
 //PRIVATE FUNCTIONS//
-void ViewManager::broadcastLocalValues(UiVariables local)
-{
-	ui.startDial->setValue(local.startDial->value());
-	
-	ui.sizeDial->setValue(local.sizeDial->value());
-	ui.widthDial->setValue(local.widthDial->value());
-	ui.scaleDial->setValue(local.scaleDial->value());
-	ui.zoomDial->setValue(local.zoomDial->value());
-}
-
 void ViewManager::broadcastPublicValues(UiVariables local)
 {
 	local.startDial->setValue(ui.startDial->value());

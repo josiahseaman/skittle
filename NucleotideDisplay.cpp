@@ -122,18 +122,21 @@ void NucleotideDisplay::color_compress()
 	int r = 0;
 	int g = 0;
 	int b = 0;
-	int end = display_size + nucleotide_start - scale;
-	const string& seq = *sequence;
+    int SCALE = ui->scaleDial->value();
+    int end = display_size + ui->startDial->value() - SCALE;
+    const string& seq = *sequence;
+    int hard_end = sequence->size();
+    end = min(end, hard_end);
 	for(int i = nucleotide_start; i < end; )
 	{
-		for(int s = 0; s < scale; ++s)
+        for(int s = 0; s < scale && i < end; ++s)
 		{
-			color current = glWidget->colors(seq[i++]);
+            color current = glWidget->colors(seq[i++]);
 			r += current.r;
 			g += current.g;
 			b += current.b;
 		}
-		nucleotide_colors.push_back(color(r/scale, g/scale, b/scale));	
+        nucleotide_colors.push_back(color(r/SCALE, g/SCALE, b/SCALE));
 		r = 0;			
 		g = 0;			
 		b = 0;
@@ -159,21 +162,22 @@ string NucleotideDisplay::mouseClick(point2D pt)
 {
 	//range check
 	if( pt.x < width() && pt.x >= 0 && pt.y <= height() )
-	{
+    {
+        int sample_length = Width;
 		int index = pt.y * width() + pt.x;
 		index *= scale;
 		index = max(0, index);
-		index = min((int)display_size-51, index);
-		index = min( index + nucleotide_start, ((int)sequence->size()) - 51 );
-//			ui->print("Index: ", index);
-		string chromosome = glWidget->chromosomeName;
+        index = min((int)display_size-sample_length-1, index);
+        index = min( index + nucleotide_start, ((int)sequence->size()) - sample_length-1 );
+
 		stringstream ss;
-        ss << "Index: " << index << "  Sequence: " << sequence->substr(index, Width);
+        ss << "Index: " << index << "  Sequence: " << sequence->substr(index, sample_length);
+        //string chromosome = glWidget->chromosomeName;
 		//ss<< "   <a href=\"http://genome.ucsc.edu/cgi-bin/hgTracks?hgsid=132202298&clade=mammal&org=Human&db=hg18&position="
 		//<<chromosome<<":"<<index<<"-"<<index+200<<"&pix=800&Submit=submit\">View in Genome Browser</a> [external link]";
 		//																											chr5			12389181	12390000
 		ui->print(ss.str().c_str());
-        return sequence->substr(index, min(1000, Width));
+        return sequence->substr(index, min(1000, sample_length));
 	}
 	else{
 		return string();

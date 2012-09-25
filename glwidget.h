@@ -89,7 +89,7 @@ public:
 public slots:
     void reportOnFinish(int);
     void changeZoom(int z);
-    void displayString(const string*);
+    void displayString(const string* sequence);
     void on_moveButton_clicked();
     void on_selectButton_clicked();
     void on_findButton_clicked();
@@ -121,6 +121,7 @@ signals:
 protected:
 	void displayTrack(const vector<track_entry>& track);
 	QPointF pixelToGlCoords(QPoint pCoords, double z = 0);
+    int display_height();
     void initializeGL();
     void paintGL();
     

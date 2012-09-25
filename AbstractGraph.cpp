@@ -99,17 +99,17 @@ void AbstractGraph::changeScale(int s)
 {
 	if(updateInt(scale, s))
 	{
-		emit scaleChanged(s);
+        ui->changeScale(s);
 	}
 }
 	
 void AbstractGraph::changeWidth(int w)
 {
 	if(updateInt(Width, w ))
-	{
-		if(Width < scale)
-			Width = scale;
-		emit widthChanged(Width);
+    {
+//		if(Width < scale)
+//			Width = scale;
+        ui->changeWidth(w);
 	}
 }
 
