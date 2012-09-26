@@ -429,24 +429,32 @@ void MainWindow::openGtf()
 		 emit newGtfFileOpen(fileName);
 }
 
-void MainWindow::changeScale()
+void MainWindow::changeScale(int scale)
 {
-    ui.changeScale();
+    if(scale == -1)
+        ui.changeScale();
+    else
+        ui.changeScale(scale);
+    viewManager->updateCurrentDisplay();
 }
 
-void MainWindow::changeWidth()
+void MainWindow::changeWidth(int width)
 {
-    ui.changeWidth();
+    if( width == -1)
+        ui.changeWidth();
+    else
+        ui.changeWidth(width);
+    viewManager->updateCurrentDisplay();
 }
 
 void MainWindow::doubleWidth()
 {
-    ui.changeWidth( 2 * widthDial->value() );
+    changeWidth( 2 * widthDial->value() );
 }
 
 void MainWindow::halveWidth()
 {
-    ui.changeWidth( (int)(0.5 * widthDial->value()) );
+    changeWidth( (int)(0.5 * widthDial->value()) );
 }
 
 

@@ -101,23 +101,28 @@ void UiVariables::print(int num1, int num2)
 	textArea->append(QString( ss1.str().c_str() ));	
 }*/
 
-void UiVariables::changeWidth(int newWidth){
-    if (newWidth != oldWidth){
-        int newScale = 1;
-        int displayWidth = newWidth / scaleDial->value();
-        if ( displayWidth < 1 || displayWidth > maxSaneWidth){
+void UiVariables::changeWidth(int newWidth)
+{
+    if(newWidth < 1)
+        newWidth = 1;
 
+    if (newWidth != oldWidth)
+    {
+        int newScale = oldScale;
+        int displayWidth = newWidth / oldScale;
+        if ( displayWidth < 1 || displayWidth > maxSaneWidth)
+        {
             newScale = int(max(double(1.0), double(oldScale) * ( double(newWidth) / double(oldWidth))));
             scaleDial->setValue(newScale);
-            oldScale = newScale;
         }
-
         widthDial->setValue(newWidth);
+        oldWidth = newWidth;
+        oldScale = newScale;
     }
-    oldWidth = newWidth;
 
 }
-void UiVariables::changeWidth(){
+void UiVariables::changeWidth()
+{
     changeWidth(widthDial->value());
 }
 void UiVariables::changeScale(int newScale)
@@ -127,19 +132,20 @@ void UiVariables::changeScale(int newScale)
 
     if(oldScale != newScale)
     {
-        int display_width = max( 1, widthDial->value() / oldScale);
+        int display_width = max( 1, oldWidth / oldScale);
 
-        int display_size = sizeDial->value() / oldScale;
+        int display_size = sizeDial->value() / scaleDial->value();
         display_size = max( 1, display_size);
-
-        widthDial->setValue( display_width * newScale );
+        int newWidth = display_width * newScale;
+        widthDial->setValue( newWidth);
         scaleDial->setValue(newScale);
         sizeDial->setMinimum(scaleDial->value() * 500);
         sizeDial->setValue(display_size*newScale);
-        oldScale = newScale;
 
         widthDial->setSingleStep(newScale);//increment the width step by scaleDial
         widthDial->setMinimum(newScale);
+        oldScale = newScale;
+        oldWidth = newWidth;
     }
 }
 void UiVariables::changeScale()

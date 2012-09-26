@@ -203,7 +203,6 @@ void GLWidget::displayString(const string* sequence)
     ui.widthDial->setValue(128);
     float multiplier = sequence->size() / (float)ui.widthDial->value() / (display_height()-10);
     int newScale = max(1, (int)(multiplier) );
-//    ui.scaleDial->setValue( newScale );
     ui.changeScale(newScale);
 	
 //	emit displaySizeChanged();

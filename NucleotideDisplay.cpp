@@ -107,8 +107,8 @@ void NucleotideDisplay::color_compress()
 	int r = 0;
 	int g = 0;
 	int b = 0;
-    int SCALE = ui->scaleDial->value();
-    int end = display_size + ui->startDial->value() - SCALE;
+    int tempScale = ui->scaleDial->value();
+    int end = display_size + ui->startDial->value() - tempScale;
     const string& seq = *sequence;
     int hard_end = sequence->size();
     end = min(end, hard_end);
@@ -121,7 +121,7 @@ void NucleotideDisplay::color_compress()
 			g += current.g;
 			b += current.b;
 		}
-        nucleotide_colors.push_back(color(r/SCALE, g/SCALE, b/SCALE));
+        nucleotide_colors.push_back(color(r/tempScale, g/tempScale, b/tempScale));
 		r = 0;			
 		g = 0;			
 		b = 0;
