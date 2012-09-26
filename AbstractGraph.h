@@ -21,8 +21,7 @@ class AbstractGraph : public QGLWidget
 {
     Q_OBJECT	
 	
-protected:			
-	int Width;
+protected:
 	int frameCount;
 	const string* sequence;
 	QScrollArea* settingsTab;
@@ -40,8 +39,7 @@ public:
 	
     int display_size;
 	int max_display_size;
-	int nucleotide_start;
-	int scale;
+    int nucleotide_start;
 	string actionLabel;
 	string actionTooltip;
 	string actionData; 
@@ -78,10 +76,8 @@ inline char complement(char a)
 }
 
 public slots:
-	void changeScale(int s);
 	void changeSize(int s);
-	void changeStart(int s);
-	void changeWidth(int w);
+    void changeStart(int s);
 	void invalidate();
     void toggleVisibility();
 	

@@ -30,8 +30,6 @@ AbstractGraph::AbstractGraph(UiVariables* gui, GLWidget* gl)
     textureBuffer = NULL;
 
     nucleotide_start = 1;
-    scale = 1;
-    changeWidth(ui->widthDial->value());
     changeSize(ui->sizeDial->value());
     display_object = 0;
     upToDate = false;
@@ -45,15 +43,13 @@ AbstractGraph::~AbstractGraph()
 
 void AbstractGraph::checkVariables()
 {
-	changeScale(ui->scaleDial->value());
-	changeWidth(ui->widthDial->value());
 	changeStart(ui->startDial->value());
 	changeSize(ui->sizeDial->value());
 }
 
 int AbstractGraph::height()
 {
-	return display_size / Width;
+    return display_size / ui->widthDial->value();
 }
 
 void AbstractGraph::paint_square(point position, color c)
@@ -114,24 +110,6 @@ string AbstractGraph::getFileName()
 }
 
 //***********SLOTS*******************
-void AbstractGraph::changeScale(int s)
-{
-	if(updateInt(scale, s))
-	{
-        ui->changeScale(s);
-	}
-}
-	
-void AbstractGraph::changeWidth(int w)
-{
-	if(updateInt(Width, w ))
-    {
-//		if(Width < scale)
-//			Width = scale;
-        ui->changeWidth(w);
-	}
-}
-
 void AbstractGraph::changeSize(int s)
 {
 	if(updateInt(max_display_size, s))
@@ -204,7 +182,7 @@ string AbstractGraph::mouseClick(point2D pt)
 
 int AbstractGraph::width() 
 {
-	return Width / scale;
+    return ui->widthDial->value() / ui->scaleDial->value();
 }
 
 QScrollArea* AbstractGraph::settingsUi()

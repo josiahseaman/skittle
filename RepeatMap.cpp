@@ -108,14 +108,14 @@ void RepeatMap::display()
 	
 	if( !upToDate )
 	{
-		if((scale > 1)&& nuc != NULL)
+        if((ui->scaleDial->value() > 1)&& nuc != NULL)
 		{
 			nuc->checkVariables();
 			if(!nuc->upToDate)
 			{
 				nuc->load_nucleotide();
 			}
-			int displayWidth = ui->widthDial->value() / scale;
+            int displayWidth = ui->widthDial->value() / ui->scaleDial->value();
 			calculate(nuc->nucleotide_colors, displayWidth);
 		}
 		else
@@ -188,7 +188,8 @@ void RepeatMap::freq_map()
         freq_maxOfSample = emptyCopy(freq);
 	for( int h = 0; h < height(); h++)
     {
-        int offset = h * Width;
+        int tempWidth = ui->widthDial->value();
+        int offset = h * tempWidth;
         /*int end = offset+Width-1;
         //NOTE: This statement is just an optional speed up
         if(genome[offset] == 'N' || genome[offset] == 'n' || genome[end] == 'N' || genome[end] == 'n')
@@ -203,12 +204,12 @@ void RepeatMap::freq_map()
         for(int w = 1; w <= F_width; w++)//calculate across widths 1-F_width
         {
             int score = 0;
-            for(int line_length = 0; line_length < Width; line_length++)
+            for(int line_length = 0; line_length < tempWidth; line_length++)
             {
                 if(genome[offset + line_length] == genome[offset + w + (F_start-1) + line_length])
                     score += 1; //pixel matches the one above it
             }
-            freq[h][w] = float(score) / Width;
+            freq[h][w] = float(score) / tempWidth;
         }
         if(usingDoubleSampling)
         {
@@ -236,8 +237,9 @@ vector<vector<float> > RepeatMap::emptyCopy(vector<vector<float> > starter)//TOD
 }
 
 int RepeatMap::height()
-{		
-    F_height = (((long int)display_size) - (F_start-1)*scale - F_width*scale ) / Width;
+{
+    F_height = (((long int)display_size) - (F_start-1)*ui->scaleDial->value() - F_width*ui->scaleDial->value() )
+            / ui->widthDial->value();
 
 	F_height = max(0, min(400, F_height) );
 	
@@ -284,8 +286,8 @@ string RepeatMap::mouseClick(point2D pt)
 	if( pt.x < (int)width() && pt.x >= 0 && pt.y <= height() )
 	{
 		pt.x += 1;//+1 because offset 1 is the first pixel [0]
-		pt.x *= scale;
-		int index = pt.y * Width;
+        pt.x *= ui->scaleDial->value();
+        int index = pt.y * ui->widthDial->value();
 		index = index + nucleotide_start;
 		int index2 = index + pt.x + F_start;
 		int w = min( 100, ui->widthDial->value() );

@@ -65,8 +65,7 @@ Development:
 RepeatOverviewDisplay::RepeatOverviewDisplay(UiVariables* gui, GLWidget* gl)
     :AbstractGraph(gui, gl)
 {
-	charPerIndex = 4;
-	scale = sizeof(long int) * 4;//4 characters per byte (2 bits per nucleotide)
+    charPerIndex = 4;
 	sequence = NULL;
 	packSeq = NULL;
 	toggleButton = NULL;
@@ -128,7 +127,8 @@ void RepeatOverviewDisplay::loadTexture()
 
 	vector<color> alignment_colors;
 	int end = max(1, (nucleotide_start + display_size) - 251);
-	for(int i = nucleotide_start; i < end; i+=scale)
+    int tempScale = ui->scaleDial->value();
+    for(int i = nucleotide_start; i < end; i += tempScale)
 		alignment_colors.push_back( simpleAlignment(i) );
 
 	storeDisplay( alignment_colors, width());
@@ -163,7 +163,8 @@ void RepeatOverviewDisplay::VLRcheck(vector<point> matches)//alternative to load
 
 	vector<color> alignment_colors;
 	int end = max(1, (nucleotide_start + display_size) - 251);
-	for(int i = nucleotide_start; i < end; i+=scale)
+    int tempScale = ui->scaleDial->value();
+    for(int i = nucleotide_start; i < end; i += tempScale)
 		alignment_colors.push_back( simpleAlignment(i) );
 
 	mergeMatches( alignment_colors, matches );
@@ -177,6 +178,7 @@ void RepeatOverviewDisplay::mergeMatches(vector<color>& original, vector<point>&
 {
 	int start = 250 / ui->scaleDial->value();
 	start = max( 10, start);
+    int tempScale = ui->scaleDial->value();
     for( int i = 0; i < (int)vlr.size(); ++i)
 	{
 		if((vlr[i].y > start) && (vlr[i].x > .7))
@@ -184,7 +186,7 @@ void RepeatOverviewDisplay::mergeMatches(vector<color>& original, vector<point>&
             for(int k = i * width(); k < (i+1) * width() && k < (int)original.size(); ++k)
 			{
 				//original[k] = (original[k]/3) + (alignment_color( vlr[i].x*scale, vlr[i].y)*2.0/3.0);// * scale 
-				original[k] = alignment_color( vlr[i].x*scale, vlr[i].y);
+                original[k] = alignment_color( vlr[i].x*tempScale, vlr[i].y);
 			}
 		}
 	}
@@ -214,7 +216,7 @@ void RepeatOverviewDisplay::displayLegend(float canvasWidth, float canvasHeight)
 		{
 			glPushMatrix();
 				glTranslated(i,4,0);
-				color c = alignment_color(scale, i);//spectrum(i/255.0);//ui->scaleDial->value()
+                color c = alignment_color(ui->scaleDial->value(), i);//spectrum(i/255.0);//ui->scaleDial->value()
 				glScaled(1,10,1);//*(c.b / 125.0)
 	    		glColor3d(c.r /255.0, c.g /255.0, c.b /255.0); 
 	    	    glBegin(GL_QUADS);
@@ -239,7 +241,7 @@ color RepeatOverviewDisplay::alignment_color(int score, int frequency)
 {
 	color c = glWidget->spectrum((double)(frequency) / 250.0);//
 	color black = color(0,0,0);
-	c = interpolate(black, c, score / float(scale));
+    c = interpolate(black, c, score / float(ui->scaleDial->value()));
 	
 	return c;
 }
@@ -352,7 +354,7 @@ color RepeatOverviewDisplay::simpleAlignment(int index)
 		return color(0,0,0);
 		
 	//scale % 4 == 0 always
-	int reference_size = scale / 4 + 2;//sequence bytes = scale / 4.  1 byte of padding for shifts. 1 byte for sub_index. 
+    int reference_size = ui->scaleDial->value() / 4 + 2;//sequence bytes = scale / 4.  1 byte of padding for shifts. 1 byte for sub_index.
     int bitmask_size = reference_size + sizeof(long int);
 	int pack_index = index / 4;
 	int sub_index = index % 4;
@@ -364,7 +366,7 @@ color RepeatOverviewDisplay::simpleAlignment(int index)
 	for(int i = 0; i < reference_size; ++i)
 		reference[i] = packSeq[i+pack_index];//copy values
 
-	int string_end = scale/4;
+    int string_end = ui->scaleDial->value()/4;
 	for(int i = 0; i < bitmask_size; ++i)
 	{
 		if( i < string_end)
@@ -444,7 +446,7 @@ void RepeatOverviewDisplay::setSequence(const string* seq)
 void RepeatOverviewDisplay::changeScale(int s)
 {
     ui->print("RepeatOverviewDisplay::changeScale ", s);
-	AbstractGraph::changeScale(s);
+    ui->changeScale(s);
 }
 
 void RepeatOverviewDisplay::toggleVisibility()

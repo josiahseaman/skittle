@@ -79,8 +79,8 @@ GLuint CylinderDisplay::render()
 	glEndList();
 
 	//width_list = vector<float>(max_display_size, (float)Width);
-	ntLinker->calculate(sequence->substr(nucleotide_start, display_size), Width);
-	width_list = ntLinker->smooth(Width, 80);
+    ntLinker->calculate(sequence->substr(nucleotide_start, display_size), ui->widthDial->value());
+    width_list = ntLinker->smooth(ui->widthDial->value(), 80);
 		//ntLinker->tie_up_loose_ends(width_list);
 		//ntLinker->cap_movement(width_list, 1);
 
@@ -101,7 +101,7 @@ GLuint CylinderDisplay::render()
 			{
                 if(i >= (int)width_list.size())
 				{
-					local_width = Width;
+                    local_width = ui->widthDial->value();
 				}
 				else
 				{

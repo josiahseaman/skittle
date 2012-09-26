@@ -54,7 +54,7 @@ NucleotideDisplay::~NucleotideDisplay(){
 void NucleotideDisplay::display()
 {
 	checkVariables();
-	glPushMatrix();
+    glPushMatrix();
 	glScaled(1,-1,1);
 		if(!upToDate)
 			load_nucleotide();
@@ -64,14 +64,14 @@ void NucleotideDisplay::display()
 
 GLuint NucleotideDisplay::render()
 {
-	GLuint list = glGenLists(1);
+    GLuint list = glGenLists(1);
     glNewList(list, GL_COMPILE);
     glPushMatrix();
-	glScaled(1,-1,1);
-		if(!upToDate)
-			load_nucleotide();
-		textureBuffer->display();
-	glPopMatrix();
+    glScaled(1,-1,1);
+    if(!upToDate)
+        load_nucleotide();
+    textureBuffer->display();
+    glPopMatrix();
     glEndList();
     upToDate = true;
     return list;
@@ -93,7 +93,7 @@ void NucleotideDisplay::loadTextureCanvas(bool raggedEdge)
 void NucleotideDisplay::sequenceToColors(const char* genome)
 {
     nucleotide_colors.clear();
-    if(scale > 1)
+    if( ui->scaleDial->value() > 1)
         color_compress();
     else
     {
@@ -114,7 +114,7 @@ void NucleotideDisplay::color_compress()
     end = min(end, hard_end);
 	for(int i = nucleotide_start; i < end; )
 	{
-        for(int s = 0; s < scale && i < end; ++s)
+        for(int s = 0; s < tempScale && i < end; ++s)
 		{
             color current = glWidget->colors(seq[i++]);
 			r += current.r;
@@ -129,28 +129,15 @@ void NucleotideDisplay::color_compress()
 	upToDate = true;
 }
 
-/******SLOTS***** /
-void NucleotideDisplay::changeWidth(int w)//Nucleotide Display changes Width internally to w/scale
-{
-	if(w < 1)
-		w = 1;
-	if(widthInBp() != w)
-	{
-		ui->print("Nucleotide Width");
-		Width = max(1, w / ui->scaleDial->value() );
-		emit widthChanged(w);
-		invalidate();
-	}	
-}
-/ **/
+/******SLOTS*****/
 string NucleotideDisplay::mouseClick(point2D pt)
 {
 	//range check
 	if( pt.x < width() && pt.x >= 0 && pt.y <= height() )
     {
-        int sample_length = Width;
+        int sample_length = ui->widthDial->value();
 		int index = pt.y * width() + pt.x;
-		index *= scale;
+        index *= ui->scaleDial->value();
 		index = max(0, index);
         index = min((int)display_size-sample_length-1, index);
         index = min( index + nucleotide_start, ((int)sequence->size()) - sample_length-1 );
@@ -172,5 +159,5 @@ string NucleotideDisplay::mouseClick(point2D pt)
 
 int NucleotideDisplay::widthInBp()//Nucleotide Display changes Width internally to w/scale
 {
-	return Width;
+    return ui->widthDial->value();
 }

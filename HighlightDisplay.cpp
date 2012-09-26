@@ -130,9 +130,10 @@ vector<int> HighlightDisplay::identifyMatches(string find)
 	int match_minimum = (int)(255 * percentage_match);
 	const char* seq = (sequence->c_str()+nucleotide_start);
 	int offset = 0;
-	for(int i = 0; i < (int)scores.size(); i+=scale)
+    int tempScale = ui->scaleDial->value();
+    for(int i = 0; i < (int)scores.size(); i+=tempScale)
 	{
-		vector<unsigned short int>::iterator bestMatch = max_element(scores.begin()+i, scores.begin()+i+scale);
+        vector<unsigned short int>::iterator bestMatch = max_element(scores.begin()+i, scores.begin()+i+tempScale);
 		short int bestScore = *bestMatch;
 		int grey = static_cast<int>(  float(bestScore)/findSize * 255 );//Grey scale based on similarity
 		int pixelColor = grey;//white to grey
@@ -150,7 +151,7 @@ vector<int> HighlightDisplay::identifyMatches(string find)
 			else
 				pixelColor = 258;//blue
 				
-			remainingLength = max(0, remainingLength - scale);
+            remainingLength = max(0, remainingLength - tempScale);
 		}
 		pixels.push_back( pixelColor );
 	}

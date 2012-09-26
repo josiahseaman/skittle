@@ -104,9 +104,7 @@ QScrollArea* OligomerDisplay::settingsUi()
 }
 
 void OligomerDisplay::checkVariables()
-{	
-	changeScale(ui->scaleDial->value());	
-	changeWidth(ui->widthDial->value());//width and scale
+{
 	changeStart(ui->startDial->value());
 	changeSize(ui->sizeDial->value());
 	changeWordLength(oligDial->value());
@@ -436,11 +434,12 @@ void OligomerDisplay::freq_map()
 	for( int h = 0; h < F_height; h++)
 	{
 		vector<int> temp_map = vector<int>(F_width, 0);
-		int offset = h * Width;
+        int tempWidth = ui->widthDial->value();
+        int offset = h * tempWidth;
 		
-		if(genome[offset] != 'N' && genome[offset+Width] != 'N')
+        if(genome[offset] != 'N' && genome[offset+tempWidth] != 'N')
 		{
-			for(int l = 0; l < Width; l++)
+            for(int l = 0; l < tempWidth; l++)
 			{	
 				int oligIndex = 0;
 				for(int c = 0; c < wordLength; ++c)
@@ -478,7 +477,7 @@ int OligomerDisplay::oligNum(string a)
 
 int OligomerDisplay::height()
 {
-	F_height = (display_size - wordLength ) / Width;
+    F_height = (display_size - wordLength ) / ui->widthDial->value();
 
     F_height = max(1, min(400, F_height) );
 	

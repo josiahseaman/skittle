@@ -24,16 +24,17 @@ void BiasDisplay::sequenceToColors(const char* genome)
 {
     nucleotide_colors.clear();
     int max_bar_width = display_width / 3;
+    int tempWidth = ui->widthDial->value();
 
     for(int h = 0; h < height(); h++)
     {
-        vector<int> counts = countNucleotides(genome + h*Width);//TODO: The counting code could be replaced with the code from OligomerDisplay freq_map()
+        vector<int> counts = countNucleotides(genome + h*tempWidth);//TODO: The counting code could be replaced with the code from OligomerDisplay freq_map()
         vector<int> bar_sizes;
         float remainder = 0.0;
         float floating_sum = 0.0;
         for(int c = 0; c < (int)counts.size(); ++c)
         {
-            float barSize = (float)counts[c] / Width * max_bar_width + .00001;  //normalize the size of the bar to display_width
+            float barSize = (float)counts[c] / tempWidth * max_bar_width + .00001;  //normalize the size of the bar to display_width
             floating_sum += barSize;
             barSize += remainder;
             remainder = floating_sum - (int)(floating_sum + .5);
@@ -48,7 +49,8 @@ void BiasDisplay::sequenceToColors(const char* genome)
 vector<int> BiasDisplay::countNucleotides(const char* genome)
 {
     vector<int> counts(4,0);
-    for(int w = 0; w < Width; w++)
+    int tempWidth = ui->widthDial->value();
+    for(int w = 0; w < tempWidth; w++)
     {
         ++counts[ACGT_num(genome[w])];
     }
