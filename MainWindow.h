@@ -50,6 +50,8 @@ public slots:
 	void updateStatus(QString);
 	void changeWindowName(std::string name);
     void openGtf();
+    void changeScale();
+    void changeWidth();
 	void doubleWidth();
 	void halveWidth();
 	void addDisplayActions(AbstractGraph*);
@@ -79,9 +81,7 @@ private:
     void createUiVariables();
 	bool loadfile(const QString &filename);
 	void readSettings();
-	void writeSettings();
-    void changeScale();
-    void changeWidth();
+    void writeSettings();
 	void print(const char* str);
     void print(QString);
 	
