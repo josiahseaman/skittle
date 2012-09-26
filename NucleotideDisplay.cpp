@@ -33,23 +33,9 @@ mouse clicks like "Find" and "Select".  Like all Graphs, it uses TextureCanvas f
 surface.
 **********************************************************/
 NucleotideDisplay::NucleotideDisplay(UiVariables* gui, GLWidget* gl)
+:AbstractGraph(gui, gl)
 {	
-	glWidget = gl;
-	ui = gui;
-	string* seq = new string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");	
-	sequence = seq;
-	
-	textureBuffer = NULL;
-	settingsTab = NULL;
-	toggleButton = NULL;	
-	hidden = false;
-	
-	nucleotide_start = 1;
-	scale = 1;
-	changeWidth(ui->widthDial->value());
-	changeSize(ui->sizeDial->value());
-	upToDate = false;
-	
+    hidden = false;
 	invert = false;
 	C = true;
 	G = true;
@@ -58,8 +44,7 @@ NucleotideDisplay::NucleotideDisplay(UiVariables* gui, GLWidget* gl)
 	
 	actionLabel = string("Nucleotide Display");
 	actionTooltip = string("Nucleotides as Colors");
-	actionData = actionLabel; 
-	display_object = 0;
+    actionData = actionLabel;
 }
 
 NucleotideDisplay::~NucleotideDisplay(){
@@ -94,7 +79,7 @@ GLuint NucleotideDisplay::render()
 
 void NucleotideDisplay::load_nucleotide()
 {
-	const char* genome = sequence->c_str() + nucleotide_start;
+    const char* genome = sequence->c_str() + ui->startDial->value();
     sequenceToColors(genome);
 	loadTextureCanvas();
 	upToDate = true;

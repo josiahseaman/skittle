@@ -39,7 +39,6 @@ signals:
 private:
 	GLWidget* glWidget;
     int max_width;
-	GLuint display_object;
 	vector<track_entry> gtfTrack;
 	
 	string fileName;

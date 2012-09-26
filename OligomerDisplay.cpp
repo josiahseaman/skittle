@@ -22,24 +22,15 @@ to the largest value being white.
 *****************************************************/
 
 OligomerDisplay::OligomerDisplay(UiVariables* gui, GLWidget* gl)
-{	
-	glWidget = gl;
-	ui = gui;
-	string* seq = new string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");	
-	sequence = seq;
-	toggleButton = NULL;
+    :AbstractGraph(gui, gl)
+{
 	graphBuffer = new TextureCanvas( );
 	avgBuffer = new TextureCanvas();
 	heatMapBuffer = new TextureCanvas();
-	correlationBuffer = new TextureCanvas();
-	hidden = true;
-	
-	nucleotide_start = 1;
+    correlationBuffer = new TextureCanvas();
+
 	F_width = 250;
-	F_height = 0;
-	changeWidth(ui->widthDial->value());
-	changeSize(ui->sizeDial->value());
-	upToDate = false;
+    F_height = 0;
 	
 	similarityGraphWidth = 50;
 	frameCount = 0;

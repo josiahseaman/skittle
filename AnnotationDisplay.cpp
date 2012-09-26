@@ -16,21 +16,15 @@
   The logic for parallel lanes is in displayTrack().
   **********************/
 AnnotationDisplay::AnnotationDisplay(UiVariables* gui, GLWidget* gl, string gtfFileName)
-{	
-	glWidget = gl;
-	ui = gui;
-	hidden = true;
-
-	nucleotide_start = 1;
-	upToDate = false;
+    :AbstractGraph(gui, gl)
+{
 	max_width = 0;
 	
 	actionLabel = string("Annotation Display");
 	actionTooltip = string("Genome annotation locations");
 	actionData = actionLabel; 
 	
-	fileName = gtfFileName;
-	display_object = 0;
+    fileName = gtfFileName;
 }
 
 AnnotationDisplay::~AnnotationDisplay()

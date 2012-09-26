@@ -43,8 +43,6 @@ public slots:
 	
 signals:
 
-protected:
-	GLuint display_object;
 };
 
 #endif

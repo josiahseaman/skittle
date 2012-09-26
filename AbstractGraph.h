@@ -26,6 +26,7 @@ protected:
 	int frameCount;
 	const string* sequence;
 	QScrollArea* settingsTab;
+    GLuint display_object;
 
 public:
 	GLWidget* glWidget;
@@ -45,7 +46,8 @@ public:
 	string actionTooltip;
 	string actionData; 
 	
-	AbstractGraph();
+    AbstractGraph();
+    AbstractGraph(UiVariables* gui, GLWidget* gl);
 	~AbstractGraph();
 	virtual int width();
 

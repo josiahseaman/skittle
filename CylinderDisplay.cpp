@@ -20,27 +20,14 @@
 *********************/
 
 CylinderDisplay::CylinderDisplay(UiVariables* gui, GLWidget* gl)
-{	
-	glWidget = gl;
-	ui = gui;
-	string* seq = new string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");
-	sequence = seq;
-	hidden = true;
-	settingsTab = NULL;
-	toggleButton = NULL;
-	
-	nucleotide_start = 1;
-	scale = 1;
-	changeWidth(ui->widthDial->value());
-	changeSize(ui->sizeDial->value());
-	upToDate = false;
+:AbstractGraph(gui, gl)
+{
 	turnCylinder = 0;
 	ntLinker = new NucleotideLinker();
 	
 	actionLabel = string("Alignment Cylinder");
 	actionTooltip = string("Best 3D alignment as a Cylinder");
-	actionData = actionLabel; 
-	display_object = 0;
+    actionData = actionLabel;
 }	
 
 CylinderDisplay::~CylinderDisplay(){
@@ -67,14 +54,14 @@ void CylinderDisplay::display()
 	checkVariables();
 	if( !upToDate )
 	{
-    	//glDeleteLists(display_object, 1);
-		//display_object = render();
+        glDeleteLists(display_object, 1);
+        display_object = render();
 	}
 	glPushMatrix();
 		glTranslated(width()/2, 0, 0);
 		glRotated(turnCylinder, 0,1,0);//rotate cylinder around Y	
-		//glCallList(display_object);
-		render();
+        glCallList(display_object);
+        //render();
 	glPopMatrix();
 }
 

@@ -37,8 +37,7 @@ public slots:
 signals:
 
 private:
-	float max_width;
-	GLuint display_object;
+    float max_width;
 	GLuint square;
 	vector<float> width_list;
 	NucleotideLinker* ntLinker;

@@ -11,15 +11,9 @@ BiasDisplay::BiasDisplay(UiVariables* gui, GLWidget* gl)
     display_width = 120;
 }
 
-QScrollArea* BiasDisplay::settingsUi()
-{
-    return NULL;
-}
-
-
 void BiasDisplay::load_nucleotide()
 {
-    const char* genome = sequence->c_str() + nucleotide_start;
+    const char* genome = sequence->c_str() + ui->startDial->value();
     sequenceToColors(genome);
 
     loadTextureCanvas(true);

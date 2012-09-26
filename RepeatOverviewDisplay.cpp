@@ -63,12 +63,8 @@ Development:
 *************************************/
 
 RepeatOverviewDisplay::RepeatOverviewDisplay(UiVariables* gui, GLWidget* gl)
-{	
-	glWidget = gl;
-	string* seq = new string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");
-	sequence = seq;
-
-	ui = gui;	
+    :AbstractGraph(gui, gl)
+{
 	charPerIndex = 4;
 	scale = sizeof(long int) * 4;//4 characters per byte (2 bits per nucleotide)
 	sequence = NULL;
@@ -77,19 +73,7 @@ RepeatOverviewDisplay::RepeatOverviewDisplay(UiVariables* gui, GLWidget* gl)
 	countTableShort = NULL;
 	countTableChar = NULL;
 	pSeqSize = 0;
-	
-	textureBuffer = NULL;	
-	settingsTab = NULL;
-	hidden = true;
-	upToDate = true;
-	
-	
-	display_size = ui->sizeDial->value();
-	nucleotide_start = ui->startDial->value();
-	Width = ui->widthDial->value();
-	scale = ui->scaleDial->value();
-//	checkVariables();
-	
+
 	calcMatchTable();
 	//packSequence is called by setSequence()
 	

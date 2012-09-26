@@ -40,24 +40,12 @@ values using: double correlate().  This is the same method as above, but more ma
 sophisticated.
 *******************************************/
 RepeatMap::RepeatMap(UiVariables* gui, GLWidget* gl)
-{	
-	glWidget = gl;
-	ui = gui;
-	nuc = NULL;
-	string* seq = new string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");	
-	sequence = seq;
-	textureBuffer = NULL;
-	toggleButton = NULL;
-	hidden = true;
-
-	nucleotide_start = 1;
+    :AbstractGraph(gui, gl)
+{
 	F_width = 250;
     F_start = 1;
     F_height = 1;
-	Width = ui->widthDial->value();
-	changeSize(ui->sizeDial->value());
     usingDoubleSampling = false;
-	upToDate = false;
 
 	freq = vector< vector<float> >();
 	for(int i = 0; i < 400; i++)
@@ -69,8 +57,7 @@ RepeatMap::RepeatMap(UiVariables* gui, GLWidget* gl)
 	
 	actionLabel = string("Repeat Map");
 	actionTooltip = string("Graph of possible alignmments");
-	actionData = actionLabel; 
-	display_object = 0;
+    actionData = actionLabel;
 }
 
 RepeatMap::~RepeatMap()

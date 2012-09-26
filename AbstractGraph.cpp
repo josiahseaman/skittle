@@ -18,6 +18,25 @@ AbstractGraph::AbstractGraph()
 	textureBuffer = new TextureCanvas();
 }
 
+AbstractGraph::AbstractGraph(UiVariables* gui, GLWidget* gl)
+{
+    glWidget = gl;
+    ui = gui;
+    string* seq = new string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATTAATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");
+    sequence = seq;
+    hidden = true;
+    settingsTab = NULL;
+    toggleButton = NULL;
+    textureBuffer = NULL;
+
+    nucleotide_start = 1;
+    scale = 1;
+    changeWidth(ui->widthDial->value());
+    changeSize(ui->sizeDial->value());
+    display_object = 0;
+    upToDate = false;
+}
+
 AbstractGraph::~AbstractGraph()
 {
 	if(toggleButton != NULL)

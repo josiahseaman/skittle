@@ -14,7 +14,6 @@ public:
     int display_width;
 
     BiasDisplay(UiVariables* gui, GLWidget* gl);
-    QScrollArea* settingsUi();
     void load_nucleotide();
     void sequenceToColors(const char* genome);
     vector<int> countNucleotides(const char* genome);
