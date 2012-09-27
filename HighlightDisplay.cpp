@@ -128,7 +128,7 @@ vector<int> HighlightDisplay::identifyMatches(string find)
 	int findSize = find.size();
 	int remainingLength = 0;
 	int match_minimum = (int)(255 * percentage_match);
-	const char* seq = (sequence->c_str()+nucleotide_start);
+    const char* seq = (sequence->c_str() + ui->startDial->value());//TODO:not a particularly safe way of accessing
 	int offset = 0;
     int tempScale = ui->scaleDial->value();
     for(int i = 0; i < (int)scores.size(); i+=tempScale)
@@ -162,15 +162,13 @@ vector<int> HighlightDisplay::identifyMatches(string find)
 vector<unsigned short int> HighlightDisplay::calculate(string find)
 {
 	vector<unsigned short int> scores;
-	int findSize = find.size();
-	//if(findSize == 0)
-	//	return vector<unsigned short int>(display_size, 0);
+    int findSize = find.size();
 		
-	int start = nucleotide_start;
+    int start = ui->startDial->value();
 	unsigned short int maxMismatches = findSize - static_cast<unsigned short int>((float)findSize * percentage_match + .999);
 		//at 50%   1 = 0,  2 = 1, 3 = 1
-	const string& seq = *sequence;
-	for( int h = 0; h < display_size && h  < (int)seq.size() - start - (findSize-1); h++)
+    const string& seq = *sequence;
+    for( int h = 0; h < current_display_size() && h  < (int)seq.size() - start - (findSize-1); h++)
 	{
 			unsigned short int mismatches = 0;
 			int start_h = start + h;
@@ -192,7 +190,7 @@ void HighlightDisplay::combine(vector< vector<int> >& results)
 	
 	//ensure they're all the same length
 	int nSequences = results.size();
-	int length = display_size;
+    int length = current_display_size();
 	if(!results.empty())
 		length = results[0].size();
 	vector< vector<int>::iterator > iterators;

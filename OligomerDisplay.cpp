@@ -105,8 +105,6 @@ QScrollArea* OligomerDisplay::settingsUi()
 
 void OligomerDisplay::checkVariables()
 {
-	changeStart(ui->startDial->value());
-	changeSize(ui->sizeDial->value());
 	changeWordLength(oligDial->value());
 }
 
@@ -430,7 +428,7 @@ void OligomerDisplay::freq_map()
 {
 	//ui->print("OligomerDisplay: ", ++frameCount);
 	height();
-	const char* genome = sequence->c_str() + nucleotide_start;
+    const char* genome = sequence->c_str() + ui->startDial->value();//TODO: find a safer way to access this
 	for( int h = 0; h < F_height; h++)
 	{
 		vector<int> temp_map = vector<int>(F_width, 0);
@@ -477,7 +475,7 @@ int OligomerDisplay::oligNum(string a)
 
 int OligomerDisplay::height()
 {
-    F_height = (display_size - wordLength ) / ui->widthDial->value();
+    F_height = (current_display_size() - wordLength ) / ui->widthDial->value();
 
     F_height = max(1, min(400, F_height) );
 	
@@ -492,7 +490,7 @@ string OligomerDisplay::mouseClick(point2D pt)
 	{
 		pt.x = pt.x / 2;
 		int index = pt.y * ui->widthDial->value();
-		index = index + nucleotide_start;
+        index = index + ui->startDial->value();
 		int w = min( 100, ui->widthDial->value() );
 		stringstream ss;
 		ss << "Dinucleotide: " << pt.x << "  Count: " << freq[pt.y][pt.x] << "\nSequence:"

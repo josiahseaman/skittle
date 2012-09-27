@@ -29,8 +29,6 @@ AbstractGraph::AbstractGraph(UiVariables* gui, GLWidget* gl)
     toggleButton = NULL;
     textureBuffer = NULL;
 
-    nucleotide_start = 1;
-    changeSize(ui->sizeDial->value());
     display_object = 0;
     upToDate = false;
 }
@@ -43,13 +41,12 @@ AbstractGraph::~AbstractGraph()
 
 void AbstractGraph::checkVariables()
 {
-	changeStart(ui->startDial->value());
-	changeSize(ui->sizeDial->value());
+//TODO: delete this
 }
 
 int AbstractGraph::height()
 {
-    return display_size / ui->widthDial->value();
+    return current_display_size() / ui->widthDial->value();
 }
 
 void AbstractGraph::paint_square(point position, color c)
@@ -109,25 +106,13 @@ string AbstractGraph::getFileName()
 	return "";
 }
 
+int AbstractGraph::current_display_size()
+{
+    return min( ui->sizeDial->value(), max(0, ((int)sequence->size() - ui->startDial->value())) );
+}
+
+
 //***********SLOTS*******************
-void AbstractGraph::changeSize(int s)
-{
-	if(updateInt(max_display_size, s))
-	{
-		display_size = min( max_display_size, max(0, ((int)sequence->size() - nucleotide_start)) );
-		emit sizeChanged(s);
-	}
-}
-
-void AbstractGraph::changeStart(int s)
-{
-	if(updateInt(nucleotide_start, s))
-	{
-		display_size = min( max_display_size, max(0, ((int)sequence->size() - nucleotide_start)) );
-		emit startChanged(s);
-	}
-}
-
 void AbstractGraph::invalidate()
 {
 	upToDate = false;
@@ -172,7 +157,6 @@ void AbstractGraph::setButtonFont()
 void AbstractGraph::setSequence(const string* seq)
 {
     sequence = seq;
-    changeSize(ui->sizeDial->value());//TODO: is this accomplishing anything on a new file read?
 }
 
 string AbstractGraph::mouseClick(point2D pt)

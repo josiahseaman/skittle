@@ -116,7 +116,6 @@ void RepeatOverviewDisplay::loadTexture()
             if(rand() % 10 != 1)
             {
                 ui.print("GLWidget::paintGL ", scale);
-                emit scaleChanged(scale);//ui.scaleDial->setValue(
                 return;
             }
         }
@@ -126,9 +125,9 @@ void RepeatOverviewDisplay::loadTexture()
 	//return if changed?
 
 	vector<color> alignment_colors;
-	int end = max(1, (nucleotide_start + display_size) - 251);
+    int end = max(1, (ui->startDial->value() + current_display_size()) - 251);
     int tempScale = ui->scaleDial->value();
-    for(int i = nucleotide_start; i < end; i += tempScale)
+    for(int i = ui->startDial->value(); i < end; i += tempScale)
 		alignment_colors.push_back( simpleAlignment(i) );
 
 	storeDisplay( alignment_colors, width());
@@ -162,9 +161,9 @@ void RepeatOverviewDisplay::VLRcheck(vector<point> matches)//alternative to load
 	//return if changed?
 
 	vector<color> alignment_colors;
-	int end = max(1, (nucleotide_start + display_size) - 251);
+    int end = max(1, (ui->startDial->value() + current_display_size()) - 251);
     int tempScale = ui->scaleDial->value();
-    for(int i = nucleotide_start; i < end; i += tempScale)
+    for(int i = ui->startDial->value(); i < end; i += tempScale)
 		alignment_colors.push_back( simpleAlignment(i) );
 
 	mergeMatches( alignment_colors, matches );

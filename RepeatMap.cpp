@@ -182,7 +182,7 @@ GLuint RepeatMap::render()
 
 void RepeatMap::freq_map()
 {
-	const char* genome = sequence->c_str() + nucleotide_start;
+    const char* genome = sequence->c_str() + ui->startDial->value();//TODO: find a safer way to access this
     vector<vector<float> > freq_maxOfSample;
     if(usingDoubleSampling)
         freq_maxOfSample = emptyCopy(freq);
@@ -238,7 +238,7 @@ vector<vector<float> > RepeatMap::emptyCopy(vector<vector<float> > starter)//TOD
 
 int RepeatMap::height()
 {
-    F_height = (((long int)display_size) - (F_start-1)*ui->scaleDial->value() - F_width*ui->scaleDial->value() )
+    F_height = (((long int)current_display_size()) - (F_start-1)*ui->scaleDial->value() - F_width*ui->scaleDial->value() )
             / ui->widthDial->value();
 
 	F_height = max(0, min(400, F_height) );
@@ -288,7 +288,7 @@ string RepeatMap::mouseClick(point2D pt)
 		pt.x += 1;//+1 because offset 1 is the first pixel [0]
         pt.x *= ui->scaleDial->value();
         int index = pt.y * ui->widthDial->value();
-		index = index + nucleotide_start;
+        index = index + ui->startDial->value();
 		int index2 = index + pt.x + F_start;
 		int w = min( 100, ui->widthDial->value() );
         if( index2 + w < (int)sequence->size() )

@@ -13,7 +13,7 @@ BiasDisplay::BiasDisplay(UiVariables* gui, GLWidget* gl)
 
 void BiasDisplay::load_nucleotide()
 {
-    const char* genome = sequence->c_str() + ui->startDial->value();
+    const char* genome = sequence->c_str() + ui->startDial->value();//TODO: find a safer way to access this
     sequenceToColors(genome);
 
     loadTextureCanvas(true);

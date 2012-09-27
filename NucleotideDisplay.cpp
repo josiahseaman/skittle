@@ -79,7 +79,7 @@ GLuint NucleotideDisplay::render()
 
 void NucleotideDisplay::load_nucleotide()
 {
-    const char* genome = sequence->c_str() + ui->startDial->value();
+    const char* genome = sequence->c_str() + ui->startDial->value();//TODO: find a safer way to access this
     sequenceToColors(genome);
 	loadTextureCanvas();
 	upToDate = true;
@@ -97,7 +97,7 @@ void NucleotideDisplay::sequenceToColors(const char* genome)
         color_compress();
     else
     {
-        for(int i = 0; i < display_size; ++i)
+        for(int i = 0; i < current_display_size(); ++i)
             nucleotide_colors.push_back( glWidget->colors(genome[i]) );//TODO: Optimize pointer function call
     }
 }
@@ -108,11 +108,11 @@ void NucleotideDisplay::color_compress()
 	int g = 0;
 	int b = 0;
     int tempScale = ui->scaleDial->value();
-    int end = display_size + ui->startDial->value() - tempScale;
+    int end = current_display_size() + ui->startDial->value() - tempScale;
     const string& seq = *sequence;
     int hard_end = sequence->size();
     end = min(end, hard_end);
-	for(int i = nucleotide_start; i < end; )
+    for(int i = ui->startDial->value(); i < end; )
 	{
         for(int s = 0; s < tempScale && i < end; ++s)
 		{
@@ -139,8 +139,8 @@ string NucleotideDisplay::mouseClick(point2D pt)
 		int index = pt.y * width() + pt.x;
         index *= ui->scaleDial->value();
 		index = max(0, index);
-        index = min((int)display_size-sample_length-1, index);
-        index = min( index + nucleotide_start, ((int)sequence->size()) - sample_length-1 );
+        index = min((int)current_display_size()-sample_length-1, index);
+        index = min( index + ui->startDial->value(), ((int)sequence->size()) - sample_length-1 );
 
 		stringstream ss;
         ss << "Index: " << index << "  Sequence: " << sequence->substr(index, sample_length);

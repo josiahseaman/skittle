@@ -78,8 +78,7 @@ GLuint CylinderDisplay::render()
 		createSquare();
 	glEndList();
 
-	//width_list = vector<float>(max_display_size, (float)Width);
-    ntLinker->calculate(sequence->substr(nucleotide_start, display_size), ui->widthDial->value());
+    ntLinker->calculate(sequence->substr(ui->startDial->value(), current_display_size()), ui->widthDial->value());
     width_list = ntLinker->smooth(ui->widthDial->value(), 80);
 		//ntLinker->tie_up_loose_ends(width_list);
 		//ntLinker->cap_movement(width_list, 1);
@@ -94,10 +93,11 @@ GLuint CylinderDisplay::render()
 		double angle = 0;
 		point p1 = point(0,0,0);
 		float local_width = width_list[0];
-		const char* genome = sequence->c_str() + nucleotide_start;
+        const char* genome = sequence->c_str() + ui->startDial->value();//TODO:not a particularly safe way of accessing
 		glPushMatrix();
 			glScaled(1,-1,1);
-			for(int i = 0; i < display_size && y < 200; i++)
+            int temp_display_size = current_display_size();
+            for(int i = 0; i < temp_display_size && y < 200; i++)
 			{
                 if(i >= (int)width_list.size())
 				{

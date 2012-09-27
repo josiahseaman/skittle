@@ -76,15 +76,15 @@ void AnnotationDisplay::displayTrack(const vector<track_entry>& track)
 	int pix_start = ui->startDial->value();
 	int width = ui->widthDial->value();
 	int pix_stop = pix_start + width;
-	int display_size = ui->sizeDial->value();
-	int next_spot = 0;
+    int temp_display_size = current_display_size();
+    int next_spot = 0;
 	
 	if(track.empty()) 
 		return;
 	vector<track_entry> activeEntries = vector<track_entry>();
 	track_entry blank = track_entry(0,0, color(0,0,0));
 	activeEntries.push_back(blank);
-	for(int row = 0; row < display_size / width; row++)
+    for(int row = 0; row < temp_display_size / width; row++)
 	{
 		//check to see if any of the old tracks are done
         for(int k = 0; k < (int)activeEntries.size(); ++k)

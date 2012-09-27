@@ -36,10 +36,7 @@ public:
 	bool upToDate;
     bool usingTextures;
 	QAction* toggleButton;
-	
-    int display_size;
-	int max_display_size;
-    int nucleotide_start;
+
 	string actionLabel;
 	string actionTooltip;
 	string actionData; 
@@ -65,6 +62,7 @@ public:
 	virtual string getFileName();
 	virtual QScrollArea* settingsUi();
 	string reverseComplement(string original);
+    int current_display_size();
 	
 inline char complement(char a)
 {
@@ -76,19 +74,13 @@ inline char complement(char a)
 }
 
 public slots:
-	void changeSize(int s);
-    void changeStart(int s);
 	void invalidate();
     void toggleVisibility();
 	
 signals:
 	void displayChanged();
 	void hideSettings(QScrollArea*);
-	void showSettings(QScrollArea*);
-	void scaleChanged(int);
-	void sizeChanged(int);	
-	void startChanged(int);
-	void widthChanged(int);	
+    void showSettings(QScrollArea*);
     void deleteButton(QAction*);
 	
 };
