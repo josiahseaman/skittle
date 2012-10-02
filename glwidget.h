@@ -97,6 +97,7 @@ public slots:
     void on_zoomButton_clicked();
     void setTool(int tool);
     void slideHorizontal(int);
+    void invalidateDisplayGraphs();
 	void updateDisplay();
 	void updateDisplaySize();
 	AnnotationDisplay* addAnnotationDisplay(QString fileName);

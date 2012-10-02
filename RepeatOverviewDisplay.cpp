@@ -451,10 +451,10 @@ void RepeatOverviewDisplay::changeScale(int s)
 void RepeatOverviewDisplay::toggleVisibility()
 {
 	if(hidden)
-	{
+    {//TODO:change this to use an internal scale without trying to influence the global value
 		int s = ui->scaleDial->value();
 		s = max(4, (s / 4) * 4);//enforces scale is a multiple of 4
-		ui->scaleDial->setValue(s);	
+        ui->changeScale(s);
 	}
 	AbstractGraph::toggleVisibility();	
 }

@@ -133,7 +133,12 @@ void GLWidget::createConnections()
 {
     for(int i = 0; i < (int)graphs.size(); ++i)
    	{
+        //Note: The connection between displayChanged and updateDisplay is specifically used
+        //for the case where the settingsUi tab causes an update that is only relevant to
+        //one of the graphs.  This means that one graph is already invalidated and the others
+        //do not need to change their data.
         connect( graphs[i], SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
+
    		connect( graphs[i], SIGNAL(hideSettings(QScrollArea*)), this, SIGNAL(hideSettings(QScrollArea*)));
         connect( graphs[i], SIGNAL(showSettings(QScrollArea*)), this, SIGNAL(showSettings(QScrollArea*)));\
 	}
@@ -271,6 +276,15 @@ void GLWidget::slideHorizontal(int x)
 		emit xOffsetChange((int)(x));
 		updateDisplay();
 	}
+}
+
+void GLWidget::invalidateDisplayGraphs()
+{
+    for(int i = 0; i < (int)graphs.size(); ++i)
+    {
+        graphs[i]->invalidate();
+    }
+    updateDisplay();
 }
 
 void GLWidget::updateDisplay()
@@ -423,7 +437,7 @@ void GLWidget::keyPressEvent( QKeyEvent *event )
 			return;
 	}
 	event->accept();
-	updateDisplay();
+    invalidateDisplayGraphs();
 }
 
 void GLWidget::keyReleaseEvent( QKeyEvent *event )
@@ -498,7 +512,7 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
-	//ui.print("Frame: ", ++frame);
+    ui.print("Frame: ", ++frame);
     glMatrixMode(GL_MODELVIEW);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
@@ -618,9 +632,9 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 			if(zoom > 100)
                 ui.zoomDial->setValue( max(100, ((int) (zoom * zoomFactor))) );
 			else
-				ui.scaleDial->setValue(newScale);//set scale to the new value
-		}
-		this->updateDisplay();
+                ui.changeScale(newScale);//set scale to the new value
+        }
+        invalidateDisplayGraphs();
 	}
     lastPos = event->pos();
 }
@@ -650,11 +664,11 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 				int value = static_cast<int>(dx * ui.scaleDial->value()*2.0 + ui.widthDial->value() + 0.5);
 				ui.widthDial->setValue(value);
 				
-			}
-			updateDisplay();
+            }
 		}
     } 
     lastPos = event->pos();
+    invalidateDisplayGraphs();
 }
 
 
