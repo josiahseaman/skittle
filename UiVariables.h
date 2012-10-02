@@ -1,5 +1,5 @@
-#ifndef JUI_VARS1234
-#define JUI_VARS1234
+#ifndef JUI_VARS
+#define JUI_VARS
 
 #include <string>
 #include <QObject>
@@ -7,10 +7,12 @@
 class QTextEdit;
 class QSpinBox;
 
+using namespace std;
+
 class UiVariables : public QObject
 {
     Q_OBJECT
-		
+
 public:
     QSpinBox* sizeDial;
     QSpinBox* widthDial;
@@ -32,11 +34,13 @@ public:
 	void printNum(int num);
 	//void print(int num1, int num2); 
 
-//public slots:
+public slots:
     void changeWidth(int newWidth);
     void changeWidth();
     void changeScale(int newScale);
     void changeScale();
+signals:
+    void internalsUpdated();
 
 private:
     int oldScale;

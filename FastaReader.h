@@ -12,7 +12,6 @@
 #include <QRunnable>
 #include <qtconcurrentrun.h>
 #include <QApplication>
-//#include "UiVariables.h"
 
 using namespace std;
 
