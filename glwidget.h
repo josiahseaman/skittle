@@ -49,7 +49,7 @@ class GLWidget : public QGLWidget
     Q_OBJECT
 
 public:
-	UiVariables ui;
+    UiVariables* ui;
 	string chromosomeName;
 	QWidget* parent;
 	FastaReader* reader;
@@ -64,7 +64,7 @@ public:
    	HighlightDisplay* highlight;
    	
 	
-    GLWidget(UiVariables gui, QWidget* parent = 0);
+    GLWidget(UiVariables *gui, QWidget* parent = 0);
     ~GLWidget();
 	void createButtons();
 	void createConnections();

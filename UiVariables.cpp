@@ -44,17 +44,22 @@ UiVariables::UiVariables(QTextEdit* text)
     oldWidth = 128;
 }
 
-UiVariables::UiVariables(const UiVariables& copy)
+//UiVariables::UiVariables(const UiVariables& copy)
+//{
+//	textArea  = copy.textArea;
+//    sizeDial  = copy.sizeDial;
+//    widthDial = copy.widthDial;
+//    startDial = copy.startDial;
+//    scaleDial = copy.scaleDial;
+//    zoomDial  = copy.zoomDial;
+//    offsetDial= copy.offsetDial;
+//    oldWidth  = copy.oldWidth;
+//    oldScale  = copy.oldScale;
+//}
+
+UiVariables::~UiVariables()
 {
-	textArea  = copy.textArea;
-    sizeDial  = copy.sizeDial;
-    widthDial = copy.widthDial;
-    startDial = copy.startDial;
-    scaleDial = copy.scaleDial;
-    zoomDial  = copy.zoomDial;
-    offsetDial= copy.offsetDial;
-    oldWidth  = copy.oldWidth;
-    oldScale  = copy.oldScale;
+    //delete all the individual dial pointers?
 }
 
 void UiVariables::print(char const * s)

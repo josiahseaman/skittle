@@ -25,9 +25,9 @@ public:
 	QScrollBar* verticalScrollBar;
 	QFrame* subFrame;
 	GLWidget* glWidget;
-	UiVariables ui;
+    UiVariables* ui;
 	
-	MdiChildWindow(UiVariables gui, QSpinBox* pStart, QTabWidget* settings);
+    MdiChildWindow(UiVariables* gui, QSpinBox* pStart, QTabWidget* settings);
     void closeEvent(QCloseEvent *event);
 	void connectWidget();
 	void hideSettingsTabs();

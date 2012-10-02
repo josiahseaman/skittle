@@ -11,7 +11,7 @@ MdiChildWindow acts as the interface between ViewManager and GLWidget. It means 
 inside of skittle can be minimized, restored, and closed.  Multiple files can be laid out side by
 side for comparison.  ViewManager and MdiChildWindow handle the synchronization of variables between
 windows.  When MainWindow::syncCheckBox is checked variable updates from the user propagate to all
-windows.  Each window that is created makes a new ui.offsetDial that manages the relative offset between
+windows.  Each window that is created makes a new ui->offsetDial that manages the relative offset between
 the local and global start position (positive or negative).  The other function of MdiChildWindow
 is to ensure that the correct settings tabs for the active window are displayed on the Information Display
 QDockWidget *infoDock.
@@ -24,9 +24,9 @@ MdiChildWindows.  Each MdiChildWindow has only one GLWidget tied to one file.  M
 the primary owner of the UiVariables object that is passed for signals all throughout the program.
 *************************************************/
 
-MdiChildWindow::MdiChildWindow(UiVariables gui, QSpinBox* pStart, QTabWidget* settings)
-	: ui(gui)
+MdiChildWindow::MdiChildWindow(UiVariables *gui, QSpinBox* pStart, QTabWidget* settings)
 {
+    ui = gui;
 	publicStart = pStart;
 	settingsDock = settings;
 	horizontalScrollBar = new QScrollBar();
@@ -57,10 +57,10 @@ MdiChildWindow::MdiChildWindow(UiVariables gui, QSpinBox* pStart, QTabWidget* se
     
 	/**Scrollbars**/
 	connect(glWidget, SIGNAL(displaySizeChanged()), this, SLOT(setPageSize()) );
-	//connect(ui.sizeDial, SIGNAL(valueChanged(int)), this, SLOT(setPageSize()) );	
-	connect(verticalScrollBar, SIGNAL(valueChanged(int)), ui.startDial, SLOT(setValue(int)));
+    //connect(ui->sizeDial, SIGNAL(valueChanged(int)), this, SLOT(setPageSize()) );
+    connect(verticalScrollBar, SIGNAL(valueChanged(int)), ui->startDial, SLOT(setValue(int)));
 	connect(verticalScrollBar, SIGNAL(sliderReleased()), glWidget, SLOT(updateDisplay()));
-	connect(ui.startDial, SIGNAL(valueChanged(int)), verticalScrollBar, SLOT(setValue(int)));
+    connect(ui->startDial, SIGNAL(valueChanged(int)), verticalScrollBar, SLOT(setValue(int)));
 	/**/
 	createSettingsTabs();
 	connectWidget();
@@ -70,17 +70,17 @@ MdiChildWindow::MdiChildWindow(UiVariables gui, QSpinBox* pStart, QTabWidget* se
 void MdiChildWindow::changeLocalStartFromPublicStart(int val)
 {
 	int start = val;
-	int offset = ui.offsetDial->value();
+    int offset = ui->offsetDial->value();
 	
-	ui.startDial->setValue((int)max(0, start + offset));
+    ui->startDial->setValue((int)max(0, start + offset));
 	//emit startChangeFromPublicStart((int)max(0, start + offset));
 }
 
 void MdiChildWindow::changeLocalStartFromOffset(int val)
 {
 	int start = publicStart->value();
-	int offset = ui.offsetDial->value();
-	ui.startDial->setValue((int)max(0, start + offset));
+    int offset = ui->offsetDial->value();
+    ui->startDial->setValue((int)max(0, start + offset));
 }
 
 void MdiChildWindow::closeEvent(QCloseEvent *event)
@@ -90,7 +90,7 @@ void MdiChildWindow::closeEvent(QCloseEvent *event)
 	//QFrame* subFrame;
 	emit subWindowClosing(this);
 	delete glWidget;	
-	delete ui.offsetDial;//->hide();
+    delete ui->offsetDial;//->hide();
 	for(int i = 0; i < (int)settingsTabs.size(); ++i)
 		delete settingsTabs[i];
 	event->accept();
@@ -101,8 +101,8 @@ void MdiChildWindow::connectWidget()
 	connect(horizontalScrollBar, SIGNAL(valueChanged(int)), glWidget, SLOT(slideHorizontal(int)));
 	connect(glWidget, SIGNAL(xOffsetChange(int)), horizontalScrollBar, SLOT(setValue(int)));	
 	connect(glWidget, SIGNAL(totalWidthChanged(int)), this, SLOT(setHorizontalWidth(int)));
-	connect(ui.widthDial, SIGNAL(valueChanged(int)), this, SLOT(setOffsetStep(int)));
-	connect(ui.offsetDial, SIGNAL(valueChanged(int)), this, SLOT(changeLocalStartFromOffset(int)));
+    connect(ui->widthDial, SIGNAL(valueChanged(int)), this, SLOT(setOffsetStep(int)));
+    connect(ui->offsetDial, SIGNAL(valueChanged(int)), this, SLOT(changeLocalStartFromOffset(int)));
 }
 
 void MdiChildWindow::setHorizontalWidth(int val)
@@ -112,15 +112,15 @@ void MdiChildWindow::setHorizontalWidth(int val)
 
 void MdiChildWindow::setOffsetStep(int val)
 {
-	ui.offsetDial->setSingleStep(val);
+    ui->offsetDial->setSingleStep(val);
 }
 
 void MdiChildWindow::setPageSize()
 {
-	//ui.print("setPageSize", ui.sizeDial->value());
+    //ui->print("setPageSize", ui->sizeDial->value());
 	if( glWidget != NULL)
-		verticalScrollBar->setMaximum( max(0, (int)(glWidget->seq()->size() - ui.widthDial->value()) ) );
-	verticalScrollBar->setPageStep(ui.sizeDial->value());
+        verticalScrollBar->setMaximum( max(0, (int)(glWidget->seq()->size() - ui->widthDial->value()) ) );
+    verticalScrollBar->setPageStep(ui->sizeDial->value());
 }
 
 void MdiChildWindow::createSettingsTabs()
@@ -130,7 +130,7 @@ void MdiChildWindow::createSettingsTabs()
 	/*for(int i = 0; i < (int)temp.size(); ++i)
 	{
 		if( settingsTabs[i] == NULL )
-			ui.print("WARNING: NULL entry in MdiChildWindow::settingsTabs");
+            ui->print("WARNING: NULL entry in MdiChildWindow::settingsTabs");
 		//else
 			//settingsDock->addTab(settingsTabs[i], settingsTabs[i]->windowTitle());
 			

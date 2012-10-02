@@ -58,9 +58,8 @@ stripped down several times but it is still one of the largest class files.  Mor
 such as mouse and keyboard interaction could be moved to new helper classes.
 */
 
-GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
+GLWidget::GLWidget(UiVariables* gui, QWidget* parentWidget)
     : QGLWidget(parentWidget)
-    //,ui(gui)
 {
     ui = gui;
 	parent = parentWidget;
@@ -70,21 +69,21 @@ GLWidget::GLWidget(UiVariables gui, QWidget* parentWidget)
 	frame = 0;
 	
 	setupColorTable();
-	reader = new FastaReader(this, &ui);
+    reader = new FastaReader(this, ui);
     //TODO:this needs to be moved .... somewhere
     connect(reader, SIGNAL(newFileRead(const string*)), this, SLOT(displayString(const string*)));
 	
 
-    trackReader = new GtfReader(&ui);
+    trackReader = new GtfReader(ui);
 	
-    nuc = new NucleotideDisplay(&ui, this);
-    bias = new BiasDisplay(&ui, this);
-    freq = new RepeatMap(&ui, this);
+    nuc = new NucleotideDisplay(ui, this);
+    bias = new BiasDisplay(ui, this);
+    freq = new RepeatMap(ui, this);
     freq->link(nuc);
-    cylinder = new CylinderDisplay(&ui, this);
-    align = new RepeatOverviewDisplay(&ui, this);
-   	olig = new OligomerDisplay(&ui, this);
-	highlight = new HighlightDisplay(&ui, this);
+    cylinder = new CylinderDisplay(ui, this);
+    align = new RepeatOverviewDisplay(ui, this);
+    olig = new OligomerDisplay(ui, this);
+    highlight = new HighlightDisplay(ui, this);
    	
    	graphs.push_back(cylinder);
     graphs.push_back(nuc);
@@ -146,9 +145,9 @@ void GLWidget::createConnections()
 	connect(trackReader,SIGNAL(BookmarkAdded(track_entry,string)), this,SLOT(addTrackEntry(track_entry,string)));
 
     /****CONNECT LOCAL VARIABLES*******/
-	connect(ui.zoomDial,  SIGNAL(valueChanged(int)), this, SLOT(changeZoom(int)));
-	connect(ui.scaleDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
-	connect(ui.widthDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
+    connect(ui->zoomDial,  SIGNAL(valueChanged(int)), this, SLOT(changeZoom(int)));
+    connect(ui->scaleDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
+    connect(ui->widthDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
 }
 
 QSize GLWidget::minimumSizeHint() const
@@ -168,7 +167,7 @@ double GLWidget::getZoom()
 
 void GLWidget::setTotalDisplayWidth()
 {	
-	//ui.print("SetWidth: ", ui.widthDial->value());
+    //ui->print("SetWidth: ", ui->widthDial->value());
 	int total_width = border;
     for(int i = 0; i < (int)graphs.size(); ++i)
 	{
@@ -197,23 +196,23 @@ const string* GLWidget::seq()
 
 void GLWidget::displayString(const string* sequence)
 {
-    ui.print("New sequence received.  Size:", sequence->size());
+    ui->print("New sequence received.  Size:", sequence->size());
 
     for(int i = 0; i < (int)graphs.size(); ++i)
 	{
         graphs[i]->setSequence(sequence);
         graphs[i]->invalidate();
     }
-    ui.startDial->setValue(1);
-    ui.widthDial->setValue(128);
-    float multiplier = sequence->size() / (float)ui.widthDial->value() / (display_height()-10);
+    ui->startDial->setValue(1);
+    ui->widthDial->setValue(128);
+    float multiplier = sequence->size() / (float)ui->widthDial->value() / (display_height()-10);
     int newScale = max(1, (int)(multiplier) );
-    ui.changeScale(newScale);
+    ui->changeScale(newScale);
 	
 //	emit displaySizeChanged();
-//    ui.zoomDial->setValue(ui.zoomDial->value() + 1);
+//    ui->zoomDial->setValue(ui->zoomDial->value() + 1);
 //    this->updateDisplay();
-//    ui.zoomDial->setValue(ui.zoomDial->value() - 1);
+//    ui->zoomDial->setValue(ui->zoomDial->value() - 1);
 //    this->updateDisplay();
 }
 
@@ -264,7 +263,7 @@ void GLWidget::setTool(int tool)
 			break;
 		default:
 			currentTool = oldTool;
-			ui.print("Error: Tool ID unrecognized: ",  tool);
+            ui->print("Error: Tool ID unrecognized: ",  tool);
 	}
 }
 
@@ -298,14 +297,14 @@ void GLWidget::updateDisplaySize()
 {
 	QSize dimensions = size();
 	double pixelHeight = dimensions.height();
-	int w = ui.widthDial->value();
-	double zoom = 100.0 / ui.zoomDial->value();
+    int w = ui->widthDial->value();
+    double zoom = 100.0 / ui->zoomDial->value();
     int display_lines = static_cast<int>(pixelHeight / 3.0 * zoom + 0.5);//TODO this can be replaced with display_height?
 	
-	ui.sizeDial->setSingleStep(w * 10);
-	if(ui.sizeDial->value() !=  w * display_lines )
+    ui->sizeDial->setSingleStep(w * 10);
+    if(ui->sizeDial->value() !=  w * display_lines )
 	{
-		ui.sizeDial->setValue( w * display_lines );
+        ui->sizeDial->setValue( w * display_lines );
 		emit displaySizeChanged();
 	}
 }
@@ -334,10 +333,10 @@ void GLWidget::updateDisplaySize()
 	{
 		vector<track_entry> track = trackReader->readFile(QString(fileName.c_str()));
 
-		ui.print("Annotations Received: ", track.size());
+        ui->print("Annotations Received: ", track.size());
 		if( track.size() > 0)// || trackReader->outputFile().compare(fileName) == 0 )//
 		{
-			tempTrackDisplay = new AnnotationDisplay(&ui, this, fileName);
+            tempTrackDisplay = new AnnotationDisplay(ui, this, fileName);
 			graphs.insert(graphs.begin(), static_cast<AnnotationDisplay*>(tempTrackDisplay) );
 			connect(tempTrackDisplay, SIGNAL(displayChanged()), this, SLOT(updateDisplay()));
 			tempTrackDisplay->newTrack( track );
@@ -362,10 +361,10 @@ AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fName)
 	else
 	{
 		vector<track_entry> track = trackReader->readFile(QString(fileName.c_str()));
-		ui.print("Annotations Received: ", track.size());
+        ui->print("Annotations Received: ", track.size());
 		if( track.size() > 0)// || trackReader->outputFile().compare(fileName) == 0 )//
 		{
-			tempTrackDisplay = new AnnotationDisplay(&ui, this, fileName);
+            tempTrackDisplay = new AnnotationDisplay(ui, this, fileName);
 			graphs.insert(graphs.begin(), static_cast<AnnotationDisplay*>(tempTrackDisplay) );
 			connect(tempTrackDisplay, SIGNAL(displayChanged()), this, SLOT(updateDisplay()));
 			tempTrackDisplay->newTrack( track );
@@ -413,23 +412,23 @@ void GLWidget::keyPressEvent( QKeyEvent *event )
 		setCursor(zoomOutCursor);
 		
 	int step = 10;	
-    int tenLines = ui.widthDial->value() * step;
+    int tenLines = ui->widthDial->value() * step;
     switch ( event->key() )//the keys should be passed directly to the widgets
     {
 		case Qt::Key_Down:
-			ui.startDial->setValue(ui.startDial->value() + tenLines);
+            ui->startDial->setValue(ui->startDial->value() + tenLines);
 			break;
 
 		case Qt::Key_Up:
-			ui.startDial->setValue(ui.startDial->value() - tenLines);
+            ui->startDial->setValue(ui->startDial->value() - tenLines);
 			break;
 
 		case Qt::Key_Right:
-			ui.widthDial->setValue(ui.widthDial->value() + ui.scaleDial->value());
+            ui->widthDial->setValue(ui->widthDial->value() + ui->scaleDial->value());
 			break;
 
 		case Qt::Key_Left:
-			ui.widthDial->setValue(ui.widthDial->value() - ui.scaleDial->value());
+            ui->widthDial->setValue(ui->widthDial->value() - ui->scaleDial->value());
 			break;
 
 		default:
@@ -512,7 +511,7 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
-    ui.print("Frame: ", ++frame);
+    ui->print("Frame: ", ++frame);
     glMatrixMode(GL_MODELVIEW);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
@@ -611,28 +610,28 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
             setCursor(zoomInCursor);
         }
 			
-		int scale = ui.scaleDial->value();//take current scale
-		int index = oglCoords.y * (ui.widthDial->value()/scale) + oglCoords.x;
+        int scale = ui->scaleDial->value();//take current scale
+        int index = oglCoords.y * (ui->widthDial->value()/scale) + oglCoords.x;
 		index *= scale;
-		index = max(0, index + ui.startDial->value());
-		int newSize = (int)(ui.sizeDial->value() / zoomFactor);//calculate new projected size
-		ui.startDial->setValue( index - (newSize/2) );//set start as centered point - size/2
+        index = max(0, index + ui->startDial->value());
+        int newSize = (int)(ui->sizeDial->value() / zoomFactor);//calculate new projected size
+        ui->startDial->setValue( index - (newSize/2) );//set start as centered point - size/2
 		//size should recalculate
 		int newScale = (int)(scale / zoomFactor) + (zoomFactor > 1.0? 0 : 1);//reduce scale by 10-20%  (Nx4)
-		int zoom = ui.zoomDial->value();
+        int zoom = ui->zoomDial->value();
 		if( zoomFactor > 1.0 )  // we're zooming in
 		{
 			if(scale == 1)
-				ui.zoomDial->setValue( zoom * zoomFactor );
+                ui->zoomDial->setValue( zoom * zoomFactor );
 			else
-                ui.changeScale(newScale);
+                ui->changeScale(newScale);
 		}
         else //zooming out
 		{
 			if(zoom > 100)
-                ui.zoomDial->setValue( max(100, ((int) (zoom * zoomFactor))) );
+                ui->zoomDial->setValue( max(100, ((int) (zoom * zoomFactor))) );
 			else
-                ui.changeScale(newScale);//set scale to the new value
+                ui->changeScale(newScale);//set scale to the new value
         }
         invalidateDisplayGraphs();
 	}
@@ -661,8 +660,8 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 			if(tool() == RESIZE_TOOL)
 			{
 				translate(0, dy);//still scroll up/down
-				int value = static_cast<int>(dx * ui.scaleDial->value()*2.0 + ui.widthDial->value() + 0.5);
-				ui.widthDial->setValue(value);
+                int value = static_cast<int>(dx * ui->scaleDial->value()*2.0 + ui->widthDial->value() + 0.5);
+                ui->widthDial->setValue(value);
 				
             }
 		}
@@ -677,9 +676,9 @@ void GLWidget::translate(float dx, float dy)
 	if(dy != 0.0)
 	{
 		int sign = (int)(dy / fabs(dy));
-		int move = -1* static_cast<int>(dy  + (sign*0.5)) * ui.widthDial->value() * 2;
-		int current = ui.startDial->value();
-		ui.startDial->setValue( max(1, current+move) );
+        int move = -1* static_cast<int>(dy  + (sign*0.5)) * ui->widthDial->value() * 2;
+        int current = ui->startDial->value();
+        ui->startDial->setValue( max(1, current+move) );
 	}
 	emit xOffsetChange((int)(xPosition + dx + .5));
 }
@@ -690,15 +689,15 @@ void GLWidget::translateOffset(float dx, float dy)
 	if(dy != 0.0)
 	{
 		int sign = (int)(dy / fabs(dy));
-		moveUp = -1* static_cast<int>(dy  + (sign*0.5)) * ui.widthDial->value() * 2;	
+        moveUp = -1* static_cast<int>(dy  + (sign*0.5)) * ui->widthDial->value() * 2;
 	}
-	int current = ui.offsetDial->value();
+    int current = ui->offsetDial->value();
 	if(dx != 0.0)
 	{
 		int sign = (int)(dx / fabs(dx));
 		dx = (int)(dx + (0.5 * sign));
 	}
-	ui.offsetDial->setValue( (int)(current + moveUp + dx));
+    ui->offsetDial->setValue( (int)(current + moveUp + dx));
 }
  
 void GLWidget::changeCursor(Qt::CursorShape cNumber)
@@ -860,25 +859,25 @@ void GLWidget::createCursors()
 	QBitmap pic = QBitmap(":/zoomIn.png");
 	if(pic.isNull())
 	{
-		ui.print("Warning: Null pic");
+        ui->print("Warning: Null pic");
 	}
 	QBitmap mask = QBitmap(":/zoomIn-mask.png");
 	if(mask.isNull())
 	{
-		ui.print("Warning: Null mask");
+        ui->print("Warning: Null mask");
 	}
 	zoomInCursor = QCursor( pic, mask);  
 	QBitmap pic2 = QBitmap(":/zoomOut.png");
 	if(pic2.isNull())
 	{
-		ui.print("Warning: Null pic2");
+        ui->print("Warning: Null pic2");
 	}
 	zoomOutCursor = QCursor( pic2, mask);  
 }
 
 void GLWidget::reportOnFinish(int i){
-	ui.print("The Editing has Finished");
-    ui.printNum(i);
+    ui->print("The Editing has Finished");
+    ui->printNum(i);
 }
 /****************************************
  * Rethinking this strategy:

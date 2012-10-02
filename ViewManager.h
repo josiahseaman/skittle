@@ -19,7 +19,7 @@ class ViewManager : public QMdiArea
 public:
 	GLWidget* activeWidget;
 	
-	ViewManager(MainWindow* window, UiVariables gui);
+    ViewManager(MainWindow* window, UiVariables* gui);
     void createConnections();
     void uiToGlwidgetConnections(GLWidget* active);
 
@@ -42,14 +42,14 @@ public slots:
 private:
 	std::vector<MdiChildWindow*> views;
 	MainWindow* mainWindow;
-	UiVariables ui;	
+    UiVariables* ui;
 	
 	void broadcastLocalValues(UiVariables local);
-	void broadcastPublicValues(UiVariables local);
-    UiVariables copyUi();
-	void connectVariables(GLWidget*, UiVariables);
-	void disconnectVariables(GLWidget*, UiVariables);
-	UiVariables vars(GLWidget* active);
+    void broadcastPublicValues(UiVariables *local);
+    UiVariables* copyUi();
+    void connectVariables(GLWidget*, UiVariables*);
+    void disconnectVariables(GLWidget*, UiVariables*);
+    UiVariables* vars(GLWidget* active);
 	
 };
 

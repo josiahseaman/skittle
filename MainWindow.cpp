@@ -57,7 +57,7 @@ MainWindow::MainWindow()
     createUiVariables();
     createUiConnections();
 	
-    viewManager	= new ViewManager(this, UiVariables(ui));
+    viewManager	= new ViewManager(this, ui);
 	setCentralWidget(viewManager);  
 	createFileConnections();
 
@@ -387,13 +387,13 @@ void MainWindow::createFileConnections()
 
 void MainWindow::createUiVariables()
 {
-    ui = UiVariables(textArea);
+    ui = new UiVariables(textArea);
 
-    ui.sizeDial = sizeDial;
-    ui.widthDial = widthDial;
-    ui.startDial = startOffset;
-    ui.scaleDial = scaleDial;
-    ui.zoomDial = zoomDial;
+    ui->sizeDial = sizeDial;
+    ui->widthDial = widthDial;
+    ui->startDial = startOffset;
+    ui->scaleDial = scaleDial;
+    ui->zoomDial = zoomDial;
 }
 
 void MainWindow::open()
@@ -432,18 +432,18 @@ void MainWindow::openGtf()
 void MainWindow::changeScale(int scale)
 {
     if(scale == -1)
-        ui.changeScale();
+        ui->changeScale();
     else
-        ui.changeScale(scale);
+        ui->changeScale(scale);
     viewManager->updateCurrentDisplay();
 }
 
 void MainWindow::changeWidth(int width)
 {
     if( width == -1)
-        ui.changeWidth();
+        ui->changeWidth();
     else
-        ui.changeWidth(width);
+        ui->changeWidth(width);
     viewManager->updateCurrentDisplay();
 }
 

@@ -31,10 +31,10 @@ MdiChildWindows.  Each MdiChildWindow has only one GLWidget tied to one file.  M
 the primary owner of the UiVariables object that is passed for signals all throughout the program.
 ********************************************/
 
-ViewManager::ViewManager(MainWindow* window, UiVariables gui)
-	: QMdiArea(window),
-	ui(gui)
+ViewManager::ViewManager(MainWindow* window, UiVariables* gui)
+    : QMdiArea(window)
 {
+    ui = gui;
 	mainWindow = window;
 	activeWidget = NULL;
 	
@@ -52,11 +52,11 @@ void ViewManager::createConnections()
     connect(mainWindow->syncCheckBox, SIGNAL(stateChanged(int)), this, SLOT(handleWindowSync()));
 	/****CONNECT ui VARIABLES*******/ 
 	
-    connect(ui.widthDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
-    connect(ui.zoomDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
-	connect(ui.scaleDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
-	connect(ui.startDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
-	connect(ui.sizeDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
+    connect(ui->widthDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
+    connect(ui->zoomDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
+    connect(ui->scaleDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
+    connect(ui->startDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
+    connect(ui->sizeDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
 }
 
 void ViewManager::uiToGlwidgetConnections(GLWidget* active)
@@ -80,10 +80,10 @@ void ViewManager::uiToGlwidgetConnections(GLWidget* active)
 //public slots
 GLWidget* ViewManager::addNewView(bool suppressOpen)
 {
-	UiVariables localDials = copyUi();
+    UiVariables* localDials = copyUi();
 	broadcastPublicValues(localDials);
 	
-	MdiChildWindow* child = new MdiChildWindow(localDials, ui.startDial, mainWindow->tabWidget);//TODO: figure out a better way to manage startDial
+    MdiChildWindow* child = new MdiChildWindow(localDials, ui->startDial, mainWindow->tabWidget);//TODO: figure out a better way to manage startDial
 	connect( child, SIGNAL(subWindowClosing(MdiChildWindow*)), this, SLOT(closeSubWindow(MdiChildWindow*)));
     addSubWindow(child);
     child->show();
@@ -188,26 +188,25 @@ void ViewManager::handleWindowSync()
 
 void ViewManager::changePublicStart(int val)
 {
-	//local.start changes
-	UiVariables local = vars(activeWidget);
-	int set = max(0, val - local.offsetDial->value());
-	ui.startDial->setValue(set);
-	//ui.print("changePublicStart: ", set);	
+    //local->start changes
+    UiVariables* local = vars(activeWidget);
+    int set = max(0, val - local->offsetDial->value());
+    ui->startDial->setValue(set);
+    //ui->print("changePublicStart: ", set);
 }
 
 //PRIVATE FUNCTIONS//
-void ViewManager::broadcastPublicValues(UiVariables local)
+void ViewManager::broadcastPublicValues(UiVariables* local)
 {
-	local.startDial->setValue(ui.startDial->value());
-	
-	local.sizeDial->setValue(ui.sizeDial->value());
-	local.widthDial->setValue(ui.widthDial->value());
-	local.scaleDial->setValue(ui.scaleDial->value());
-	local.zoomDial->setValue(ui.zoomDial->value());
+    local->startDial->setValue(ui->startDial->value());
+    local->sizeDial->setValue(ui->sizeDial->value());
+    local->widthDial->setValue(ui->widthDial->value());
+    local->scaleDial->setValue(ui->scaleDial->value());
+    local->zoomDial->setValue(ui->zoomDial->value());
 }
 
-UiVariables ViewManager::copyUi()
-{
+UiVariables* ViewManager::copyUi()
+{//TODO: I think this whole method could be drastically simplified.
 	QSpinBox* widthDial = new QSpinBox(this);
     widthDial->setMinimum(1);
     widthDial->setMaximum(1000000000);
@@ -246,75 +245,75 @@ UiVariables ViewManager::copyUi()
     mainWindow->settingToolBar->addWidget(offsetDial);
     //offsetDial->hide();
     
-	UiVariables localDials(ui.textArea);
-	localDials.sizeDial  = sizeDial;
-    localDials.widthDial = widthDial;
-    localDials.startDial = startDial;
-    localDials.scaleDial = scaleDial;
-    localDials.zoomDial  = zoomDial;
-    localDials.offsetDial  = offsetDial;
+    UiVariables* localDials = new UiVariables(ui->textArea);
+    localDials->sizeDial  = sizeDial;
+    localDials->widthDial = widthDial;
+    localDials->startDial = startDial;
+    localDials->scaleDial = scaleDial;
+    localDials->zoomDial  = zoomDial;
+    localDials->offsetDial  = offsetDial;
     
 	return localDials;
 }
 
 void ViewManager::printNum(int num)
 {
-	ui.print("Global:  ", num);
+    ui->print("Global:  ", num);
 }
 
 void ViewManager::printNum2(int num)
 {
-	ui.print("Local:   ", num);
+    ui->print("Local:   ", num);
 }
 
 //the mother load!
 //implement in glWidget
-void ViewManager::connectVariables(GLWidget* active, UiVariables local)
+void ViewManager::connectVariables(GLWidget* active, UiVariables* local)
 {
-	connect(local.sizeDial	, SIGNAL(valueChanged(int)), ui.sizeDial	, SLOT(setValue(int)));
-	//connect(ui.sizeDial		, SIGNAL(valueChanged(int)), local.sizeDial	, SLOT(setValue(int)));
+    connect(local->sizeDial	, SIGNAL(valueChanged(int)), ui->sizeDial	, SLOT(setValue(int)));
+    //connect(ui->sizeDial		, SIGNAL(valueChanged(int)), local->sizeDial	, SLOT(setValue(int)));
 
-	connect(local.widthDial	, SIGNAL(valueChanged(int)), ui.widthDial	, SLOT(setValue(int)));
-	connect(ui.widthDial	, SIGNAL(valueChanged(int)), local.widthDial, SLOT(setValue(int)));
+    connect(local->widthDial	, SIGNAL(valueChanged(int)), ui->widthDial	, SLOT(setValue(int)));
+    connect(ui->widthDial	, SIGNAL(valueChanged(int)), local->widthDial, SLOT(setValue(int)));
 
-	//OLD:widget -> local.start -> pub.start
-	//NEW:widget -> local.start -> vMan.slots -> pub.start
-	//connect(local.startDial	, SIGNAL(valueChanged(int)), ui.startDial	, SLOT(setValue(int)));
-	connect(local.startDial , SIGNAL(valueChanged(int)), this, SLOT(changePublicStart(int)));
-	connect(ui.startDial	, SIGNAL(valueChanged(int)), 
+    //OLD:widget -> local->start -> pub.start
+    //NEW:widget -> local->start -> vMan.slots -> pub.start
+    //connect(local->startDial	, SIGNAL(valueChanged(int)), ui->startDial	, SLOT(setValue(int)));
+    connect(local->startDial , SIGNAL(valueChanged(int)), this, SLOT(changePublicStart(int)));
+    connect(ui->startDial	, SIGNAL(valueChanged(int)),
 		dynamic_cast<MdiChildWindow*>(active->parent), SLOT(changeLocalStartFromPublicStart(int)));
-	//connect(this, SIGNAL(startChangeFromPublicStart(int)), local.startDial, SLOT(setValue(int)));	
+    //connect(this, SIGNAL(startChangeFromPublicStart(int)), local->startDial, SLOT(setValue(int)));
 
-	connect(local.scaleDial	, SIGNAL(valueChanged(int)), ui.scaleDial	, SLOT(setValue(int)));
-    connect(ui.scaleDial	, SIGNAL(valueChanged(int)), local.scaleDial, SLOT(setValue(int)));
+    connect(local->scaleDial	, SIGNAL(valueChanged(int)), ui->scaleDial	, SLOT(setValue(int)));
+    connect(ui->scaleDial	, SIGNAL(valueChanged(int)), local->scaleDial, SLOT(setValue(int)));
 
-	connect(local.zoomDial	, SIGNAL(valueChanged(int)), ui.zoomDial	, SLOT(setValue(int)));
-    connect(ui.zoomDial		, SIGNAL(valueChanged(int)), local.zoomDial	, SLOT(setValue(int)));
+    connect(local->zoomDial	, SIGNAL(valueChanged(int)), ui->zoomDial	, SLOT(setValue(int)));
+    connect(ui->zoomDial		, SIGNAL(valueChanged(int)), local->zoomDial	, SLOT(setValue(int)));
 }
 
-void ViewManager::disconnectVariables(GLWidget* active, UiVariables local)
+void ViewManager::disconnectVariables(GLWidget* active, UiVariables* local)
 {
-	disconnect(local.sizeDial	, SIGNAL(valueChanged(int)), ui.sizeDial	, SLOT(setValue(int)));
-	disconnect(ui.sizeDial		, SIGNAL(valueChanged(int)), local.sizeDial	, SLOT(setValue(int)));
+    disconnect(local->sizeDial	, SIGNAL(valueChanged(int)), ui->sizeDial	, SLOT(setValue(int)));
+    disconnect(ui->sizeDial		, SIGNAL(valueChanged(int)), local->sizeDial	, SLOT(setValue(int)));
 
-	disconnect(local.widthDial	, SIGNAL(valueChanged(int)), ui.widthDial	, SLOT(setValue(int)));
-	disconnect(ui.widthDial	, SIGNAL(valueChanged(int)), local.widthDial, SLOT(setValue(int)));
+    disconnect(local->widthDial	, SIGNAL(valueChanged(int)), ui->widthDial	, SLOT(setValue(int)));
+    disconnect(ui->widthDial	, SIGNAL(valueChanged(int)), local->widthDial, SLOT(setValue(int)));
 
-	disconnect(local.startDial , SIGNAL(valueChanged(int)), this, SLOT(changePublicStart(int)));
-	disconnect(ui.startDial	, SIGNAL(valueChanged(int)), 
+    disconnect(local->startDial , SIGNAL(valueChanged(int)), this, SLOT(changePublicStart(int)));
+    disconnect(ui->startDial	, SIGNAL(valueChanged(int)),
 		dynamic_cast<MdiChildWindow*>(active->parent), SLOT(changeLocalStartFromPublicStart(int)));
-	//disconnect(this, SIGNAL(startChangeFromPublicStart(int)), local.startDial, SLOT(setValue(int)));	
+    //disconnect(this, SIGNAL(startChangeFromPublicStart(int)), local->startDial, SLOT(setValue(int)));
 	
-	//disconnect(local.offsetDial, SIGNAL(valueChanged(int)), this, SLOT(changeLocalStart(int)));
+    //disconnect(local->offsetDial, SIGNAL(valueChanged(int)), this, SLOT(changeLocalStart(int)));
 
-	disconnect(local.scaleDial	, SIGNAL(valueChanged(int)), ui.scaleDial	, SLOT(setValue(int)));
-	disconnect(ui.scaleDial	, SIGNAL(valueChanged(int)), local.scaleDial, SLOT(setValue(int)));
+    disconnect(local->scaleDial	, SIGNAL(valueChanged(int)), ui->scaleDial	, SLOT(setValue(int)));
+    disconnect(ui->scaleDial	, SIGNAL(valueChanged(int)), local->scaleDial, SLOT(setValue(int)));
 
-	disconnect(local.zoomDial	, SIGNAL(valueChanged(int)), ui.zoomDial	, SLOT(setValue(int)));
-	disconnect(ui.zoomDial		, SIGNAL(valueChanged(int)), local.zoomDial	, SLOT(setValue(int)));
+    disconnect(local->zoomDial	, SIGNAL(valueChanged(int)), ui->zoomDial	, SLOT(setValue(int)));
+    disconnect(ui->zoomDial		, SIGNAL(valueChanged(int)), local->zoomDial	, SLOT(setValue(int)));
 }
 
-UiVariables ViewManager::vars(GLWidget* active)
+UiVariables* ViewManager::vars(GLWidget* active)
 {
 	return dynamic_cast<MdiChildWindow*>(active->parent)->ui;
 }

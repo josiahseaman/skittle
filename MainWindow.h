@@ -85,7 +85,7 @@ private:
 	void print(const char* str);
     void print(QString);
 	
-    UiVariables ui;
+    UiVariables* ui;
 	ViewManager* viewManager;
 	QMenu *annotationMenu;
 	QMenu *fileMenu;
