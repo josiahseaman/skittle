@@ -22,9 +22,8 @@ public:
     QSpinBox* offsetDial;
 	QTextEdit* textArea;
 
-	UiVariables();
-	UiVariables(QTextEdit*);
-//    UiVariables(const UiVariables& copy);
+//	UiVariables();
+    UiVariables(QTextEdit* text = NULL);
     ~UiVariables();
 
     void print(const char*);
@@ -39,6 +38,9 @@ public slots:
     void changeWidth();
     void changeScale(int newScale);
     void changeScale();
+    void changeStart(int start);
+    void changeZoom(int zoom);
+    void changeOffset(int offset);
 signals:
     void internalsUpdated();
 

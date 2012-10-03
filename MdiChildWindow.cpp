@@ -72,7 +72,7 @@ void MdiChildWindow::changeLocalStartFromPublicStart(int val)
 	int start = val;
     int offset = ui->offsetDial->value();
 	
-    ui->startDial->setValue((int)max(0, start + offset));
+    ui->changeStart((int)max(0, start + offset));
 	//emit startChangeFromPublicStart((int)max(0, start + offset));
 }
 

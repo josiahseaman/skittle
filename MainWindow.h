@@ -77,8 +77,7 @@ private:
 	void createToolbars();
 	void createStatusBar();
 	void createUiConnections();
-	void createFileConnections();
-    void createUiVariables();
+    void createFileConnections();
 	bool loadfile(const QString &filename);
 	void readSettings();
     void writeSettings();
@@ -108,11 +107,6 @@ private:
 
     QPushButton *doubleDisplayWidth;
     QPushButton *halveDisplayWidth;
-    QSpinBox *widthDial;
-    QSpinBox *scaleDial;
-    QSpinBox* zoomDial;
-    QSpinBox *sizeDial;
-    QSpinBox *startOffset;
     QCheckBox* syncCheckBox;
 	
 	

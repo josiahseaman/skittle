@@ -191,7 +191,8 @@ void ViewManager::changePublicStart(int val)
     //local->start changes
     UiVariables* local = vars(activeWidget);
     int set = max(0, val - local->offsetDial->value());
-    ui->startDial->setValue(set);
+    ui->changeStart(set);
+//    ui->startDial->setValue(set);
     //ui->print("changePublicStart: ", set);
 }
 
@@ -206,53 +207,22 @@ void ViewManager::broadcastPublicValues(UiVariables* local)
 }
 
 UiVariables* ViewManager::copyUi()
-{//TODO: I think this whole method could be drastically simplified.
-	QSpinBox* widthDial = new QSpinBox(this);
-    widthDial->setMinimum(1);
-    widthDial->setMaximum(1000000000);
-    widthDial->setValue(128);
-    widthDial->hide();
-	
-	QSpinBox* scaleDial = new QSpinBox(this);
-    scaleDial->setMinimum(1);
-    scaleDial->setMaximum(100000);
-    scaleDial->setValue(1);
-	scaleDial->hide();
-	
-	QSpinBox* zoomDial = new QSpinBox(this);
-    zoomDial->setMinimum(1);
-    zoomDial->setMaximum(100000);
-    zoomDial->setValue(100);
-	zoomDial->hide();
-	
-	QSpinBox* startDial = new QSpinBox(this);
-    startDial->setMinimum(1);
-    startDial->setMaximum(400000000);
-    startDial->setValue(1);
-    startDial->hide();
-	
-	QSpinBox* sizeDial = new QSpinBox(this);
-    sizeDial->setMinimum(1000);
-    sizeDial->setMaximum(400000000);//something very large MAX_INT?
-    sizeDial->setValue(10000);	
-    sizeDial->hide();
+{
+    UiVariables* localDials = new UiVariables(ui->textArea);
+    localDials->widthDial->hide();
+    localDials->scaleDial->hide();
+    localDials->zoomDial->hide();
+    localDials->startDial->hide();
+    localDials->sizeDial->hide();
 
 	QSpinBox* offsetDial = new QSpinBox(this);
     offsetDial->setMinimum(-40000000);
     offsetDial->setMaximum(40000000);
     offsetDial->setValue(0);
-    offsetDial->setSingleStep(widthDial->value());
+    offsetDial->setSingleStep(localDials->widthDial->value());
     mainWindow->settingToolBar->addWidget(offsetDial);
-    //offsetDial->hide();
-    
-    UiVariables* localDials = new UiVariables(ui->textArea);
-    localDials->sizeDial  = sizeDial;
-    localDials->widthDial = widthDial;
-    localDials->startDial = startDial;
-    localDials->scaleDial = scaleDial;
-    localDials->zoomDial  = zoomDial;
-    localDials->offsetDial  = offsetDial;
-    
+    localDials->offsetDial = offsetDial;
+
 	return localDials;
 }
 
@@ -289,6 +259,11 @@ void ViewManager::connectVariables(GLWidget* active, UiVariables* local)
 
     connect(local->zoomDial	, SIGNAL(valueChanged(int)), ui->zoomDial	, SLOT(setValue(int)));
     connect(ui->zoomDial		, SIGNAL(valueChanged(int)), local->zoomDial	, SLOT(setValue(int)));
+
+    //when a local copy is updated, globals is updated but without this line, the other
+    //GLwidgets fail to refresh.
+    connect(local, SIGNAL(internalsUpdated()), ui, SIGNAL(internalsUpdated()));
+    connect(ui, SIGNAL(internalsUpdated()), active, SLOT(invalidateDisplayGraphs()));
 }
 
 void ViewManager::disconnectVariables(GLWidget* active, UiVariables* local)
@@ -311,6 +286,11 @@ void ViewManager::disconnectVariables(GLWidget* active, UiVariables* local)
 
     disconnect(local->zoomDial	, SIGNAL(valueChanged(int)), ui->zoomDial	, SLOT(setValue(int)));
     disconnect(ui->zoomDial		, SIGNAL(valueChanged(int)), local->zoomDial	, SLOT(setValue(int)));
+
+    //when a local copy is updated, globals is updated but without this line, the other
+    //GLwidgets fail to refresh.
+    disconnect(local, SIGNAL(internalsUpdated()), ui, SIGNAL(internalsUpdated()));
+    disconnect(ui, SIGNAL(internalsUpdated()), active, SLOT(invalidateDisplayGraphs()));
 }
 
 UiVariables* ViewManager::vars(GLWidget* active)

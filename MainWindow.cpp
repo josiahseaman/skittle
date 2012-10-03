@@ -51,10 +51,9 @@ MainWindow::MainWindow()
 	setWindowTitle( "Skittle Genome Visualizer");
 	createActions();
 	createMenus();
-	createToolbars();
-	createDocks();
-	createStatusBar();
-    createUiVariables();
+    createDocks();
+    createToolbars();
+    createStatusBar();
     createUiConnections();
 	
     viewManager	= new ViewManager(this, ui);
@@ -249,56 +248,28 @@ void MainWindow::createToolbars()
 	settingToolBar->addWidget(activeW);
 	settingToolBar->addSeparator();
 	
-	settingToolBar->addWidget(new QLabel("Width"));
-	widthDial = new QSpinBox(this);
-    widthDial->setMinimum(1);
-    widthDial->setMaximum(1000000000);
-    widthDial->setValue(128);
-    widthDial->setSuffix(" bp");
-    widthDial->setButtonSymbols(QAbstractSpinBox::NoButtons);
-	settingToolBar->addWidget(widthDial);
+
+    //Note:Creating the visual representation of UiVariables is split between Mainwindow and the UiVariables constructor
+    ui = new UiVariables(textArea);
+    settingToolBar->addWidget(new QLabel("Width"));
+    settingToolBar->addWidget(ui->widthDial);
 
 	doubleDisplayWidth = new QPushButton("x2",this);
 	settingToolBar->addWidget(doubleDisplayWidth);
 	halveDisplayWidth = new QPushButton("/2",this);
 	settingToolBar->addWidget(halveDisplayWidth);
 	
-	settingToolBar->addWidget(new QLabel("Scale"));
-    scaleDial = new QSpinBox(this);
-    scaleDial->setMinimum(1);
-    scaleDial->setMaximum(100000);
-    scaleDial->setValue(1);
-    scaleDial->setSingleStep(4);
-    scaleDial->setSuffix(" bp/pixel");
-    scaleDial->setButtonSymbols(QAbstractSpinBox::NoButtons);
-    settingToolBar->addWidget(scaleDial);
+    settingToolBar->addWidget(new QLabel("Scale"));
+    settingToolBar->addWidget(ui->scaleDial);
 	
-	settingToolBar->addWidget(new QLabel("Zoom"));
-    zoomDial = new QSpinBox(this);
-    zoomDial->setMinimum(1);
-    zoomDial->setMaximum(100000);
-    zoomDial->setSingleStep(10);
-    zoomDial->setValue(100);
-    zoomDial->setButtonSymbols(QAbstractSpinBox::NoButtons);
-    settingToolBar->addWidget(zoomDial);
+    settingToolBar->addWidget(new QLabel("Zoom"));
+    settingToolBar->addWidget(ui->zoomDial);
 	
-	settingToolBar->addWidget(new QLabel("Start Index"));
-	startOffset = new QSpinBox(this);
-    startOffset->setMinimum(1);
-    startOffset->setMaximum(400000000);
-    startOffset->setValue(1);
-    startOffset->setButtonSymbols(QAbstractSpinBox::NoButtons);
-	settingToolBar->addWidget(startOffset);
+    settingToolBar->addWidget(new QLabel("Start Index"));
+    settingToolBar->addWidget(ui->startDial);
 	
-	settingToolBar->addWidget(new QLabel("Display Length"));
-    sizeDial = new QSpinBox(this);
-    sizeDial->setMinimum(1000);
-    sizeDial->setMaximum(400000000);//something very large MAX_INT?
-    sizeDial->setSingleStep(1000);
-    sizeDial->setValue(10000);
-    sizeDial->setSuffix(" bp");
-    sizeDial->setButtonSymbols(QAbstractSpinBox::NoButtons);
-    settingToolBar->addWidget(sizeDial);
+    settingToolBar->addWidget(new QLabel("Display Length"));
+    settingToolBar->addWidget(ui->sizeDial);
 
 	
 	//settingToolBar->addSeparator();
@@ -367,11 +338,11 @@ void MainWindow::createUiConnections()
     connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
     connect(helpAction, SIGNAL(triggered()), this, SLOT(helpDialog()));
 
-    connect( scaleDial, SIGNAL(editingFinished()), this, SLOT(changeScale()));
+    connect( ui->scaleDial, SIGNAL(editingFinished()), this, SLOT(changeScale()));
     
 	connect( doubleDisplayWidth, SIGNAL(clicked()), this, SLOT(doubleWidth()));
     connect( halveDisplayWidth, SIGNAL(clicked()), this, SLOT(halveWidth()));
-    connect( widthDial, SIGNAL(editingFinished()), this, SLOT(changeWidth()));
+    connect( ui->widthDial, SIGNAL(editingFinished()), this, SLOT(changeWidth()));
 	
 }
 void MainWindow::createFileConnections()
@@ -383,17 +354,6 @@ void MainWindow::createFileConnections()
 	connect(importAction, SIGNAL(triggered()), this, SLOT(openGtf()));
 	connect(this, SIGNAL(newGtfFileOpen(QString)), viewManager, SLOT(addAnnotationDisplay(QString)));	
 	connect(addAnnotationAction, SIGNAL(triggered()), viewManager, SLOT(addBookmark()));
-}
-
-void MainWindow::createUiVariables()
-{
-    ui = new UiVariables(textArea);
-
-    ui->sizeDial = sizeDial;
-    ui->widthDial = widthDial;
-    ui->startDial = startOffset;
-    ui->scaleDial = scaleDial;
-    ui->zoomDial = zoomDial;
 }
 
 void MainWindow::open()
@@ -449,12 +409,12 @@ void MainWindow::changeWidth(int width)
 
 void MainWindow::doubleWidth()
 {
-    changeWidth( 2 * widthDial->value() );
+    changeWidth( 2 * ui->widthDial->value() );
 }
 
 void MainWindow::halveWidth()
 {
-    changeWidth( (int)(0.5 * widthDial->value()) );
+    changeWidth( (int)(0.5 * ui->widthDial->value()) );
 }
 
 

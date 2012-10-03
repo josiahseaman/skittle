@@ -416,19 +416,19 @@ void GLWidget::keyPressEvent( QKeyEvent *event )
     switch ( event->key() )//the keys should be passed directly to the widgets
     {
 		case Qt::Key_Down:
-            ui->startDial->setValue(ui->startDial->value() + tenLines);
+            ui->changeStart(ui->startDial->value() + tenLines);
 			break;
 
 		case Qt::Key_Up:
-            ui->startDial->setValue(ui->startDial->value() - tenLines);
+            ui->changeStart(ui->startDial->value() - tenLines);
 			break;
 
 		case Qt::Key_Right:
-            ui->widthDial->setValue(ui->widthDial->value() + ui->scaleDial->value());
+            ui->changeWidth(ui->widthDial->value() + ui->scaleDial->value());
 			break;
 
 		case Qt::Key_Left:
-            ui->widthDial->setValue(ui->widthDial->value() - ui->scaleDial->value());
+            ui->changeWidth(ui->widthDial->value() - ui->scaleDial->value());
 			break;
 
 		default:
@@ -511,7 +511,7 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
-    ui->print("Frame: ", ++frame);
+    //ui->print("Frame: ", ++frame);
     glMatrixMode(GL_MODELVIEW);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
@@ -622,14 +622,14 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 		if( zoomFactor > 1.0 )  // we're zooming in
 		{
 			if(scale == 1)
-                ui->zoomDial->setValue( zoom * zoomFactor );
+                ui->changeZoom( zoom * zoomFactor );
 			else
                 ui->changeScale(newScale);
 		}
         else //zooming out
 		{
 			if(zoom > 100)
-                ui->zoomDial->setValue( max(100, ((int) (zoom * zoomFactor))) );
+                ui->changeZoom( max(100, ((int) (zoom * zoomFactor))) );
 			else
                 ui->changeScale(newScale);//set scale to the new value
         }
@@ -661,7 +661,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 			{
 				translate(0, dy);//still scroll up/down
                 int value = static_cast<int>(dx * ui->scaleDial->value()*2.0 + ui->widthDial->value() + 0.5);
-                ui->widthDial->setValue(value);
+                ui->changeWidth(value);
 				
             }
 		}
@@ -678,7 +678,7 @@ void GLWidget::translate(float dx, float dy)
 		int sign = (int)(dy / fabs(dy));
         int move = -1* static_cast<int>(dy  + (sign*0.5)) * ui->widthDial->value() * 2;
         int current = ui->startDial->value();
-        ui->startDial->setValue( max(1, current+move) );
+        ui->changeStart( max(1, current+move) );
 	}
 	emit xOffsetChange((int)(xPosition + dx + .5));
 }
@@ -697,7 +697,7 @@ void GLWidget::translateOffset(float dx, float dy)
 		int sign = (int)(dx / fabs(dx));
 		dx = (int)(dx + (0.5 * sign));
 	}
-    ui->offsetDial->setValue( (int)(current + moveUp + dx));
+    ui->changeOffset( (int)(current + moveUp + dx));
 }
  
 void GLWidget::changeCursor(Qt::CursorShape cNumber)

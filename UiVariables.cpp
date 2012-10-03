@@ -8,7 +8,7 @@
 using std::max;
 /** *******************************
 This class is a container class for the set of 5 global dials that affect all
-Graph visualizations.  Those dials are: start, width, size, scaleDial, and zoom.
+Graph visualizations.  Those dials are: start, width, size, scale, and zoom.
 It also contains a pointer to the local offsetDial for multiple windows.
 Finally, UiVariables has a pointer to the textArea of "Information Display"
 and convenience functions for printing out information to the text area.  This
@@ -17,45 +17,62 @@ You should also use the print functions to provide data to the user in a format
 that can be copy and pasted without the need to write a file.
 **********************************/
 
-UiVariables::UiVariables()
-{
-	textArea = NULL;
-    sizeDial = NULL;
-    widthDial = NULL;
-    startDial = NULL;
-    scaleDial = NULL;
-    zoomDial = NULL;
-    offsetDial = NULL;
-    oldScale = 1;
-    oldWidth = 128;
-}
+//UiVariables::UiVariables()
+//{
+//}
 
 UiVariables::UiVariables(QTextEdit* text)
 {
-	textArea = text;
-	textArea->toPlainText();
-    sizeDial = NULL;
-    widthDial = NULL;
-    startDial = NULL;
-    scaleDial = NULL;
-    zoomDial = NULL;
+    textArea = text;
+    if(textArea != NULL)
+        textArea->toPlainText();
+
+    widthDial = new QSpinBox();
+    widthDial->setMinimum(1);
+    widthDial->setMaximum(1000000000);
+    widthDial->setValue(128);
+    widthDial->setSuffix(" bp");
+    widthDial->setButtonSymbols(QAbstractSpinBox::NoButtons);
+
+    scaleDial = new QSpinBox();
+    scaleDial->setMinimum(1);
+    scaleDial->setMaximum(100000);
+    scaleDial->setValue(1);
+    scaleDial->setSingleStep(4);
+    scaleDial->setSuffix(" bp/pixel");
+    scaleDial->setButtonSymbols(QAbstractSpinBox::NoButtons);
+
+    zoomDial = new QSpinBox();
+    zoomDial->setMinimum(1);
+    zoomDial->setMaximum(100000);
+    zoomDial->setSingleStep(10);
+    zoomDial->setValue(100);
+    zoomDial->setButtonSymbols(QAbstractSpinBox::NoButtons);
+
+    startDial = new QSpinBox();
+    startDial->setMinimum(1);
+    startDial->setMaximum(400000000);
+    startDial->setValue(1);
+    startDial->setButtonSymbols(QAbstractSpinBox::NoButtons);
+
+    sizeDial = new QSpinBox();
+    sizeDial->setMinimum(1000);
+    sizeDial->setMaximum(400000000);//something very large MAX_INT?
+    sizeDial->setSingleStep(1000);
+    sizeDial->setValue(10000);
+    sizeDial->setSuffix(" bp");
+    sizeDial->setButtonSymbols(QAbstractSpinBox::NoButtons);
+
     offsetDial = NULL;
     oldScale = 1;
     oldWidth = 128;
-}
 
-//UiVariables::UiVariables(const UiVariables& copy)
-//{
-//	textArea  = copy.textArea;
-//    sizeDial  = copy.sizeDial;
-//    widthDial = copy.widthDial;
-//    startDial = copy.startDial;
-//    scaleDial = copy.scaleDial;
-//    zoomDial  = copy.zoomDial;
-//    offsetDial= copy.offsetDial;
-//    oldWidth  = copy.oldWidth;
-//    oldScale  = copy.oldScale;
-//}
+    //These lines make the Graphs respond immediately to typing rather than waiting for the user to finish
+    /*connect(widthDial, SIGNAL(valueChanged(int)), this, SIGNAL(internalsUpdated()));
+    connect(scaleDial, SIGNAL(valueChanged(int)), this, SIGNAL(internalsUpdated()));
+    connect(zoomDial, SIGNAL(valueChanged(int)), this, SIGNAL(internalsUpdated()));
+    connect(startDial, SIGNAL(valueChanged(int)), this, SIGNAL(internalsUpdated()));*/
+}
 
 UiVariables::~UiVariables()
 {
@@ -123,8 +140,8 @@ void UiVariables::changeWidth(int newWidth)
         widthDial->setValue(newWidth);
         oldWidth = newWidth;
         oldScale = newScale;
+        emit internalsUpdated();
     }
-
 }
 void UiVariables::changeWidth()
 {
@@ -151,6 +168,7 @@ void UiVariables::changeScale(int newScale)
         widthDial->setMinimum(newScale);
         oldScale = newScale;
         oldWidth = newWidth;
+        emit internalsUpdated();
     }
 }
 void UiVariables::changeScale()
@@ -158,4 +176,31 @@ void UiVariables::changeScale()
     changeScale(scaleDial->value());
 }
 
+void UiVariables::changeStart(int start)
+{
+    connect(startDial, SIGNAL(valueChanged(int)), this, SIGNAL(internalsUpdated()));
+    startDial->setValue(start);
+    disconnect(startDial, SIGNAL(valueChanged(int)), this, SIGNAL(internalsUpdated()));
+}
+
+void UiVariables::changeZoom(int zoom)
+{
+    if(zoom != zoomDial->value())
+    {
+        zoomDial->setValue(zoom);
+        emit internalsUpdated();
+    }
+}
+
+void UiVariables::changeOffset(int offset)
+{
+    if(offsetDial != NULL)
+    {
+        if(offset != offsetDial->value())
+        {
+            offsetDial->setValue(offset);
+            emit internalsUpdated();
+        }
+    }
+}
 
