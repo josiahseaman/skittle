@@ -25,6 +25,7 @@ the primary owner of the UiVariables object that is passed for signals all throu
 *************************************************/
 
 MdiChildWindow::MdiChildWindow(UiVariables *gui, QSpinBox* pStart, QTabWidget* settings)
+    :QFrame()
 {
     ui = gui;
 	publicStart = pStart;
@@ -36,9 +37,9 @@ MdiChildWindow::MdiChildWindow(UiVariables *gui, QSpinBox* pStart, QTabWidget* s
     horizontalScrollBar->setSingleStep(10);
 	verticalScrollBar = new QScrollBar();
 	verticalScrollBar->setMaximum( 100 );
-	
-	setMouseTracking(true);
-    //setFocusPolicy(Qt::ClickFocus);
+
+    setMouseTracking(true);
+    setFocusPolicy(Qt::ClickFocus);
 	subFrame = new QFrame(this);
 	glWidget = new GLWidget(ui, this);
 	QHBoxLayout* hLayout = new QHBoxLayout;
@@ -179,6 +180,7 @@ void MdiChildWindow::showSettingsTabs()
 
 void MdiChildWindow::mousePressEvent(QMouseEvent *event)
 {
+//    qDebug("Window Clicked");
 	emit IveBeenClicked(this);
 	QFrame::mousePressEvent(event);
 }

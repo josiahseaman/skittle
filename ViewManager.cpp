@@ -183,13 +183,6 @@ void ViewManager::handleWindowSync()
 	}
 }
 
-void ViewManager::changeLocalStart()
-{
-    QSpinBox* dial = dynamic_cast<QSpinBox*> (QObject::sender());
-    UiVariables* local = dynamic_cast<UiVariables*>(dial->parent());
-    local->startDial->setValue(globalUi->startDial->value() + local->offsetDial->value());
-}
-
 void ViewManager::changeGlobalStart()
 {
     UiVariables* local = vars(activeWidget);
@@ -225,8 +218,8 @@ UiVariables* ViewManager::copyUi()
     localDials->startDial->hide();
     localDials->sizeDial->hide();
 
-    mainWindow->settingToolBar->addWidget(localDials->offsetDial);
     localDials->offsetDial->show();
+    mainWindow->settingToolBar->addWidget(localDials->offsetDial);
 
 	return localDials;
 }
@@ -244,11 +237,11 @@ void ViewManager::printNum2(int num)
 void ViewManager::connectGlobalPushToLocal(GLWidget* active, UiVariables* local) //all windows are listening with syncCheckbox
 {
     /** We are using Qt::UniqueConnection just to make sure we aren't forming duplicate connections */
-    //connect(globalUi->sizeDial, SIGNAL(valueChanged(int)), local->sizeDial	, SLOT(setValue(int)));
-    connect(globalUi->widthDial	, SIGNAL(valueChanged(int)), local->widthDial, SLOT(setValue(int)), Qt::UniqueConnection);
-    connect(globalUi->startDial	, SIGNAL(valueChanged(int)), this, SLOT(changeAllLocalStarts()), Qt::UniqueConnection);
-    connect(globalUi->scaleDial	, SIGNAL(valueChanged(int)), local->scaleDial, SLOT(setValue(int)), Qt::UniqueConnection);
-    connect(globalUi->zoomDial		, SIGNAL(valueChanged(int)), local->zoomDial	, SLOT(setValue(int)), Qt::UniqueConnection);
+    //connect(globalUi->sizeDial, SIGNAL(valueChanged(int)), local->sizeDial   , SLOT(setValue(int)));
+    connect(globalUi->widthDial	, SIGNAL(valueChanged(int)), local->widthDial  , SLOT(setValue(int)), Qt::UniqueConnection);
+    connect(globalUi->startDial	, SIGNAL(valueChanged(int)), this              , SLOT(changeAllLocalStarts()), Qt::UniqueConnection);
+    connect(globalUi->scaleDial	, SIGNAL(valueChanged(int)), local->scaleDial  , SLOT(setValue(int)), Qt::UniqueConnection);
+    connect(globalUi->zoomDial  , SIGNAL(valueChanged(int)), local->zoomDial   , SLOT(setValue(int)), Qt::UniqueConnection);
     connect(globalUi, SIGNAL(internalsUpdated()), active, SLOT(invalidateDisplayGraphs()), Qt::UniqueConnection);
 }
 
@@ -256,10 +249,8 @@ void ViewManager::connectLocalPushToGlobal(GLWidget* active, UiVariables* local)
 {
     connect(local->sizeDial	 , SIGNAL(valueChanged(int)), globalUi->sizeDial	, SLOT(setValue(int)));
     connect(local->widthDial , SIGNAL(valueChanged(int)), globalUi->widthDial	, SLOT(setValue(int)));
-
-    //NEW:widget -> local->start -> vMan.slots -> pub.start
-    connect(local->offsetDial, SIGNAL(valueChanged(int)), this, SLOT(changeSingleLocalStart()));
-    connect(local->startDial , SIGNAL(valueChanged(int)), this, SLOT(changeGlobalStart()));
+    //connect(local->offsetDial, SIGNAL(valueChanged(int)), active->parent, SLOT(changeLocalStartFromOffset(int)));
+    connect(local->startDial , SIGNAL(valueChanged(int)), this, SLOT(changeGlobalStart()));//NEW:widget -> local->start -> vMan.slots -> pub.start
     connect(local->scaleDial , SIGNAL(valueChanged(int)), globalUi->scaleDial	, SLOT(setValue(int)));
     connect(local->zoomDial	 , SIGNAL(valueChanged(int)), globalUi->zoomDial	, SLOT(setValue(int)));
 
@@ -272,20 +263,17 @@ void ViewManager::disconnectGlobalPushToLocal(GLWidget* active, UiVariables* loc
 {
     disconnect(globalUi->sizeDial		, SIGNAL(valueChanged(int)), local->sizeDial	, SLOT(setValue(int)));
     disconnect(globalUi->widthDial	, SIGNAL(valueChanged(int)), local->widthDial, SLOT(setValue(int)));
-    disconnect(globalUi->startDial	, SIGNAL(valueChanged(int)),active->parent, SLOT(changeLocalStartFromPublicStart(int)));
+    disconnect(globalUi->startDial	, SIGNAL(valueChanged(int)), this, SLOT(changeAllLocalStarts()));
     disconnect(globalUi->scaleDial	, SIGNAL(valueChanged(int)), local->scaleDial, SLOT(setValue(int)));
     disconnect(globalUi->zoomDial		, SIGNAL(valueChanged(int)), local->zoomDial	, SLOT(setValue(int)));
     disconnect(globalUi, SIGNAL(internalsUpdated()), active, SLOT(invalidateDisplayGraphs()));
-
 }
 
 void ViewManager::disconnectLocalPushToGlobal(GLWidget* active, UiVariables* local)
 {
     disconnect(local->sizeDial	, SIGNAL(valueChanged(int)), globalUi->sizeDial	, SLOT(setValue(int)));
     disconnect(local->widthDial	, SIGNAL(valueChanged(int)), globalUi->widthDial	, SLOT(setValue(int)));
-    disconnect(local->offsetDial, SIGNAL(editingFinished()), this, SLOT(changeGlobalStart()));
-    disconnect(local->startDial , SIGNAL(valueChanged(int)), this, SLOT(changeGlobalStart(int)));
-//    disconnect(local->offsetDial, SIGNAL(valueChanged(int)), this, SLOT(changeLocalStart(int)));
+    disconnect(local->startDial , SIGNAL(valueChanged(int)), this, SLOT(changeGlobalStart()));
     disconnect(local->scaleDial	, SIGNAL(valueChanged(int)), globalUi->scaleDial	, SLOT(setValue(int)));
     disconnect(local->zoomDial	, SIGNAL(valueChanged(int)), globalUi->zoomDial	, SLOT(setValue(int)));
     disconnect(local, SIGNAL(internalsUpdated()), globalUi, SIGNAL(internalsUpdated()));

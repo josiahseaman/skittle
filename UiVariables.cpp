@@ -17,10 +17,6 @@ You should also use the print functions to provide data to the user in a format
 that can be copy and pasted without the need to write a file.
 **********************************/
 
-//UiVariables::UiVariables()
-//{
-//}
-
 UiVariables::UiVariables(QTextEdit* text)
 {
     textArea = text;
@@ -63,7 +59,7 @@ UiVariables::UiVariables(QTextEdit* text)
     sizeDial->setSuffix(" bp");
     sizeDial->setButtonSymbols(QAbstractSpinBox::NoButtons);
 
-    QSpinBox* offsetDial = new QSpinBox();
+    offsetDial = new QSpinBox();
     offsetDial->setMinimum(-40000000);
     offsetDial->setMaximum(40000000);
     offsetDial->setValue(0);
