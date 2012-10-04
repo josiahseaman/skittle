@@ -62,7 +62,7 @@ GLWidget::GLWidget(UiVariables* gui, QWidget* parentWidget)
     : QGLWidget(parentWidget)
 {
     ui = gui;
-	parent = parentWidget;
+    parent = dynamic_cast<MdiChildWindow*>(parentWidget);
 	setMouseTracking(true);
 	setMinimumWidth(100);
 	setMinimumHeight(100);

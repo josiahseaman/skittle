@@ -63,7 +63,12 @@ UiVariables::UiVariables(QTextEdit* text)
     sizeDial->setSuffix(" bp");
     sizeDial->setButtonSymbols(QAbstractSpinBox::NoButtons);
 
-    offsetDial = NULL;
+    QSpinBox* offsetDial = new QSpinBox();
+    offsetDial->setMinimum(-40000000);
+    offsetDial->setMaximum(40000000);
+    offsetDial->setValue(0);
+    offsetDial->setSingleStep(widthDial->value());
+    offsetDial->hide();
     oldScale = 1;
     oldWidth = 128;
 
@@ -178,9 +183,11 @@ void UiVariables::changeScale()
 
 void UiVariables::changeStart(int start)
 {
-    connect(startDial, SIGNAL(valueChanged(int)), this, SIGNAL(internalsUpdated()));
-    startDial->setValue(start);
-    disconnect(startDial, SIGNAL(valueChanged(int)), this, SIGNAL(internalsUpdated()));
+    if(start != startDial->value())
+    {
+        startDial->setValue(start);
+        emit internalsUpdated();
+    }
 }
 
 void UiVariables::changeZoom(int zoom)
@@ -199,6 +206,9 @@ void UiVariables::changeOffset(int offset)
         if(offset != offsetDial->value())
         {
             offsetDial->setValue(offset);
+//            startDial->setValue(preOffset + offset    );
+//            oldOffset
+//                    global_start
             emit internalsUpdated();
         }
     }

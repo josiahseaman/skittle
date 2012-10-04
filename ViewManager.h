@@ -33,7 +33,9 @@ public slots:
 	void addAnnotationDisplay(QString);
 	void addBookmark();
     void handleWindowSync();
-	void changePublicStart(int val);
+    void changeSingleLocalStart();
+    void changeGlobalStart();
+    void changeAllLocalStarts();
 	void printNum(int num);
 	void printNum2(int num);
     void updateCurrentDisplay();
@@ -42,13 +44,15 @@ public slots:
 private:
 	std::vector<MdiChildWindow*> views;
 	MainWindow* mainWindow;
-    UiVariables* ui;
+    UiVariables* globalUi;
 	
 	void broadcastLocalValues(UiVariables local);
     void broadcastPublicValues(UiVariables *local);
     UiVariables* copyUi();
-    void connectVariables(GLWidget*, UiVariables*);
-    void disconnectVariables(GLWidget*, UiVariables*);
+    void connectGlobalPushToLocal(GLWidget *, UiVariables*);//all windows are listening with syncCheckbox
+    void connectLocalPushToGlobal(GLWidget *, UiVariables*);//only active window gets to push to globalUi
+    void disconnectGlobalPushToLocal(GLWidget *, UiVariables*);
+    void disconnectLocalPushToGlobal(GLWidget *, UiVariables*);
     UiVariables* vars(GLWidget* active);
 	
 };

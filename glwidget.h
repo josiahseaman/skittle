@@ -27,6 +27,7 @@
 #include <string>
 #include "BasicTypes.h"
 #include "UiVariables.h"
+#include "MdiChildWindow.h"
 
 class UiVariables;
 class FastaReader;
@@ -51,7 +52,7 @@ class GLWidget : public QGLWidget
 public:
     UiVariables* ui;
 	string chromosomeName;
-	QWidget* parent;
+    MdiChildWindow* parent;
 	FastaReader* reader;
 	GtfReader*	trackReader;
 	NucleotideDisplay* nuc;//make this private

@@ -2,7 +2,7 @@
 #define JUI_VARS
 
 #include <string>
-#include <QObject>
+#include <QWidget>
 
 class QTextEdit;
 class QSpinBox;
