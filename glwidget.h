@@ -91,6 +91,7 @@ public slots:
     void reportOnFinish(int);
     void changeZoom(int z);
     void displayString(const string* sequence);
+    void zoomExtents();
     void on_moveButton_clicked();
     void on_selectButton_clicked();
     void on_findButton_clicked();

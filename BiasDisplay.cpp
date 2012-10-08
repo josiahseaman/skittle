@@ -48,7 +48,7 @@ void BiasDisplay::sequenceToColors(const char* genome)
 
 vector<int> BiasDisplay::countNucleotides(const char* genome)
 {
-    vector<int> counts(4,0);
+    vector<int> counts(5,0);
     int tempWidth = ui->widthDial->value();
     for(int w = 0; w < tempWidth; w++)
     {
@@ -67,19 +67,20 @@ vector<color>& vector_append(vector<color>& A, vector<color>& B)
 
 vector<color> BiasDisplay::drawJustifiedBar(vector<int> alphabetic_sizes)
 {
-    char order[] = {'C','G','A','T'};
-    if(alphabetic_sizes.size() != 4){
-        ui->print("Error: Nucleotide Bias line size is not 4.");
+    char r[] = {'C','G','A','T', 'N'};
+    vector<char> order(r, r + 5);//this should be the size of the above array.
+    if(alphabetic_sizes.size() != order.size()){
+        ui->print("Error: Nucleotide Bias line size is not 5.");
         return vector<color>();
     }
     //reorder sizes to match order[]
-    vector<int> sizes(4, 0);
+    vector<int> sizes(alphabetic_sizes.size(), 0);
     for(int i = 0; i < (int)sizes.size(); ++i)
         sizes[i] = alphabetic_sizes[ACGT_num(order[i])];
 
     vector<color> line;
 
-    for(int position = 0; position < 4; ++position)
+    for(int position = 0; position < 5; ++position)
     {
         int size = sizes[position];
 
@@ -101,10 +102,13 @@ vector<color> BiasDisplay::drawJustifiedBar(vector<int> alphabetic_sizes)
             rightJustified = true;
             break;
         case 3:
-            filler_size = display_width / 3 - size;
+            filler_size = display_width / 3 - size - sizes[4];
             rightJustified = false;
             break;
-
+        case 4://N's
+            filler_size = 0;
+            rightJustified = true;
+            break;
         }
         color barColor = glWidget->colors(order[position]);
         vector<color> filler( max(0,filler_size), color(0.5));

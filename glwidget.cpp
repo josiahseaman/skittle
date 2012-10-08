@@ -206,16 +206,21 @@ void GLWidget::displayString(const string* sequence)
     ui->startDial->setValue(1);
     ui->widthDial->setValue(128);
 
-    //these lines zoom out to the full extents of the file
-//    float multiplier = sequence->size() / (float)ui->widthDial->value() / (display_height()-10);
-//    int newScale = max(1, (int)(multiplier) );
-//    ui->changeScale(newScale);
+    //zoomExtents();
 	
     emit displaySizeChanged();
     ui->zoomDial->setValue(ui->zoomDial->value() + 1);
     this->updateDisplay();
     ui->zoomDial->setValue(ui->zoomDial->value() - 1);
     this->updateDisplay();
+}
+
+void GLWidget::zoomExtents()
+{
+    //these lines zoom out to the full extents of the file
+    float multiplier = seq()->size() / (float)ui->widthDial->value() / (display_height()-10);
+    int newScale = max(1, (int)(multiplier) );
+    ui->changeScale(newScale);
 }
 
 void GLWidget::on_moveButton_clicked()
