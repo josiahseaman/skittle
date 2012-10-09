@@ -17,7 +17,10 @@ public:
     void load_nucleotide();
     void sequenceToColors(const char* genome);
     vector<int> countNucleotides(const char* genome);
-    vector<color> drawJustifiedBar(vector<int> alphabetic_sizes);
+    float count_3merPattern( const char* genome);
+    vector<color>& drawBar(int size, int filler_size, color barColor, bool rightJustified, vector<color>& line);
+    vector<color>  drawJustifiedBar(vector<int> alphabetic_sizes);
+
     virtual int width();
     
     inline int ACGT_num(char n)
@@ -26,6 +29,7 @@ public:
         if(n == 'T') return 3;
         if(n == 'C') return 0;
         if(n == 'G') return 1;
+        if(n == '3') return 5;//3-mer pattern
         return 4;//N and All unknown characters
     }
 signals:
