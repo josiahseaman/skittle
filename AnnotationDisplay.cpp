@@ -183,6 +183,11 @@ string AnnotationDisplay::getFileName()
 	return fileName;
 }
 
+int AnnotationDisplay::current_display_size()
+{
+    return ui->sizeDial->value();
+}
+
 void AnnotationDisplay::setFileName(string gtfFileName)
 {
 	fileName = gtfFileName;

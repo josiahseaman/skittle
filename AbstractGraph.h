@@ -62,7 +62,7 @@ public:
 	virtual string getFileName();
 	virtual QScrollArea* settingsUi();
 	string reverseComplement(string original);
-    int current_display_size();
+    virtual int current_display_size();
 	
 inline char complement(char a)
 {

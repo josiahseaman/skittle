@@ -27,8 +27,10 @@ AbstractGraph::AbstractGraph(UiVariables* gui, GLWidget* gl)
     hidden = true;
     settingsTab = NULL;
     toggleButton = NULL;
-    textureBuffer = NULL;
+    textureBuffer = new TextureCanvas();
 
+    usingTextures = true;
+    frameCount = 0;
     display_object = 0;
     upToDate = false;
 }

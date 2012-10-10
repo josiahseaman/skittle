@@ -71,8 +71,9 @@ void CylinderDisplay::display()
 */
 GLuint CylinderDisplay::render()
 {
+    qDebug() << "CylinderDisplay::render(): " << ++frameCount;
 	GLuint square = glGenLists(1);
-	//GLuint list = glGenLists(1);
+    GLuint cylinder_Display_list = glGenLists(1);
 	
 	glNewList(square, GL_COMPILE);
 		createSquare();
@@ -83,15 +84,14 @@ GLuint CylinderDisplay::render()
 		//ntLinker->tie_up_loose_ends(width_list);
 		//ntLinker->cap_movement(width_list, 1);
 
-    //glNewList(list, GL_COMPILE);
+    glNewList(cylinder_Display_list, GL_COMPILE);
 		
 	if( !width_list.empty() )
 	{
 		max_width = 0;
 		double pi = 3.141592653589793;
 		double y = 0;
-		double angle = 0;
-		point p1 = point(0,0,0);
+        double angle = 0;
 		float local_width = width_list[0];
         const char* genome = sequence->c_str() + ui->startDial->value();//TODO:not a particularly safe way of accessing
 		glPushMatrix();
@@ -129,10 +129,10 @@ GLuint CylinderDisplay::render()
 		glPopMatrix();
 	}		
 
-    //glEndList();
+    glEndList();
     upToDate = true;
     
-    return 0;//(list);
+    return cylinder_Display_list;
 }
 
 int CylinderDisplay::width()

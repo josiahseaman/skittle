@@ -30,6 +30,7 @@ public:
 	int width();
 	void setFileName(string gtfFileName);
 	string getFileName();
+    int current_display_size();
 		
 public slots:
 	void addEntry(track_entry entry);
