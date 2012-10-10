@@ -85,14 +85,14 @@ bool AbstractGraph::updateInt(int& subject, int& value)
 	return false;
 }
 
-bool AbstractGraph::updateVal(double& subject, double& value)
+bool AbstractGraph::updateDouble(double& subject, double& value)
 {
 	if(value < 0.01)
 		value = 0.01;
 	if(subject != value)
 	{
 		subject = value;	
-		upToDate = false;
+        upToDate = false;
 		return true;
 	}	
 	return false;

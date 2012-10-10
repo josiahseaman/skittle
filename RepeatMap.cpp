@@ -73,14 +73,14 @@ QScrollArea* RepeatMap::settingsUi()
 	formLayout->setRowWrapPolicy(QFormLayout::WrapLongRows);
 	settingsTab->setLayout(formLayout);
     
-	QSpinBox* graphStartDial = new QSpinBox(settingsTab);
-	graphStartDial->setMinimum(1);	
-	graphStartDial->setMaximum(100000);	
-	graphStartDial->setSingleStep(10);
-	formLayout->addRow("Starting Offset:", graphStartDial);
+    QSpinBox* frequencyStartDial = new QSpinBox(settingsTab);
+    frequencyStartDial->setMinimum(1);
+    frequencyStartDial->setMaximum(100000);
+    frequencyStartDial->setSingleStep(10);
+    formLayout->addRow("Starting Offset:", frequencyStartDial);
 	
-	connect( graphStartDial, SIGNAL(valueChanged(int)), this, SLOT(changeFStart(int)));	
-	connect( this, SIGNAL(fStartChanged(int)), graphStartDial, SLOT(setValue(int)));
+    connect( frequencyStartDial, SIGNAL(valueChanged(int)), this, SLOT(changeFStart(int)));
+    connect( this, SIGNAL(fStartChanged(int)), frequencyStartDial, SLOT(setValue(int)));
 	connect( this, SIGNAL(fStartChanged(int)), this, SIGNAL(displayChanged()));
     
     QSpinBox* graphWidthDial  = new QSpinBox(settingsTab);

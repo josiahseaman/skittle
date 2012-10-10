@@ -89,7 +89,7 @@ void NucleotideLinker::DrawArc(float r, float cx, float cy, float start_angle, f
 
 void NucleotideLinker::calculate(string sequence, int minimum_width)
 {
-	min_width = minimum_width;
+    min_width = minimum_width;
 	
 	int consensus_width = 200;
 	int consensus_strength = 0;

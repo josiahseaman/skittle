@@ -164,7 +164,7 @@ void OligomerDisplay::graphThreeDisplay(int state)
 
 void OligomerDisplay::changeMinDelta(double mD)
 {
-	if(updateVal(minDeltaBoundary, mD ))
+    if(updateDouble(minDeltaBoundary, mD ))
 	{
 		emit displayChanged();
 	}		

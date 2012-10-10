@@ -97,6 +97,7 @@ void RepeatOverviewDisplay::display()//TODO: Delete this whole method since it i
 void RepeatOverviewDisplay::loadTexture()
 {
 	/**/
+    qDebug() << "RepeatOverviewDisplay::load: " << ++frameCount;
 	int s = ui->scaleDial->value();
 	if(s % 4 != 0)
 	{
@@ -121,9 +122,7 @@ void RepeatOverviewDisplay::loadTexture()
         }
     }*/
 
-    checkVariables();
-	//return if changed?
-
+    qDebug() << "Width: " << ui->widthDial->value() << "\nScale: " << ui->scaleDial->value() << "\nStart: " << ui->startDial->value();
 	vector<color> alignment_colors;
     int end = max(1, (ui->startDial->value() + current_display_size()) - 251);
     int tempScale = ui->scaleDial->value();
