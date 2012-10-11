@@ -97,7 +97,10 @@ bool FastaReader::readFile(QString fileName)
     QObject::connect(this, SIGNAL(progressValueChanged(int)), progressBar, SLOT(setValue(int)));
     progressBar->show();
 
-    //Read in the file
+    //Skip the first line of the file as this is the chromosome name/info
+    wordfile.ignore(500, '\n');
+
+    //Read in the rest of the file
     char current;
     int i = 0;
     do
@@ -110,10 +113,12 @@ bool FastaReader::readFile(QString fileName)
 
         ++i;
 
-        if(current == 65 || current == 67 || current == 71 || current == 84 || current == 78) //A C G T N
+        //if(current == 65 || current == 67 || current == 71 || current == 84 || current == 78) //A C G T N
+        if(current != '\n' && current != '\r')
         {
             sequence.push_back(current);
         }
+
         if(i % progress == 0)
         {
             emit progressValueChanged(i);
