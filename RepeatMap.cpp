@@ -46,6 +46,7 @@ RepeatMap::RepeatMap(UiVariables* gui, GLWidget* gl)
     F_start = 1;
     F_height = 1;
     usingDoubleSampling = false;
+    usingMin3mer = false;
 
 	freq = vector< vector<float> >();
 	for(int i = 0; i < 400; i++)
@@ -98,6 +99,11 @@ QScrollArea* RepeatMap::settingsUi()
     doubleSample->setChecked(false);
     formLayout->addRow("Check for matches upstream and downstream (increases contrast)", doubleSample);
     connect( doubleSample, SIGNAL(toggled(bool)), this, SLOT(toggleDoubleSample(bool)));
+
+    QCheckBox* min3merButton = new QCheckBox(settingsTab);
+    min3merButton->setChecked(false);
+    formLayout->addRow("Filter for 3mer minimum pattern", min3merButton);
+    connect( min3merButton, SIGNAL(toggled(bool)), this, SLOT(toggleMin3merFilter(bool)));
 	
 	return settingsTab;
 }
@@ -116,11 +122,17 @@ void RepeatMap::display()
 				nuc->load_nucleotide();
 			}
             int displayWidth = ui->widthDial->value() / ui->scaleDial->value();
-			calculate(nuc->nucleotide_colors, displayWidth);
+            calculate(nuc->nucleotide_colors, displayWidth);
 		}
 		else
 		{
 			freq_map();	
+            if(usingDoubleSampling)
+                max_vertical_pair_filter();
+            if(usingMin3mer)
+                min_3mer_filter();
+            vector<float> scores_3mer = convolution_3mer();
+            print_scores(scores_3mer);
 		}
 	}
 	load_canvas();
@@ -139,6 +151,14 @@ void RepeatMap::display()
 	    paint_square(point(1, 0, .25), color(255,0,0));
 	glPopMatrix();
 
+}
+
+void RepeatMap::print_scores(vector<float> scores_3mer)
+{
+    for(int i = 0; i < (int)scores_3mer.size(); ++i)
+    {
+        qDebug() << scores_3mer[i];
+    }
 }
 
 void RepeatMap::link(NucleotideDisplay* nuc_display)
@@ -183,9 +203,6 @@ GLuint RepeatMap::render()
 void RepeatMap::freq_map()
 {
     const char* genome = sequence->c_str() + ui->startDial->value();//TODO: find a safer way to access this
-    vector<vector<float> > freq_maxOfSample;
-    if(usingDoubleSampling)
-        freq_maxOfSample = emptyCopy(freq);
 	for( int h = 0; h < height(); h++)
     {
         int tempWidth = ui->widthDial->value();
@@ -211,19 +228,70 @@ void RepeatMap::freq_map()
             }
             freq[h][w] = float(score) / tempWidth;
         }
-        if(usingDoubleSampling)
+    }
+	upToDate = true;
+}
+
+void RepeatMap::max_vertical_pair_filter()
+{
+    vector<vector<float> > freq_maxOfSample;
+    freq_maxOfSample = emptyCopy(freq);
+
+    for( int h = 0; h < height(); h++)
+    {
+        if(h > 0)
         {
-            if(h > 0)
+            for(int w = 1; w <= F_width; w++)
             {
-                for(int w = 1; w <= F_width; w++)
-                {
-                    freq_maxOfSample[h][w] = max(freq[h][w], freq[h-1][w]);
-                }
+                freq_maxOfSample[h][w] = max(freq[h][w], freq[h-1][w]);
             }
         }
     }
-    if(usingDoubleSampling) freq = freq_maxOfSample;
-	upToDate = true;
+    freq = freq_maxOfSample;
+}
+
+void RepeatMap::min_3mer_filter()
+{
+    int reach = 10 * 3;
+    for(int y = 0; y < (int)freq.size(); ++y)
+    {
+        for(int x = 0; x + reach < (int)freq[y].size(); ++x)
+        {
+            float average = 0;
+//            float minimum = freq[y][x];
+            for(int r = 0; r <= reach; r += 3)
+            {
+//                minimum = min(minimum, freq[y][x+r]);
+                average += freq[y][x+r];
+            }
+//            freq[y][x] = minimum ;
+            freq[y][x] = average / ((float)reach / 3.0);
+        }
+    }
+}
+
+vector<float> RepeatMap::convolution_3mer()
+{
+    int reach = 20 * 3;
+    vector<float> mask;
+    for(int i = 0; i < reach; ++i)//create mask
+    {
+        if(i % 3 == 0)
+            mask.push_back(1.0);
+        else
+            mask.push_back(-0.5);
+    }
+    vector<float> scores;
+    for(int y = 0; y < (int)freq.size(); ++y)
+    {
+        float lineScore = 0.0;
+        for(int x = 0; x < (int)mask.size() && x < (int)freq[y].size(); ++x)
+        {
+            lineScore += min((float)0.5, mask[x] * freq[y][x]);//the amount that any position can affect is capped because of tandem repeats with 100% similarity
+        }
+        scores.push_back(lineScore);
+    }
+    return scores;
 }
 
 vector<vector<float> > RepeatMap::emptyCopy(vector<vector<float> > starter)//TODO: is there a shorter way of allocating this?
@@ -273,10 +341,15 @@ void RepeatMap::changeGraphWidth(int val)
 	}
 }	
 
-
 void RepeatMap::toggleDoubleSample(bool d)
 {
     usingDoubleSampling = d;
+    invalidate();
+}
+
+void RepeatMap::toggleMin3merFilter(bool m)
+{
+    usingMin3mer = m;
     invalidate();
 }
 

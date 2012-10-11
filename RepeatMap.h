@@ -25,10 +25,14 @@ public:
     ~RepeatMap();
 	QScrollArea* settingsUi();
 	void display();
+    void print_scores(vector<float> scores_3mer);
 	void link(NucleotideDisplay* nuc_display);
 	void load_canvas();
 	GLuint render();
 	void freq_map();
+    void max_vertical_pair_filter();
+    void min_3mer_filter();
+    vector<float> convolution_3mer();
 	int height();
 	string mouseClick(point2D pt);
 	
@@ -43,6 +47,7 @@ public slots:
 	void changeFStart(int val);
 	void changeGraphWidth(int val);
     void toggleDoubleSample(bool d);
+    void toggleMin3merFilter(bool m);
 	
 signals:
 	void fStartChanged(int);
@@ -60,6 +65,7 @@ protected:
 	int freq_map_count;
 	int calculate_count;
     bool usingDoubleSampling;
+    bool usingMin3mer;
 };
 
 #endif
