@@ -37,7 +37,7 @@ public:
 	string trimFilename(string path);
 
 public slots:
-	void readFile(QString name);	
+    bool readFile(QString name);
 
 signals:
 	void fileNameChanged(string name);
@@ -48,17 +48,12 @@ private:
 	GLWidget* glWidget;
 	UiVariables* ui;
 	char upperCase(char& c);
-	bool initFile(string file);
 	void loadingProgress();
-	int readBlock(int &start);
-	int readBlock2(int &start);
-	int readBlock3(int &start);
 	void storeChrName(string n);
 	string logo();
 
 	ifstream wordfile;
 	string sequence;
-	vector<char> buffer;
 	QProgressDialog* progressBar;
 	int bytesInFile;//file size, but more specific
 	int blockSize;

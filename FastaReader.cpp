@@ -12,6 +12,8 @@
 #include <qtconcurrentrun.h>
 #include <QApplication>
 
+#include <QDebug>
+
 using namespace QtConcurrent;
 
 /** *********************
@@ -40,7 +42,6 @@ FastaReader::FastaReader( GLWidget* gl, UiVariables* gui)
 	ui = gui;
 	sequence = logo();//string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");//
 	bytesInFile = 0;
-	blockSize = 5000000;
 	progressBar = NULL;
 }
 FastaReader::~FastaReader()
@@ -49,69 +50,91 @@ FastaReader::~FastaReader()
 	sequence.resize(0);
 }
 
-bool FastaReader::initFile(string file)
+bool FastaReader::readFile(QString fileName)
 {
-	wordfile.clear();//reset the fail state to normal
-	wordfile.open (file.c_str(), ifstream::in | ifstream::binary);
-	if(wordfile.fail())
-	{
-		ErrorBox msg("Could not read the file.  Either Skittle doesn't have file permissions or the file does not exist.");
-		return false;
-	}
-	int begin = wordfile.tellg();
-	wordfile.seekg (0, ios::end);
-	int end = wordfile.tellg();
-	bytesInFile = end - begin;
-	wordfile.seekg(0, ios::beg);//move pointer to the beginning of the file
-	
-	return true;
-}
+    string file = fileName.toStdString();
 
-void FastaReader::readFile(QString fileName)
-{
-	string file = fileName.toStdString();
-	if( file.empty() )
-		return;
-	ui->print(file);
-	storeChrName(file);	
-	sequence.clear();
-	sequence = string(">"); //inserting this character at the beginning means the first nucleotide is at sequence[1]
-	
+    //Make sure that we were requested to open a file
+    if(file.empty())
+    {
+        return false;
+    }
+    ui->print(file);
+    storeChrName(file);
 
-	if(initFile(file))
-	{
-		buffer.push_back('>');
-		loadingProgress();
-		wordfile.close();
-		int bufferSize = buffer.size();
-		sequence.resize(bufferSize, 'N');
-		
-		if(progressBar)
-		{
-			delete progressBar;
-			progressBar = NULL;
-		}
-		progressBar = new QProgressDialog("Capitalizing Sequence...", 0, 0, bytesInFile);//no ,"Cancel",
-		progressBar->setMinimumDuration(0);
-    	QObject::connect(this, SIGNAL(progressValueChanged(int)), progressBar, SLOT(setValue(int)));
+    //Clear out anything that may be left in the sequence string and set initial pad character
+    sequence.clear();
+    sequence = string(">");
 
-        for(int i = 0; i < (int)buffer.size(); ++i)
-		{
-			sequence[i] = upperCase(buffer[i]);
-			if(i % blockSize == 0)
-				emit progressValueChanged(i);
-		}
-		progressBar->close();
-		if(progressBar)
-		{
-			delete progressBar;
-			progressBar = NULL;
-		}
-		buffer.clear();
-		buffer.resize(0);
-		ui->print("Done reading file.");
-		emit newFileRead( seq() );
-	}
+    //Clear out anything that may be in the ifstream then open the new file
+    wordfile.clear();
+    wordfile.open(file.c_str(), ifstream::in | ifstream::binary);
+
+    //See if we opened the file successfully
+    if(wordfile.fail())
+    {
+        ErrorBox msg("Could not read the file. Either Skittle doesn't have file permissions or the file does not exist.");
+        return false;
+    }
+
+    //Get how many characters are in the file
+    int begin = wordfile.tellg();
+    wordfile.seekg(0, ios::end);
+    int end = wordfile.tellg();
+    bytesInFile = end - begin;
+    wordfile.seekg(0, ios::beg);
+    int progress = bytesInFile / 100;
+
+    //Setup the progress bar by initially wiping it if one already exists
+    if(progressBar)
+    {
+        delete progressBar;
+        progressBar = NULL;
+    }
+    //Then setup a new progress bar
+    progressBar = new QProgressDialog("Loading File...", "Cancel", 0, 0);
+    progressBar->setMinimumDuration(0);
+    QObject::connect(this, SIGNAL(progressValueChanged(int)), progressBar, SLOT(setValue(int)));
+    progressBar->show();
+
+    //Read in the file
+    char current;
+    int i;
+    do
+    {
+        //Read the next character
+        wordfile >> current;
+
+        //If it is a letter, uppercase it
+        current = upperCase(current);
+
+        ++i;
+
+        if(current == 65 || current == 67 || current == 71 || current == 84 || current == 78) //A C G T N
+        {
+            sequence.push_back(current);
+        }
+        if(i % progress == 0)
+        {
+            emit progressValueChanged(i);
+        }
+    }
+    while(!wordfile.eof() && !wordfile.fail() && !progressBar->wasCanceled());
+
+    //Close up everything
+    progressBar->reset();
+    progressBar->close();
+    if(progressBar)
+    {
+        delete progressBar;
+        progressBar = NULL;
+    }
+    wordfile.close();
+
+    ui->print("Done loading file!");
+    emit newFileRead(seq());
+
+    return true;
 }
 
 char FastaReader::upperCase(char& c)
@@ -121,109 +144,6 @@ char FastaReader::upperCase(char& c)
 	else
 		return c;
 }  
-
-void FastaReader::loadingProgress()
-{
-	/*
-#ifndef QT_NO_CONCURRENT
-	//ProgressBar *dialog = new ProgressBar(this);
-	// QThreadPool takes ownership and deletes 'hello' automatically
-	//QThreadPool::globalInstance()->start(dialog);
-
-	for(int i = 0; i < bytesInFile-1 && !wordfile.fail();)//&& !dialog->wasCanceled(); )//i+=blockSize)
-	{
-		i = readBlock3(i);//returns the last position read
-	}
-
-
-	//dialog->reset();//setValue(bytesInFile);//reset
-	//dialog->close();
-	//delete dialog;
-	/*/
-//#else	
-	if(progressBar)
-	{
-		delete progressBar;
-		progressBar = NULL;
-	}
-	progressBar = new QProgressDialog("Reading File...", 0, 0, bytesInFile);//, this);
-	progressBar->setMinimumDuration(0);
-    QObject::connect(this, SIGNAL(progressValueChanged(int)), progressBar, SLOT(setValue(int)));
-
-    for(int i = 0; i < bytesInFile-1 && !wordfile.fail() && !progressBar->wasCanceled(); )//i+=blockSize)
-    {
-		i = readBlock3(i);//returns the last position read
-	}
-	progressBar->reset();//setValue(bytesInFile);//reset
-	progressBar->close();/**/
-//#endif
-}
-
-int FastaReader::readBlock(int &start)
-{
-	//wordfile.seekg(start, ios::beg);//start is in file bytes, not sequence letters (blasted newlines)
-	int end = start + blockSize;//end is in file bytes
-	string line;	
-	if(start == 0)
-		wordfile.ignore(500, '\n');//skip first line of the FASTA file
-	while( wordfile >> line )
-	{//TODO:This may have bad behaviour in a file with no new lines
-		transform(line.begin(), line.end(), line.begin(), to_upper() );
-		sequence.append(line);
-		if(wordfile.tellg() > end)
-		{
-			break;
-		}
-	}
-	
-	emit progressValueChanged( start );
-	return wordfile.tellg();
-}
-
-int FastaReader::readBlock2(int &start)
-{
-	//wordfile.seekg(start, ios::beg);//start is in file bytes, not sequence letters (blasted newlines)
-	int end = start + blockSize;//end is in file bytes
-	string line;	
-	if(start == 0)
-		wordfile.ignore(500, '\n');//skip first line of the FASTA file
-	char curr;
-	for( int i = start; i < end; ++i) 
-	{
-		curr = wordfile.get();
-		if( curr != '\n')
-			buffer.push_back(curr);
-	}
-	
-	emit progressValueChanged( start );
-	return wordfile.tellg();
-}
-
-int FastaReader::readBlock3(int &start)
-{
-	//wordfile.seekg(start, ios::beg);//start is in file bytes, not sequence letters (blasted newlines)
-	int bytesLeft = bytesInFile - start;
-	int readBytes = min(blockSize, bytesLeft);//end is in file bytes
-	string line;	
-	if(start == 0)
-		wordfile.ignore(500, '\n');//skip first line of the FASTA file
-		
-	vector<char> temp;
-	temp.resize(readBytes, '\n');
-	wordfile.read(&(temp[0]), readBytes);
-	
-	char curr;
-	int tempSize = temp.size();
-	for( int i = 0; i < tempSize; ++i) 
-	{
-		curr = temp[i];
-		if( !(curr == '\n' || curr == '\r') )//!isspace(curr))// != '\n')//check speed
-			buffer.push_back(curr);
-	}
-	
-	emit progressValueChanged( start );//*100 / bytesInFile
-	return wordfile.tellg();
-}
 
 string FastaReader::trimFilename(string path)
 {
