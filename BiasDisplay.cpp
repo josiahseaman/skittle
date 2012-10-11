@@ -53,9 +53,9 @@ void BiasDisplay::sequenceToColors(const char* genome)
         bar = drawBar(0, spacer_width, color(0,0,0), false, bar);
 
         float threeScore = count_3merPattern(genome + h * tempWidth);
-        color threeColor(70,70,255);
+        color threeColor(65,102,198);
         if (threeScore > 1.0)
-            threeColor = color(200,0,150);
+            threeColor = color(112,0,174);
 
         int temp = max(0, (int)( (threeScore) * f3_bar_width) );
         int threeMerBar = min( f3_bar_width, temp);
