@@ -11,7 +11,9 @@ class BiasDisplay : public NucleotideDisplay
 {
     Q_OBJECT
 public:
-    int display_width;
+    int f3_bar_width;
+    int max_bar_width;
+    int spacer_width;
 
     BiasDisplay(UiVariables* gui, GLWidget* gl);
     void load_nucleotide();

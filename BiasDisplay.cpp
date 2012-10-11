@@ -8,7 +8,9 @@ BiasDisplay::BiasDisplay(UiVariables* gui, GLWidget* gl)
     actionLabel = string("Nucleotide Bias");
     actionTooltip = string("Displays bar graphs of nucleotide bias per line");
     actionData = actionLabel;
-    display_width = 140;
+    f3_bar_width = 20;
+    max_bar_width = 40;
+    spacer_width = 5;
 }
 
 void BiasDisplay::load_nucleotide()
@@ -30,8 +32,6 @@ vector<color>& vector_append(vector<color>& A, vector<color>& B)
 void BiasDisplay::sequenceToColors(const char* genome)
 {
     nucleotide_colors.clear();
-    int freq_bar_width = 20;
-    int max_bar_width = (display_width-freq_bar_width) / 3;
     int tempWidth = ui->widthDial->value();
 
     for(int h = 0; h < height(); h++)
@@ -49,11 +49,18 @@ void BiasDisplay::sequenceToColors(const char* genome)
             bar_sizes.push_back((int)(barSize+.5));
         }
         vector<color> bar = drawJustifiedBar(bar_sizes);
+        //place spacer
+        bar = drawBar(0, spacer_width, color(0,0,0), false, bar);
 
         float threeScore = count_3merPattern(genome + h * tempWidth);
-        int threeMerBar = min( freq_bar_width, max(0, (int)( (threeScore) * freq_bar_width) ));
-        int filler_size = freq_bar_width - threeMerBar;
-        bar = drawBar(threeMerBar, filler_size, color(200,0,150), false, bar);
+        color threeColor(70,70,255);
+        if (threeScore > 1.0)
+            threeColor = color(200,0,150);
+
+        int temp = max(0, (int)( (threeScore) * f3_bar_width) );
+        int threeMerBar = min( f3_bar_width, temp);
+        int filler_size = f3_bar_width - threeMerBar;
+        bar = drawBar(threeMerBar, filler_size, threeColor, false, bar);
 
         nucleotide_colors.insert(nucleotide_colors.end(), bar.begin(), bar.end()  );
     }
@@ -124,8 +131,6 @@ vector<color> BiasDisplay::drawJustifiedBar(vector<int> alphabetic_sizes)
         sizes[i] = alphabetic_sizes[ACGT_num(order[i])];
 
     vector<color> line;
-    int freq_bar_width = 20;
-    int max_bar_width = (display_width-freq_bar_width) / 3;
 
     for(int position = 0; position < 5; ++position)
     {
@@ -166,6 +171,6 @@ vector<color> BiasDisplay::drawJustifiedBar(vector<int> alphabetic_sizes)
 /** Overrides the AbstractGraph::width() because Bias has a fixed size */
 int BiasDisplay::width()
 {
-    return display_width;
+    return max_bar_width * 3 + f3_bar_width + spacer_width;
 }
 
