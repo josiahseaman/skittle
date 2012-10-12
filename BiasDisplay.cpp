@@ -8,9 +8,7 @@ BiasDisplay::BiasDisplay(UiVariables* gui, GLWidget* gl)
     actionLabel = string("Nucleotide Bias");
     actionTooltip = string("Displays bar graphs of nucleotide bias per line");
     actionData = actionLabel;
-    f3_bar_width = 20;
     max_bar_width = 40;
-    spacer_width = 5;
 }
 
 void BiasDisplay::load_nucleotide()
@@ -42,19 +40,6 @@ void BiasDisplay::sequenceToColors(const char* genome)
             bar_sizes.push_back((int)(barSize+.5));
         }
         vector<color> bar = drawJustifiedBar(bar_sizes, max_bar_width, glWidget);
-        //place spacer
-        bar = drawBar(0, spacer_width, color(0,0,0), false, bar);
-
-        float threeScore = count_3merPattern(genome + h * tempWidth);
-        color threeColor(65,102,198);
-        if (threeScore > 1.0)
-            threeColor = color(112,0,174);
-
-        int temp = max(0, (int)( (threeScore) * f3_bar_width) );
-        int threeMerBar = min( f3_bar_width, temp);
-        int filler_size = f3_bar_width - threeMerBar;
-        bar = drawBar(threeMerBar, filler_size, threeColor, false, bar);
-
         nucleotide_colors.insert(nucleotide_colors.end(), bar.begin(), bar.end()  );
     }
     return;
@@ -71,32 +56,9 @@ vector<int> BiasDisplay::countNucleotides(const char* genome)
     return counts;
 }
 
-float BiasDisplay::count_3merPattern( const char* genome)
-{
-    int F_width = 3;
-    vector<float> freq(F_width+1,0);
-    int tempWidth = ui->widthDial->value();
-    /** This is the core algorithm of RepeatMap.  For each line, for each width,
-              check the line below and see if it matches.         */
-    for(int w = 1; w <= F_width; w++)//calculate across widths 1-F_width
-    {
-        int score = 0;
-        for(int line_length = 0; line_length < tempWidth; line_length++)
-        {
-            if(genome[line_length] == genome[w + line_length])
-                score += 1; //pixel matches the one above it
-        }
-        freq[w] = float(score) / tempWidth;
-    }
-    float background = (freq[1] + freq[2]) / 2.0;
-    float normalized = (freq[3]-background) / (1.0 - background);
-    normalized = normalized / 0.2;//ceiling is not 1.0
-    return normalized;
-}
-
 /** Overrides the AbstractGraph::width() because Bias has a fixed size */
 int BiasDisplay::width()
 {
-    return max_bar_width * 3 + f3_bar_width + spacer_width;
+    return max_bar_width * 3;
 }
 

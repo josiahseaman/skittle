@@ -26,7 +26,6 @@ public:
 	QScrollArea* settingsUi();
 	void display();
     void load_3mer_canvas(vector<float> scores);
-    void print_scores(vector<float> scores_3mer);
 	void link(NucleotideDisplay* nuc_display);
 	void load_canvas();
 	GLuint render();

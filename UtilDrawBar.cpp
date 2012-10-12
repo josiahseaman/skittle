@@ -3,8 +3,31 @@
 namespace SkittleUtil
 {
 
-vector<color>& percentageBar(float percentage, int barWidth, color barColor, vector<color>& line,  bool rightJustified)
+vector<float> lowPassFilter(vector<float> scores)
 {
+    vector<float> smoothed_scores(scores.size(), 0.0);
+    for(int i = 1; i < (int)scores.size()-1; ++i)
+    {
+        smoothed_scores[i] = (scores[i-1] + scores[i] + scores[i+1]) / 2.0;// 3/2 boosts the values after smoothing
+    }
+    if(!scores.empty())//fill in first and last edge conditions
+    {
+        smoothed_scores[0] = scores[0];
+        smoothed_scores[scores.size()-1] = scores[scores.size()-1];
+    }
+    return smoothed_scores;
+}
+
+
+vector<color>& percentageBar(float percentage, int barWidth, vector<color>& line, color barColor, bool rightJustified)
+{
+    if(barColor == NULL)
+    {
+        barColor = color(65,102,198);
+        if (percentage > 1.0)
+            barColor = color(112,0,174);
+    }
+
     int size = min( barWidth, max(0, (int)(percentage * barWidth)));
     int filler_size = barWidth - size;
     line = drawBar(size, filler_size, barColor, rightJustified, line);

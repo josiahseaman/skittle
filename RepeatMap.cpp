@@ -68,7 +68,8 @@ RepeatMap::RepeatMap(UiVariables* gui, GLWidget* gl)
 
 RepeatMap::~RepeatMap()
 {
-    glDeleteLists(display_object, 1);
+    if(canvas_3mer != NULL)
+        delete canvas_3mer;
 }
 
 QScrollArea* RepeatMap::settingsUi()
@@ -137,8 +138,8 @@ void RepeatMap::display()
             if(usingMin3mer)
                 min_3mer_filter();
             vector<float> scores_3mer = convolution_3mer();
-            load_3mer_canvas(scores_3mer);
-//            print_scores(scores_3mer);
+            vector<float> smoothed_scores = lowPassFilter(scores_3mer);
+            load_3mer_canvas(smoothed_scores);
 		}
 	}
 	load_canvas();
@@ -166,19 +167,11 @@ void RepeatMap::load_3mer_canvas(vector<float> scores)
     vector<color> barGraph;
     for(int y = 0; y < (int)scores.size(); ++y)
     {
-        percentageBar(scores[y], barWidth, color(205,0,125), barGraph);
+        percentageBar(scores[y], barWidth, barGraph);
     }
     if(canvas_3mer != NULL)
         delete canvas_3mer;
     canvas_3mer = new TextureCanvas(barGraph, barWidth);
-}
-
-void RepeatMap::print_scores(vector<float> scores_3mer)
-{
-    for(int i = 0; i < (int)scores_3mer.size(); ++i)
-    {
-        qDebug() << scores_3mer[i];
-    }
 }
 
 void RepeatMap::link(NucleotideDisplay* nuc_display)
