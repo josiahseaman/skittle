@@ -29,9 +29,7 @@ public:
 	void link(NucleotideDisplay* nuc_display);
 	void load_canvas();
 	GLuint render();
-	void freq_map();
-    void max_vertical_pair_filter();
-    void min_3mer_filter();
+    void freq_map();
     vector<float> convolution_3mer();
 	int height();
 	string mouseClick(point2D pt);
@@ -45,9 +43,8 @@ public:
     vector<vector<float> > emptyCopy(vector<vector<float> > starter);
 public slots:
 	void changeFStart(int val);
-	void changeGraphWidth(int val);
-    void toggleDoubleSample(bool d);
-    void toggleMin3merFilter(bool m);
+    void changeGraphWidth(int val);
+    void toggle3merGraph(bool m);
 	
 signals:
 	void fStartChanged(int);
@@ -66,8 +63,7 @@ protected:
 	
 	int freq_map_count;
 	int calculate_count;
-    bool usingDoubleSampling;
-    bool usingMin3mer;
+    bool using3merGraph;
 };
 
 #endif

@@ -50,8 +50,7 @@ RepeatMap::RepeatMap(UiVariables* gui, GLWidget* gl)
 	F_width = 250;
     F_start = 1;
     F_height = 1;
-    usingDoubleSampling = false;
-    usingMin3mer = false;
+    using3merGraph = true;
 
 	freq = vector< vector<float> >();
 	for(int i = 0; i < 400; i++)
@@ -101,15 +100,10 @@ QScrollArea* RepeatMap::settingsUi()
 	connect( this, SIGNAL(graphWidthChanged(int)), graphWidthDial, SLOT(setValue(int)));
 	connect( this, SIGNAL(graphWidthChanged(int)), this, SIGNAL(displayChanged()));
 
-    QCheckBox* doubleSample = new QCheckBox(settingsTab);
-    doubleSample->setChecked(false);
-    formLayout->addRow("Check for matches upstream and downstream (increases contrast)", doubleSample);
-    connect( doubleSample, SIGNAL(toggled(bool)), this, SLOT(toggleDoubleSample(bool)));
-
-    QCheckBox* min3merButton = new QCheckBox(settingsTab);
-    min3merButton->setChecked(false);
-    formLayout->addRow("Filter for 3mer minimum pattern", min3merButton);
-    connect( min3merButton, SIGNAL(toggled(bool)), this, SLOT(toggleMin3merFilter(bool)));
+    QCheckBox* find3merButton = new QCheckBox(settingsTab);
+    find3merButton->setChecked(true);
+    formLayout->addRow("Find 3mer pattern", find3merButton);
+    connect( find3merButton, SIGNAL(toggled(bool)), this, SLOT(toggle3merGraph(bool)));
 	
 	return settingsTab;
 }
@@ -131,22 +125,24 @@ void RepeatMap::display()
             calculate(nuc->nucleotide_colors, displayWidth);
 		}
 		else
-		{
-			freq_map();	
-            if(usingDoubleSampling)
-                max_vertical_pair_filter();
-            if(usingMin3mer)
-                min_3mer_filter();
-            vector<float> scores_3mer = convolution_3mer();
-            vector<float> smoothed_scores = lowPassFilter(scores_3mer);
-            load_3mer_canvas(smoothed_scores);
-		}
-	}
+        {
+            freq_map();
+            if(using3merGraph && ui->scaleDial->value() == 1)
+            {
+                vector<float> scores_3mer = convolution_3mer();
+                vector<float> smoothed_scores = lowPassFilter(scores_3mer);
+                load_3mer_canvas(smoothed_scores);
+            }
+        }
+    }
 	load_canvas();
 	glPushMatrix();
 		glScaled(1,-1,1);
-        canvas_3mer->display();
-        glTranslated(barWidth+2, 0, 0);
+        if(using3merGraph && ui->scaleDial->value() == 1)
+        {
+            canvas_3mer->display();
+            glTranslated(barWidth+2, 0, 0);
+        }
 		textureBuffer->display();
 
 
@@ -245,44 +241,6 @@ void RepeatMap::freq_map()
 	upToDate = true;
 }
 
-void RepeatMap::max_vertical_pair_filter()
-{
-    vector<vector<float> > freq_maxOfSample;
-    freq_maxOfSample = emptyCopy(freq);
-
-    for( int h = 0; h < height(); h++)
-    {
-        if(h > 0)
-        {
-            for(int w = 1; w <= F_width; w++)
-            {
-                freq_maxOfSample[h][w] = max(freq[h][w], freq[h-1][w]);
-            }
-        }
-    }
-    freq = freq_maxOfSample;
-}
-
-void RepeatMap::min_3mer_filter()
-{
-    int reach = 10 * 3;
-    for(int y = 0; y < (int)freq.size(); ++y)
-    {
-        for(int x = 0; x + reach < (int)freq[y].size(); ++x)
-        {
-            float average = 0;
-//            float minimum = freq[y][x];
-            for(int r = 0; r <= reach; r += 3)
-            {
-//                minimum = min(minimum, freq[y][x+r]);
-                average += freq[y][x+r];
-            }
-//            freq[y][x] = minimum ;
-            freq[y][x] = average / ((float)reach / 3.0);
-        }
-    }
-}
-
 vector<float> RepeatMap::convolution_3mer()
 {
     int reach = 20 * 3;
@@ -354,15 +312,9 @@ void RepeatMap::changeGraphWidth(int val)
 	}
 }	
 
-void RepeatMap::toggleDoubleSample(bool d)
+void RepeatMap::toggle3merGraph(bool m)
 {
-    usingDoubleSampling = d;
-    invalidate();
-}
-
-void RepeatMap::toggleMin3merFilter(bool m)
-{
-    usingMin3mer = m;
+    using3merGraph = m;
     invalidate();
 }
 
