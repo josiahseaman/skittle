@@ -2,6 +2,15 @@
 
 namespace SkittleUtil
 {
+
+vector<color>& percentageBar(float percentage, int barWidth, color barColor, vector<color>& line,  bool rightJustified)
+{
+    int size = min( barWidth, max(0, (int)(percentage * barWidth)));
+    int filler_size = barWidth - size;
+    line = drawBar(size, filler_size, barColor, rightJustified, line);
+    return line;
+}
+
 vector<color>& drawBar(int size, int filler_size, color barColor, bool rightJustified, vector<color>& line)
 {
     vector<color> filler( max(0,filler_size), color(0.5));

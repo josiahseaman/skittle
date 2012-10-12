@@ -25,9 +25,11 @@ TextureCanvas::TextureCanvas()
 	canvas.push_back(vector<textureTile>());
 }
 
-TextureCanvas::TextureCanvas(vector<color> pixels, int w, bool raggedEdge)
+TextureCanvas::TextureCanvas(vector<color>& pixels, int w, bool raggedEdge)
 {
-	colors = vector<color>(pixels);
+    int max_size = checkForDisplayDriver();
+    if(!useTextures)
+        colors = vector<color>(pixels);
     ragged = raggedEdge;
 	//pad the end with white pixels, background color
 	for(int i = 0; i <= w; ++i)
@@ -36,7 +38,6 @@ TextureCanvas::TextureCanvas(vector<color> pixels, int w, bool raggedEdge)
     width = max(1, w);//don't divide by zero
 	height = pixels.size() / width;
 
-    int max_size = checkForDisplayDriver();
     if(useTextures)
         loadPixelsToCard(pixels, max_size);
 }
@@ -61,7 +62,7 @@ int TextureCanvas::checkForDisplayDriver()
 /** The method parses vector<color> pixels into the appropriate textureTile, turns it into an
 unsigned char (required by OpenGL) then loads it onto the graphics card as a texture
 and deletes the old data. */
-void TextureCanvas::loadPixelsToCard(vector<color> pixels, int max_size)
+void TextureCanvas::loadPixelsToCard(vector<color>& pixels, int max_size)
 {
     //determine the size of the texture canvas
     int canvas_width = width / max_size + 1; //canvas width can be wider than one tile width

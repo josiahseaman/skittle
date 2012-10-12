@@ -1,7 +1,10 @@
 #include "RepeatMap.h"
 #include "glwidget.h"
+#include "SkittleUtil.h"
 #include <sstream>
 #include <QFrame>
+
+using namespace SkittleUtil;
 
 /** ***************************************
 RepeatMap is designed to make finding tandem repeats much easier than randomly
@@ -42,6 +45,8 @@ sophisticated.
 RepeatMap::RepeatMap(UiVariables* gui, GLWidget* gl)
     :AbstractGraph(gui, gl)
 {
+    canvas_3mer = NULL;
+    barWidth = 20;
 	F_width = 250;
     F_start = 1;
     F_height = 1;
@@ -132,18 +137,21 @@ void RepeatMap::display()
             if(usingMin3mer)
                 min_3mer_filter();
             vector<float> scores_3mer = convolution_3mer();
-            print_scores(scores_3mer);
+            load_3mer_canvas(scores_3mer);
+//            print_scores(scores_3mer);
 		}
 	}
 	load_canvas();
 	glPushMatrix();
 		glScaled(1,-1,1);
+        canvas_3mer->display();
+        glTranslated(barWidth+2, 0, 0);
 		textureBuffer->display();
-	glPopMatrix();
+
 
 	//Draw Red indicator according to Width
 	int displayWidth = ui->widthDial->value() / ui->scaleDial->value(); 
-	glPushMatrix();
+
 		glColor4f(1,0,0, 1);//red
         glTranslated(displayWidth - F_start, 202, 0);
 	    glScaled(.5, 410, 1);
@@ -151,6 +159,18 @@ void RepeatMap::display()
 	    paint_square(point(1, 0, .25), color(255,0,0));
 	glPopMatrix();
 
+}
+
+void RepeatMap::load_3mer_canvas(vector<float> scores)
+{
+    vector<color> barGraph;
+    for(int y = 0; y < (int)scores.size(); ++y)
+    {
+        percentageBar(scores[y], barWidth, color(205,0,125), barGraph);
+    }
+    if(canvas_3mer != NULL)
+        delete canvas_3mer;
+    canvas_3mer = new TextureCanvas(barGraph, barWidth);
 }
 
 void RepeatMap::print_scores(vector<float> scores_3mer)
@@ -489,5 +509,5 @@ double RepeatMap::correlate(vector<color>& img, int beginA, int beginB, int pixe
 
 int RepeatMap::width()
 {
-	return F_width;
+    return F_width + barWidth + 2;
 }

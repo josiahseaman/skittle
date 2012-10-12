@@ -25,6 +25,7 @@ public:
     ~RepeatMap();
 	QScrollArea* settingsUi();
 	void display();
+    void load_3mer_canvas(vector<float> scores);
     void print_scores(vector<float> scores_3mer);
 	void link(NucleotideDisplay* nuc_display);
 	void load_canvas();
@@ -54,10 +55,12 @@ signals:
 	void graphWidthChanged(int);
 	
 protected:
+    TextureCanvas* canvas_3mer;
 	NucleotideDisplay* nuc;
 	GLuint display_object;
 	vector< vector<float> > freq;
 	vector<color> pixels;
+    int barWidth;
 	int F_width;
 	int F_start;
 	int F_height;
