@@ -120,19 +120,21 @@ private:
 	QAction *zoomAction;
 	QAction *selectAction;
     QAction *findAction;
+
     QAction* updateSkittle;
-	QAction *addAnnotationAction;
-	QAction *nextAnnotationAction;
-	QAction *prevAnnotationAction;
-	QAction *browseCommunityAction;
-	QAction *delAnnotationAction;
+//	QAction *browseCommunityAction;
+//	QAction *delAnnotationAction;
 	QAction *findSequenceAction;
-	QAction *findNextAction;
-	QAction *findPrevAction;
+    QAction *findNextAction;
+    QAction *findPrevAction;
 	QAction *hilightResultsAction;
 	QAction *addViewAction;
 	QAction *openAction;
-	QAction *importAction;
+    QAction *openGtfAction;
+    QAction *addAnnotationAction;
+    QAction *nextAnnotationAction;
+    QAction *prevAnnotationAction;
+
 	QAction *exitAction;
 	QAction *helpAction;
 	QAction *aboutQtAct;

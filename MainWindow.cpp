@@ -183,8 +183,8 @@ void MainWindow::createActions()
     selectAction->setToolTip(QString("Displays index and sequence information"));
 	findAction = new QAction("&Find",this);	
     addAnnotationAction = new QAction("Add Annotation",this);
-	//nextAnnotationAction = new QAction("Next Annotation",this);	
-	//prevAnnotationAction = new QAction("Previous Annotation",this);	
+    nextAnnotationAction = new QAction("Next Annotation",this);
+    prevAnnotationAction = new QAction("Previous Annotation",this);
 	//browseCommunityAction = new QAction("Browse Community Research",this);	
 	//delAnnotationAction = new QAction("Delete Current Bookmark",this);	
 	
@@ -209,8 +209,8 @@ void MainWindow::createActions()
 	openAction = new QAction("&Open File",this);
 	openAction->setStatusTip("Open a Sequence File");
 	
-    importAction = new QAction("Open Annotation",this);
-	importAction->setStatusTip("Open GTF / GFF Annotation File");
+    openGtfAction = new QAction("Open Annotation",this);
+	openGtfAction->setStatusTip("Open GTF / GFF Annotation File");
 	
 	exitAction = new QAction("E&xit",this);
 	helpAction = new QAction("Online &Help",this);
@@ -224,7 +224,7 @@ void MainWindow::createMenus()
 	fileMenu->addAction(openAction);
 	fileMenu->addAction(addViewAction);
 	fileMenu->addSeparator();
-	fileMenu->addAction(importAction);
+	fileMenu->addAction(openGtfAction);
 	fileMenu->addAction(exitAction);
 	/*searchMenu = menuBar()->addMenu("&Search");
 	searchMenu->addAction(findSequenceAction);
@@ -298,7 +298,7 @@ void MainWindow::createToolbars()
 	annotationToolBar->addAction(openAction);
 	annotationToolBar->addAction(addViewAction);
 	annotationToolBar->addAction(addAnnotationAction);
-    annotationToolBar->addAction(importAction);
+    annotationToolBar->addAction(openGtfAction);
 	//annotationToolBar->addAction(nextAnnotationAction);
 	//annotationToolBar->addAction(prevAnnotationAction);
 	//annotationToolBar->addAction(browseCommunityAction);
@@ -386,7 +386,7 @@ void MainWindow::createFileConnections()
     connect(openAction, SIGNAL(triggered()), this, SLOT(open()));
     connect(this, SIGNAL(newFileOpen(QString)), viewManager, SLOT(changeFile(QString)));
 
-	connect(importAction, SIGNAL(triggered()), this, SLOT(openGtf()));
+	connect(openGtfAction, SIGNAL(triggered()), this, SLOT(openGtf()));
 	connect(this, SIGNAL(newGtfFileOpen(QString)), viewManager, SLOT(addAnnotationDisplay(QString)));	
 	connect(addAnnotationAction, SIGNAL(triggered()), viewManager, SLOT(addBookmark()));
 }
