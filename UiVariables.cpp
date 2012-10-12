@@ -217,8 +217,9 @@ string UiVariables::getColorSetting()
     return colorSetting = string("DRuMS");
 }
 
-//void UiVariables::changeColorSetting(string newColorSetting)
-//{
-//    colorSetting = newColorSetting;
-//    emit internalsUpdated();
-//}
+void UiVariables::changeColorSetting(string newColorSetting)
+{
+    colorSetting = newColorSetting;
+    //TODO: add in validity checking
+    emit internalsUpdated();
+}

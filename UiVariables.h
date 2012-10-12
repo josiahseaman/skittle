@@ -42,7 +42,7 @@ public slots:
     void changeStart(int start);
     void changeZoom(int zoom);
     void changeOffset(int offset);
-//    void changeColorSetting();
+    void changeColorSetting(string set);
 signals:
     void internalsUpdated();
 
