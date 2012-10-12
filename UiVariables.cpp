@@ -214,7 +214,7 @@ void UiVariables::changeOffset(int offset)
 
 string UiVariables::getColorSetting()
 {
-    colorSetting = string("DRuMS");
+    return colorSetting = string("DRuMS");
 }
 
 //void UiVariables::changeColorSetting(string newColorSetting)
