@@ -444,7 +444,6 @@ void GLWidget::keyPressEvent( QKeyEvent *event )
 			return;
 	}
 	event->accept();
-    invalidateDisplayGraphs();
 }
 
 void GLWidget::keyReleaseEvent( QKeyEvent *event )

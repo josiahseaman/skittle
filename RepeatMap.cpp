@@ -211,6 +211,8 @@ GLuint RepeatMap::render()
 
 void RepeatMap::freq_map()
 {
+    qDebug() << "Width: " << ui->widthDial->value() << "\nScale: " << ui->scaleDial->value() << "\nStart: " << ui->startDial->value();
+
     const char* genome = sequence->c_str() + ui->startDial->value();//TODO: find a safer way to access this
 	for( int h = 0; h < height(); h++)
     {

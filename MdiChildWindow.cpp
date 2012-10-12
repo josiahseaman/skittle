@@ -52,7 +52,7 @@ MdiChildWindow::MdiChildWindow(UiVariables *gui, QSpinBox* pStart, QTabWidget* s
 	vLayout->addWidget(subFrame);
 	vLayout->addWidget(horizontalScrollBar);
 	setLayout(vLayout);
-	
+
     //scrollArea->setWidget(glWidget);//glWidget);
     setAttribute(Qt::WA_DeleteOnClose);
     
