@@ -69,10 +69,10 @@ void ColorListEditor::populateList()
 {	
     QStringList colorNames = QColor::colorNames();
     
-	insertColorItem(0, QColor(0,0,0), QString("Black"));
-	insertColorItem(1, QColor(255,0,0), QString("Red"));
-	insertColorItem(2, QColor(0,255,0), QString("Green"));
-	insertColorItem(3, QColor(0,0,255), QString("Blue"));
+    insertColorItem(0, QColor(0,0,0), QString("Black"));
+    insertColorItem(1, QColor(255,0,0), QString("Red"));
+    insertColorItem(2, QColor(0,255,0), QString("Green"));
+    insertColorItem(3, QColor(0,0,255), QString("Blue"));
 	
 	int k = 4;
     for (int i = 0; i < colorNames.size(); ++i) 

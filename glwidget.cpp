@@ -290,6 +290,7 @@ void GLWidget::invalidateDisplayGraphs()
     {
         graphs[i]->invalidate();
     }
+    setupColorTable();
     updateDisplay();
 }
 
@@ -741,7 +742,7 @@ color GLWidget::colors(char nucleotide)
 
 void GLWidget::setupColorTable()
 {
-	colorTable = vector<color>( 1024, color(150,150,150) );//default = dark grey
+    colorTable = vector<color>( 1024, color(150,150,150) );//default = dark grey
 	
 	{ 
 		for(int i = 0; i <= 255; i++)
@@ -777,14 +778,52 @@ void GLWidget::setupColorTable()
 	colorTable[ (int)'Y' ] = color(140, 112, 76);//Tyrosine TYR
 	//colorTable[ (int)'Z' ] = color( 255,255,255);//	UNUSED
 	
-	
-	//Override previous values
-	colorTable[ (int)'A' ] = color(0, 0, 0);//BLACK - Adenine
-	colorTable[ (int)'C' ] = color(255, 0, 0);//RED - Cytosine
-	colorTable[ (int)'G' ] = color(0, 255, 0);//GREEN - Guanine
-	colorTable[ (int)'T' ] = color(0, 0, 255);//BLUE - Thymine
-    colorTable[ (int)'N' ] = color( 50, 50, 50);//not sequenced
 
+
+    string colorSetting = ui->getColorSetting();
+    if(colorSetting.compare(string("Color Blind Safe")) == 0)
+    {
+        colorTable[ (int)'A' ] = color(255, 102, 0);//Adenine
+        colorTable[ (int)'C' ] = color(153, 0, 0);//Cytosine
+        colorTable[ (int)'G' ] = color(51, 255, 51);//Guanine
+        colorTable[ (int)'T' ] = color(0, 153, 204);//Thymine
+        colorTable[ (int)'N' ] = color( 50, 50, 50);//not sequenced
+
+    }
+    if (colorSetting.compare(string("DRuMS")) == 0)
+    {
+        colorTable[ (int)'A' ] = color(80, 80, 255);//Adenine
+        colorTable[ (int)'C' ] = color(224, 0, 0);//Cytosine
+        colorTable[ (int)'G' ] = color(0, 192, 0);//Guanine
+        colorTable[ (int)'T' ] = color(230, 230, 0);//Thymine
+        colorTable[ (int)'N' ] = color( 50, 50, 50);//not sequenced
+    }
+     if (colorSetting.compare(string("Blues")) == 0)
+    {
+        colorTable[ (int)'A' ] = color(141, 0, 74);//Adenine
+        colorTable[ (int)'C' ] = color(82, 0, 124);//Cytosine
+        colorTable[ (int)'G' ] = color(17, 69, 134);//Guanine
+        colorTable[ (int)'T' ] = color(14, 112, 118);//Thymine
+        colorTable[ (int)'N' ] = color( 50, 50, 50);//not sequenced
+    }
+     if (colorSetting.compare(string("Reds")) == 0)
+    {
+        colorTable[ (int)'A' ] = color(141, 0, 74);// Adenine
+        colorTable[ (int)'C' ] = color(159, 0, 0);// Cytosine
+        colorTable[ (int)'G' ] = color(196, 90, 6);// Guanine
+        colorTable[ (int)'T' ] = color(218, 186, 8);// Thymine
+        colorTable[ (int)'N' ] = color( 50, 50, 50);//not sequenced
+    }
+
+    // might be interesting for "Highlight A", "Highlight C", etc options which would be rgb except for the one Nuc that was white
+     if (colorSetting.compare(string("Classic")) == 0) // default values AKA "Classic"
+    {
+        colorTable[ (int)'A' ] = color(0, 0, 0);//BLACK - Adenine
+        colorTable[ (int)'C' ] = color(255, 0, 0);//RED - Cytosine
+        colorTable[ (int)'G' ] = color(0, 255, 0);//GREEN - Guanine
+        colorTable[ (int)'T' ] = color(0, 0, 255);//BLUE - Thymine
+        colorTable[ (int)'N' ] = color( 50, 50, 50);//not sequenced
+    }
 }
 
 color GLWidget::spectrum(double i)

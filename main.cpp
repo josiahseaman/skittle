@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <string>
 #include <stdio.h>
-#include <windows.h>
+//#include <windows.h>
 #include "MainWindow.h"
 
 using std::string;
@@ -37,7 +37,7 @@ void checkForLauncherUpdate()
 //    if(found)//rename SkittleTemp to Skittle
     if(checkForSkittleTemp())
     {
-        Sleep(5000);
+        //Sleep(5000);
         qDebug("Found Launcher update.");
         system("del Skittle.exe");
         system("rename SkittleTemp.exe Skittle.exe");

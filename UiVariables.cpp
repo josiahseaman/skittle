@@ -68,6 +68,8 @@ UiVariables::UiVariables(QTextEdit* text)
     oldScale = 1;
     oldWidth = 128;
 
+    colorSetting = string("Classic");
+
     //These lines make the Graphs respond immediately to typing rather than waiting for the user to finish
     /*connect(widthDial, SIGNAL(valueChanged(int)), this, SIGNAL(internalsUpdated()));
     connect(scaleDial, SIGNAL(valueChanged(int)), this, SIGNAL(internalsUpdated()));
@@ -210,3 +212,13 @@ void UiVariables::changeOffset(int offset)
     }
 }
 
+string UiVariables::getColorSetting()
+{
+    colorSetting = string("DRuMS");
+}
+
+//void UiVariables::changeColorSetting(string newColorSetting)
+//{
+//    colorSetting = newColorSetting;
+//    emit internalsUpdated();
+//}

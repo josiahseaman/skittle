@@ -32,6 +32,7 @@ public:
 	void print(const char* s, int num);
 	void printNum(int num);
 	//void print(int num1, int num2); 
+    string getColorSetting();
 
 public slots:
     void changeWidth(int newWidth);
@@ -41,12 +42,14 @@ public slots:
     void changeStart(int start);
     void changeZoom(int zoom);
     void changeOffset(int offset);
+//    void changeColorSetting();
 signals:
     void internalsUpdated();
 
 private:
     int oldScale;
     int oldWidth;
+    string colorSetting;
     static int const maxSaneWidth = 4000;
 
 

@@ -91,6 +91,7 @@ private:
 	QMenu *presetMenu;
 	QMenu *searchMenu;
 	QMenu *toolMenu;
+    QMenu *colorSettingsMenu;
 	QMenu *viewMenu;
 	QMenu *toolBarMenu;
 	

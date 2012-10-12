@@ -201,6 +201,9 @@ void MainWindow::createMenus()
 	toolActionGroup->addAction(zoomAction);
 	toolActionGroup->addAction(selectAction);
 	toolActionGroup->addAction(findAction);
+
+    colorSettingsMenu = menuBar()->addMenu("&Settings");
+    colorSettingsMenu->addAction("Classic");
 	
 	QMenu* helpMenu = menuBar()->addMenu("&Help");
 	helpMenu->addAction(helpAction);
@@ -453,6 +456,7 @@ void MainWindow::writeSettings()
 	settings.beginGroup("mainWindow");
 	settings. setValue("geometry", saveGeometry());
 	settings.setValue("state", saveState());
+//    settings.setValue("nColors", saveColors());
 	settings.endGroup();
 }
 
