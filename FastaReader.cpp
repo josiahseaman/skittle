@@ -99,7 +99,7 @@ bool FastaReader::readFile(QString fileName)
 
     //Read in the file
     char current;
-    int i;
+    int i = 0;
     do
     {
         //Read the next character
