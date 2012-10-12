@@ -50,7 +50,7 @@ public:
 	virtual void paint_square(point position, color c);
     virtual void storeDisplay(vector<color>& pixels, int width, bool raggedEdge = false);
 	virtual bool updateInt(int& subject, int& value);
-	virtual bool updateVal(double& subject, double& value);
+    virtual bool updateDouble(double& subject, double& value);
 	virtual void display() = 0;
 	virtual void displayLegend(float canvasWidth, float canvasHeight);
 	virtual void checkVariables();

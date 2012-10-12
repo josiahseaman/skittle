@@ -27,7 +27,7 @@ class TextureCanvas{
 public:
 	
 	TextureCanvas();
-    TextureCanvas(vector<color> pixels, int width, bool raggedEdge = false);
+    TextureCanvas(vector<color>& pixels, int width, bool raggedEdge = false);
 	~TextureCanvas();
     void display();
     static int const maxSaneWidth = 4000;
@@ -37,7 +37,7 @@ public:
 private:
     int max_size;
     int checkForDisplayDriver();
-    void loadPixelsToCard(vector<color> pixels, int w);
+    void loadPixelsToCard(vector<color>& pixels, int w);
 	void createEmptyTiles(int canvas_width, int canvas_height, int max_size);
 	void drawTextureSquare();	
 	point2D grid_position(int i, int width, int height, int max_size );

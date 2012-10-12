@@ -79,7 +79,7 @@ GLuint CylinderDisplay::render()
 		createSquare();
 	glEndList();
 
-    ntLinker->calculate(sequence->substr(ui->startDial->value(), current_display_size()), ui->widthDial->value());
+    ntLinker->calculate(sequence->substr(ui->startDial->value(), current_display_size()), max(1, ui->widthDial->value() / 3 ));
     width_list = ntLinker->smooth(ui->widthDial->value(), 80);
 		//ntLinker->tie_up_loose_ends(width_list);
 		//ntLinker->cap_movement(width_list, 1);

@@ -34,7 +34,9 @@ HEADERS += AbstractGraph.h \
            TextureCanvas.h \
            ViewManager.h \
            UiVariables.h \ 
-    BiasDisplay.h
+    BiasDisplay.h \
+    UtilDrawBar.h \
+    SkittleUtil.h
 SOURCES += AbstractGraph.cpp \
            RepeatOverviewDisplay.cpp \
            AnnotationDisplay.cpp \
@@ -55,4 +57,5 @@ SOURCES += AbstractGraph.cpp \
            TextureCanvas.cpp \
            UiVariables.cpp \
            ViewManager.cpp \
-    BiasDisplay.cpp
+    BiasDisplay.cpp \
+    UtilDrawBar.cpp

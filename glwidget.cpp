@@ -286,6 +286,7 @@ void GLWidget::slideHorizontal(int x)
 
 void GLWidget::invalidateDisplayGraphs()
 {
+    qDebug() << "GlWidget::invalidateDisplayGraphs " << ++frame;
     for(int i = 0; i < (int)graphs.size(); ++i)
     {
         graphs[i]->invalidate();
@@ -444,7 +445,6 @@ void GLWidget::keyPressEvent( QKeyEvent *event )
 			return;
 	}
 	event->accept();
-    invalidateDisplayGraphs();
 }
 
 void GLWidget::keyReleaseEvent( QKeyEvent *event )
@@ -519,7 +519,7 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
-    //ui->print("Frame: ", ++frame);
+//    qDebug() << "GlWidget Frame: " << ++frame;
     glMatrixMode(GL_MODELVIEW);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
@@ -642,7 +642,6 @@ void GLWidget::mousePressEvent(QMouseEvent* event)
 			else
                 ui->changeScale(newScale);//set scale to the new value
         }
-        invalidateDisplayGraphs();
 	}
     lastPos = event->pos();
 }
@@ -674,9 +673,9 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 				
             }
 		}
+        invalidateDisplayGraphs();
     } 
     lastPos = event->pos();
-    invalidateDisplayGraphs();
 }
 
 

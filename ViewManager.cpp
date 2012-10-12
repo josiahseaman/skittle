@@ -187,7 +187,8 @@ void ViewManager::changeGlobalStart()
 {
     UiVariables* local = vars(activeWidget);
     int preOffsetStart = max(1, local->startDial->value() - local->offsetDial->value());
-    globalUi->changeStart(preOffsetStart);
+    globalUi->startDial->setValue(preOffsetStart);
+//    globalUi->changeStart(preOffsetStart);
 }
 
 void ViewManager::changeAllLocalStarts()

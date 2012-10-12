@@ -1,7 +1,10 @@
 #include "RepeatMap.h"
 #include "glwidget.h"
+#include "SkittleUtil.h"
 #include <sstream>
 #include <QFrame>
+
+using namespace SkittleUtil;
 
 /** ***************************************
 RepeatMap is designed to make finding tandem repeats much easier than randomly
@@ -42,10 +45,12 @@ sophisticated.
 RepeatMap::RepeatMap(UiVariables* gui, GLWidget* gl)
     :AbstractGraph(gui, gl)
 {
+    canvas_3mer = NULL;
+    barWidth = 20;
 	F_width = 250;
     F_start = 1;
     F_height = 1;
-    usingDoubleSampling = false;
+    using3merGraph = true;
 
 	freq = vector< vector<float> >();
 	for(int i = 0; i < 400; i++)
@@ -62,7 +67,8 @@ RepeatMap::RepeatMap(UiVariables* gui, GLWidget* gl)
 
 RepeatMap::~RepeatMap()
 {
-    glDeleteLists(display_object, 1);
+    if(canvas_3mer != NULL)
+        delete canvas_3mer;
 }
 
 QScrollArea* RepeatMap::settingsUi()
@@ -73,14 +79,14 @@ QScrollArea* RepeatMap::settingsUi()
 	formLayout->setRowWrapPolicy(QFormLayout::WrapLongRows);
 	settingsTab->setLayout(formLayout);
     
-	QSpinBox* graphStartDial = new QSpinBox(settingsTab);
-	graphStartDial->setMinimum(1);	
-	graphStartDial->setMaximum(100000);	
-	graphStartDial->setSingleStep(10);
-	formLayout->addRow("Starting Offset:", graphStartDial);
+    QSpinBox* frequencyStartDial = new QSpinBox(settingsTab);
+    frequencyStartDial->setMinimum(1);
+    frequencyStartDial->setMaximum(100000);
+    frequencyStartDial->setSingleStep(10);
+    formLayout->addRow("Starting Offset:", frequencyStartDial);
 	
-	connect( graphStartDial, SIGNAL(valueChanged(int)), this, SLOT(changeFStart(int)));	
-	connect( this, SIGNAL(fStartChanged(int)), graphStartDial, SLOT(setValue(int)));
+    connect( frequencyStartDial, SIGNAL(valueChanged(int)), this, SLOT(changeFStart(int)));
+    connect( this, SIGNAL(fStartChanged(int)), frequencyStartDial, SLOT(setValue(int)));
 	connect( this, SIGNAL(fStartChanged(int)), this, SIGNAL(displayChanged()));
     
     QSpinBox* graphWidthDial  = new QSpinBox(settingsTab);
@@ -94,10 +100,10 @@ QScrollArea* RepeatMap::settingsUi()
 	connect( this, SIGNAL(graphWidthChanged(int)), graphWidthDial, SLOT(setValue(int)));
 	connect( this, SIGNAL(graphWidthChanged(int)), this, SIGNAL(displayChanged()));
 
-    QCheckBox* doubleSample = new QCheckBox(settingsTab);
-    doubleSample->setChecked(false);
-    formLayout->addRow("Check for matches upstream and downstream (increases contrast)", doubleSample);
-    connect( doubleSample, SIGNAL(toggled(bool)), this, SLOT(toggleDoubleSample(bool)));
+    QCheckBox* find3merButton = new QCheckBox(settingsTab);
+    find3merButton->setChecked(true);
+    formLayout->addRow("Find 3mer pattern", find3merButton);
+    connect( find3merButton, SIGNAL(toggled(bool)), this, SLOT(toggle3merGraph(bool)));
 	
 	return settingsTab;
 }
@@ -116,22 +122,33 @@ void RepeatMap::display()
 				nuc->load_nucleotide();
 			}
             int displayWidth = ui->widthDial->value() / ui->scaleDial->value();
-			calculate(nuc->nucleotide_colors, displayWidth);
+            calculate(nuc->nucleotide_colors, displayWidth);
 		}
 		else
-		{
-			freq_map();	
-		}
-	}
+        {
+            freq_map();
+            if(using3merGraph && ui->scaleDial->value() == 1)
+            {
+                vector<float> scores_3mer = convolution_3mer();
+                vector<float> smoothed_scores = lowPassFilter(scores_3mer);
+                load_3mer_canvas(smoothed_scores);
+            }
+        }
+    }
 	load_canvas();
 	glPushMatrix();
 		glScaled(1,-1,1);
+        if(using3merGraph && ui->scaleDial->value() == 1)
+        {
+            canvas_3mer->display();
+            glTranslated(barWidth+2, 0, 0);
+        }
 		textureBuffer->display();
-	glPopMatrix();
+
 
 	//Draw Red indicator according to Width
 	int displayWidth = ui->widthDial->value() / ui->scaleDial->value(); 
-	glPushMatrix();
+
 		glColor4f(1,0,0, 1);//red
         glTranslated(displayWidth - F_start, 202, 0);
 	    glScaled(.5, 410, 1);
@@ -139,6 +156,18 @@ void RepeatMap::display()
 	    paint_square(point(1, 0, .25), color(255,0,0));
 	glPopMatrix();
 
+}
+
+void RepeatMap::load_3mer_canvas(vector<float> scores)
+{
+    vector<color> barGraph;
+    for(int y = 0; y < (int)scores.size(); ++y)
+    {
+        percentageBar(scores[y], barWidth, barGraph);
+    }
+    if(canvas_3mer != NULL)
+        delete canvas_3mer;
+    canvas_3mer = new TextureCanvas(barGraph, barWidth);
 }
 
 void RepeatMap::link(NucleotideDisplay* nuc_display)
@@ -182,10 +211,9 @@ GLuint RepeatMap::render()
 
 void RepeatMap::freq_map()
 {
+    qDebug() << "Width: " << ui->widthDial->value() << "\nScale: " << ui->scaleDial->value() << "\nStart: " << ui->startDial->value();
+
     const char* genome = sequence->c_str() + ui->startDial->value();//TODO: find a safer way to access this
-    vector<vector<float> > freq_maxOfSample;
-    if(usingDoubleSampling)
-        freq_maxOfSample = emptyCopy(freq);
 	for( int h = 0; h < height(); h++)
     {
         int tempWidth = ui->widthDial->value();
@@ -211,19 +239,32 @@ void RepeatMap::freq_map()
             }
             freq[h][w] = float(score) / tempWidth;
         }
-        if(usingDoubleSampling)
-        {
-            if(h > 0)
-            {
-                for(int w = 1; w <= F_width; w++)
-                {
-                    freq_maxOfSample[h][w] = max(freq[h][w], freq[h-1][w]);
-                }
-            }
-        }
     }
-    if(usingDoubleSampling) freq = freq_maxOfSample;
 	upToDate = true;
+}
+
+vector<float> RepeatMap::convolution_3mer()
+{
+    int reach = 20 * 3;
+    vector<float> mask;
+    for(int i = 0; i < reach; ++i)//create mask
+    {
+        if(i % 3 == 0)
+            mask.push_back(1.0);
+        else
+            mask.push_back(-0.5);
+    }
+    vector<float> scores;
+    for(int y = 0; y < (int)freq.size(); ++y)
+    {
+        float lineScore = 0.0;
+        for(int x = 0; x < (int)mask.size() && x < (int)freq[y].size(); ++x)
+        {
+            lineScore += min((float)0.5, mask[x] * freq[y][x]);//the amount that any position can affect is capped because of tandem repeats with 100% similarity
+        }
+        scores.push_back(lineScore);
+    }
+    return scores;
 }
 
 vector<vector<float> > RepeatMap::emptyCopy(vector<vector<float> > starter)//TODO: is there a shorter way of allocating this?
@@ -273,10 +314,9 @@ void RepeatMap::changeGraphWidth(int val)
 	}
 }	
 
-
-void RepeatMap::toggleDoubleSample(bool d)
+void RepeatMap::toggle3merGraph(bool m)
 {
-    usingDoubleSampling = d;
+    using3merGraph = m;
     invalidate();
 }
 
@@ -416,5 +456,5 @@ double RepeatMap::correlate(vector<color>& img, int beginA, int beginB, int pixe
 
 int RepeatMap::width()
 {
-	return F_width;
+    return F_width + barWidth + 2;
 }

@@ -25,10 +25,12 @@ public:
     ~RepeatMap();
 	QScrollArea* settingsUi();
 	void display();
+    void load_3mer_canvas(vector<float> scores);
 	void link(NucleotideDisplay* nuc_display);
 	void load_canvas();
 	GLuint render();
-	void freq_map();
+    void freq_map();
+    vector<float> convolution_3mer();
 	int height();
 	string mouseClick(point2D pt);
 	
@@ -41,25 +43,27 @@ public:
     vector<vector<float> > emptyCopy(vector<vector<float> > starter);
 public slots:
 	void changeFStart(int val);
-	void changeGraphWidth(int val);
-    void toggleDoubleSample(bool d);
+    void changeGraphWidth(int val);
+    void toggle3merGraph(bool m);
 	
 signals:
 	void fStartChanged(int);
 	void graphWidthChanged(int);
 	
 protected:
+    TextureCanvas* canvas_3mer;
 	NucleotideDisplay* nuc;
 	GLuint display_object;
 	vector< vector<float> > freq;
 	vector<color> pixels;
+    int barWidth;
 	int F_width;
 	int F_start;
 	int F_height;
 	
 	int freq_map_count;
 	int calculate_count;
-    bool usingDoubleSampling;
+    bool using3merGraph;
 };
 
 #endif

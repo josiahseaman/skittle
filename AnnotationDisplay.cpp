@@ -49,25 +49,27 @@ void AnnotationDisplay::display()
 {
 	if( !upToDate )
 	{
-    	//glDeleteLists(display_object, 1);
+        glDeleteLists(display_object, 1);
 		display_object = render();
 	}	
-	glCallList(display_object);
+    else
+        glCallList(display_object);
 }
 
 GLuint AnnotationDisplay::render()
 {
-	GLuint list = glGenLists(1);
-    glNewList(list, GL_COMPILE);
-	glPushMatrix();
+    qDebug() << "AnnotationDisplay::render(): " << ++frameCount;
+    GLuint Annotation_Display_list = glGenLists(1);
+    glNewList(Annotation_Display_list, GL_COMPILE_AND_EXECUTE);
+        glPushMatrix();
 	
-	if( !gtfTrack.empty() ) 
-		displayTrack( gtfTrack );
+        if( !gtfTrack.empty() )
+            displayTrack( gtfTrack );
 	
-	glPopMatrix();
+        glPopMatrix();
     glEndList();
-//    upToDate = true;
-    return list;
+    upToDate = true;
+    return Annotation_Display_list;
 }
 
 void AnnotationDisplay::displayTrack(const vector<track_entry>& track)

@@ -164,7 +164,7 @@ void OligomerDisplay::graphThreeDisplay(int state)
 
 void OligomerDisplay::changeMinDelta(double mD)
 {
-	if(updateVal(minDeltaBoundary, mD ))
+    if(updateDouble(minDeltaBoundary, mD ))
 	{
 		emit displayChanged();
 	}		
@@ -633,7 +633,7 @@ int OligomerDisplay::width()
 {
     widthMultiplier = 1;
 
-	return F_width*widthMultiplier + (F_height+2)*2;
+    return F_width*widthMultiplier + (F_height+2)*2;//TODO: make this width() check which of the subviews are currently visible.
 }
 
 /*vector<color> OligomerDisplay::calculateAverageSignature(int begin, int end)
