@@ -49,6 +49,7 @@ MainWindow::MainWindow()
 	textArea = NULL;
 	setDockOptions(QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks);
 	setWindowTitle( "Skittle Genome Visualizer");
+    createUiVars();
 	createActions();
 	createMenus();
     createDocks();
@@ -119,6 +120,57 @@ void MainWindow::addDisplayDivider()
 	presetToolBar->addSeparator();	
 }
 
+void MainWindow::createUiVars()
+{
+    settingToolBar = addToolBar("Sequence View Settings");
+    settingToolBar->setObjectName("Sequence View Settings");
+
+    QFont boldFont = QFont();
+    boldFont.setBold(true);
+    QLabel* activeW = new QLabel("Active Window:");
+    activeW->setFont(boldFont);
+    settingToolBar->addWidget(activeW);
+    settingToolBar->addSeparator();
+
+
+    //Note:Creating the visual representation of UiVariables is split between Mainwindow and the UiVariables constructor
+    ui = new UiVariables(textArea);
+    settingToolBar->addWidget(new QLabel("Width"));
+    settingToolBar->addWidget(ui->widthDial);
+
+    doubleDisplayWidth = new QPushButton("x2",this);
+    settingToolBar->addWidget(doubleDisplayWidth);
+    halveDisplayWidth = new QPushButton("/2",this);
+    settingToolBar->addWidget(halveDisplayWidth);
+
+    settingToolBar->addWidget(new QLabel("Scale"));
+    settingToolBar->addWidget(ui->scaleDial);
+
+    settingToolBar->addWidget(new QLabel("Zoom"));
+    settingToolBar->addWidget(ui->zoomDial);
+
+    settingToolBar->addWidget(new QLabel("Start Index"));
+    settingToolBar->addWidget(ui->startDial);
+
+    settingToolBar->addWidget(new QLabel("Display Length"));
+    settingToolBar->addWidget(ui->sizeDial);
+
+
+    //settingToolBar->addSeparator();
+
+    QLabel* multiW = new QLabel("Multiple Windows:");
+    multiW->setFont(boldFont);
+    settingToolBar->addWidget(multiW);
+    settingToolBar->addSeparator();
+    //QActionGroup* multiGroup = new QActionGroup(this);
+    syncCheckBox = new QCheckBox("Synchronize Views", this);
+    syncCheckBox->setCheckState(Qt::Checked);
+    //multiGroup->addWidget(syncCheckBox);
+    settingToolBar->addWidget(syncCheckBox);
+    settingToolBar->addWidget( new QLabel("Offsets:"));
+
+}
+
 void MainWindow::createActions()
 {
 	moveAction = new QAction("Move",this);	
@@ -128,7 +180,7 @@ void MainWindow::createActions()
 	zoomAction = new QAction("Zoom",this);	
 	zoomAction->setToolTip(QString("Shift+Click to zoom out"));
 	selectAction = new QAction("Select",this);	
-	selectAction->setToolTip(QString("Displays index and sequence information"));
+    selectAction->setToolTip(QString("Displays index and sequence information"));
 	findAction = new QAction("&Find",this);	
     addAnnotationAction = new QAction("Add Annotation",this);
 	//nextAnnotationAction = new QAction("Next Annotation",this);	
@@ -203,11 +255,35 @@ void MainWindow::createMenus()
 	toolActionGroup->addAction(findAction);
 
     colorSettingsMenu = menuBar()->addMenu("&Settings");
-    colorSettingsMenu->addAction("Classic");
-	
+    QActionGroup* colorGroup = new QActionGroup( this );
+    QSignalMapper* signalMapper = new QSignalMapper(this);
+    connect(signalMapper, SIGNAL(mapped(int)), this, SIGNAL(colorSelected(int)));
+    connect(this, SIGNAL(colorSelected(int)), ui, SLOT(changeColorSetting(int)));
+
+    createColorPalleteAction(QString("Classic"), UiVariables::CLASSIC, colorGroup, signalMapper )->setChecked(true);
+
+    createColorPalleteAction(QString("Color Blind Safe"), UiVariables::COLORBLINDSAFE, colorGroup, signalMapper );
+    createColorPalleteAction(QString("DRuMS"), UiVariables::DRUMS, colorGroup, signalMapper );
+    createColorPalleteAction(QString("Blues"), UiVariables::BLUES, colorGroup, signalMapper );
+    createColorPalleteAction(QString("Reds"), UiVariables::REDS, colorGroup, signalMapper );
+
 	QMenu* helpMenu = menuBar()->addMenu("&Help");
 	helpMenu->addAction(helpAction);
 	helpMenu->addAction(aboutQtAct);
+}
+
+QAction* MainWindow::createColorPalleteAction(QString label, int colorPallete, QActionGroup* group, QSignalMapper* signalMapper)
+{
+    QAction* colorPalleteAction = new QAction ( label, this );
+    colorPalleteAction->setCheckable(true);
+    colorPalleteAction->setActionGroup(group);
+    colorSettingsMenu->addAction(colorPalleteAction);
+    //this is where the return statement was originally
+
+    signalMapper->setMapping(colorPalleteAction, colorPallete);
+    connect(colorPalleteAction, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    return colorPalleteAction;
 }
 
 void MainWindow::createToolbars()
@@ -243,51 +319,7 @@ void MainWindow::createToolbars()
 	toolToolBar->addAction(findAction);
 	toolBarMenu->addAction(toolToolBar->toggleViewAction());
 	
-    settingToolBar = addToolBar("Sequence View Settings");
-    settingToolBar->setObjectName("Sequence View Settings");
-
-	QLabel* activeW = new QLabel("Active Window:");
-	activeW->setFont(boldFont);	
-	settingToolBar->addWidget(activeW);
-	settingToolBar->addSeparator();
-	
-
-    //Note:Creating the visual representation of UiVariables is split between Mainwindow and the UiVariables constructor
-    ui = new UiVariables(textArea);
-    settingToolBar->addWidget(new QLabel("Width"));
-    settingToolBar->addWidget(ui->widthDial);
-
-	doubleDisplayWidth = new QPushButton("x2",this);
-	settingToolBar->addWidget(doubleDisplayWidth);
-	halveDisplayWidth = new QPushButton("/2",this);
-	settingToolBar->addWidget(halveDisplayWidth);
-	
-    settingToolBar->addWidget(new QLabel("Scale"));
-    settingToolBar->addWidget(ui->scaleDial);
-	
-    settingToolBar->addWidget(new QLabel("Zoom"));
-    settingToolBar->addWidget(ui->zoomDial);
-	
-    settingToolBar->addWidget(new QLabel("Start Index"));
-    settingToolBar->addWidget(ui->startDial);
-	
-    settingToolBar->addWidget(new QLabel("Display Length"));
-    settingToolBar->addWidget(ui->sizeDial);
-
-	
-	//settingToolBar->addSeparator();
-
-	QLabel* multiW = new QLabel("Multiple Windows:");
-	multiW->setFont(boldFont);	
-	settingToolBar->addWidget(multiW);
-	settingToolBar->addSeparator();
-	//QActionGroup* multiGroup = new QActionGroup(this);
-	syncCheckBox = new QCheckBox("Synchronize Views", this);
-    syncCheckBox->setCheckState(Qt::Checked);	
-	//multiGroup->addWidget(syncCheckBox);
-	settingToolBar->addWidget(syncCheckBox);
-	settingToolBar->addWidget( new QLabel("Offsets:"));
-	
+    //previous location of createUiVars()
 	
 	toolBarMenu->addAction(settingToolBar->toggleViewAction());
 	addToolBar(Qt::RightToolBarArea,presetToolBar);

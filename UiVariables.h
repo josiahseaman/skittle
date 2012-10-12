@@ -32,7 +32,10 @@ public:
 	void print(const char* s, int num);
 	void printNum(int num);
 	//void print(int num1, int num2); 
-    string getColorSetting();
+    int getColorSetting();
+
+    //color palletes
+    enum colorPalletes { CLASSIC, DRUMS, COLORBLINDSAFE, REDS, BLUES };
 
 public slots:
     void changeWidth(int newWidth);
@@ -42,14 +45,15 @@ public slots:
     void changeStart(int start);
     void changeZoom(int zoom);
     void changeOffset(int offset);
-    void changeColorSetting(string set);
+    void changeColorSetting(int set);
 signals:
     void internalsUpdated();
+    void colorsChanged(int);
 
 private:
     int oldScale;
     int oldWidth;
-    string colorSetting;
+    int colorSetting;
     static int const maxSaneWidth = 4000;
 
 

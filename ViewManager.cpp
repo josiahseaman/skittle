@@ -244,6 +244,7 @@ void ViewManager::connectGlobalPushToLocal(GLWidget* active, UiVariables* local)
     connect(globalUi->scaleDial	, SIGNAL(valueChanged(int)), local->scaleDial  , SLOT(setValue(int)), Qt::UniqueConnection);
     connect(globalUi->zoomDial  , SIGNAL(valueChanged(int)), local->zoomDial   , SLOT(setValue(int)), Qt::UniqueConnection);
     connect(globalUi, SIGNAL(internalsUpdated()), active, SLOT(invalidateDisplayGraphs()), Qt::UniqueConnection);
+    connect(globalUi, SIGNAL(colorsChanged(int)), local, SLOT(changeColorSetting(int)), Qt::UniqueConnection); // Should never be disconnected
 }
 
 void ViewManager::connectLocalPushToGlobal(GLWidget* active, UiVariables* local) //only active window gets to push to globalUi

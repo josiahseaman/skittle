@@ -19,14 +19,14 @@ vector<float> lowPassFilter(vector<float> scores)
 }
 
 
-vector<color>& percentageBar(float percentage, int barWidth, vector<color>& line, color barColor, bool rightJustified)
+vector<color>& percentageBar(float percentage, int barWidth, vector<color>& line, bool rightJustified)
 {
-    if(barColor == NULL)
-    {
-        barColor = color(65,102,198);
+//    if(barColor == NULL)
+//    {
+        color barColor = color(65,102,198);
         if (percentage > 1.0)
             barColor = color(112,0,174);
-    }
+//    }
 
     int size = min( barWidth, max(0, (int)(percentage * barWidth)));
     int filler_size = barWidth - size;

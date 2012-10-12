@@ -27,6 +27,7 @@ class QFrame;
 class QTabWidget;
 class QCheckBox;
 class ViewManager;
+class QSignalMapper;
 
 class MainWindow : public QMainWindow
 {
@@ -64,17 +65,20 @@ public slots:
 signals:
 	void newFileOpen(QString name);
 	void newGtfFileOpen(QString name);
-	
+    void colorSelected(int);
 	
 protected:
 	void closeEvent(QCloseEvent *event);
 	
 private:
+    void createUiVars();
 	void createActions();
 	void createMenus();
 	void createDocks();
 	void createContextMenus();
 	void createToolbars();
+    QAction* createColorPalleteAction(QString label, int colorPalletes, QActionGroup* group, QSignalMapper *signalMapper);
+
 	void createStatusBar();
 	void createUiConnections();
     void createFileConnections();

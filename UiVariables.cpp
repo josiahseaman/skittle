@@ -3,6 +3,7 @@
 #include <QString>
 #include <sstream>
 #include <algorithm>
+#include <QDebug>
 #include "UiVariables.h"
 
 using std::max;
@@ -68,7 +69,7 @@ UiVariables::UiVariables(QTextEdit* text)
     oldScale = 1;
     oldWidth = 128;
 
-    colorSetting = string("Classic");
+    colorSetting = CLASSIC; // default
 
     //These lines make the Graphs respond immediately to typing rather than waiting for the user to finish
     /*connect(widthDial, SIGNAL(valueChanged(int)), this, SIGNAL(internalsUpdated()));
@@ -93,7 +94,7 @@ void UiVariables::print(char const * s)
 
 void UiVariables::print(std::string s)
 {
-	textArea->append(QString(s.c_str()));	
+    textArea->append(QString(s.c_str()));
 }
 
 void UiVariables::printHtml(std::string s)
@@ -107,7 +108,7 @@ void UiVariables::print(const char* s, int num)
 	std::stringstream ss1;
 	ss1 << s << num;
 
-	textArea->append(QString( ss1.str().c_str() ));	
+    textArea->append(QString( ss1.str().c_str() ));
 }
 
 void UiVariables::printNum(int num)
@@ -212,14 +213,15 @@ void UiVariables::changeOffset(int offset)
     }
 }
 
-string UiVariables::getColorSetting()
+int UiVariables::getColorSetting()
 {
-    return colorSetting = string("DRuMS");
+    return colorSetting;
 }
 
-void UiVariables::changeColorSetting(string newColorSetting)
+void UiVariables::changeColorSetting(int newColorSetting)
 {
     colorSetting = newColorSetting;
     //TODO: add in validity checking
-    emit internalsUpdated();
+    emit colorsChanged(newColorSetting);
 }
+

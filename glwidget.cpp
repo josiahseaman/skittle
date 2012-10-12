@@ -148,6 +148,7 @@ void GLWidget::createConnections()
     connect(ui->zoomDial,  SIGNAL(valueChanged(int)), this, SLOT(changeZoom(int)));
     connect(ui->scaleDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
     connect(ui->widthDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
+    connect(ui, SIGNAL(colorsChanged(int)), this, SLOT(invalidateDisplayGraphs()));
 }
 
 QSize GLWidget::minimumSizeHint() const
@@ -286,12 +287,12 @@ void GLWidget::slideHorizontal(int x)
 
 void GLWidget::invalidateDisplayGraphs()
 {
+    setupColorTable();
     qDebug() << "GlWidget::invalidateDisplayGraphs " << ++frame;
     for(int i = 0; i < (int)graphs.size(); ++i)
     {
         graphs[i]->invalidate();
     }
-    setupColorTable();
     updateDisplay();
 }
 
@@ -779,8 +780,8 @@ void GLWidget::setupColorTable()
 	
 
 
-    string colorSetting = ui->getColorSetting();
-    if(colorSetting.compare(string("Color Blind Safe")) == 0)
+    int colorSetting = ui->getColorSetting();
+    if(colorSetting == UiVariables::COLORBLINDSAFE)
     {
         colorTable[ (int)'A' ] = color(255, 102, 0);//Adenine
         colorTable[ (int)'C' ] = color(153, 0, 0);//Cytosine
@@ -789,7 +790,7 @@ void GLWidget::setupColorTable()
         colorTable[ (int)'N' ] = color( 50, 50, 50);//not sequenced
 
     }
-    if (colorSetting.compare(string("DRuMS")) == 0)
+    else if (colorSetting == UiVariables::DRUMS)
     {
         colorTable[ (int)'A' ] = color(80, 80, 255);//Adenine
         colorTable[ (int)'C' ] = color(224, 0, 0);//Cytosine
@@ -797,7 +798,7 @@ void GLWidget::setupColorTable()
         colorTable[ (int)'T' ] = color(230, 230, 0);//Thymine
         colorTable[ (int)'N' ] = color( 50, 50, 50);//not sequenced
     }
-     if (colorSetting.compare(string("Blues")) == 0)
+    else if (colorSetting == UiVariables::BLUES)
     {
         colorTable[ (int)'A' ] = color(141, 0, 74);//Adenine
         colorTable[ (int)'C' ] = color(82, 0, 124);//Cytosine
@@ -805,7 +806,7 @@ void GLWidget::setupColorTable()
         colorTable[ (int)'T' ] = color(14, 112, 118);//Thymine
         colorTable[ (int)'N' ] = color( 50, 50, 50);//not sequenced
     }
-     if (colorSetting.compare(string("Reds")) == 0)
+    else if (colorSetting == UiVariables::REDS)
     {
         colorTable[ (int)'A' ] = color(141, 0, 74);// Adenine
         colorTable[ (int)'C' ] = color(159, 0, 0);// Cytosine
@@ -815,7 +816,7 @@ void GLWidget::setupColorTable()
     }
 
     // might be interesting for "Highlight A", "Highlight C", etc options which would be rgb except for the one Nuc that was white
-     if (colorSetting.compare(string("Classic")) == 0) // default values AKA "Classic"
+    else // default values AKA "Classic"
     {
         colorTable[ (int)'A' ] = color(0, 0, 0);//BLACK - Adenine
         colorTable[ (int)'C' ] = color(255, 0, 0);//RED - Cytosine
