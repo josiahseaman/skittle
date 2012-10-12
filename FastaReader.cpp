@@ -14,8 +14,6 @@
 
 #include <QDebug>
 
-using namespace QtConcurrent;
-
 /** *********************
   FastaReader is the file reader for sequence files (FASTA format) usually ending in .fa.
   The first line starts with > and a name then the rest of the file is ACGT or acgt.  The
@@ -36,13 +34,14 @@ using namespace QtConcurrent;
 
   *********************/
 
-FastaReader::FastaReader( GLWidget* gl, UiVariables* gui) 
+FastaReader::FastaReader( GLWidget* gl, UiVariables* gui)
 {	
-	glWidget = gl;
+    glWidget = gl;
 	ui = gui;
 	sequence = logo();//string("AATCGATCGTACGCTACGATCGCTACGCAGCTAGGACGGATT");//
 	bytesInFile = 0;
 	progressBar = NULL;
+    cancelled = false;
 }
 FastaReader::~FastaReader()
 {
@@ -60,7 +59,22 @@ bool FastaReader::readFile(QString fileName)
         return false;
     }
     ui->print(file);
+
+    //Setup the progress bar by initially wiping it if one already exists
+    if(progressBar)
+    {
+        delete progressBar;
+        progressBar = NULL;
+    }
+    //Then setup a new progress bar
+    progressBar = new QProgressDialog("Loading File...", "Cancel", 0, 100);
+    connect(progressBar, SIGNAL(canceled()), this, SLOT(cancel()));
+    progressBar->show();
+
+    //Parse the name of the chromosome from the file name and send it to glwidget to be stored
     storeChrName(file);
+
+    QApplication::processEvents();
 
     //Clear out anything that may be left in the sequence string and set initial pad character
     sequence.clear();
@@ -82,21 +96,13 @@ bool FastaReader::readFile(QString fileName)
     wordfile.seekg(0, ios::end);
     int end = wordfile.tellg();
     bytesInFile = end - begin;
+
+    //Start progress bar at 0
+    int progress = bytesInFile / 20;
+    progressBar->setValue(progress);
+
+    //Return to the beginning of the file
     wordfile.seekg(0, ios::beg);
-    int progress = bytesInFile / 100;
-
-    //Setup the progress bar by initially wiping it if one already exists
-    if(progressBar)
-    {
-        delete progressBar;
-        progressBar = NULL;
-    }
-    //Then setup a new progress bar
-    progressBar = new QProgressDialog("Loading File...", "Cancel", 0, 0);
-    progressBar->setMinimumDuration(0);
-    QObject::connect(this, SIGNAL(progressValueChanged(int)), progressBar, SLOT(setValue(int)));
-    progressBar->show();
-
     //Skip the first line of the file as this is the chromosome name/info
     wordfile.ignore(500, '\n');
 
@@ -105,13 +111,16 @@ bool FastaReader::readFile(QString fileName)
     int i = 0;
     do
     {
+        //If the cancel button was pushed, go ahead and exit fasta reader
+        if(cancelled){
+            return false;
+        }
+
         //Read the next character
         wordfile >> current;
 
         //If it is a letter, uppercase it
         current = upperCase(current);
-
-        ++i;
 
         //if(current == 65 || current == 67 || current == 71 || current == 84 || current == 78) //A C G T N
         if(current != '\n' && current != '\r')
@@ -119,12 +128,15 @@ bool FastaReader::readFile(QString fileName)
             sequence.push_back(current);
         }
 
-        if(i % progress == 0)
+        if(i != 0 && i % progress == 0)
         {
-            emit progressValueChanged(i);
+            QApplication::processEvents();
+            progressBar->setValue(progressBar->value() + 5);
         }
+
+        i++;
     }
-    while(!wordfile.eof() && !wordfile.fail() && !progressBar->wasCanceled());
+    while(!wordfile.eof() && !wordfile.fail() && !cancelled);
 
     //Close up everything
     progressBar->reset();
@@ -149,6 +161,11 @@ char FastaReader::upperCase(char& c)
 	else
 		return c;
 }  
+
+void FastaReader::cancel()
+{
+    cancelled = true;
+}
 
 string FastaReader::trimFilename(string path)
 {

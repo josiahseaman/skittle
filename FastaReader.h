@@ -31,24 +31,23 @@ class FastaReader : public QObject
 	
 public:
 	
-	FastaReader(GLWidget* gl, UiVariables* gui);
+    FastaReader(GLWidget* gl, UiVariables* gui);
 	~FastaReader();
 	const string* seq();
 	string trimFilename(string path);
 
 public slots:
     bool readFile(QString name);
+    void cancel();
 
 signals:
 	void fileNameChanged(string name);
 	void newFileRead(const string*);
-	void progressValueChanged(int start);
 	
 private:
-	GLWidget* glWidget;
+    GLWidget* glWidget;
 	UiVariables* ui;
 	char upperCase(char& c);
-	void loadingProgress();
 	void storeChrName(string n);
 	string logo();
 
@@ -56,31 +55,8 @@ private:
 	string sequence;
 	QProgressDialog* progressBar;
 	int bytesInFile;//file size, but more specific
-	int blockSize;
-};
 
-class ProgressBar : public QRunnable//, public QObject
-{
-public:
-	FastaReader* fasta;
-	ProgressBar(FastaReader* f)
-	{
-		fasta = f;
-	}
-	void run()
-	{
-		// Create a progress dialog.
-		QProgressDialog* dialog  = new QProgressDialog("Reading File...", 0, 0, 100);
-		//dialog->setLabelText(QString("Reading using %1 thread(s)...").arg(QThread::idealThreadCount()));
-		//QObject::connect(fasta, SIGNAL(progressValueChanged(int)), dialog, SLOT(setValue(int)));
-	    
-		dialog->exec();
-		/*
-		while( dialog->value() < 90)
-		{
-			;//wait for file to finish reading (we don't always get a 100% signal
-		}*/
-	}
+    bool cancelled;
 };
 
 #endif
