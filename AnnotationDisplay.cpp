@@ -60,11 +60,11 @@ GLuint AnnotationDisplay::render()
 {
     qDebug() << "AnnotationDisplay::render(): " << ++frameCount;
     GLuint Annotation_Display_list = glGenLists(1);
-    glNewList(Annotation_Display_list, GL_COMPILE_AND_EXECUTE);
+    glNewList(Annotation_Display_list, GL_COMPILE);
         glPushMatrix();
-	
-        if( !gtfTrack.empty() )
-            displayTrack( gtfTrack );
+
+        vector<vector<track_entry> > layout = calculateTrackLayout( gtfTrack );
+        displayLayout(layout);
 	
         glPopMatrix();
     glEndList();
@@ -72,28 +72,60 @@ GLuint AnnotationDisplay::render()
     return Annotation_Display_list;
 }
 
-void AnnotationDisplay::displayTrack(const vector<track_entry>& track)
+void AnnotationDisplay::displayLayout(vector<vector<track_entry> > layout)
+{
+    //display each track
+    glPushMatrix();
+    glScaled(1,-1,1);
+    for(int y = 0; y < (int)layout.size(); ++y)
+    {
+        vector<track_entry>& lineEntries = layout[y];
+        for(int x = 0; x < (int)lineEntries.size(); ++x)
+        {
+            color c;
+            if(lineEntries[x].isBlank())
+                c = color(200,200,200);
+            else
+                c = lineEntries[x].col;
+
+            glPushName( lineEntries[x].index );
+            paint_square( point(x*2,y,0), c );
+            paint_square( point(x*2+1,y,0), c );
+            glPopName();
+            if(x+1 > max_width)
+                max_width = x+1;
+        }
+    }
+    glPopMatrix();
+}
+
+vector< vector<track_entry> > AnnotationDisplay::calculateTrackLayout(const vector<track_entry>& annotationFile)
 {
 	max_width = 1;
-	int pix_start = ui->startDial->value();
+    int line_start = ui->startDial->value();
 	int width = ui->widthDial->value();
-	int pix_stop = pix_start + width;
+    int line_stop = line_start + width;
     int temp_display_size = current_display_size();
-    int next_spot = 0;
+    int nextInactiveAnnotation = 0;
 	
-	if(track.empty()) 
-		return;
-	vector<track_entry> activeEntries = vector<track_entry>();
+    if(annotationFile.empty())
+        return vector< vector<track_entry> >();
+    /** activeEntries is the list annotations that are on the current display line
+        this is a dynamically changing group with annotations coming in and out based on
+        their start and stop positions.*/
+    vector<vector<track_entry> > layout;
+    vector<track_entry> activeEntries = vector<track_entry>();
 	track_entry blank = track_entry(0,0, color(0,0,0));
 	activeEntries.push_back(blank);
-    for(int row = 0; row < temp_display_size / width; row++)
+
+    for(int row = 0; row < temp_display_size / width; row++)//for each line on the screen
 	{
-		//check to see if any of the old tracks are done
+        //check to see if any of the tracks already in activeEntries stop on this line
         for(int k = 0; k < (int)activeEntries.size(); ++k)
 		{
 			if( !activeEntries[k].isBlank() )
 			{
-				if( activeEntries[k].stop < pix_start )
+                if( activeEntries[k].stop < line_start )
 				{
 					if( activeEntries[k].col == color(200,200,200) )
 						activeEntries[k] = blank;//remove the entry
@@ -103,38 +135,22 @@ void AnnotationDisplay::displayTrack(const vector<track_entry>& track)
 			}
 		}
 		//check to match start for a new track
-        while(next_spot < (int)track.size() && track[next_spot].stop < pix_start )//assumes tracks are in order
-			next_spot++;
-        while(next_spot < (int)track.size()
-			&& ((track[next_spot].start >= pix_start && track[next_spot].start <= pix_stop)//start in range
-			    || (track[next_spot].stop >= pix_start && track[next_spot].stop <= pix_stop)//end in range
-				|| (track[next_spot].start < pix_start && track[next_spot].stop > pix_stop)) )//in the middle
+        while(annotationFile[nextInactiveAnnotation].stop < line_start &&  nextInactiveAnnotation < (int)annotationFile.size() )//assumes tracks are in order
+            nextInactiveAnnotation++;
+        //keep adding annotations that start on this line
+        while(nextInactiveAnnotation < (int)annotationFile.size()
+            && ((annotationFile[nextInactiveAnnotation].start >= line_start && annotationFile[nextInactiveAnnotation].start <= line_stop)//start in range
+                || (annotationFile[nextInactiveAnnotation].stop >= line_start && annotationFile[nextInactiveAnnotation].stop <= line_stop)//end in range
+                || (annotationFile[nextInactiveAnnotation].start < line_start && annotationFile[nextInactiveAnnotation].stop > line_stop)) )//in the middle
 		{
-			stackEntry(activeEntries, track[next_spot++]);		//place new tracks in proper position
+            stackEntry(activeEntries, annotationFile[nextInactiveAnnotation++]);		//place new tracks in proper position
 		}
-		
-		//display each track
-		glPushMatrix();
-			glScaled(1,-1,1);
-        for(int x = 0; x < (int)activeEntries.size(); ++x)
-		{
-			color c;
-			if(activeEntries[x].isBlank())
-                c = color(200,200,200);
-			else	
-				c = activeEntries[x].col;
-				
-			glPushName( activeEntries[x].index );
-			paint_square( point(x*2,row,0), c );
-			paint_square( point(x*2+1,row,0), c );
-			glPopName();
-			if(x+1 > max_width)
-				max_width = x+1;
-		}
-		glPopMatrix();
-		pix_start += width;
-		pix_stop += width;
+
+        line_start += width;
+        line_stop += width;
+        layout.push_back(activeEntries);
 	}
+    return layout;
 }
 
 void AnnotationDisplay::stackEntry(vector<track_entry>& activeEntries, track_entry item)
@@ -188,6 +204,11 @@ string AnnotationDisplay::getFileName()
 int AnnotationDisplay::current_display_size()
 {
     return ui->sizeDial->value();
+}
+
+int AnnotationDisplay::getNextAnnotationPosition()
+{
+    return 100;
 }
 
 void AnnotationDisplay::setFileName(string gtfFileName)

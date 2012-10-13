@@ -240,8 +240,8 @@ void MainWindow::createMenus()
 	
     annotationMenu = menuBar()->addMenu("&Annotations");
 	annotationMenu->addAction(addAnnotationAction);
-	//annotationMenu->addAction(nextAnnotationAction);
-	//annotationMenu->addAction(prevAnnotationAction);
+    annotationMenu->addAction(nextAnnotationAction);
+    annotationMenu->addAction(prevAnnotationAction);
 	//annotationMenu->addAction(browseCommunityAction);
 	//annotationMenu->addAction(delAnnotationAction);
 	toolMenu = menuBar()->addMenu("&Tools");
@@ -302,8 +302,8 @@ void MainWindow::createToolbars()
 	annotationToolBar->addAction(addViewAction);
 	annotationToolBar->addAction(addAnnotationAction);
     annotationToolBar->addAction(openGtfAction);
-	//annotationToolBar->addAction(nextAnnotationAction);
-	//annotationToolBar->addAction(prevAnnotationAction);
+    annotationToolBar->addAction(nextAnnotationAction);
+    annotationToolBar->addAction(prevAnnotationAction);
 	//annotationToolBar->addAction(browseCommunityAction);
 	//annotationToolBar->addAction(delAnnotationAction);
 	toolBarMenu->addAction(annotationToolBar->toggleViewAction());
@@ -392,6 +392,7 @@ void MainWindow::createFileConnections()
 	connect(openGtfAction, SIGNAL(triggered()), this, SLOT(openGtf()));
 	connect(this, SIGNAL(newGtfFileOpen(QString)), viewManager, SLOT(addAnnotationDisplay(QString)));	
 	connect(addAnnotationAction, SIGNAL(triggered()), viewManager, SLOT(addBookmark()));
+    connect(nextAnnotationAction, SIGNAL(triggered()), viewManager, SLOT(jumpToNextAnnotation()));
 }
 
 void MainWindow::open()

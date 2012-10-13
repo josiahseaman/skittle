@@ -165,6 +165,14 @@ void ViewManager::addBookmark()
 	}
 }
 
+void ViewManager::jumpToNextAnnotation()
+{
+    if(activeWidget != NULL)
+    {
+        activeWidget->jumpToNextAnnotation();
+    }
+}
+
 void ViewManager::handleWindowSync()
 {
 	if( mainWindow->syncCheckBox->isChecked() )//reconnect all windows

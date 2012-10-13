@@ -24,13 +24,15 @@ public:
 	~AnnotationDisplay();
 	void display();
 	GLuint render();
-	void displayTrack(const vector<track_entry>& track);
+    void displayLayout(vector<vector<track_entry> > layout);
+    vector<vector<track_entry> > calculateTrackLayout(const vector<track_entry>& track);
 	void newTrack(vector<track_entry> track);
 	string mouseClick(point2D pt);
 	int width();
 	void setFileName(string gtfFileName);
 	string getFileName();
     int current_display_size();
+    int getNextAnnotationPosition();
 		
 public slots:
 	void addEntry(track_entry entry);

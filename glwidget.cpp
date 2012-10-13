@@ -387,19 +387,43 @@ AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fName)
 	return tempTrackDisplay;
 } 
 
+void GLWidget::jumpToNextAnnotation()
+{
+    //scan for all the AnnotationDisplays
+    vector<AnnotationDisplay*> annotations = getAllAnnotationDisplays();
+    int startPosition = 1000000000;//end of file
+    //have each submit the position of the next annotation
+    for(int i = 0; i < (int)annotations.size(); ++i)
+        startPosition = min(startPosition, annotations[i]->getNextAnnotationPosition());
+    //jump to the first one (min)
+    ui->changeStart(startPosition);
+}
+
 AnnotationDisplay* GLWidget::findMatchingAnnotationDisplay(string fileName)
 {
-	AnnotationDisplay* tempTrackDisplay = NULL;
-    for ( int n = 0; n < (int)graphs.size(); n++)
-	{
-		AnnotationDisplay* testPtr = dynamic_cast<AnnotationDisplay*>(graphs[n]);
-		if ( testPtr != NULL && testPtr->getFileName().compare(fileName) == 0 )
+    vector<AnnotationDisplay*> aDisplays = getAllAnnotationDisplays();
+    AnnotationDisplay* tempTrackDisplay = NULL;
+    for ( int n = 0; n < (int)aDisplays.size(); n++)
+    {
+        if (aDisplays[n]  != NULL && aDisplays[n]->getFileName().compare(fileName) == 0 )
 		{
-			tempTrackDisplay = testPtr;
+            tempTrackDisplay = aDisplays[n];
 			break;
 		}	
 	}
 	return 	tempTrackDisplay;
+}
+
+vector<AnnotationDisplay*> GLWidget::getAllAnnotationDisplays()
+{
+    vector<AnnotationDisplay*> annotations;
+    for ( int n = 0; n < (int)graphs.size(); n++)
+    {
+        AnnotationDisplay* testPtr = dynamic_cast<AnnotationDisplay*>(graphs[n]);
+        if ( testPtr != NULL )
+            annotations.push_back(testPtr);
+    }
+    return 	annotations;
 }
 
 void GLWidget::addTrackEntry(track_entry entry, string gtfFileName)

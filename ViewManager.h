@@ -32,6 +32,8 @@ public slots:
 	void changeFile(QString);
 	void addAnnotationDisplay(QString);
 	void addBookmark();
+    void jumpToNextAnnotation();
+
     void handleWindowSync();
     void changeGlobalStart();
     void changeAllLocalStarts();

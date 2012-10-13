@@ -102,8 +102,10 @@ public slots:
     void invalidateDisplayGraphs();
 	void updateDisplay();
 	void updateDisplaySize();
+    void jumpToNextAnnotation();
 	AnnotationDisplay* addAnnotationDisplay(QString fileName);
 	AnnotationDisplay* findMatchingAnnotationDisplay(string fileName);
+    vector<AnnotationDisplay*> getAllAnnotationDisplays();
 	void addTrackEntry(track_entry entry, string gtfFileName);
     void loadFile(QString);
 	//void setUi(UiVariables);
