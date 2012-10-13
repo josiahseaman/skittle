@@ -18,7 +18,7 @@
 AnnotationDisplay::AnnotationDisplay(UiVariables* gui, GLWidget* gl, string gtfFileName)
     :AbstractGraph(gui, gl)
 {
-	max_width = 0;
+    max_width = 1;
 	
 	actionLabel = string("Annotation Display");
 	actionTooltip = string("Genome annotation locations");
@@ -52,8 +52,7 @@ void AnnotationDisplay::display()
         glDeleteLists(display_object, 1);
 		display_object = render();
 	}	
-    else
-        glCallList(display_object);
+    glCallList(display_object);
 }
 
 GLuint AnnotationDisplay::render()
@@ -74,28 +73,30 @@ GLuint AnnotationDisplay::render()
 
 void AnnotationDisplay::displayLayout(vector<vector<track_entry> > layout)
 {
-    //display each track
-    glPushMatrix();
-    glScaled(1,-1,1);
+    vector<color> pixels;
     for(int y = 0; y < (int)layout.size(); ++y)
     {
         vector<track_entry>& lineEntries = layout[y];
-        for(int x = 0; x < (int)lineEntries.size(); ++x)
+        for(int x = 0; x < max_width / 2; ++x)
         {
-            color c;
-            if(lineEntries[x].isBlank())
-                c = color(200,200,200);
-            else
-                c = lineEntries[x].col;
-
-            glPushName( lineEntries[x].index );
-            paint_square( point(x*2,y,0), c );
-            paint_square( point(x*2+1,y,0), c );
-            glPopName();
-            if(x+1 > max_width)
-                max_width = x+1;
+            color c = color(200,200,200);
+            if(x < (int)lineEntries.size())
+            {
+                if(lineEntries[x].isBlank())
+                    c = color(200,200,200);
+                else
+                    c = lineEntries[x].col;
+            }
+            pixels.push_back(c);
+            pixels.push_back(c);
         }
     }
+    if(textureBuffer != NULL)
+        delete textureBuffer;
+    textureBuffer = new TextureCanvas(pixels, max_width);
+    glPushMatrix();
+    glScaled(1,-1,1);
+        textureBuffer->display();
     glPopMatrix();
 }
 
@@ -148,6 +149,8 @@ vector< vector<track_entry> > AnnotationDisplay::calculateTrackLayout(const vect
 
         line_start += width;
         line_stop += width;
+        if( (int)activeEntries.size()*2 > max_width)
+            max_width = activeEntries.size()*2;
         layout.push_back(activeEntries);
 	}
     return layout;
@@ -192,7 +195,7 @@ string AnnotationDisplay::mouseClick(point2D pt)
 
 int AnnotationDisplay::width()
 {
-    return max_width*2;
+    return max_width;
 }
 
 
