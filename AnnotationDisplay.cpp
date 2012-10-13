@@ -135,7 +135,7 @@ vector< vector<track_entry> > AnnotationDisplay::calculateTrackLayout(const vect
 			}
 		}
 		//check to match start for a new track
-        while(annotationFile[nextInactiveAnnotation].stop < line_start &&  nextInactiveAnnotation < (int)annotationFile.size() )//assumes tracks are in order
+        while(nextInactiveAnnotation < (int)annotationFile.size() && annotationFile[nextInactiveAnnotation].stop < line_start)//assumes tracks are in order
             nextInactiveAnnotation++;
         //keep adding annotations that start on this line
         while(nextInactiveAnnotation < (int)annotationFile.size()
@@ -208,7 +208,11 @@ int AnnotationDisplay::current_display_size()
 
 int AnnotationDisplay::getNextAnnotationPosition()
 {
-    return 100;
+    int i = 0;
+    int lineStart = ui->startDial->value() + ui->widthDial->value();//this is the start position at the _end_ of the line
+    while( i < (int)gtfTrack.size() && gtfTrack[i].start < lineStart )//assumes tracks are in order
+        i++;
+    return gtfTrack[i].start;
 }
 
 void AnnotationDisplay::setFileName(string gtfFileName)
