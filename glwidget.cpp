@@ -396,7 +396,7 @@ void GLWidget::jumpToNextAnnotation()
     for(int i = 0; i < (int)annotations.size(); ++i)
         startPosition = min(startPosition, annotations[i]->getNextAnnotationPosition());
     //jump to the first one (min)
-    if(startPosition < seq()->size())
+    if(startPosition < (int)seq()->size())
         ui->changeStart(startPosition);
     else
         ui->print("There are no annotations further in the file.");
