@@ -214,6 +214,14 @@ int AnnotationDisplay::getNextAnnotationPosition()
         i++;
     return gtfTrack[i].start;
 }
+int AnnotationDisplay::getPrevAnnotationPosition()
+{
+    int i = (int)gtfTrack.size()-1;
+    int lineStart = ui->startDial->value();//this is the start position
+    while( i > 0 && gtfTrack[i].start >= lineStart )//assumes tracks are in order
+        i--;
+    return gtfTrack[i].start;
+}
 
 void AnnotationDisplay::setFileName(string gtfFileName)
 {

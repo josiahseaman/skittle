@@ -169,7 +169,14 @@ void ViewManager::jumpToNextAnnotation()
 {
     if(activeWidget != NULL)
     {
-        activeWidget->jumpToNextAnnotation();
+        activeWidget->jumpToAnnotation(true);
+    }
+}
+void ViewManager::jumpToPrevAnnotation()
+{
+    if(activeWidget != NULL)
+    {
+        activeWidget->jumpToAnnotation(false);
     }
 }
 

@@ -393,6 +393,7 @@ void MainWindow::createFileConnections()
 	connect(this, SIGNAL(newGtfFileOpen(QString)), viewManager, SLOT(addAnnotationDisplay(QString)));	
 	connect(addAnnotationAction, SIGNAL(triggered()), viewManager, SLOT(addBookmark()));
     connect(nextAnnotationAction, SIGNAL(triggered()), viewManager, SLOT(jumpToNextAnnotation()));
+    connect(prevAnnotationAction, SIGNAL(triggered()), viewManager, SLOT(jumpToPrevAnnotation()));
 }
 
 void MainWindow::open()

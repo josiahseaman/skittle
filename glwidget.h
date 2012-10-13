@@ -102,7 +102,7 @@ public slots:
     void invalidateDisplayGraphs();
 	void updateDisplay();
 	void updateDisplaySize();
-    void jumpToNextAnnotation();
+    void jumpToAnnotation(bool forward);
 	AnnotationDisplay* addAnnotationDisplay(QString fileName);
 	AnnotationDisplay* findMatchingAnnotationDisplay(string fileName);
     vector<AnnotationDisplay*> getAllAnnotationDisplays();

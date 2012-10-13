@@ -33,6 +33,7 @@ public:
 	string getFileName();
     int current_display_size();
     int getNextAnnotationPosition();
+    int getPrevAnnotationPosition();
 		
 public slots:
 	void addEntry(track_entry entry);

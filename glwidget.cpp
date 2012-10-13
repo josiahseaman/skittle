@@ -387,16 +387,21 @@ AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fName)
 	return tempTrackDisplay;
 } 
 
-void GLWidget::jumpToNextAnnotation()
+void GLWidget::jumpToAnnotation(bool forward)
 {
     //scan for all the AnnotationDisplays
     vector<AnnotationDisplay*> annotations = getAllAnnotationDisplays();
     int startPosition = 1000000000;//end of file
     //have each submit the position of the next annotation
     for(int i = 0; i < (int)annotations.size(); ++i)
-        startPosition = min(startPosition, annotations[i]->getNextAnnotationPosition());
+    {
+        if(forward==true)
+            startPosition = min(startPosition, annotations[i]->getNextAnnotationPosition());
+        else //go backwards
+            startPosition = min(startPosition, annotations[i]->getPrevAnnotationPosition());
+    }
     //jump to the first one (min)
-    if(startPosition < seq()->size())
+    if(startPosition < (int)seq()->size())
         ui->changeStart(startPosition);
     else
         ui->print("There are no annotations further in the file.");

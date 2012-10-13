@@ -33,6 +33,7 @@ public slots:
 	void addAnnotationDisplay(QString);
 	void addBookmark();
     void jumpToNextAnnotation();
+    void jumpToPrevAnnotation();
 
     void handleWindowSync();
     void changeGlobalStart();
