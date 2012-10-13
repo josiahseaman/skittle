@@ -142,6 +142,8 @@ void MainWindow::createUiVars()
     settingToolBar->addWidget(doubleDisplayWidth);
     halveDisplayWidth = new QPushButton("/2",this);
     settingToolBar->addWidget(halveDisplayWidth);
+    zoomExtents = new QPushButton("Scale to \nChromosome",this);
+    settingToolBar->addWidget(zoomExtents);
 
     settingToolBar->addWidget(new QLabel("Scale"));
     settingToolBar->addWidget(ui->scaleDial);
@@ -373,11 +375,12 @@ void MainWindow::createUiConnections()
     connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
     connect(helpAction, SIGNAL(triggered()), this, SLOT(helpDialog()));
 
-    connect( ui->scaleDial, SIGNAL(editingFinished()), this, SLOT(changeScale()));
+    connect(ui->scaleDial, SIGNAL(editingFinished()), this, SLOT(changeScale()));
     
-	connect( doubleDisplayWidth, SIGNAL(clicked()), this, SLOT(doubleWidth()));
-    connect( halveDisplayWidth, SIGNAL(clicked()), this, SLOT(halveWidth()));
-    connect( ui->widthDial, SIGNAL(editingFinished()), this, SLOT(changeWidth()));
+    connect(doubleDisplayWidth, SIGNAL(clicked()), this, SLOT(doubleWidth()));
+    connect(halveDisplayWidth, SIGNAL(clicked()), this, SLOT(halveWidth()));
+//    connect(zoomExtents, SIGNAL(clicked()), , SLOT(zoomExtents()));
+    connect(ui->widthDial, SIGNAL(editingFinished()), this, SLOT(changeWidth()));
 	
 }
 void MainWindow::createFileConnections()

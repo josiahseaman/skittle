@@ -156,9 +156,9 @@ void UiVariables::changeScale(int newScale)
     if(newScale < 1)
         newScale = 1;
 
-    if(oldScale != newScale)
+    if(scaleDial->value() != newScale)
     {
-        int display_width = max( 1, oldWidth / oldScale);
+        int display_width = max( 1, widthDial->value() / scaleDial->value());
 
         int display_size = sizeDial->value() / scaleDial->value();
         display_size = max( 1, display_size);

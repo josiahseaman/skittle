@@ -67,6 +67,7 @@ void ViewManager::uiToGlwidgetConnections(GLWidget* active)
     connect(mainWindow->findAction, SIGNAL(triggered()), active, SLOT(on_findButton_clicked()));
     connect(mainWindow->resizeAction, SIGNAL(triggered()), active, SLOT(on_resizeButton_clicked()));
     connect(mainWindow->zoomAction, SIGNAL(triggered()), active, SLOT(on_zoomButton_clicked()));
+    connect(mainWindow->zoomExtents, SIGNAL(clicked()), active, SLOT(zoomExtents()));
 	
 	connect( active, SIGNAL(addGraphMode(AbstractGraph*)), mainWindow, SLOT(addDisplayActions(AbstractGraph*)));
 	

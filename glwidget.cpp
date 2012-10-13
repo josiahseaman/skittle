@@ -219,8 +219,11 @@ void GLWidget::displayString(const string* sequence)
 void GLWidget::zoomExtents()
 {
     //these lines zoom out to the full extents of the file
-    float multiplier = seq()->size() / (float)ui->widthDial->value() / (display_height()-10);
-    int newScale = max(1, (int)(multiplier) );
+    float pixelWidth = (float)ui->widthDial->value() / (float)ui->scaleDial->value();
+    float pixelsOnScreen = pixelWidth * (display_height()-10);
+    float requiredScale = seq()->size() / pixelsOnScreen;
+    int newScale = max(1, (int)(requiredScale + 0.5) );
+    ui->startDial->setValue(1);
     ui->changeScale(newScale);
 }
 
