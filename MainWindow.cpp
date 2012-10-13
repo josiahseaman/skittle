@@ -49,10 +49,10 @@ MainWindow::MainWindow()
 	textArea = NULL;
 	setDockOptions(QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks);
 	setWindowTitle( "Skittle Genome Visualizer");
+    createDocks();
     createUiVars();
 	createActions();
 	createMenus();
-    createDocks();
     createToolbars();
     createStatusBar();
     createUiConnections();
@@ -233,6 +233,7 @@ void MainWindow::createMenus()
 	searchMenu->addAction(hilightResultsAction);*/
     viewMenu = menuBar()->addMenu("&View");
 	toolBarMenu = viewMenu->addMenu("ToolBar");
+    toolBarMenu->addAction(infoDock->toggleViewAction());
     presetMenu = viewMenu->addMenu("Visualization Graphs");
 	
     annotationMenu = menuBar()->addMenu("&Annotations");
@@ -330,9 +331,8 @@ void MainWindow::createToolbars()
 
 void MainWindow::createDocks()
 {	
-	QDockWidget *infoDock = new QDockWidget("Information Display", this);
-	infoDock->setObjectName("infodock");
-	toolBarMenu->addAction(infoDock->toggleViewAction());
+    infoDock = new QDockWidget("Information Display", this);
+    infoDock->setObjectName("infodock");
 	infoDock->setAllowedAreas(Qt::AllDockWidgetAreas);
 	
 	tabWidget = new QTabWidget(infoDock);

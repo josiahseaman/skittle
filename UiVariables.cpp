@@ -83,7 +83,7 @@ UiVariables::~UiVariables()
     //delete all the individual dial pointers?
 }
 
-void UiVariables::print(char const * s)
+void UiVariables::print(char const* s)
 {
 	if(textArea != NULL)
 	{
