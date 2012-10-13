@@ -392,17 +392,21 @@ void GLWidget::jumpToAnnotation(bool forward)
     //scan for all the AnnotationDisplays
     vector<AnnotationDisplay*> annotations = getAllAnnotationDisplays();
     int startPosition = 1000000000;//end of file
+    if (!forward)
+        startPosition = 1;
     //have each submit the position of the next annotation
     for(int i = 0; i < (int)annotations.size(); ++i)
     {
-        if(forward==true)
+        if(forward)
             startPosition = min(startPosition, annotations[i]->getNextAnnotationPosition());
         else //go backwards
-            startPosition = min(startPosition, annotations[i]->getPrevAnnotationPosition());
+            startPosition = max(startPosition, annotations[i]->getPrevAnnotationPosition());
     }
     //jump to the first one (min)
     if(startPosition < (int)seq()->size())
         ui->changeStart(startPosition);
+    else if (startPosition <= 1)
+        ui->print("You have reached the beginning of the file.");
     else
         ui->print("There are no annotations further in the file.");
 }
