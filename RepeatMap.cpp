@@ -260,7 +260,8 @@ vector<float> RepeatMap::convolution_3mer()
         float lineScore = 0.0;
         for(int x = 0; x < (int)mask.size() && x < (int)freq[y].size(); ++x)
         {
-            lineScore += min((float)0.5, mask[x] * freq[y][x]);//the amount that any position can affect is capped because of tandem repeats with 100% similarity
+            lineScore += mask[x] * freq[y][x];
+//            lineScore += min((float)0.5, mask[x] * freq[y][x]);//the amount that any position can affect is capped because of tandem repeats with 100% similarity
         }
         scores.push_back(lineScore);
     }

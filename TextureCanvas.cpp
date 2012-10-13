@@ -27,10 +27,11 @@ TextureCanvas::TextureCanvas()
 
 TextureCanvas::TextureCanvas(vector<color>& pixels, int w, bool raggedEdge)
 {
+    ragged = raggedEdge;
     int max_size = checkForDisplayDriver();
     if(!useTextures)
         colors = vector<color>(pixels);
-    ragged = raggedEdge;
+
 	//pad the end with white pixels, background color
 	for(int i = 0; i <= w; ++i)
 		pixels.push_back( color(128,128,128) );
