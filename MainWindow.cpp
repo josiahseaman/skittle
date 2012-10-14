@@ -263,21 +263,22 @@ void MainWindow::createMenus()
     connect(signalMapper, SIGNAL(mapped(int)), this, SIGNAL(colorSelected(int)));
     connect(this, SIGNAL(colorSelected(int)), ui, SLOT(changeColorSetting(int)));
 
-    createColorPalleteAction(QString("Classic"), UiVariables::CLASSIC, colorGroup, signalMapper )->setChecked(true);
+    createColorPalleteAction(QString("Classic"), UiVariables::CLASSIC, QIcon(":/icons/classic.png"), colorGroup, signalMapper )->setChecked(true);
 
-    createColorPalleteAction(QString("Color Blind Safe"), UiVariables::COLORBLINDSAFE, colorGroup, signalMapper );
-    createColorPalleteAction(QString("DRuMS"), UiVariables::DRUMS, colorGroup, signalMapper );
-    createColorPalleteAction(QString("Blues"), UiVariables::BLUES, colorGroup, signalMapper );
-    createColorPalleteAction(QString("Reds"), UiVariables::REDS, colorGroup, signalMapper );
+    createColorPalleteAction(QString("Color Blind Safe"), UiVariables::COLORBLINDSAFE, QIcon(":/icons/colorblindsafe.png"), colorGroup, signalMapper );
+    createColorPalleteAction(QString("DRuMS"), UiVariables::DRUMS, QIcon(":/icons/drums.png"), colorGroup, signalMapper );
+    createColorPalleteAction(QString("Blues"), UiVariables::BLUES, QIcon(":/icons/blues.png"), colorGroup, signalMapper );
+    createColorPalleteAction(QString("Reds"), UiVariables::REDS, QIcon(":/icons/reds.png"), colorGroup, signalMapper );
 
 	QMenu* helpMenu = menuBar()->addMenu("&Help");
 	helpMenu->addAction(helpAction);
 	helpMenu->addAction(aboutQtAct);
 }
 
-QAction* MainWindow::createColorPalleteAction(QString label, int colorPallete, QActionGroup* group, QSignalMapper* signalMapper)
+QAction* MainWindow::createColorPalleteAction(QString label, int colorPallete, QIcon palleteIcon, QActionGroup* group, QSignalMapper* signalMapper)
 {
-    QAction* colorPalleteAction = new QAction ( label, this );
+    QAction* colorPalleteAction = new QAction (palleteIcon, label, this );
+
     colorPalleteAction->setCheckable(true);
     colorPalleteAction->setActionGroup(group);
     colorSettingsMenu->addAction(colorPalleteAction);

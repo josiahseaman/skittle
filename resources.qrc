@@ -5,5 +5,11 @@
         <file>zoomIn-mask.png</file>
         <file>skittle.svg</file>
         <file>updatebutton.png</file>
+        <file>classic.png</file>
+        <file>icons/blues.png</file>
+        <file>icons/classic.png</file>
+        <file>icons/colorblindsafe.png</file>
+        <file>icons/drums.png</file>
+        <file>icons/reds.png</file>
     </qresource>
 </RCC>

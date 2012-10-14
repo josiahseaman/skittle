@@ -77,7 +77,7 @@ private:
 	void createDocks();
 	void createContextMenus();
 	void createToolbars();
-    QAction* createColorPalleteAction(QString label, int colorPalletes, QActionGroup* group, QSignalMapper *signalMapper);
+    QAction* createColorPalleteAction(QString label, int colorPalletes, QIcon palleteIcon, QActionGroup* group, QSignalMapper *signalMapper);
 
 	void createStatusBar();
 	void createUiConnections();
