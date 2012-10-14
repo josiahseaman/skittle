@@ -243,6 +243,86 @@ void GLWidget::on_findButton_clicked()
 	highlight->ensureVisible();
 }
 
+void GLWidget::on_screenCaptureButton_clicked()
+{
+    makeCurrent();
+
+    QImage image;
+
+    if (format().rgba())
+    {
+        image = read_framebuffer(QSize(width(), height()), format().alpha(), false);
+    }
+    else
+    {
+        #if defined(Q_WS_WIN) && !defined(QT_OPENGL_ES)
+            image = QImage(width(), height(), QImage::Format_Indexed8);
+            glReadPixels(0, 0, width(), height(), GL_COLOR_INDEX, GL_UNSIGNED_BYTE, image.bits());
+            const QVector<QColor> pal = QColormap::instance().colormap();
+
+            if(pal.size())
+            {
+                image.setNumColors(pal.size());
+                for(int i = 0; i < pal.size(); i++)
+                {
+                    image.setColor(i, pal.at(i).rgb());
+                }
+            }
+            image = image.mirrored();
+        #endif
+    }
+
+    image.save("capture.png");
+}
+
+QImage GLWidget::read_framebuffer(const QSize &size, bool alpha_format, bool include_alpha)
+{
+    QImage image(size, alpha_format ? QImage::Format_ARGB32 : QImage::Format_RGB32);
+
+    int w = size.width();
+    int h = size.height();
+
+    glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+    convertFromGLImage(image, w, h, alpha_format, include_alpha);
+
+    return image;
+}
+
+void GLWidget::convertFromGLImage(QImage &image, int w, int h, bool alpha_format, bool include_alpha)
+{
+    if (QSysInfo::ByteOrder == QSysInfo::BigEndian) {
+        // OpenGL gives RGBA; Qt wants ARGB
+        uint *p = (uint*)image.bits();
+        uint *end = p + w*h;
+        if (alpha_format && include_alpha) {
+            while (p < end) {
+                uint a = *p << 24;
+                *p = (*p >> 8) | a;
+                p++;
+            }
+        } else {
+            // This is an old legacy fix for PowerPC based Macs, which
+            // we shouldn't remove
+            while (p < end) {
+                *p = 0xff000000 | (*p>>8);
+                ++p;
+            }
+        }
+    } else {
+        // OpenGL gives ABGR (i.e. RGBA backwards); Qt wants ARGB
+        for (int y = 0; y < h; y++) {
+            uint *q = (uint*)image.scanLine(y);
+            for (int x=0; x < w; ++x) {
+                const uint pixel = *q;
+                *q = ((pixel << 16) & 0xff0000) | ((pixel >> 16) & 0xff) | (pixel & 0xff00ff00);
+                q++;
+            }
+        }
+
+    }
+    image = image.mirrored();
+}
+
 void GLWidget::on_resizeButton_clicked()
 {
 	setTool(RESIZE_TOOL);

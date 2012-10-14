@@ -95,6 +95,7 @@ public slots:
     void on_moveButton_clicked();
     void on_selectButton_clicked();
     void on_findButton_clicked();
+    void on_screenCaptureButton_clicked();
     void on_resizeButton_clicked();
     void on_zoomButton_clicked();
     void setTool(int tool);
@@ -157,6 +158,8 @@ private:
 	int border;
 	int currentTool;
 	int frame;
+    QImage read_framebuffer(const QSize &size, bool alpha_format, bool include_alpha);
+    void convertFromGLImage(QImage &img, int w, int h, bool alpha_format, bool include_alpha);
 };
 //! [3]
 /* Alu Consensus Sequence 290bp
@@ -169,5 +172,6 @@ TGAACCCGGGAGGCGGAGGTTGCAGTGAGCCGAGATCGCGCCACTGCACTCCAGCCTGGGCGACAGAGCGAGACTCCGTC
 #define SELECT_TOOL 3
 #define ZOOM_TOOL 4
 #define FIND_TOOL 5
+#define SCREENCAPTURE_TOOL 6
 
 #endif

@@ -184,6 +184,8 @@ void MainWindow::createActions()
 	selectAction = new QAction("Select",this);	
     selectAction->setToolTip(QString("Displays index and sequence information"));
 	findAction = new QAction("&Find",this);	
+    screenCaptureAction = new QAction("Screen &Capture", this);
+    screenCaptureAction->setToolTip(QString("Take a screen shot"));
     addAnnotationAction = new QAction("Add Annotation",this);
     nextAnnotationAction = new QAction("Next Annotation",this);
     prevAnnotationAction = new QAction("Previous Annotation",this);
@@ -250,12 +252,14 @@ void MainWindow::createMenus()
 	toolMenu->addAction(zoomAction);
 	toolMenu->addAction(selectAction);
 	toolMenu->addAction(findAction);
+    toolMenu->addAction(screenCaptureAction);
 	toolActionGroup = new QActionGroup(this);
 	toolActionGroup->addAction(moveAction);
 	toolActionGroup->addAction(resizeAction);
 	toolActionGroup->addAction(zoomAction);
 	toolActionGroup->addAction(selectAction);
 	toolActionGroup->addAction(findAction);
+    toolActionGroup->addAction(screenCaptureAction);
 
     colorSettingsMenu = menuBar()->addMenu("&Settings");
     QActionGroup* colorGroup = new QActionGroup( this );
@@ -321,6 +325,7 @@ void MainWindow::createToolbars()
 	toolToolBar->addAction(zoomAction);
 	toolToolBar->addAction(selectAction);
 	toolToolBar->addAction(findAction);
+    toolToolBar->addAction(screenCaptureAction);
 	toolBarMenu->addAction(toolToolBar->toggleViewAction());
 	
     //previous location of createUiVars()

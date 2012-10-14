@@ -154,7 +154,7 @@ void TextureCanvas::drawTextureSquare()//draws from canvas
 		        glVertex3f (0.0f, tile.height, 0.0f);
 		    glEnd ();
 		
-		    glDisable (GL_TEXTURE_2D); /* disable texture mapping */
+            glDisable (GL_TEXTURE_2D); /* disable texture mapping */
 			glPopMatrix();
 		}
 	}	

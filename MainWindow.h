@@ -121,6 +121,7 @@ private:
 	QAction *zoomAction;
 	QAction *selectAction;
     QAction *findAction;
+    QAction *screenCaptureAction;
 
     QAction* updateSkittle;
 //	QAction *browseCommunityAction;
