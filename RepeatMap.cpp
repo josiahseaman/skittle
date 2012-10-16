@@ -150,8 +150,8 @@ void RepeatMap::display()
 	int displayWidth = ui->widthDial->value() / ui->scaleDial->value(); 
 
 		glColor4f(1,0,0, 1);//red
-        glTranslated(displayWidth - F_start, 202, 0);
-	    glScaled(.5, 410, 1);
+        glTranslated(displayWidth - F_start, 500, 0);
+        glScaled(.5, 500, 1);
 	    paint_square(point(-1, 0, .25), color(255,0,0));
 	    paint_square(point(1, 0, .25), color(255,0,0));
 	glPopMatrix();
