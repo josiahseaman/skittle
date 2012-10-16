@@ -62,6 +62,7 @@ MainWindow::MainWindow()
 	createFileConnections();
 
 	readSettings();
+    ensureDocksAreVisible();
     setWindowIcon(QIcon(":/skittle.svg"));
 	
 	//openAction->trigger();
@@ -326,23 +327,36 @@ void MainWindow::createToolbars()
 	
     //previous location of createUiVars()
 
-	addToolBar(Qt::RightToolBarArea,presetToolBar);
-	addToolBar(Qt::LeftToolBarArea,toolToolBar);
-	addToolBar(Qt::LeftToolBarArea,annotationToolBar);
-	addToolBar(Qt::TopToolBarArea,settingToolBar);
+    addToolBar(Qt::RightToolBarArea,presetToolBar);
+    addToolBar(Qt::LeftToolBarArea,toolToolBar);
+    addToolBar(Qt::LeftToolBarArea,annotationToolBar);
+    addToolBar(Qt::TopToolBarArea,settingToolBar);
+
+}
+
+void MainWindow::ensureDocksAreVisible()
+{
+    presetToolBar->setVisible(true);
+    toolToolBar->setVisible(true);
+    annotationToolBar->setVisible(true);
+    settingToolBar->setVisible(true);
+    infoDock->setVisible(true);
+
 }
 
 void MainWindow::createDocks()
 {	
     infoDock = new QDockWidget("Information Display", this);
     infoDock->setObjectName("infodock");
-	infoDock->setAllowedAreas(Qt::AllDockWidgetAreas);
+    infoDock->setAllowedAreas(Qt::AllDockWidgetAreas);
+    infoDock->setFeatures(QDockWidget::NoDockWidgetFeatures);//in particular we want to avoid Closable
+    infoDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
 	
 	tabWidget = new QTabWidget(infoDock);
 	infoDock->setWidget(tabWidget);
 	textArea = new QTextEdit(tabWidget);
     tabWidget->addTab(textArea, QString("Text Output"));
-	addDockWidget(Qt::BottomDockWidgetArea, infoDock);
+    addDockWidget(Qt::BottomDockWidgetArea, infoDock);
 	
 	/*
 	QWidget *filters = new QWidget;

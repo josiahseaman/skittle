@@ -74,6 +74,7 @@ private:
     void createUiVars();
 	void createActions();
 	void createMenus();
+    void ensureDocksAreVisible();
 	void createDocks();
 	void createContextMenus();
 	void createToolbars();
@@ -105,7 +106,7 @@ private:
 	QToolBar *toolToolBar;
 	QToolBar *settingToolBar;
 	
-	QDockWidget *infoDock;
+    QDockWidget *infoDock;
 	QTextEdit* textArea;
     QTabWidget *tabWidget;
 
