@@ -270,6 +270,7 @@ void MainWindow::createMenus()
     createColorPalleteAction(QString("Classic"), UiVariables::CLASSIC, QIcon(":/icons/classic.png"), colorGroup, signalMapper )->setChecked(true);
 
     createColorPalleteAction(QString("Color Blind Safe"), UiVariables::COLORBLINDSAFE, QIcon(":/icons/colorblindsafe.png"), colorGroup, signalMapper );
+    createColorPalleteAction(QString("Better Color Blind Safe"), UiVariables::BETTERCBSAFE, QIcon(":/icons/colorblindsafe.png"), colorGroup, signalMapper );
     createColorPalleteAction(QString("DRuMS"), UiVariables::DRUMS, QIcon(":/icons/drums.png"), colorGroup, signalMapper );
     createColorPalleteAction(QString("Blues"), UiVariables::BLUES, QIcon(":/icons/blues.png"), colorGroup, signalMapper );
     createColorPalleteAction(QString("Reds"), UiVariables::REDS, QIcon(":/icons/reds.png"), colorGroup, signalMapper );

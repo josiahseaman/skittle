@@ -909,6 +909,14 @@ void GLWidget::setupColorTable()
         colorTable[ (int)'N' ] = color( 50, 50, 50);//not sequenced
 
     }
+    else if (colorSetting == UiVariables::BETTERCBSAFE)
+    {
+        colorTable[ (int)'A' ] = color(0, 204, 204);//Adenine
+        colorTable[ (int)'C' ] = color(153, 255, 0);//Cytosine
+        colorTable[ (int)'G' ] = color(204, 0, 102);//Guanine
+        colorTable[ (int)'T' ] = color(255, 102, 0);//Thymine
+        colorTable[ (int)'N' ] = color( 50, 50, 50);//not sequenced
+    }
     else if (colorSetting == UiVariables::DRUMS)
     {
         colorTable[ (int)'A' ] = color(80, 80, 255);//Adenine
