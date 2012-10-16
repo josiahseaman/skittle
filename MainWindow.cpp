@@ -236,8 +236,6 @@ void MainWindow::createMenus()
 	searchMenu->addAction(findPrevAction);
 	searchMenu->addAction(hilightResultsAction);*/
     viewMenu = menuBar()->addMenu("&View");
-	toolBarMenu = viewMenu->addMenu("ToolBar");
-    toolBarMenu->addAction(infoDock->toggleViewAction());
     presetMenu = viewMenu->addMenu("Visualization Graphs");
 	
     annotationMenu = menuBar()->addMenu("&Annotations");
@@ -261,7 +259,7 @@ void MainWindow::createMenus()
 	toolActionGroup->addAction(findAction);
     toolActionGroup->addAction(screenCaptureAction);
 
-    colorSettingsMenu = menuBar()->addMenu("&Settings");
+    colorSettingsMenu = menuBar()->addMenu("Color &Settings");
     QActionGroup* colorGroup = new QActionGroup( this );
     QSignalMapper* signalMapper = new QSignalMapper(this);
     connect(signalMapper, SIGNAL(mapped(int)), this, SIGNAL(colorSelected(int)));
@@ -311,13 +309,11 @@ void MainWindow::createToolbars()
     annotationToolBar->addAction(nextAnnotationAction);
     annotationToolBar->addAction(prevAnnotationAction);
 	//annotationToolBar->addAction(browseCommunityAction);
-	//annotationToolBar->addAction(delAnnotationAction);
-	toolBarMenu->addAction(annotationToolBar->toggleViewAction());
+    //annotationToolBar->addAction(delAnnotationAction);
 	
     presetToolBar = new QToolBar("Visualization Graphs");
     presetToolBar->setObjectName("Visualization Graphs");
-	presetToolBar->setOrientation(Qt::Horizontal);
-	toolBarMenu->addAction(presetToolBar->toggleViewAction());
+    presetToolBar->setOrientation(Qt::Horizontal);
 	
     toolToolBar = addToolBar("Mouse Tools");
     toolToolBar->setObjectName("Mouse Tools");
@@ -327,11 +323,9 @@ void MainWindow::createToolbars()
 	toolToolBar->addAction(selectAction);
 	toolToolBar->addAction(findAction);
     toolToolBar->addAction(screenCaptureAction);
-	toolBarMenu->addAction(toolToolBar->toggleViewAction());
 	
     //previous location of createUiVars()
-	
-	toolBarMenu->addAction(settingToolBar->toggleViewAction());
+
 	addToolBar(Qt::RightToolBarArea,presetToolBar);
 	addToolBar(Qt::LeftToolBarArea,toolToolBar);
 	addToolBar(Qt::LeftToolBarArea,annotationToolBar);
