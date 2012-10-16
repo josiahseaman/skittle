@@ -96,8 +96,7 @@ private:
 	QMenu *searchMenu;
 	QMenu *toolMenu;
     QMenu *colorSettingsMenu;
-	QMenu *viewMenu;
-	QMenu *toolBarMenu;
+    QMenu *viewMenu;
 	
 	QActionGroup *toolActionGroup;
 	
