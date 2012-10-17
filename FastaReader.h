@@ -49,6 +49,7 @@ private:
 	UiVariables* ui;
 	char upperCase(char& c);
 	void storeChrName(string n);
+    void setupProgressBar();
 	string logo();
 
 	ifstream wordfile;

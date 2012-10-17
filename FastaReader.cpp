@@ -60,16 +60,7 @@ bool FastaReader::readFile(QString fileName)
     }
     ui->print(file);
 
-    //Setup the progress bar by initially wiping it if one already exists
-    if(progressBar)
-    {
-        delete progressBar;
-        progressBar = NULL;
-    }
-    //Then setup a new progress bar
-    progressBar = new QProgressDialog("Loading File...", "Cancel", 0, 100);
-    connect(progressBar, SIGNAL(canceled()), this, SLOT(cancel()));
-    progressBar->show();
+    setupProgressBar();
 
     //Parse the name of the chromosome from the file name and send it to glwidget to be stored
     storeChrName(file);
@@ -80,12 +71,9 @@ bool FastaReader::readFile(QString fileName)
     sequence.reserve(5);
     sequence = string(">");
 
-    QApplication::processEvents();
-
     //Clear out anything that may be in the ifstream then open the new file
     wordfile.clear();
     wordfile.open(file.c_str(), ifstream::in | ifstream::binary);
-
     //See if we opened the file successfully
     if(wordfile.fail())
     {
@@ -108,6 +96,8 @@ bool FastaReader::readFile(QString fileName)
     //Start progress bar at 0
     int progress = bytesInFile / 20;
     progressBar->setValue(progress);
+
+    QApplication::processEvents();
 
     //Return to the beginning of the file
     wordfile.seekg(0, ios::beg);
@@ -139,8 +129,8 @@ bool FastaReader::readFile(QString fileName)
 
         if(i != 0 && i % progress == 0)
         {
-            QApplication::processEvents();
             progressBar->setValue(progressBar->value() + 5);
+            QApplication::processEvents();
         }
 
         i++;
@@ -174,6 +164,20 @@ char FastaReader::upperCase(char& c)
 void FastaReader::cancel()
 {
     cancelled = true;
+}
+
+void FastaReader::setupProgressBar()
+{
+    //Setup the progress bar by initially wiping it if one already exists
+    if(progressBar)
+    {
+        delete progressBar;
+        progressBar = NULL;
+    }
+    //Then setup a new progress bar
+    progressBar = new QProgressDialog("Loading File...", "Cancel", 0, 100);
+    connect(progressBar, SIGNAL(canceled()), this, SLOT(cancel()));
+    progressBar->show();
 }
 
 string FastaReader::trimFilename(string path)
