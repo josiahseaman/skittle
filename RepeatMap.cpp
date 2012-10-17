@@ -47,6 +47,7 @@ RepeatMap::RepeatMap(UiVariables* gui, GLWidget* gl)
 {
     canvas_3mer = NULL;
     barWidth = 20;
+    spacerWidth = 2;
 	F_width = 250;
     F_start = 1;
     F_height = 1;
@@ -141,7 +142,7 @@ void RepeatMap::display()
         if(using3merGraph && ui->scaleDial->value() == 1)
         {
             canvas_3mer->display();
-            glTranslated(barWidth+2, 0, 0);
+            glTranslated(barWidth+spacerWidth, 0, 0);
         }
 		textureBuffer->display();
 
@@ -332,8 +333,12 @@ string RepeatMap::SELECT_MouseClick(point2D pt)
 	//range check
 	if( pt.x < (int)width() && pt.x >= 0 && pt.y <= height() )
 	{
-        int percentage = freq[pt.y][pt.x] * 100;
-		pt.x += 1;//+1 because offset 1 is the first pixel [0]
+        if(using3merGraph)
+            pt.x -= barWidth + spacerWidth;
+        if(pt.x < 0)//clicked on the 3mer detector, not freq_map
+            return string();
+
+        int percentage = freq[pt.y][pt.x+1] * 100;//+1 because offset 1 is the first pixel [0]
         pt.x *= ui->scaleDial->value();
         int index = pt.y * ui->widthDial->value();
         index = index + ui->startDial->value();
@@ -345,7 +350,7 @@ string RepeatMap::SELECT_MouseClick(point2D pt)
             ss << percentage << "% similarity at Offset "<< pt.x+ F_start;
             ss << "\nIndex: " << index << ": " << sequence->substr(index, w);
             ss << "\nIndex: " << index2<< ": " << sequence->substr(index2, w);
-			ui->print(ss.str());
+            ui->print(ss.str());
 		}
 	}
 	return string();
@@ -463,5 +468,8 @@ double RepeatMap::correlate(vector<color>& img, int beginA, int beginB, int pixe
 
 int RepeatMap::width()
 {
-    return F_width + barWidth + 2;
+    int w = F_width;
+    if(using3merGraph)
+        w += barWidth + spacerWidth;
+    return w;
 }

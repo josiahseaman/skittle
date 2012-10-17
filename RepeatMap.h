@@ -58,6 +58,7 @@ protected:
 	vector< vector<float> > freq;
 	vector<color> pixels;
     int barWidth;
+    int spacerWidth;
 	int F_width;
 	int F_start;
 	int F_height;
