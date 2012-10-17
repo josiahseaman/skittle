@@ -20,26 +20,16 @@ class NucleotideDisplay : public AbstractGraph
 	Q_OBJECT
 
 public:
-	vector<color> nucleotide_colors;
-	bool invert;
-	bool C;
-	bool G;
-	bool A;
-	bool T;	
+    bool invert;
 	
 	NucleotideDisplay(UiVariables* gui, GLWidget* gl);
     ~NucleotideDisplay();
-	virtual void display();
-	virtual GLuint render();
-    virtual void load_nucleotide();
-    virtual void loadTextureCanvas(bool raggedEdge = false);
+    virtual void calculateOutputPixels();
     virtual void sequenceToColors(const char* genome);
     virtual void color_compress();
-	int widthInBp();//Nucleotide Display changes Width internally to w/scale
 	
 public slots:	
 //	void changeWidth(int w);
-	string mouseClick(point2D pt);
 	
 signals:
 

@@ -28,6 +28,7 @@ protected:
     GLuint display_object;
 
 public:
+    vector<color> outputPixels;
 	GLWidget* glWidget;
 	UiVariables* ui;	
     TextureCanvas* textureBuffer;
@@ -48,21 +49,23 @@ public:
 
 	virtual int height();
 	virtual void paint_square(point position, color c);
+    virtual void loadTextureCanvas(bool raggedEdge = false);
     virtual void storeDisplay(vector<color>& pixels, int width, bool raggedEdge = false);
 	virtual bool updateInt(int& subject, int& value);
     virtual bool updateDouble(double& subject, double& value);
-	virtual void display() = 0;
+    virtual void display();
+    virtual GLuint render();
+    virtual void calculateOutputPixels() = 0;
 	virtual void displayLegend(float canvasWidth, float canvasHeight);
 	virtual void checkVariables();
-	virtual void ensureVisible();
-	virtual GLuint render() = 0;
+    virtual void ensureVisible();
 	virtual void setButtonFont();
-	virtual void setSequence(const string* seq);
-	virtual string mouseClick(point2D pt);
+    virtual void setSequence(const string* seq);
 	virtual string getFileName();
 	virtual QScrollArea* settingsUi();
 	string reverseComplement(string original);
     virtual int current_display_size();
+    virtual string mouseClick(point2D pt);
 	
 inline char complement(char a)
 {

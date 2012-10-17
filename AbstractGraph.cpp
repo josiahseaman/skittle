@@ -1,6 +1,7 @@
 #include "AbstractGraph.h"
 #include "UiVariables.h"
 #include "glwidget.h"
+#include <sstream>
 #include <math.h>
 
 
@@ -39,11 +40,40 @@ AbstractGraph::~AbstractGraph()
 {
 	if(toggleButton != NULL)
 		emit deleteButton(toggleButton);
+
+    glDeleteLists(display_object, 1);//for the Graphs that use a cached GL_Display_List,
+    //you need to delete it on exit so it doesn't suck up memory on the graphics card.
 }
 
 void AbstractGraph::checkVariables()
 {
-//TODO: delete this
+//This is a place holder for the case where a Graph needs to check its settings tab
+}
+
+void AbstractGraph::display()
+{
+    checkVariables();
+    glPushMatrix();
+    glScaled(1,-1,1);
+        if(!upToDate)
+            calculateOutputPixels();
+        textureBuffer->display();
+    glPopMatrix();
+}
+
+GLuint AbstractGraph::render()
+{
+    GLuint list = glGenLists(1);
+    glNewList(list, GL_COMPILE);
+    glPushMatrix();
+    glScaled(1,-1,1);
+    if(!upToDate)
+        calculateOutputPixels();
+    textureBuffer->display();
+    glPopMatrix();
+    glEndList();
+    upToDate = true;
+    return list;
 }
 
 int AbstractGraph::height()
@@ -63,6 +93,11 @@ void AbstractGraph::paint_square(point position, color c)
 	        glVertex3d(.0, -1, 0);
 	    glEnd();
 	glPopMatrix();
+}
+
+void AbstractGraph::loadTextureCanvas(bool raggedEdge)
+{
+    storeDisplay( outputPixels, width(), raggedEdge );
 }
 
 void AbstractGraph::storeDisplay(vector<color>& pixels, int width, bool raggedEdge)
@@ -161,11 +196,6 @@ void AbstractGraph::setSequence(const string* seq)
     sequence = seq;
 }
 
-string AbstractGraph::mouseClick(point2D pt)
-{	
-	return string();
-}
-
 int AbstractGraph::width() 
 {
     return ui->widthDial->value() / ui->scaleDial->value();
@@ -187,4 +217,30 @@ string AbstractGraph::reverseComplement(string original)
 		rc[x] = complement(original[size-x-1]);
 	}
 	return rc;
+}
+
+string AbstractGraph::mouseClick(point2D pt)
+{
+    //range check
+    if( pt.x < width() && pt.x >= 0 && pt.y <= height() )
+    {
+        int sample_length = ui->widthDial->value();
+        int index = pt.y * width() + pt.x;
+        index *= ui->scaleDial->value();
+        index = max(0, index);
+        index = min((int)current_display_size()-sample_length-1, index);
+        index = min( index + ui->startDial->value(), ((int)sequence->size()) - sample_length-1 );
+
+        std::stringstream ss;
+        ss << "Index: " << index << "  Sequence: " << sequence->substr(index, sample_length);
+        //string chromosome = glWidget->chromosomeName;
+        //ss<< "   <a href=\"http://genome.ucsc.edu/cgi-bin/hgTracks?hgsid=132202298&clade=mammal&org=Human&db=hg18&position="
+        //<<chromosome<<":"<<index<<"-"<<index+200<<"&pix=800&Submit=submit\">View in Genome Browser</a> [external link]";
+        //																											chr5			12389181	12390000
+        ui->print(ss.str().c_str());
+        return sequence->substr(index, min(1000, sample_length));
+    }
+    else{
+        return string();
+    }
 }

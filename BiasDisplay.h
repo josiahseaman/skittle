@@ -16,7 +16,7 @@ public:
     int max_bar_width;
 
     BiasDisplay(UiVariables* gui, GLWidget* gl);
-    void load_nucleotide();
+    void calculateOutputPixels();
     void sequenceToColors(const char* genome);
     vector<int> countNucleotides(const char* genome);
 

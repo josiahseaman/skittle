@@ -25,8 +25,9 @@ public:
     ~CylinderDisplay();
 	void createSquare();
 	void quickSquare();
+    void calculateOutputPixels();
 	void display();
-	GLuint render();
+    GLuint render();
 	int width();
 	string mouseClick(point2D pt);
 	

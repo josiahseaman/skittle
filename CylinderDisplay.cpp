@@ -49,19 +49,23 @@ void CylinderDisplay::quickSquare()
    	glCallList(square);
 }
 
+void CylinderDisplay::calculateOutputPixels()
+{
+    glDeleteLists(display_object, 1);
+    display_object = render();
+}
+
 void CylinderDisplay::display()
 {
 	checkVariables();
 	if( !upToDate )
-	{
-        glDeleteLists(display_object, 1);
-        display_object = render();
+    {
+        calculateOutputPixels();
 	}
 	glPushMatrix();
 		glTranslated(width()/2, 0, 0);
 		glRotated(turnCylinder, 0,1,0);//rotate cylinder around Y	
         glCallList(display_object);
-        //render();
 	glPopMatrix();
 }
 

@@ -11,7 +11,7 @@ BiasDisplay::BiasDisplay(UiVariables* gui, GLWidget* gl)
     max_bar_width = 40;
 }
 
-void BiasDisplay::load_nucleotide()
+void BiasDisplay::calculateOutputPixels()
 {
     const char* genome = sequence->c_str() + ui->startDial->value();//TODO: find a safer way to access this
     sequenceToColors(genome);
@@ -22,7 +22,7 @@ void BiasDisplay::load_nucleotide()
 
 void BiasDisplay::sequenceToColors(const char* genome)
 {
-    nucleotide_colors.clear();
+    outputPixels.clear();
     int tempWidth = ui->widthDial->value();
 
     for(int h = 0; h < height(); h++)
@@ -40,7 +40,7 @@ void BiasDisplay::sequenceToColors(const char* genome)
             bar_sizes.push_back((int)(barSize+.5));
         }
         vector<color> bar = drawJustifiedBar(bar_sizes, max_bar_width, glWidget);
-        nucleotide_colors.insert(nucleotide_colors.end(), bar.begin(), bar.end()  );
+        outputPixels.insert(outputPixels.end(), bar.begin(), bar.end()  );
     }
     return;
 }

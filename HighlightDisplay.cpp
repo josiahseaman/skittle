@@ -109,7 +109,7 @@ void HighlightDisplay::display()
 			loadTextureCanvas();
 			upToDate = true;
 		}
-		if( !nucleotide_colors.empty())
+		if( !outputPixels.empty())
 			textureBuffer->display();
 	glPopMatrix();
 }
@@ -186,7 +186,7 @@ vector<unsigned short int> HighlightDisplay::calculate(string find)
 
 void HighlightDisplay::combine(vector< vector<int> >& results)
 {	
-	nucleotide_colors.clear();
+	outputPixels.clear();
 	
 	//ensure they're all the same length
 	int nSequences = results.size();
@@ -230,7 +230,7 @@ void HighlightDisplay::combine(vector< vector<int> >& results)
 			if( score == 258) c = seqLines[matchSeq]->mismatchColor;		
 			if( score == 260) c = seqLines[matchSeq]->matchColor;
 		}
-		nucleotide_colors.push_back( c );
+		outputPixels.push_back( c );
 	}
 }
 

@@ -22,6 +22,7 @@ public:
 	
 	AnnotationDisplay(UiVariables* gui, GLWidget* gl, string gtfFileName);
 	~AnnotationDisplay();
+    void calculateOutputPixels();
 	void display();
 	GLuint render();
     void displayLayout(vector<vector<track_entry> > layout);

@@ -36,48 +36,18 @@ NucleotideDisplay::NucleotideDisplay(UiVariables* gui, GLWidget* gl)
 :AbstractGraph(gui, gl)
 {	
     hidden = false;
-	invert = false;
-	C = true;
-	G = true;
-	A = true;
-	T = true;
+    invert = false;
 	
 	actionLabel = string("Nucleotide Display");
 	actionTooltip = string("Nucleotides as Colors");
     actionData = actionLabel;
 }
 
-NucleotideDisplay::~NucleotideDisplay(){
-    glDeleteLists(display_object, 1);
-}
-
-void NucleotideDisplay::display()
+NucleotideDisplay::~NucleotideDisplay()
 {
-	checkVariables();
-    glPushMatrix();
-	glScaled(1,-1,1);
-		if(!upToDate)
-			load_nucleotide();
-		textureBuffer->display();
-	glPopMatrix();
 }
 
-GLuint NucleotideDisplay::render()
-{
-    GLuint list = glGenLists(1);
-    glNewList(list, GL_COMPILE);
-    glPushMatrix();
-    glScaled(1,-1,1);
-    if(!upToDate)
-        load_nucleotide();
-    textureBuffer->display();
-    glPopMatrix();
-    glEndList();
-    upToDate = true;
-    return list;
-}
-
-void NucleotideDisplay::load_nucleotide()
+void NucleotideDisplay::calculateOutputPixels()
 {
     const char* genome = sequence->c_str() + ui->startDial->value();//TODO: find a safer way to access this
     sequenceToColors(genome);
@@ -85,20 +55,15 @@ void NucleotideDisplay::load_nucleotide()
 	upToDate = true;
 }
 
-void NucleotideDisplay::loadTextureCanvas(bool raggedEdge)
-{
-    storeDisplay( nucleotide_colors, width(), raggedEdge );
-}
-
 void NucleotideDisplay::sequenceToColors(const char* genome)
 {
-    nucleotide_colors.clear();
+    outputPixels.clear();
     if( ui->scaleDial->value() > 1)
         color_compress();
     else
     {
         for(int i = 0; i < current_display_size(); ++i)
-            nucleotide_colors.push_back( glWidget->colors(genome[i]) );//TODO: Optimize pointer function call
+            outputPixels.push_back( glWidget->colors(genome[i]) );//TODO: Optimize pointer function call
     }
 }
 
@@ -121,7 +86,7 @@ void NucleotideDisplay::color_compress()
 			g += current.g;
 			b += current.b;
 		}
-        nucleotide_colors.push_back(color(r/tempScale, g/tempScale, b/tempScale));
+        outputPixels.push_back(color(r/tempScale, g/tempScale, b/tempScale));
 		r = 0;			
 		g = 0;			
 		b = 0;
@@ -130,34 +95,4 @@ void NucleotideDisplay::color_compress()
 }
 
 /******SLOTS*****/
-string NucleotideDisplay::mouseClick(point2D pt)
-{
-	//range check
-	if( pt.x < width() && pt.x >= 0 && pt.y <= height() )
-    {
-        int sample_length = ui->widthDial->value();
-		int index = pt.y * width() + pt.x;
-        index *= ui->scaleDial->value();
-		index = max(0, index);
-        index = min((int)current_display_size()-sample_length-1, index);
-        index = min( index + ui->startDial->value(), ((int)sequence->size()) - sample_length-1 );
-
-		stringstream ss;
-        ss << "Index: " << index << "  Sequence: " << sequence->substr(index, sample_length);
-        //string chromosome = glWidget->chromosomeName;
-		//ss<< "   <a href=\"http://genome.ucsc.edu/cgi-bin/hgTracks?hgsid=132202298&clade=mammal&org=Human&db=hg18&position="
-		//<<chromosome<<":"<<index<<"-"<<index+200<<"&pix=800&Submit=submit\">View in Genome Browser</a> [external link]";
-		//																											chr5			12389181	12390000
-		ui->print(ss.str().c_str());
-        return sequence->substr(index, min(1000, sample_length));
-	}
-	else{
-		return string();
-	}
-}
 /**/
-
-int NucleotideDisplay::widthInBp()//Nucleotide Display changes Width internally to w/scale
-{
-    return ui->widthDial->value();
-}

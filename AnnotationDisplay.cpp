@@ -45,12 +45,17 @@ void AnnotationDisplay::newTrack(vector<track_entry> track)
 	emit displayChanged();
 }
 
+void AnnotationDisplay::calculateOutputPixels()
+{
+    glDeleteLists(display_object, 1);
+    display_object = render();
+}
+
 void AnnotationDisplay::display()
 {
 	if( !upToDate )
-	{
-        glDeleteLists(display_object, 1);
-		display_object = render();
+    {
+        calculateOutputPixels();
 	}	
     glCallList(display_object);
 }

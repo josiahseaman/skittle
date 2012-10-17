@@ -119,10 +119,10 @@ void RepeatMap::display()
 			nuc->checkVariables();
 			if(!nuc->upToDate)
 			{
-				nuc->load_nucleotide();
+                nuc->calculateOutputPixels();
 			}
             int displayWidth = ui->widthDial->value() / ui->scaleDial->value();
-            calculate(nuc->nucleotide_colors, displayWidth);
+            calculate(nuc->outputPixels, displayWidth);
 		}
 		else
         {
@@ -191,17 +191,23 @@ void RepeatMap::load_canvas()
 	upToDate = true;
 }
 
+void RepeatMap::calculateOutputPixels()
+{
+    freq_map();
+    load_canvas();
+}
+
 GLuint RepeatMap::render()
 {
 	if(! upToDate )
-		freq_map();	
+    {
+        calculateOutputPixels();
+    }
 
 	GLuint list = glGenLists(1);
     glNewList(list, GL_COMPILE);
 	glPushMatrix();
-	glScaled(1,-1,1);
-		if(!upToDate)
-			load_canvas();	
+    glScaled(1,-1,1);
 		textureBuffer->display();	
 	glPopMatrix();
     glEndList();

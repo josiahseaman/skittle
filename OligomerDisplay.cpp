@@ -186,27 +186,32 @@ void OligomerDisplay::changeWordLength(int w)
 	}
 }
 
+void OligomerDisplay::calculateOutputPixels()
+{
+    if(graphThreeOn)
+    {
+        freq_map();
+        calculateHeatMap();
+        selfCorrelationMap();
+    }
+    else if(graphTwoOn)
+    {
+        freq_map();
+        calculateHeatMap();
+    }
+    else
+    {
+        freq_map();
+    }
+    load_canvas();
+}
+
 void OligomerDisplay::display()
 {
 	checkVariables();
 	if(! upToDate )
 	{
-        if(graphThreeOn)
-        {
-            freq_map();
-            calculateHeatMap();
-            selfCorrelationMap();
-        }
-        else if(graphTwoOn)
-        {
-            freq_map();
-            calculateHeatMap();
-        }
-        else
-        {
-            freq_map();
-        }
-        load_canvas();
+        calculateOutputPixels();
 	}
 	width();
 	glPushMatrix();
@@ -488,7 +493,7 @@ string OligomerDisplay::mouseClick(point2D pt)
 	//range check
 	if( pt.x < (int)width()-similarityGraphWidth && pt.x >= 0  )
 	{
-		pt.x = pt.x / 2;
+        pt.x = pt.x / 2;//TODO: is this /2 still correct?
 		int index = pt.y * ui->widthDial->value();
         index = index + ui->startDial->value();
 		int w = min( 100, ui->widthDial->value() );

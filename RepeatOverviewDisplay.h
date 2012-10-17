@@ -6,11 +6,11 @@
 #include <vector>
 #include "BasicTypes.h"
 #include "UiVariables.h"
-#include "AbstractGraph.h"
+#include "NucleotideDisplay.h"
 
 using namespace std;
 
-class RepeatOverviewDisplay : public AbstractGraph
+class RepeatOverviewDisplay : public NucleotideDisplay
 {
     Q_OBJECT
     

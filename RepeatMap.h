@@ -28,6 +28,7 @@ public:
     void load_3mer_canvas(vector<float> scores);
 	void link(NucleotideDisplay* nuc_display);
 	void load_canvas();
+    void calculateOutputPixels();
 	GLuint render();
     void freq_map();
     vector<float> convolution_3mer();

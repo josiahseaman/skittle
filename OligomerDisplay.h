@@ -27,6 +27,7 @@ public:
     ~OligomerDisplay();
 	QScrollArea* settingsUi();
 	void checkVariables();
+    void calculateOutputPixels();
 	void display();
 	//vector<color> calculateAverageSignature(int, int);
 	//void isochores();

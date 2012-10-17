@@ -63,12 +63,12 @@ Development:
 *************************************/
 
 RepeatOverviewDisplay::RepeatOverviewDisplay(UiVariables* gui, GLWidget* gl)
-    :AbstractGraph(gui, gl)
+    :NucleotideDisplay(gui, gl)
 {
+    hidden = true;
     charPerIndex = 4;
 	sequence = NULL;
-	packSeq = NULL;
-	toggleButton = NULL;
+    packSeq = NULL;
 	countTableShort = NULL;
 	countTableChar = NULL;
 	pSeqSize = 0;
