@@ -250,15 +250,22 @@ void GLWidget::on_screenCaptureButton_clicked()
 
     QImage image;
 
+    int pictureWidth = getTotalPixelWidth();
+
+    //Set the gl render width to the total graph's pixel widths
+    int tempWidth = width();
+    resize(pictureWidth, height());
+    paintGL();
+
     if (format().rgba())
     {
-        image = read_framebuffer(QSize(width(), height()), format().alpha(), false);
+        image = read_framebuffer(QSize(pictureWidth, height()), format().alpha(), false);
     }
     else
     {
         #if defined(Q_WS_WIN) && !defined(QT_OPENGL_ES)
-            image = QImage(width(), height(), QImage::Format_Indexed8);
-            glReadPixels(0, 0, width(), height(), GL_COLOR_INDEX, GL_UNSIGNED_BYTE, image.bits());
+            image = QImage(pictureWidth, height(), QImage::Format_Indexed8);
+            glReadPixels(0, 0, pictureWidth, height(), GL_COLOR_INDEX, GL_UNSIGNED_BYTE, image.bits());
             const QVector<QColor> pal = QColormap::instance().colormap();
 
             if(pal.size())
@@ -282,6 +289,21 @@ void GLWidget::on_screenCaptureButton_clicked()
 
     filename.prepend("Saved image: ");
     ui->print(filename.toStdString());
+
+    //Set width back to what it should be
+    this->resize(tempWidth, height());
+    paintGL();
+}
+
+int GLWidget::getTotalPixelWidth()
+{
+    int pixelWidth = border;
+    for(int i = 0; i < (int)graphs.size(); ++i)
+    {
+        if(graphs[i]->hidden == false)
+            pixelWidth += graphs[i]->width() + border;
+    }
+    return pixelWidth * getZoom() * 6;
 }
 
 QImage GLWidget::read_framebuffer(const QSize &size, bool alpha_format, bool include_alpha)

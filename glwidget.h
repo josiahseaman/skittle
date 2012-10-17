@@ -160,6 +160,7 @@ private:
 	int frame;
     QImage read_framebuffer(const QSize &size, bool alpha_format, bool include_alpha);
     void convertFromGLImage(QImage &img, int w, int h, bool alpha_format, bool include_alpha);
+    int getTotalPixelWidth();
 };
 //! [3]
 /* Alu Consensus Sequence 290bp
