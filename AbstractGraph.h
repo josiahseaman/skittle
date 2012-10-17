@@ -66,6 +66,10 @@ public:
 	string reverseComplement(string original);
     virtual int current_display_size();
     virtual string mouseClick(point2D pt);
+    virtual int getRelativeIndexFromMouseClick(point2D pt);
+    virtual int adjustForSampleLengthBounds(int index, int sample_length);
+    virtual string stringFromMouseClick(int index);
+    virtual string getFindStringFromMouseClick(int index);
 	
 inline char complement(char a)
 {
