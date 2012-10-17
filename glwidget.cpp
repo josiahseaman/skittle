@@ -205,11 +205,12 @@ void GLWidget::displayString(const string* sequence)
         graphs[i]->invalidate();
     }
     ui->startDial->setValue(1);
-    ui->widthDial->setValue(128);
+    ui->changeScale(1);
+    ui->changeWidth(128);
 
     //zoomExtents();
-	
-    emit displaySizeChanged();
+
+    updateDisplaySize();
     ui->zoomDial->setValue(ui->zoomDial->value() + 1);
     this->updateDisplay();
     ui->zoomDial->setValue(ui->zoomDial->value() - 1);

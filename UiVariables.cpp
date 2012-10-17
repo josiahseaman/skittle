@@ -170,6 +170,7 @@ void UiVariables::changeScale(int newScale)
 
         widthDial->setSingleStep(newScale);//increment the width step by scaleDial
         widthDial->setMinimum(newScale);
+        widthDial->setMaximum(maxSaneWidth * newScale);
         oldScale = newScale;
         oldWidth = newWidth;
         emit internalsUpdated();
