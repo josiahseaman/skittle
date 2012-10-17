@@ -74,11 +74,13 @@ bool FastaReader::readFile(QString fileName)
     //Parse the name of the chromosome from the file name and send it to glwidget to be stored
     storeChrName(file);
 
-    QApplication::processEvents();
-
     //Clear out anything that may be left in the sequence string and set initial pad character
     sequence.clear();
+    sequence = "";
+    sequence.reserve(5);
     sequence = string(">");
+
+    QApplication::processEvents();
 
     //Clear out anything that may be in the ifstream then open the new file
     wordfile.clear();
@@ -92,6 +94,7 @@ bool FastaReader::readFile(QString fileName)
     }
 
     //Get how many characters are in the file
+    wordfile.seekg(0, ios::beg);
     int begin = wordfile.tellg();
     wordfile.seekg(0, ios::end);
     int end = wordfile.tellg();
@@ -114,6 +117,7 @@ bool FastaReader::readFile(QString fileName)
     //Read in the rest of the file
     char current;
     int i = 0;
+    cancelled = false;
     do
     {
         //If the cancel button was pushed, go ahead and exit fasta reader
