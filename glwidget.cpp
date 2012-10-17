@@ -273,7 +273,15 @@ void GLWidget::on_screenCaptureButton_clicked()
         #endif
     }
 
-    image.save("capture.png");
+    stringstream namestream;
+    namestream << "capture\\" << chromosomeName << "_w-" << ui->widthDial->value() << "_st-" << ui->startDial->value() << "_sc-" << ui->scaleDial->value() << ".png";
+
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save Image"), namestream.str().c_str(), tr("Images (*.png *.jpg)"));
+
+    image.save(filename);
+
+    filename.prepend("Saved image: ");
+    ui->print(filename.toStdString());
 }
 
 QImage GLWidget::read_framebuffer(const QSize &size, bool alpha_format, bool include_alpha)
