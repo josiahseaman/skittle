@@ -327,7 +327,7 @@ void RepeatMap::toggle3merGraph(bool m)
     invalidate();
 }
 
-string RepeatMap::mouseClick(point2D pt)
+string RepeatMap::SELECT_MouseClick(point2D pt)
 {
 	//range check
 	if( pt.x < (int)width() && pt.x >= 0 && pt.y <= height() )

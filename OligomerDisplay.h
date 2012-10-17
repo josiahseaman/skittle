@@ -44,7 +44,7 @@ public:
 	void freq_map();
 	int oligNum(string a);
 	int height();
-	string mouseClick(point2D pt);
+	string SELECT_MouseClick(point2D pt);
 	
 	void display_freq();
 	void calculate(vector<color>& img, int vote_size);

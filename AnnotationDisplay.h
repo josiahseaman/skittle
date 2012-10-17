@@ -28,7 +28,7 @@ public:
     void displayLayout(vector<vector<track_entry> > layout);
     vector<vector<track_entry> > calculateTrackLayout(const vector<track_entry>& track);
 	void newTrack(vector<track_entry> track);
-	string mouseClick(point2D pt);
+	string SELECT_MouseClick(point2D pt);
 	int width();
 	void setFileName(string gtfFileName);
 	string getFileName();

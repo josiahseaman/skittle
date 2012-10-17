@@ -33,7 +33,7 @@ public:
     void freq_map();
     vector<float> convolution_3mer();
 	int height();
-	string mouseClick(point2D pt);
+	string SELECT_MouseClick(point2D pt);
 	
 	vector<point> bestMatches();
 	void display_freq();

@@ -712,13 +712,16 @@ void GLWidget::mousePressEvent(QMouseEvent* event)
 	if(tool() == SELECT_TOOL || tool() == FIND_TOOL)
 	{
 		vector<string> responses;
-		/*Progressively decrement x based on the cumulative width of modules*/
-		/*The order here is important and should match the left to right display order*/
+        /*Progressively decrement x based on the cumulative width of modules
+        The order here is important and should match the left to right display order*/
 		for(int i = 0; i < (int)graphs.size(); ++i)
 		{
 			if(!graphs[i]->hidden)
 			{
-				responses.push_back(graphs[i]->mouseClick(oglCoords));
+                if(tool() == SELECT_TOOL )
+                    responses.push_back(graphs[i]->SELECT_MouseClick(oglCoords));
+                if(tool() == FIND_TOOL)
+                    responses.push_back(graphs[i]->FIND_MouseClick(oglCoords));
 				oglCoords.x -= graphs[i]->width() + border;
 			}
 		}

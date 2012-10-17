@@ -174,7 +174,7 @@ void AnnotationDisplay::stackEntry(vector<track_entry>& activeEntries, track_ent
 		activeEntries.push_back(item);
 }
 
-string AnnotationDisplay::mouseClick(point2D pt)
+string AnnotationDisplay::SELECT_MouseClick(point2D pt)
 {
 	//range check
 	if( pt.x <= width() && pt.x >= 0 )

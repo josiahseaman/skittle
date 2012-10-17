@@ -488,7 +488,7 @@ int OligomerDisplay::height()
 }
 
 /******SLOTS*****/
-string OligomerDisplay::mouseClick(point2D pt)
+string OligomerDisplay::SELECT_MouseClick(point2D pt)
 {
 	//range check
 	if( pt.x < (int)width()-similarityGraphWidth && pt.x >= 0  )

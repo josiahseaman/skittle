@@ -29,7 +29,7 @@ public:
 	void display();
     GLuint render();
 	int width();
-	string mouseClick(point2D pt);
+	string SELECT_MouseClick(point2D pt);
 	
 	
 public slots:	

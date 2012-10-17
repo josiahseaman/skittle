@@ -219,22 +219,33 @@ string AbstractGraph::reverseComplement(string original)
     return rc;
 }
 
-string AbstractGraph::mouseClick(point2D pt)
+string AbstractGraph::mouseClick(point2D pt, bool selectTool)
 {
     int index = getRelativeIndexFromMouseClick(pt);
     if( index > -1)
     {
         int sample_length = ui->widthDial->value();
         index = adjustForSampleLengthBounds(index, sample_length);
-        ui->print(stringFromMouseClick(index));
-
-        string findString = getFindStringFromMouseClick(index);
-        return findString;
+        if(selectTool)
+            return SELECT_StringFromMouseClick(index);
+        else
+            return FIND_StringFromMouseClick(index);
     }
     else{
         return string();
     }
 }
+
+string AbstractGraph::SELECT_MouseClick(point2D pt)
+{
+    return mouseClick(pt, true);
+}
+
+string AbstractGraph::FIND_MouseClick(point2D pt)
+{
+    return mouseClick(pt, false);
+}
+
 
 /** Returns the relative index on a square area.  It will return -1 if
   the point is invalid. */
@@ -258,7 +269,7 @@ int AbstractGraph::adjustForSampleLengthBounds(int index, int sample_length)
     return index;
 }
 
-string AbstractGraph::stringFromMouseClick(int index)
+string AbstractGraph::SELECT_StringFromMouseClick(int index)
 {
     int sample_length = ui->widthDial->value();
     std::stringstream ss;
@@ -270,7 +281,7 @@ string AbstractGraph::stringFromMouseClick(int index)
     return ss.str();
 }
 
-string AbstractGraph::getFindStringFromMouseClick(int index)
+string AbstractGraph::FIND_StringFromMouseClick(int index)
 {
     int sample_length = ui->widthDial->value();
     return sequence->substr(index, min(500, sample_length));

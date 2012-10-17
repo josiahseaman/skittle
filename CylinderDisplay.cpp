@@ -147,7 +147,7 @@ int CylinderDisplay::width()
 	return (int)(max_width / pi);
 }
 
-string CylinderDisplay::mouseClick(point2D pt)
+string CylinderDisplay::SELECT_MouseClick(point2D pt)
 {
     return string("");//TODO: Not yet implemented.
 }
