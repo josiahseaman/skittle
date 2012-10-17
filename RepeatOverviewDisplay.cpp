@@ -151,45 +151,6 @@ GLuint RepeatOverviewDisplay::render()
     return list;
 }
 
-void RepeatOverviewDisplay::VLRcheck(vector<point> matches)//alternative to loadTexture
-{
-	/*int s = ui->scaleDial->value();
-	s = max(4, (s / 4) * 4);//enforces scale is a multiple of 4
-	ui->scaleDial->setValue(s);
-	checkVariables();*/
-	//return if changed?
-
-	vector<color> alignment_colors;
-    int end = max(1, (ui->startDial->value() + current_display_size()) - 251);
-    int tempScale = ui->scaleDial->value();
-    for(int i = ui->startDial->value(); i < end; i += tempScale)
-		alignment_colors.push_back( simpleAlignment(i) );
-
-	mergeMatches( alignment_colors, matches );
-
-	storeDisplay( alignment_colors, width());
-
-	upToDate = true;
-}
-
-void RepeatOverviewDisplay::mergeMatches(vector<color>& original, vector<point>& vlr)
-{
-	int start = 250 / ui->scaleDial->value();
-	start = max( 10, start);
-    int tempScale = ui->scaleDial->value();
-    for( int i = 0; i < (int)vlr.size(); ++i)
-	{
-		if((vlr[i].y > start) && (vlr[i].x > .7))
-		{
-            for(int k = i * width(); k < (i+1) * width() && k < (int)original.size(); ++k)
-			{
-				//original[k] = (original[k]/3) + (alignment_color( vlr[i].x*scale, vlr[i].y)*2.0/3.0);// * scale 
-                original[k] = alignment_color( vlr[i].x*tempScale, vlr[i].y);
-			}
-		}
-	}
-}
-
 void RepeatOverviewDisplay::displayLegend(float canvasWidth, float canvasHeight)
 {
 	/** /
@@ -348,8 +309,15 @@ void RepeatOverviewDisplay::shiftString(unsigned char* str, int size)
 
 color RepeatOverviewDisplay::simpleAlignment(int index)
 {
-	if(packSeq[index/4] == 0)
-		return color(0,0,0);
+    pair<int,int> answer = getBestAlignment(index);
+
+    return alignment_color(answer.first , answer.second);
+}
+
+pair<int,int> RepeatOverviewDisplay::getBestAlignment(int index)
+{
+    if(packSeq[index/4] == 0)
+        return pair<int,int>(0,0);
 		
 	//scale % 4 == 0 always
     int reference_size = ui->scaleDial->value() / 4 + 2;//sequence bytes = scale / 4.  1 byte of padding for shifts. 1 byte for sub_index.
@@ -430,9 +398,8 @@ color RepeatOverviewDisplay::simpleAlignment(int index)
 		shiftMask(bitmask, bitmask_size);
 	}
 	if(best_freq == 0) best_freq = 1;
-	//max_score = scale;
-	return alignment_color(max_score, best_freq);
-	//return color(240,240,17);
+    //max_score = scale;
+    return pair<int,int>(max_score, best_freq);
 }
 
 void RepeatOverviewDisplay::setSequence(const string* seq)
@@ -456,4 +423,16 @@ void RepeatOverviewDisplay::toggleVisibility()
         ui->changeScale(s);
 	}
 	AbstractGraph::toggleVisibility();	
+}
+
+string RepeatOverviewDisplay::SELECT_StringFromMouseClick(int index)
+{
+    int sample_length = ui->scaleDial->value();
+    std::stringstream ss;
+    pair<int,int> answer = getBestAlignment(index);
+    int percentage = (int)(((double)answer.first / (double)sample_length) *100);
+    ss << percentage << "% similarity at +" << answer.second << " offset.";
+    ss << "\nIndex: " << index               << ": " << sequence->substr(index, sample_length);
+    ss << "\nIndex: " << index+answer.second << ": " << sequence->substr(index+answer.second, sample_length);
+    return ss.str();
 }

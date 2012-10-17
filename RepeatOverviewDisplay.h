@@ -19,11 +19,7 @@ public:
 	RepeatOverviewDisplay(UiVariables*, GLWidget* gl);
 	void display();
 	void loadTexture();//calls simple alignment
-	GLuint render();//creates display list using loadTexture
-	
-	void mergeMatches(vector<color>& original, vector<point>& vlr);
-	void VLRcheck(vector<point> matches);
-	
+    GLuint render();//creates display list using loadTexture
 	void displayLegend(float canvasWidth, float canvasHeight);
 	color alignment_color(int score, int frequency);
 	color interpolate(color p1, color p3, double progress);
@@ -41,7 +37,9 @@ public:
 	void shiftMask(char* str, int size);
 	void shiftString(unsigned char* str, int size);
 	color simpleAlignment(int index);
+    pair<int,int> getBestAlignment(int index);
 	void setSequence(const string* seq);
+    string SELECT_StringFromMouseClick(int index);
 
 public slots:
 	void changeScale(int s);

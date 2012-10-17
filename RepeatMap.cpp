@@ -332,6 +332,7 @@ string RepeatMap::SELECT_MouseClick(point2D pt)
 	//range check
 	if( pt.x < (int)width() && pt.x >= 0 && pt.y <= height() )
 	{
+        int percentage = freq[pt.y][pt.x] * 100;
 		pt.x += 1;//+1 because offset 1 is the first pixel [0]
         pt.x *= ui->scaleDial->value();
         int index = pt.y * ui->widthDial->value();
@@ -340,13 +341,12 @@ string RepeatMap::SELECT_MouseClick(point2D pt)
 		int w = min( 100, ui->widthDial->value() );
         if( index2 + w < (int)sequence->size() )
 		{
-			stringstream ss;
-			ss << "Offset: "<<pt.x+ F_start<<" #" << index << " compared with #" << index2 << "  \n"
-				<< sequence->substr(index, w) << "\n <----> \n" << sequence->substr(index2, w);
+            stringstream ss;
+            ss << percentage << "% similarity at Offset "<< pt.x+ F_start;
+            ss << "\nIndex: " << index << ": " << sequence->substr(index, w);
+            ss << "\nIndex: " << index2<< ": " << sequence->substr(index2, w);
 			ui->print(ss.str());
 		}
-		
-		//ui->widthDial->setValue( pt.x);
 	}
 	return string();
 }
