@@ -65,7 +65,7 @@ public:
 	virtual QScrollArea* settingsUi();
 	string reverseComplement(string original);
     virtual int current_display_size();
-    virtual string mouseClick(point2D pt);
+    virtual string mouseClick(point2D pt, bool);
     virtual string SELECT_MouseClick(point2D pt);
     virtual string FIND_MouseClick(point2D pt);
     virtual int getRelativeIndexFromMouseClick(point2D pt);

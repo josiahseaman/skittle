@@ -720,6 +720,12 @@ void GLWidget::resizeGL(int width, int height)
     updateDisplaySize();
 }
 
+void pushNonEmpty(vector<string>& arr, string str)
+{
+    if(!str.empty())
+        arr.push_back(str);
+}
+
 void GLWidget::mousePressEvent(QMouseEvent* event)
 {
     parent->mousePressEvent(event);
@@ -741,23 +747,22 @@ void GLWidget::mousePressEvent(QMouseEvent* event)
 			if(!graphs[i]->hidden)
 			{
                 if(tool() == SELECT_TOOL )
-                    responses.push_back(graphs[i]->SELECT_MouseClick(oglCoords));
+                    pushNonEmpty(responses, graphs[i]->SELECT_MouseClick(oglCoords));
                 if(tool() == FIND_TOOL)
-                    responses.push_back(graphs[i]->FIND_MouseClick(oglCoords));
+                    pushNonEmpty(responses, graphs[i]->FIND_MouseClick(oglCoords));
 				oglCoords.x -= graphs[i]->width() + border;
 			}
 		}
+        if(tool() == SELECT_TOOL)
+        {
+            for(int i = 0; i < (int)responses.size(); ++i)
+                ui->print(responses[i]);
+        }
 		if(tool() == FIND_TOOL)
 		{
-			for(int i = 0; i < (int)responses.size(); ++i)
-			{
-				if(!(responses[i].empty()))
-				{
-					QString copy(responses[i].c_str());
-					highlight->setHighlightSequence(copy);
-				}
-			}
-		}
+            for(int i = 0; i < (int)responses.size(); ++i)
+                highlight->setHighlightSequence(QString(responses[i].c_str()));
+        }
 	}
 	if(tool() == ZOOM_TOOL)
 	{
