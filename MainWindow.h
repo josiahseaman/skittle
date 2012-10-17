@@ -100,6 +100,7 @@ private:
     QMenu *viewMenu;
 	
 	QActionGroup *toolActionGroup;
+    QActionGroup *colorGroup;
 	
 	QToolBar *annotationToolBar;
 	QToolBar *presetToolBar;

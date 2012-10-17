@@ -35,7 +35,7 @@ public:
     int getColorSetting();
 
     //color palletes
-    enum colorPalletes { CLASSIC, DRUMS, COLORBLINDSAFE, REDS, BLUES, BETTERCBSAFE };
+    enum colorPalletes { CLASSIC, COLORBLINDSAFE, BETTERCBSAFE, DRUMS, BLUES, REDS };
 
 public slots:
     void changeWidth(int newWidth);

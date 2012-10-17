@@ -10,5 +10,6 @@
         <file>icons/colorblindsafe.png</file>
         <file>icons/drums.png</file>
         <file>icons/reds.png</file>
+        <file>icons/colorblindsafe2.png</file>
     </qresource>
 </RCC>

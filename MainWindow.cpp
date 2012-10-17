@@ -261,15 +261,14 @@ void MainWindow::createMenus()
     toolActionGroup->addAction(screenCaptureAction);
 
     colorSettingsMenu = menuBar()->addMenu("Color &Settings");
-    QActionGroup* colorGroup = new QActionGroup( this );
+    colorGroup = new QActionGroup( this );
     QSignalMapper* signalMapper = new QSignalMapper(this);
     connect(signalMapper, SIGNAL(mapped(int)), this, SIGNAL(colorSelected(int)));
     connect(this, SIGNAL(colorSelected(int)), ui, SLOT(changeColorSetting(int)));
 
-    createColorPalleteAction(QString("Classic"), UiVariables::CLASSIC, QIcon(":/icons/classic.png"), colorGroup, signalMapper )->setChecked(true);
-
-    createColorPalleteAction(QString("Color Blind Safe"), UiVariables::COLORBLINDSAFE, QIcon(":/icons/colorblindsafe.png"), colorGroup, signalMapper );
-    createColorPalleteAction(QString("Better Color Blind Safe"), UiVariables::BETTERCBSAFE, QIcon(":/icons/colorblindsafe.png"), colorGroup, signalMapper );
+    createColorPalleteAction(QString("Classic"), UiVariables::CLASSIC, QIcon(":/icons/classic.png"), colorGroup, signalMapper );
+    createColorPalleteAction(QString("Color Blind Safe 1"), UiVariables::COLORBLINDSAFE, QIcon(":/icons/colorblindsafe.png"), colorGroup, signalMapper );
+    createColorPalleteAction(QString("Color Blind Safe 2"), UiVariables::BETTERCBSAFE, QIcon(":/icons/colorblindsafe2.png"), colorGroup, signalMapper );
     createColorPalleteAction(QString("DRuMS"), UiVariables::DRUMS, QIcon(":/icons/drums.png"), colorGroup, signalMapper );
     createColorPalleteAction(QString("Blues"), UiVariables::BLUES, QIcon(":/icons/blues.png"), colorGroup, signalMapper );
     createColorPalleteAction(QString("Reds"), UiVariables::REDS, QIcon(":/icons/reds.png"), colorGroup, signalMapper );
@@ -286,7 +285,6 @@ QAction* MainWindow::createColorPalleteAction(QString label, int colorPallete, Q
     colorPalleteAction->setCheckable(true);
     colorPalleteAction->setActionGroup(group);
     colorSettingsMenu->addAction(colorPalleteAction);
-    //this is where the return statement was originally
 
     signalMapper->setMapping(colorPalleteAction, colorPallete);
     connect(colorPalleteAction, SIGNAL(triggered()), signalMapper, SLOT(map()));
@@ -352,9 +350,10 @@ void MainWindow::createDocks()
     infoDock->setFeatures(QDockWidget::NoDockWidgetFeatures);//in particular we want to avoid Closable
     infoDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
 	
-	tabWidget = new QTabWidget(infoDock);
+    tabWidget = new QTabWidget(infoDock);
+//    tabWidget->setSizePolicy(QSizePolicy::Policy 100, QSizePolicy::Policy 50);
 	infoDock->setWidget(tabWidget);
-	textArea = new QTextEdit(tabWidget);
+    textArea = new QTextEdit(tabWidget);
     tabWidget->addTab(textArea, QString("Text Output"));
     addDockWidget(Qt::BottomDockWidgetArea, infoDock);
 	
@@ -493,11 +492,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::readSettings()
 {
-	print("Reading User Settings");
+    print("Reading User Settings");
 	QSettings settings("Skittle", "Preferences");
 	settings.beginGroup("mainWindow");
 	restoreGeometry(settings.value("geometry").toByteArray());
-	restoreState(settings.value("state").toByteArray());
+    restoreState(settings.value("state").toByteArray());
+    QList<QAction*> colorIndex = colorGroup->actions();
+    colorIndex[settings.value("nucleotideColors").toInt()]->trigger();
 	settings.endGroup();
 }
 
@@ -506,9 +507,9 @@ void MainWindow::writeSettings()
 	print("Writing Settings");
 	QSettings settings("Skittle", "Preferences");
 	settings.beginGroup("mainWindow");
-	settings. setValue("geometry", saveGeometry());
+	settings.setValue("geometry", saveGeometry());
 	settings.setValue("state", saveState());
-//    settings.setValue("nColors", saveColors());
+    settings.setValue("nucleotideColors", ui->getColorSetting() );
 	settings.endGroup();
 }
 
