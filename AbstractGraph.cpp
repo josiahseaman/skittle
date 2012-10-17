@@ -215,32 +215,63 @@ string AbstractGraph::reverseComplement(string original)
 	for(int x = 0; x < size; ++x)
 	{					
 		rc[x] = complement(original[size-x-1]);
-	}
-	return rc;
+    }
+    return rc;
 }
 
 string AbstractGraph::mouseClick(point2D pt)
 {
-    //range check
-    if( pt.x < width() && pt.x >= 0 && pt.y <= height() )
+    int index = getRelativeIndexFromMouseClick(pt);
+    if( index > -1)
     {
         int sample_length = ui->widthDial->value();
-        int index = pt.y * width() + pt.x;
-        index *= ui->scaleDial->value();
-        index = max(0, index);
-        index = min((int)current_display_size()-sample_length-1, index);
-        index = min( index + ui->startDial->value(), ((int)sequence->size()) - sample_length-1 );
+        index = adjustForSampleLengthBounds(index, sample_length);
+        ui->print(stringFromMouseClick(index));
 
-        std::stringstream ss;
-        ss << "Index: " << index << "  Sequence: " << sequence->substr(index, sample_length);
-        //string chromosome = glWidget->chromosomeName;
-        //ss<< "   <a href=\"http://genome.ucsc.edu/cgi-bin/hgTracks?hgsid=132202298&clade=mammal&org=Human&db=hg18&position="
-        //<<chromosome<<":"<<index<<"-"<<index+200<<"&pix=800&Submit=submit\">View in Genome Browser</a> [external link]";
-        //																											chr5			12389181	12390000
-        ui->print(ss.str().c_str());
-        return sequence->substr(index, min(1000, sample_length));
+        string findString = getFindStringFromMouseClick(index);
+        return findString;
     }
     else{
         return string();
     }
+}
+
+/** Returns the relative index on a square area.  It will return -1 if
+  the point is invalid. */
+int AbstractGraph::getRelativeIndexFromMouseClick(point2D pt)
+{
+    if( pt.x < width() && pt.x >= 0 && pt.y <= height() )//check if it is inside the box
+    {
+        int index = pt.y * width() + pt.x;
+        index *= ui->scaleDial->value();
+        index = max(0, index);
+        return index;
+    }
+    else
+        return -1;
+}
+
+int AbstractGraph::adjustForSampleLengthBounds(int index, int sample_length)
+{
+    index = min((int)current_display_size()-sample_length-1, index);
+    index = min( index + ui->startDial->value(), ((int)sequence->size()) - sample_length-1 );
+    return index;
+}
+
+string AbstractGraph::stringFromMouseClick(int index)
+{
+    int sample_length = ui->widthDial->value();
+    std::stringstream ss;
+    ss << "Index: " << index << "  Sequence: " << sequence->substr(index, sample_length);
+    //string chromosome = glWidget->chromosomeName;
+    //ss<< "   <a href=\"http://genome.ucsc.edu/cgi-bin/hgTracks?hgsid=132202298&clade=mammal&org=Human&db=hg18&position="
+    //<<chromosome<<":"<<index<<"-"<<index+200<<"&pix=800&Submit=submit\">View in Genome Browser</a> [external link]";
+    //																											chr5			12389181	12390000
+    return ss.str();
+}
+
+string AbstractGraph::getFindStringFromMouseClick(int index)
+{
+    int sample_length = ui->widthDial->value();
+    return sequence->substr(index, min(500, sample_length));
 }
