@@ -97,6 +97,11 @@ bool FastaReader::readFile(QString fileName)
     int end = wordfile.tellg();
     bytesInFile = end - begin;
 
+    //Discovered Reserve is different than malloc by creating a memory iterator
+    //The iterator takes old size, then virtually allocates a new vector to new size while at the same time copying start/end memory to this new location
+    //Then it destroys the old vector and walks through physical storage looking for a contiguous slot open, then dumps into the start and end location of new slot
+    sequence.reserve(bytesInFile);
+
     //Start progress bar at 0
     int progress = bytesInFile / 20;
     progressBar->setValue(progress);
