@@ -39,7 +39,7 @@ private:
 	color color_entry();
 	bool eq(string& str1, const char* str2);
 
-	UiVariables ui;
+    UiVariables* ui;
 	string outputFilename;
 	ifstream file;
 	QProgressDialog* progressBar;

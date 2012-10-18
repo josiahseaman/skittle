@@ -38,9 +38,9 @@ using namespace std;
 
 GtfReader::GtfReader(UiVariables* gui)
 {	
-	//ui = gui;
+    ui = gui;
 	inputFilename = string("blank.fa");
-	outputFilename = string("user.gtf");
+    outputFilename = string("user.gff");
 	bytesInFile = 0;
 	blockSize = 1000000;
 }
@@ -71,10 +71,10 @@ void GtfReader::addBookmark()//int start, int end)
 	dialog.setupUi(&parent);
 	
 	std::stringstream ss;
-	ss << ui.startDial->value();
+    ss << ui->startDial->value();
 	dialog.start->setText( QString( ss.str().c_str() ) );
 	std::stringstream ss2;
-	ss2 << ui.startDial->value() + ui.sizeDial->value();
+    ss2 << ui->startDial->value() + ui->sizeDial->value();
 	dialog.end->setText( QString(ss2.str().c_str() ) );
 	dialog.sequence->setText( QString(chrName.c_str()) );
 	
@@ -83,7 +83,6 @@ void GtfReader::addBookmark()//int start, int end)
 	int result = parent.exec();
 	if(result == QDialog::Accepted)
 	{
-		
 		ofstream outFile;
 		outFile.open(outputFilename.c_str(), ios::app);
 		if(!outFile.fail())
@@ -115,7 +114,7 @@ void GtfReader::determineOutputFile(QString file)
 {
 	string filename = file.toStdString();
 	outputFilename = filename;
-	outputFilename.append("-skittle_notes.gtf");
+    outputFilename.append("-skittle_notes.gff");
     chrName = trimPathFromFilename(filename);
 }
 
