@@ -18,7 +18,8 @@ vector<float> lowPassFilter(vector<float> scores)
     return smoothed_scores;
 }
 
-
+/** The ragged appearance of the bar graphs is accomplished by inserting 50% grey pixels that blend in
+  with the background, giving bar graphs a fake transparent section.  */
 vector<color>& percentageBar(float percentage, int barWidth, vector<color>& line, bool rightJustified)
 {
 //    if(barColor == NULL)

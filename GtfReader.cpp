@@ -33,12 +33,6 @@ using namespace std;
   The bookmark functionality references the ui layout Ui_BookmarkDialog.h.  GtfReader
   provides the information for AnnotationDisplay to display.  Both use the track_entry class.
 
-  Development:
-  * Make start and stop columns a user settable variable upon opening a new file.  Issue #4.
-  * Given that the name is gtfReader, the bookmark and file writing functionality should
-    be moved to a different class.  Issue #31.
-
-
 **************************************/
 
 GtfReader::GtfReader(UiVariables* gui)

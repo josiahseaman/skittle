@@ -15,7 +15,7 @@
 
 Development: One currently neglected feature is the DrawArc function.  This was originally another Graph
   inspired by "The Shape of Song" http://www.turbulence.org/Works/song/index.html  The idea
-  is to have arcs contecting repeated motifs along the length of the DNA sequence.
+  is to have arcs contecting repeated motifs along the length of the DNA sequence.  Issue #78
 
 *************************/
 
