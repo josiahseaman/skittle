@@ -40,6 +40,7 @@ public:
     pair<int,int> getBestAlignment(int index);
 	void setSequence(const string* seq);
     string SELECT_StringFromMouseClick(int index);
+    string FIND_StringFromMouseClick(int index);
 
 public slots:
 	void changeScale(int s);

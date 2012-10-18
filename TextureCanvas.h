@@ -29,6 +29,7 @@ public:
 	TextureCanvas();
     TextureCanvas(vector<color>& pixels, int width, bool raggedEdge = false);
 	~TextureCanvas();
+    void init(int w = 1, bool raggedEdge = false);
     void display();
     static int const maxSaneWidth = 4000;
     bool ragged;

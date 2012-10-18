@@ -34,6 +34,7 @@ public:
     vector<float> convolution_3mer();
 	int height();
 	string SELECT_MouseClick(point2D pt);
+    int getRelativeIndexFromMouseClick(point2D pt);
 	
 	vector<point> bestMatches();
 	void display_freq();
