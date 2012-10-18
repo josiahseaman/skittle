@@ -1,7 +1,9 @@
 #include "AnnotationDisplay.h"
 #include "glwidget.h"
+#include "SkittleUtil.h"
 #include <sstream>
 #include <algorithm>
+
 /** **********************
   This class is a Graph class that is designed to visualize annotation files.
   This is the most unusual of the graphs except for Cylinder.  It makes a slender bar
@@ -19,8 +21,9 @@ AnnotationDisplay::AnnotationDisplay(UiVariables* gui, GLWidget* gl, string gtfF
     :AbstractGraph(gui, gl)
 {
     max_width = 1;
+    hidden = false;
 	
-	actionLabel = string("Annotation Display");
+    actionLabel = trimPathFromFilename(gtfFileName);
 	actionTooltip = string("Genome annotation locations");
 	actionData = actionLabel; 
 	

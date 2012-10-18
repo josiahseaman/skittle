@@ -4,8 +4,6 @@
 #include <sstream>
 #include <QFrame>
 
-using namespace SkittleUtil;
-
 /** ***************************************
 RepeatMap is designed to make finding tandem repeats much easier than randomly
 scrolling around with NucleotideDisplay.  It was the second Graph model designed

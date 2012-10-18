@@ -3,6 +3,7 @@
 #include "BasicTypes.h"
 #include "glwidget.h"
 #include "UiVariables.h"
+#include "SkittleUtil.h"
 
 #include <string>
 #include <cctype>
@@ -13,6 +14,7 @@
 #include <QApplication>
 
 #include <QDebug>
+
 
 /** *********************
   FastaReader is the file reader for sequence files (FASTA format) usually ending in .fa.
@@ -180,17 +182,9 @@ void FastaReader::setupProgressBar()
     progressBar->show();
 }
 
-string FastaReader::trimFilename(string path)
-{
-	int startI = path.find_last_of('/');
-	int endI = path.size();//path.find_last_of('.');//
-	int sizeI = endI - startI;
-	return path.substr(startI+1, sizeI-1); 
-}
-
 void FastaReader::storeChrName(string path)
 {
-	string name = trimFilename(path);
+    string name = trimPathFromFilename(path);
 	glWidget->chromosomeName = name;
 	emit fileNameChanged(name);
 }

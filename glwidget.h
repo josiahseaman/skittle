@@ -67,6 +67,7 @@ public:
 	
     GLWidget(UiVariables *gui, QWidget* parent = 0);
     ~GLWidget();
+    void addGraph(AbstractGraph* graph);
 	void createButtons();
 	void createConnections();
 

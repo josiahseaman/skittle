@@ -9,7 +9,7 @@
 #include "glwidget.h"
 #include "SkittleUtil.h"
 
-using namespace std;
+using std::vector;
 
 namespace SkittleUtil
 {

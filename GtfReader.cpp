@@ -4,6 +4,7 @@
 #include "BasicTypes.h"
 #include "UiVariables.h"
 #include "ui_BookmarkDialog.h"
+#include "SkittleUtil.h"
 
 #include <QDebug>
 #include <QThread>
@@ -115,15 +116,7 @@ void GtfReader::determineOutputFile(QString file)
 	string filename = file.toStdString();
 	outputFilename = filename;
 	outputFilename.append("-skittle_notes.gtf");
-	chrName = trimFilename(filename);
-}
-
-string GtfReader::trimFilename(string path)
-{
-	int startI = path.find_last_of('/');
-	int endI = path.size();//path.find_last_of('.');//
-	int sizeI = endI - startI;
-	return path.substr(startI+1, sizeI-1); 
+    chrName = trimPathFromFilename(filename);
 }
 
 vector<track_entry>  GtfReader::readFile(QString filename)

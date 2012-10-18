@@ -1,13 +1,8 @@
 #ifndef BIASDISPLAY_H
 #define BIASDISPLAY_H
 #include "NucleotideDisplay.h"
-#include "SkittleUtil.h"
 #include <string>
 #include <vector>
-
-using namespace std;
-using namespace SkittleUtil;
-
 
 class BiasDisplay : public NucleotideDisplay
 {

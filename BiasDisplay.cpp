@@ -1,5 +1,6 @@
 #include "BiasDisplay.h"
 #include "glwidget.h"
+#include "SkittleUtil.h"
 
 /** **********************************************
   BiasDisplay shows the line per line usage bias of the

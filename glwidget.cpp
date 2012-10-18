@@ -30,6 +30,7 @@
 #include "HighlightDisplay.h"
 #include "GtfReader.h"
 #include "FastaReader.h"
+#include "SkittleUtil.h"
 
 using std::string;
 
@@ -85,13 +86,13 @@ GLWidget::GLWidget(UiVariables* gui, QWidget* parentWidget)
     olig = new OligomerDisplay(ui, this);
     highlight = new HighlightDisplay(ui, this);
    	
-   	graphs.push_back(cylinder);
-    graphs.push_back(nuc);
-    graphs.push_back(highlight);
-    graphs.push_back(bias);
-    graphs.push_back(freq);
-    graphs.push_back(align);
-    graphs.push_back(olig);
+    addGraph(cylinder);
+    addGraph(nuc);
+    addGraph(highlight);
+    addGraph(bias);
+    addGraph(freq);
+    addGraph(align);
+    addGraph(olig);
    	
 	border = 10;    
     xPosition = 0;
@@ -121,6 +122,21 @@ GLWidget::~GLWidget()
     makeCurrent();//TODO: What does this do???
 }
 
+void GLWidget::addGraph(AbstractGraph* graph)
+{
+    graphs.push_back(graph);
+
+    //Note: The connection between displayChanged and updateDisplay is specifically used
+    //for the case where the settingsUi tab causes an update that is only relevant to
+    //one of the graphs.  This means that one graph is already invalidated and the others
+    //do not need to change their data.
+    connect( graph, SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
+    connect( graph, SIGNAL(hideSettings(QScrollArea*)), this, SIGNAL(hideSettings(QScrollArea*)));
+    connect( graph, SIGNAL(showSettings(QScrollArea*)), this, SIGNAL(showSettings(QScrollArea*)));
+
+    emit addGraphMode(graph);
+}
+
 void GLWidget::createButtons()
 {
     for(int i = 0; i < (int)graphs.size(); ++i)
@@ -130,18 +146,6 @@ void GLWidget::createButtons()
 
 void GLWidget::createConnections()
 {
-    for(int i = 0; i < (int)graphs.size(); ++i)
-   	{
-        //Note: The connection between displayChanged and updateDisplay is specifically used
-        //for the case where the settingsUi tab causes an update that is only relevant to
-        //one of the graphs.  This means that one graph is already invalidated and the others
-        //do not need to change their data.
-        connect( graphs[i], SIGNAL(displayChanged()), this, SLOT(updateDisplay()) );
-
-   		connect( graphs[i], SIGNAL(hideSettings(QScrollArea*)), this, SIGNAL(hideSettings(QScrollArea*)));
-        connect( graphs[i], SIGNAL(showSettings(QScrollArea*)), this, SIGNAL(showSettings(QScrollArea*)));\
-	}
-	
 	connect(trackReader,SIGNAL(BookmarkAdded(track_entry,string)), this,SLOT(addTrackEntry(track_entry,string)));
 
     /****CONNECT LOCAL VARIABLES*******/
@@ -433,42 +437,6 @@ void GLWidget::updateDisplaySize()
 	}
 }
 
-/*AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fName)
-{
-	string fileName = fName.toStdString();
-	//if( fileName.empty() )
-	//{
-	//	fileName = trackReader->outputFile();
-	//}
-	AnnotationDisplay* tempTrackDisplay = NULL;
-	int fileIndex = -1;
-	for ( int n = 0; n < graphs.size(); n++)
-	{
-		AnnotationDisplay* testPtr = dynamic_cast<AnnotationDisplay*>(graphs[n]);
-		if ( testPtr != NULL && testPtr->getFileName().compare(fileName) == 0 )
-		{
-			tempTrackDisplay = testPtr;
-			fileIndex = n;
-			break;
-		}
-	}
-	//if not found: exising track display
-	if (fileIndex == -1)
-	{
-		vector<track_entry> track = trackReader->readFile(QString(fileName.c_str()));
-
-        ui->print("Annotations Received: ", track.size());
-		if( track.size() > 0)// || trackReader->outputFile().compare(fileName) == 0 )//
-		{
-            tempTrackDisplay = new AnnotationDisplay(ui, this, fileName);
-			graphs.insert(graphs.begin(), static_cast<AnnotationDisplay*>(tempTrackDisplay) );
-			connect(tempTrackDisplay, SIGNAL(displayChanged()), this, SLOT(updateDisplay()));
-			tempTrackDisplay->newTrack( track );
-		}
-	}
-	return tempTrackDisplay;
-}*/
-
 AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fName)
 {
 	string fileName = fName.toStdString();
@@ -489,10 +457,8 @@ AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fName)
 		if( track.size() > 0)// || trackReader->outputFile().compare(fileName) == 0 )//
 		{
             tempTrackDisplay = new AnnotationDisplay(ui, this, fileName);
-			graphs.insert(graphs.begin(), static_cast<AnnotationDisplay*>(tempTrackDisplay) );
-			connect(tempTrackDisplay, SIGNAL(displayChanged()), this, SLOT(updateDisplay()));
-			tempTrackDisplay->newTrack( track );
-			tempTrackDisplay = NULL;
+            addGraph(tempTrackDisplay);
+            tempTrackDisplay->newTrack( track );
 		}
 	}
 	return tempTrackDisplay;
@@ -1050,7 +1016,7 @@ color GLWidget::spectrum(double i)
 void GLWidget::loadFile(QString fileName)
 {
 	if(parent != NULL)
-		parent->setWindowTitle( reader->trimFilename(fileName.toStdString()).c_str());
+        parent->setWindowTitle( trimPathFromFilename(fileName.toStdString()).c_str());
 	reader->readFile(fileName);
 }
 
