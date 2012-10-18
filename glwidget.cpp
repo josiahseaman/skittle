@@ -85,7 +85,7 @@ GLWidget::GLWidget(UiVariables* gui, QWidget* parentWidget)
     align = new RepeatOverviewDisplay(ui, this);
     olig = new OligomerDisplay(ui, this);
     highlight = new HighlightDisplay(ui, this);
-   	
+
     addGraph(cylinder);
     addGraph(nuc);
     addGraph(highlight);
@@ -93,7 +93,7 @@ GLWidget::GLWidget(UiVariables* gui, QWidget* parentWidget)
     addGraph(freq);
     addGraph(align);
     addGraph(olig);
-   	
+
 	border = 10;    
     xPosition = 0;
     slideHorizontal(0);
@@ -124,7 +124,7 @@ GLWidget::~GLWidget()
 
 void GLWidget::addGraph(AbstractGraph* graph)
 {
-    graphs.push_back(graph);
+    graphs.insert(graphs.begin(), graph );//these are added in reverse order for the sake of AnnotationDisplay
 
     //Note: The connection between displayChanged and updateDisplay is specifically used
     //for the case where the settingsUi tab causes an update that is only relevant to

@@ -79,9 +79,13 @@ void MainWindow::addDisplayActions(AbstractGraph* display)
 		display->toggleButton = presetAction;
 		connect(presetAction,SIGNAL(triggered()),display, SLOT(toggleVisibility()));
         connect(display, SIGNAL(deleteButton(QAction*)), this, SLOT(removeGraphButton(QAction*)));
-	
-		presetMenu->addAction(presetAction);
-		presetToolBar->addAction(presetAction);
+
+        presetMenu->addAction(presetAction);
+        QAction* before = NULL;
+        QList<QAction*> list = presetToolBar->actions();
+        if(!list.isEmpty())
+            before = list.first();
+        presetToolBar->insertAction(before, presetAction);
 		display->setButtonFont();
 	}
 	else
