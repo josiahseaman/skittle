@@ -33,6 +33,7 @@ public:
 	void printNum(int num);
 	//void print(int num1, int num2); 
     int getColorSetting();
+    int colorSetting;
 
     //color palletes
     enum colorPalletes { CLASSIC, COLORBLINDSAFE, BETTERCBSAFE, DRUMS, BLUES, REDS };
@@ -53,7 +54,6 @@ signals:
 private:
     int oldScale;
     int oldWidth;
-    int colorSetting;
     static int const maxSaneWidth = 4000;
 
 

@@ -225,11 +225,13 @@ void ViewManager::broadcastPublicValues(UiVariables* local)
     local->widthDial->setValue(globalUi->widthDial->value());
     local->scaleDial->setValue(globalUi->scaleDial->value());
     local->zoomDial->setValue(globalUi->zoomDial->value());
+    local->colorSetting = globalUi->colorSetting;
 }
 
 UiVariables* ViewManager::copyUi()
 {
     UiVariables* localDials = new UiVariables(globalUi->textArea);
+    localDials->colorSetting = globalUi->colorSetting;
     localDials->widthDial->hide();
     localDials->scaleDial->hide();
     localDials->zoomDial->hide();

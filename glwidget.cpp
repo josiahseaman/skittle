@@ -281,7 +281,7 @@ void GLWidget::on_screenCaptureButton_clicked()
     }
 
     stringstream namestream;
-    namestream << "capture\\" << chromosomeName << "_w-" << ui->widthDial->value() << "_st-" << ui->startDial->value() << "_sc-" << ui->scaleDial->value() << ".png";
+    namestream << chromosomeName << "_w-" << ui->widthDial->value() << "_st-" << ui->startDial->value() << "_sc-" << ui->scaleDial->value() << ".png";
 
     QString filename = QFileDialog::getSaveFileName(this, tr("Save Image"), namestream.str().c_str(), tr("Images (*.png *.jpg)"));
 

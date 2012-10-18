@@ -56,12 +56,12 @@ MainWindow::MainWindow()
     createToolbars();
     createStatusBar();
     createUiConnections();
-	
+
+    readSettings();
     viewManager	= new ViewManager(this, ui);
 	setCentralWidget(viewManager);  
 	createFileConnections();
 
-	readSettings();
     ensureDocksAreVisible();
     setWindowIcon(QIcon(":/skittle.svg"));
 	
