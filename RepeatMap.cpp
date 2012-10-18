@@ -139,7 +139,7 @@ void RepeatMap::display()
 	load_canvas();
 	glPushMatrix();
 		glScaled(1,-1,1);
-        if(using3merGraph && ui->scaleDial->value() == 1)
+        if(using3merGraph && ui->scaleDial->value() == 1)// && canvas_3mer != NULL)
         {
             canvas_3mer->display();
             glTranslated(barWidth+spacerWidth, 0, 0);
@@ -178,16 +178,16 @@ void RepeatMap::link(NucleotideDisplay* nuc_display)
 
 void RepeatMap::load_canvas()
 {
-	pixels.clear();
+    outputPixels.clear();
 	for( int h = 0; h < height(); h++)
 	{		
 		for(int w = 1; w <= F_width; w++)
 		{
 			int grey = static_cast<int>(  freq[h][w] * 255 );			
-			pixels.push_back( color(grey, grey, grey) );
+            outputPixels.push_back( color(grey, grey, grey) );
 		}
 	}
-	storeDisplay(pixels, F_width);
+    storeDisplay(outputPixels, F_width);
 
 	upToDate = true;
 }

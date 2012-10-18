@@ -126,10 +126,15 @@ void TextureCanvas::createEmptyTiles(int canvas_width, int canvas_height, int ma
 
 void TextureCanvas::display()
 {
-    if(	!useTextures  )
-        textureFreeRender();
+    if( this == NULL)//this is to prevent a null pointer exception from crashing the program
+        int howDidThisHappen = 0;//somehow, a graph called ->display() on a null pointer
     else
-        drawTextureSquare();
+    {
+        if(	!useTextures  )
+            textureFreeRender();
+        else
+            drawTextureSquare();
+    }
 }
 
 void TextureCanvas::drawTextureSquare()//draws from canvas

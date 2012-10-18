@@ -16,10 +16,10 @@ class RepeatOverviewDisplay : public NucleotideDisplay
     
 public:
 	
-	RepeatOverviewDisplay(UiVariables*, GLWidget* gl);
-	void display();
-	void loadTexture();//calls simple alignment
-    GLuint render();//creates display list using loadTexture
+    RepeatOverviewDisplay(UiVariables*, GLWidget* gl);
+    void checkVariables();
+    void calculateOutputPixels();
+    int width();
 	void displayLegend(float canvasWidth, float canvasHeight);
 	color alignment_color(int score, int frequency);
 	color interpolate(color p1, color p3, double progress);
@@ -41,11 +41,15 @@ public:
 	void setSequence(const string* seq);
     string SELECT_StringFromMouseClick(int index);
     string FIND_StringFromMouseClick(int index);
+    int getRelativeIndexFromMouseClick(point2D pt);
 
 public slots:
 	void changeScale(int s);
 	void toggleVisibility();
-	
+
+protected:
+    int internalScale;
+
 private:	
 	unsigned int charPerIndex;
 	int* countTable;

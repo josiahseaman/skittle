@@ -56,8 +56,7 @@ protected:
     TextureCanvas* canvas_3mer;
 	NucleotideDisplay* nuc;
 	GLuint display_object;
-	vector< vector<float> > freq;
-	vector<color> pixels;
+    vector< vector<float> > freq;
     int barWidth;
     int spacerWidth;
 	int F_width;

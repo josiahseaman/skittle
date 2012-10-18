@@ -67,6 +67,7 @@ RepeatOverviewDisplay::RepeatOverviewDisplay(UiVariables* gui, GLWidget* gl)
 {
     hidden = true;
     charPerIndex = 4;
+    internalScale = charPerIndex;
 	sequence = NULL;
     packSeq = NULL;
 	countTableShort = NULL;
@@ -80,53 +81,21 @@ RepeatOverviewDisplay::RepeatOverviewDisplay(UiVariables* gui, GLWidget* gl)
 	actionTooltip = string("Color by the best alignment offset");
 	actionData = actionLabel; 
 }
-
-void RepeatOverviewDisplay::display()//TODO: Delete this whole method since it is redundant with AbstractGraph
+void RepeatOverviewDisplay::checkVariables()
 {
-	checkVariables();
-    glPushMatrix();
-	glScaled(1,-1,1);
-	
-		if(!upToDate)
-			loadTexture();
-		textureBuffer->display();
-
-	glPopMatrix();
+    internalScale = max(charPerIndex, (int)(ui->scaleDial->value() / charPerIndex) * charPerIndex);
 }
 
-void RepeatOverviewDisplay::loadTexture()
+void RepeatOverviewDisplay::calculateOutputPixels()
 {
 	/**/
     qDebug() << "RepeatOverviewDisplay::load: " << ++frameCount;
-	int s = ui->scaleDial->value();
-	if(s % 4 != 0)
-	{
-		ui->print("Warning: The SCALE on Repeat Overview should be set to a multiple of 4.");
-	}
-	//s = max(4, (s / 4) * 4);//enforces scale is a multiple of 4
-	//ui->scaleDial->setValue(s);
-    /* /
-    if(!align->hidden)
-    {
-        int scale = ui.scaleDial->value();
-        int rem = scale % 4;
-        scale = scale - rem;//enforces scale is a multiple of 4
-        scale = max(4, scale);
-        if(scale != ui.scaleDial->value())
-        {
-            if(rand() % 10 != 1)
-            {
-                ui.print("GLWidget::paintGL ", scale);
-                return;
-            }
-        }
-    }*/
+
 
     qDebug() << "Width: " << ui->widthDial->value() << "\nScale: " << ui->scaleDial->value() << "\nStart: " << ui->startDial->value();
 	vector<color> alignment_colors;
     int end = max(1, (ui->startDial->value() + current_display_size()) - 251);
-    int tempScale = ui->scaleDial->value();
-    for(int i = ui->startDial->value(); i < end; i += tempScale)
+    for(int i = ui->startDial->value(); i < end; i += internalScale)
 		alignment_colors.push_back( simpleAlignment(i) );
 
 	storeDisplay( alignment_colors, width());
@@ -134,21 +103,9 @@ void RepeatOverviewDisplay::loadTexture()
 	upToDate = true;
 }
 
-GLuint RepeatOverviewDisplay::render()
+int RepeatOverviewDisplay::width()
 {
-	GLuint list = glGenLists(1);
-    glNewList(list, GL_COMPILE);
-    glPushMatrix();
-	glScaled(1,-1,1);
-	
-		if(!upToDate)
-			loadTexture();
-		textureBuffer->display();
-
-	glPopMatrix();
-    glEndList();
-    upToDate = true;
-    return list;
+    return max(1, ui->widthDial->value() / internalScale);
 }
 
 void RepeatOverviewDisplay::displayLegend(float canvasWidth, float canvasHeight)
@@ -161,7 +118,7 @@ void RepeatOverviewDisplay::displayLegend(float canvasWidth, float canvasHeight)
 	{
 	for(int i = 0; i < 250; i++)
 	{
-				paintIt.push_back(alignment_color(scale, i));//spectrum(i/255.0);//ui->scaleDial->value()
+                paintIt.push_back(alignment_color(scale, i));//spectrum(i/255.0);//internalWidth
 	}
 	}
 	TextureCanvas paint = TextureCanvas( paintIt, 250);
@@ -175,7 +132,7 @@ void RepeatOverviewDisplay::displayLegend(float canvasWidth, float canvasHeight)
 		{
 			glPushMatrix();
 				glTranslated(i,4,0);
-                color c = alignment_color(ui->scaleDial->value(), i);//spectrum(i/255.0);//ui->scaleDial->value()
+                color c = alignment_color(internalScale, i);//spectrum(i/255.0);
 				glScaled(1,10,1);//*(c.b / 125.0)
 	    		glColor3d(c.r /255.0, c.g /255.0, c.b /255.0); 
 	    	    glBegin(GL_QUADS);
@@ -200,7 +157,7 @@ color RepeatOverviewDisplay::alignment_color(int score, int frequency)
 {
 	color c = glWidget->spectrum((double)(frequency) / 250.0);//
 	color black = color(0,0,0);
-    c = interpolate(black, c, score / float(ui->scaleDial->value()));
+    c = interpolate(black, c, score / float(internalScale));
 	
 	return c;
 }
@@ -320,7 +277,7 @@ pair<int,int> RepeatOverviewDisplay::getBestAlignment(int index)
         return pair<int,int>(0,0);
 		
 	//scale % 4 == 0 always
-    int reference_size = ui->scaleDial->value() / 4 + 2;//sequence bytes = scale / 4.  1 byte of padding for shifts. 1 byte for sub_index.
+    int reference_size = internalScale / 4 + 2;//sequence bytes = scale / 4.  1 byte of padding for shifts. 1 byte for sub_index.
     int bitmask_size = reference_size + sizeof(long int);
 	int pack_index = index / 4;
 	int sub_index = index % 4;
@@ -332,7 +289,7 @@ pair<int,int> RepeatOverviewDisplay::getBestAlignment(int index)
 	for(int i = 0; i < reference_size; ++i)
 		reference[i] = packSeq[i+pack_index];//copy values
 
-    int string_end = ui->scaleDial->value()/4;
+    int string_end = internalScale/4;
 	for(int i = 0; i < bitmask_size; ++i)
 	{
 		if( i < string_end)
@@ -417,17 +374,15 @@ void RepeatOverviewDisplay::changeScale(int s)
 void RepeatOverviewDisplay::toggleVisibility()
 {
 	if(hidden)
-    {//TODO:change this to use an internal scale without trying to influence the global value
-		int s = ui->scaleDial->value();
-		s = max(4, (s / 4) * 4);//enforces scale is a multiple of 4
-        ui->changeScale(s);
+    {
+        checkVariables();
 	}
 	AbstractGraph::toggleVisibility();	
 }
 
 string RepeatOverviewDisplay::SELECT_StringFromMouseClick(int index)
 {
-    int sample_length = ui->scaleDial->value();
+    int sample_length = internalScale;
     std::stringstream ss;
     pair<int,int> answer = getBestAlignment(index);
     int percentage = (int)(((double)answer.first / (double)sample_length) *100);
@@ -439,6 +394,23 @@ string RepeatOverviewDisplay::SELECT_StringFromMouseClick(int index)
 
 string RepeatOverviewDisplay::FIND_StringFromMouseClick(int index)
 {
-    int sample_length = ui->scaleDial->value();
+    int sample_length = internalScale;
     return sequence->substr(index, min(500, sample_length));
 }
+
+
+/** This method had to be reimplemented in RepeatOverview because the indices
+will be out of sync with the display unless it uses internalScale as opposed
+to ui->scaleDial->value().  */
+int RepeatOverviewDisplay::getRelativeIndexFromMouseClick(point2D pt)
+{
+    if( pt.x < width() && pt.x >= 0 && pt.y <= height() )//check if it is inside the box
+    {
+        int index = pt.y * ui->widthDial->value() + pt.x * internalScale;
+        index = max(0, index);
+        return index;
+    }
+    else
+        return -1;
+}
+
