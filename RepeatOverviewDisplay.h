@@ -39,6 +39,8 @@ public:
 	color simpleAlignment(int index);
     pair<int,int> getBestAlignment(int index);
 	void setSequence(const string* seq);
+
+    /** Mouse Click methods */
     string SELECT_StringFromMouseClick(int index);
     string FIND_StringFromMouseClick(int index);
     int getRelativeIndexFromMouseClick(point2D pt);

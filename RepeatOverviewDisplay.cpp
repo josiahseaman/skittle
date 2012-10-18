@@ -56,10 +56,8 @@ instead of simply counting.  So 1101 is 2 differences, 0110 is 2 differences and
 difference.
 
 Development:
-*Add text to the spectrum legend.
+*Add text to the spectrum legend.  Issue #11
 *Make it useful at scale = 1.  Issue #33
-*Make the CPU optimization less buggy.
-*Make the scaleDial feedback for multiples of 4 unnecessary.
 *************************************/
 
 RepeatOverviewDisplay::RepeatOverviewDisplay(UiVariables* gui, GLWidget* gl)
@@ -105,7 +103,7 @@ void RepeatOverviewDisplay::calculateOutputPixels()
 
 int RepeatOverviewDisplay::width()
 {
-    return max(1, ui->widthDial->value() / internalScale);
+    return max(1, (int)((float)ui->widthDial->value() / (float)internalScale + 0.5));
 }
 
 void RepeatOverviewDisplay::displayLegend(float canvasWidth, float canvasHeight)
@@ -406,7 +404,8 @@ int RepeatOverviewDisplay::getRelativeIndexFromMouseClick(point2D pt)
 {
     if( pt.x < width() && pt.x >= 0 && pt.y <= height() )//check if it is inside the box
     {
-        int index = pt.y * ui->widthDial->value() + pt.x * internalScale;
+        int index = pt.y * width()*internalScale //the bp per line is not quite ui.widthDial.value() because it needs to be a multiple of 4.
+                + pt.x * internalScale;
         index = max(0, index);
         return index;
     }
