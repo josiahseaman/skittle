@@ -436,3 +436,9 @@ string RepeatOverviewDisplay::SELECT_StringFromMouseClick(int index)
     ss << "\nIndex: " << index+answer.second << ": " << sequence->substr(index+answer.second, sample_length);
     return ss.str();
 }
+
+string RepeatOverviewDisplay::FIND_StringFromMouseClick(int index)
+{
+    int sample_length = ui->scaleDial->value();
+    return sequence->substr(index, min(500, sample_length));
+}

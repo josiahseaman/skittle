@@ -22,13 +22,13 @@ in through the constructor.  This means a new TextureCanvas is generated every f
 
 TextureCanvas::TextureCanvas()
 {
-	canvas.push_back(vector<textureTile>());
+    init();
 }
 
 TextureCanvas::TextureCanvas(vector<color>& pixels, int w, bool raggedEdge)
 {
-    ragged = raggedEdge;
-    int max_size = checkForDisplayDriver();
+    init(w, raggedEdge);
+
     if(!useTextures)
         colors = vector<color>(pixels);
 
@@ -36,8 +36,7 @@ TextureCanvas::TextureCanvas(vector<color>& pixels, int w, bool raggedEdge)
 	for(int i = 0; i <= w; ++i)
 		pixels.push_back( color(128,128,128) );
     
-    width = max(1, w);//don't divide by zero
-	height = pixels.size() / width;
+    height = pixels.size() / width;
 
     if(useTextures)
         loadPixelsToCard(pixels, max_size);
@@ -48,6 +47,13 @@ TextureCanvas::~TextureCanvas()
 	for(unsigned int i = 0; i < canvas.size(); ++i)
 		for(unsigned int k = 0; k < canvas[i].size(); ++k)
 			glDeleteTextures(1, &canvas[i][k].tex_id );	
+}
+
+void TextureCanvas::init(int w, bool raggedEdge)
+{
+    ragged = raggedEdge;
+    max_size = checkForDisplayDriver();
+    width = max(1, w);//don't divide by zero
 }
 
 int TextureCanvas::checkForDisplayDriver()

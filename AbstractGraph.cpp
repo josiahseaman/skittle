@@ -253,8 +253,7 @@ int AbstractGraph::getRelativeIndexFromMouseClick(point2D pt)
 {
     if( pt.x < width() && pt.x >= 0 && pt.y <= height() )//check if it is inside the box
     {
-        int index = pt.y * width() + pt.x;
-        index *= ui->scaleDial->value();
+        int index = pt.y * ui->widthDial->value() + pt.x * ui->scaleDial->value();
         index = max(0, index);
         return index;
     }
