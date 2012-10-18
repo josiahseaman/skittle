@@ -42,7 +42,8 @@ public:
 	void load_canvas();
 	GLuint render();
 	void freq_map();
-	int oligNum(string a);
+    int oligToNumber(string a);
+    string numberToOlig(int);
 	int height();
 	string SELECT_MouseClick(point2D pt);
 	
@@ -51,7 +52,9 @@ public:
 	double correlate(vector<double>& apples, vector<double>& oranges);
 	void assignRanks(vector<point>& temp);
 	double spearmanCorrelation(vector<double>& apples, vector<double>& oranges);
-	int width();
+    int countsGraphWidth();
+    int heatMapGraphWidth();
+    int width();
 	
 	inline int ACGT_num(char n)
 	{
@@ -61,7 +64,15 @@ public:
 		if(n == 'G') return 2;
 		return -100000;//handles up to 8-mer correctly
 	}
-	
+    inline char num_ACGT(int n)//inverse function of ACGT_num
+    {
+        if(n == 0) return 'A';
+        if(n == 3) return 'T';
+        if(n == 1) return 'C';
+        if(n == 2) return 'G';
+        return 'N';
+    }
+
 	inline int comp_num(char n)
 	{
 		if(n == 'T') return 0;

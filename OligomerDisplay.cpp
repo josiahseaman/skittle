@@ -31,6 +31,7 @@ OligomerDisplay::OligomerDisplay(UiVariables* gui, GLWidget* gl)
 
 	F_width = 250;
     F_height = 0;
+    widthMultiplier = 1;
 	
 	similarityGraphWidth = 50;
 	frameCount = 0;
@@ -468,7 +469,7 @@ void OligomerDisplay::freq_map()
 	upToDate = true;
 }
 
-int OligomerDisplay::oligNum(string a)
+int OligomerDisplay::oligToNumber(string a)
 {
 	int oligIndex = 0;
 	for(int c = 0; c < (int)a.size(); ++c)
@@ -477,6 +478,19 @@ int OligomerDisplay::oligNum(string a)
 	}
 	return oligIndex;
 }
+
+string OligomerDisplay::numberToOlig(int oligIndex)
+{
+    string olig("");
+    for(int i = 0; i < wordLength; ++i)
+    {
+        int remainder = oligIndex % 4;
+        oligIndex /= 4;
+        olig.insert(olig.begin(), num_ACGT(remainder));
+    }
+    return olig;
+}
+
 
 int OligomerDisplay::height()
 {
@@ -490,17 +504,15 @@ int OligomerDisplay::height()
 /******SLOTS*****/
 string OligomerDisplay::SELECT_MouseClick(point2D pt)
 {
-	//range check
-	if( pt.x < (int)width()-similarityGraphWidth && pt.x >= 0  )
-	{
-        pt.x = pt.x / 2;//TODO: is this /2 still correct?
+    //this only supports the countsGraph freq
+    if( pt.x < countsGraphWidth() && pt.x >= 0  )
+    {
 		int index = pt.y * ui->widthDial->value();
         index = index + ui->startDial->value();
-		int w = min( 100, ui->widthDial->value() );
 		stringstream ss;
-		ss << "Dinucleotide: " << pt.x << "  Count: " << freq[pt.y][pt.x] << "\nSequence:"
-			<< sequence->substr(index, w);
-		ui->print(ss.str().c_str());
+        ss << numberToOlig(pt.x) << "  Count: " << freq[pt.y][pt.x];
+        //<< "\nSequence:" << sequence->substr(index, w);
+        return ss.str().c_str();
 	}
 	return string();
 }
@@ -633,12 +645,27 @@ double OligomerDisplay::spearmanCorrelation(vector<double>& apples, vector<doubl
 	//Pearson Correlation on ranks
 	return correlate(ranks1, ranks2);	
 }
-	
+
+int OligomerDisplay::countsGraphWidth()
+{
+    return F_width*widthMultiplier;
+}
+
+int OligomerDisplay::heatMapGraphWidth()
+{
+    return (F_height+2);
+}
+
 int OligomerDisplay::width()
 {
-    widthMultiplier = 1;
-
-    return F_width*widthMultiplier + (F_height+2)*2;//TODO: make this width() check which of the subviews are currently visible.
+    int cumulative = 0;
+    if( graphOneOn )
+        cumulative += countsGraphWidth();
+    if( graphTwoOn )
+        cumulative += heatMapGraphWidth();
+    if( graphThreeOn )
+        cumulative += heatMapGraphWidth();
+    return cumulative;
 }
 
 /*vector<color> OligomerDisplay::calculateAverageSignature(int begin, int end)
