@@ -86,13 +86,13 @@ GLWidget::GLWidget(UiVariables* gui, QWidget* parentWidget)
     olig = new OligomerDisplay(ui, this);
     highlight = new HighlightDisplay(ui, this);
 
-    addGraph(cylinder);
-    addGraph(nuc);
-    addGraph(highlight);
-    addGraph(bias);
-    addGraph(freq);
-    addGraph(align);
     addGraph(olig);
+    addGraph(align);
+    addGraph(freq);
+    addGraph(bias);
+    addGraph(highlight);
+    addGraph(nuc);
+    addGraph(cylinder);
 
     border = 10;
     xPosition = 0;
@@ -139,7 +139,7 @@ void GLWidget::addGraph(AbstractGraph* graph)
 
 void GLWidget::createButtons()
 {
-    for(int i = 0; i < (int)graphs.size(); ++i)
+    for(int i = (int)graphs.size()-1; i >= 0 ; --i)
         emit addGraphMode( graphs[i] );
     emit addDivider();
 }
