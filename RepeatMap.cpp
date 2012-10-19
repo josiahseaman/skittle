@@ -46,21 +46,21 @@ RepeatMap::RepeatMap(UiVariables* gui, GLWidget* gl)
     canvas_3mer = NULL;
     barWidth = 20;
     spacerWidth = 2;
-	F_width = 250;
+    F_width = 250;
     F_start = 1;
     F_height = 1;
     using3merGraph = true;
 
-	freq = vector< vector<float> >();
-	for(int i = 0; i < 400; i++)
-	{
-		freq.push_back( vector<float>(F_width, 0.0) );
-	}
-	freq_map_count = 0;
-	calculate_count = 0;
-	
-	actionLabel = string("Repeat Map");
-	actionTooltip = string("Graph of possible alignmments");
+    freq = vector< vector<float> >();
+    for(int i = 0; i < 400; i++)
+    {
+        freq.push_back( vector<float>(F_width, 0.0) );
+    }
+    freq_map_count = 0;
+    calculate_count = 0;
+
+    actionLabel = string("Repeat Map");
+    actionTooltip = string("Graph of possible alignmments");
     actionData = actionLabel;
 }
 
@@ -72,58 +72,58 @@ RepeatMap::~RepeatMap()
 
 QScrollArea* RepeatMap::settingsUi()
 {	
-    settingsTab = new QScrollArea();    
+    settingsTab = new QScrollArea();
     settingsTab->setWindowTitle(QString("Repeat Map Settings"));
-	QFormLayout* formLayout = new QFormLayout;
-	formLayout->setRowWrapPolicy(QFormLayout::WrapLongRows);
-	settingsTab->setLayout(formLayout);
+    QFormLayout* formLayout = new QFormLayout;
+    formLayout->setRowWrapPolicy(QFormLayout::WrapLongRows);
+    settingsTab->setLayout(formLayout);
     
     QSpinBox* frequencyStartDial = new QSpinBox(settingsTab);
     frequencyStartDial->setMinimum(1);
     frequencyStartDial->setMaximum(100000);
     frequencyStartDial->setSingleStep(10);
     formLayout->addRow("Starting Offset:", frequencyStartDial);
-	
+
     connect( frequencyStartDial, SIGNAL(valueChanged(int)), this, SLOT(changeFStart(int)));
     connect( this, SIGNAL(fStartChanged(int)), frequencyStartDial, SLOT(setValue(int)));
-	connect( this, SIGNAL(fStartChanged(int)), this, SIGNAL(displayChanged()));
+    connect( this, SIGNAL(fStartChanged(int)), this, SIGNAL(displayChanged()));
     
     QSpinBox* graphWidthDial  = new QSpinBox(settingsTab);
     graphWidthDial->setMinimum(1);
     graphWidthDial->setMaximum(250);
     graphWidthDial->setSingleStep(10);
     graphWidthDial->setValue(F_width);
-	formLayout->addRow("Graph Display Width:", graphWidthDial);
-	
-	connect( graphWidthDial, SIGNAL(valueChanged(int)), this, SLOT(changeGraphWidth(int)));
-	connect( this, SIGNAL(graphWidthChanged(int)), graphWidthDial, SLOT(setValue(int)));
-	connect( this, SIGNAL(graphWidthChanged(int)), this, SIGNAL(displayChanged()));
+    formLayout->addRow("Graph Display Width:", graphWidthDial);
+
+    connect( graphWidthDial, SIGNAL(valueChanged(int)), this, SLOT(changeGraphWidth(int)));
+    connect( this, SIGNAL(graphWidthChanged(int)), graphWidthDial, SLOT(setValue(int)));
+    connect( this, SIGNAL(graphWidthChanged(int)), this, SIGNAL(displayChanged()));
 
     QCheckBox* find3merButton = new QCheckBox(settingsTab);
     find3merButton->setChecked(true);
     formLayout->addRow("Find 3mer pattern", find3merButton);
     connect( find3merButton, SIGNAL(toggled(bool)), this, SLOT(toggle3merGraph(bool)));
-	
-	return settingsTab;
+
+    return settingsTab;
 }
 
 void RepeatMap::display()
 {
-	checkVariables();
-	
-	if( !upToDate )
-	{
+    checkVariables();
+
+    if( !upToDate )
+    {
         if((ui->scaleDial->value() > 1)&& nuc != NULL)
-		{
-			nuc->checkVariables();
-			if(!nuc->upToDate)
-			{
+        {
+            nuc->checkVariables();
+            if(!nuc->upToDate)
+            {
                 nuc->calculateOutputPixels();
-			}
+            }
             int displayWidth = ui->widthDial->value() / ui->scaleDial->value();
             calculate(nuc->outputPixels, displayWidth);
-		}
-		else
+        }
+        else
         {
             freq_map();
             if(using3merGraph && ui->scaleDial->value() == 1)
@@ -134,26 +134,26 @@ void RepeatMap::display()
             }
         }
     }
-	load_canvas();
-	glPushMatrix();
-		glScaled(1,-1,1);
-        if(using3merGraph && ui->scaleDial->value() == 1)// && canvas_3mer != NULL)
-        {
-            canvas_3mer->display();
-            glTranslated(barWidth+spacerWidth, 0, 0);
-        }
-		textureBuffer->display();
+    load_canvas();
+    glPushMatrix();
+    glScaled(1,-1,1);
+    if(using3merGraph && ui->scaleDial->value() == 1)// && canvas_3mer != NULL)
+    {
+        canvas_3mer->display();
+        glTranslated(barWidth+spacerWidth, 0, 0);
+    }
+    textureBuffer->display();
 
 
-	//Draw Red indicator according to Width
-	int displayWidth = ui->widthDial->value() / ui->scaleDial->value(); 
+    //Draw Red indicator according to Width
+    int displayWidth = ui->widthDial->value() / ui->scaleDial->value();
 
-		glColor4f(1,0,0, 1);//red
-        glTranslated(displayWidth - F_start, 500, 0);
-        glScaled(.5, 500, 1);
-	    paint_square(point(-1, 0, .25), color(255,0,0));
-	    paint_square(point(1, 0, .25), color(255,0,0));
-	glPopMatrix();
+    glColor4f(1,0,0, 1);//red
+    glTranslated(displayWidth - F_start, 500, 0);
+    glScaled(.5, 500, 1);
+    paint_square(point(-1, 0, .25), color(255,0,0));
+    paint_square(point(1, 0, .25), color(255,0,0));
+    glPopMatrix();
 
 }
 
@@ -171,23 +171,23 @@ void RepeatMap::load_3mer_canvas(vector<float> scores)
 
 void RepeatMap::link(NucleotideDisplay* nuc_display)
 {
-	nuc = nuc_display;
+    nuc = nuc_display;
 }
 
 void RepeatMap::load_canvas()
 {
     outputPixels.clear();
-	for( int h = 0; h < height(); h++)
-	{		
-		for(int w = 1; w <= F_width; w++)
-		{
-			int grey = static_cast<int>(  freq[h][w] * 255 );			
+    for( int h = 0; h < height(); h++)
+    {
+        for(int w = 1; w <= F_width; w++)
+        {
+            int grey = static_cast<int>(  freq[h][w] * 255 );
             outputPixels.push_back( color(grey, grey, grey) );
-		}
-	}
+        }
+    }
     storeDisplay(outputPixels, F_width);
 
-	upToDate = true;
+    upToDate = true;
 }
 
 void RepeatMap::calculateOutputPixels()
@@ -198,17 +198,17 @@ void RepeatMap::calculateOutputPixels()
 
 GLuint RepeatMap::render()
 {
-	if(! upToDate )
+    if(! upToDate )
     {
         calculateOutputPixels();
     }
 
-	GLuint list = glGenLists(1);
+    GLuint list = glGenLists(1);
     glNewList(list, GL_COMPILE);
-	glPushMatrix();
+    glPushMatrix();
     glScaled(1,-1,1);
-		textureBuffer->display();	
-	glPopMatrix();
+    textureBuffer->display();
+    glPopMatrix();
     glEndList();
     upToDate = true;
     return list;
@@ -219,7 +219,7 @@ void RepeatMap::freq_map()
     qDebug() << "Width: " << ui->widthDial->value() << "\nScale: " << ui->scaleDial->value() << "\nStart: " << ui->startDial->value();
 
     const char* genome = sequence->c_str() + ui->startDial->value();//TODO: find a safer way to access this
-	for( int h = 0; h < height(); h++)
+    for( int h = 0; h < height(); h++)
     {
         int tempWidth = ui->widthDial->value();
         int offset = h * tempWidth;
@@ -245,7 +245,7 @@ void RepeatMap::freq_map()
             freq[h][w] = float(score) / tempWidth;
         }
     }
-	upToDate = true;
+    upToDate = true;
 }
 
 vector<float> RepeatMap::convolution_3mer()
@@ -266,7 +266,7 @@ vector<float> RepeatMap::convolution_3mer()
         for(int x = 0; x < (int)mask.size() && x < (int)freq[y].size(); ++x)
         {
             lineScore += mask[x] * freq[y][x];
-//            lineScore += min((float)0.5, mask[x] * freq[y][x]);//the amount that any position can affect is capped because of tandem repeats with 100% similarity
+            //            lineScore += min((float)0.5, mask[x] * freq[y][x]);//the amount that any position can affect is capped because of tandem repeats with 100% similarity
         }
         scores.push_back(lineScore);
     }
@@ -288,36 +288,36 @@ int RepeatMap::height()
     F_height = (((long int)current_display_size()) - (F_start-1)*ui->scaleDial->value() - F_width*ui->scaleDial->value() )
             / ui->widthDial->value();
 
-	F_height = max(0, min(400, F_height) );
-	
-	return F_height;
+    F_height = max(0, min(400, F_height) );
+
+    return F_height;
 }
 
 /******SLOTS*****/
 void RepeatMap::changeFStart(int val)
 {
-	if(updateInt(F_start, val))
-		emit fStartChanged(F_start);
+    if(updateInt(F_start, val))
+        emit fStartChanged(F_start);
 }
 
 void RepeatMap::changeGraphWidth(int val)
 {
-	val = min(250, val);
-	if(updateInt(F_width, val))
-	{
-		//freq.clear();
-		//freq = vector< vector<float> >();
-		for(int i = 0; i < 400; i++)
-		{
-			freq[i].clear();
-		}
-		for(int i = 0; i < 400; i++)
-		{
-			freq[i] = vector<float>(F_width, 0.0) ;
-		}
-		
-		emit graphWidthChanged(F_width);
-	}
+    val = min(250, val);
+    if(updateInt(F_width, val))
+    {
+        //freq.clear();
+        //freq = vector< vector<float> >();
+        for(int i = 0; i < 400; i++)
+        {
+            freq[i].clear();
+        }
+        for(int i = 0; i < 400; i++)
+        {
+            freq[i] = vector<float>(F_width, 0.0) ;
+        }
+
+        emit graphWidthChanged(F_width);
+    }
 }	
 
 void RepeatMap::toggle3merGraph(bool m)
@@ -328,9 +328,9 @@ void RepeatMap::toggle3merGraph(bool m)
 
 string RepeatMap::SELECT_MouseClick(point2D pt)
 {
-	//range check
-	if( pt.x < (int)width() && pt.x >= 0 && pt.y <= height() )
-	{
+    //range check
+    if( pt.x < (int)width() && pt.x >= 0 && pt.y <= height() )
+    {
         if(using3merGraph)
             pt.x -= barWidth + spacerWidth;
         if(pt.x < 0)//clicked on the 3mer detector, not freq_map
@@ -340,18 +340,18 @@ string RepeatMap::SELECT_MouseClick(point2D pt)
         pt.x *= ui->scaleDial->value();
         int index = pt.y * ui->widthDial->value();
         index = index + ui->startDial->value();
-		int index2 = index + pt.x + F_start;
-		int w = min( 100, ui->widthDial->value() );
+        int index2 = index + pt.x + F_start;
+        int w = min( 100, ui->widthDial->value() );
         if( index2 + w < (int)sequence->size() )
-		{
+        {
             stringstream ss;
             ss << percentage << "% similarity at Offset "<< pt.x+ F_start;
             ss << "\nIndex: " << index << ": " << sequence->substr(index, w);
             ss << "\nIndex: " << index2<< ": " << sequence->substr(index2, w);
             ui->print(ss.str());
-		}
-	}
-	return string();
+        }
+    }
+    return string();
 }
 
 /** Returns the relative index on a square area.  It will return -1 if
@@ -371,111 +371,111 @@ int RepeatMap::getRelativeIndexFromMouseClick(point2D pt)
 /***Correlation***/
 vector<point> RepeatMap::bestMatches()
 {
-	//calculate(color_avgs, width() / ui->scaleDial->value());
-		
-	vector<point> best_matches;
-	for(int h =0; h < height(); h++)
-	{
-		float best_score = 0;
-		int best_freq = 0;
-		//if(freq[h][1] != 0)//N's block
-		{
-			for(int w = 1; w <= F_width; w++)
-			{
-				float curr = freq[h][w];
-				if( curr * .90 > best_score)  //new value must beat old by at least 10%
-				{
-					best_score = curr;
-					best_freq = w;
-				}
-			}
-		}
-		if(best_freq == 0) best_freq = 1;//NNNNN's show up as 0 and causes crash
-		best_matches.push_back( point(best_score, (float)best_freq, 0) );
-	}
-	return best_matches;
+    //calculate(color_avgs, width() / ui->scaleDial->value());
+
+    vector<point> best_matches;
+    for(int h =0; h < height(); h++)
+    {
+        float best_score = 0;
+        int best_freq = 0;
+        //if(freq[h][1] != 0)//N's block
+        {
+            for(int w = 1; w <= F_width; w++)
+            {
+                float curr = freq[h][w];
+                if( curr * .90 > best_score)  //new value must beat old by at least 10%
+                {
+                    best_score = curr;
+                    best_freq = w;
+                }
+            }
+        }
+        if(best_freq == 0) best_freq = 1;//NNNNN's show up as 0 and causes crash
+        best_matches.push_back( point(best_score, (float)best_freq, 0) );
+    }
+    return best_matches;
 }
 
 void RepeatMap::calculate(vector<color>& img, int pixelsPerSample)//constructs the frequency map
 {
-	//display_size = img.size();
-	checkVariables();
-	//glWidget->print("Calculate(): ", ++calculate_count);
-	for( int h = 0; h < height(); h++)
-	{
-		int offset = h * pixelsPerSample;
-		for(int w = 1; w <= F_width; w++)//calculate across widths 1-F_width
-		{
-			freq[h][w] = .5 * (1.0 + correlate(img, offset, offset+w, pixelsPerSample));
-		}
-	}
-	upToDate = true;
+    //display_size = img.size();
+    checkVariables();
+    //glWidget->print("Calculate(): ", ++calculate_count);
+    for( int h = 0; h < height(); h++)
+    {
+        int offset = h * pixelsPerSample;
+        for(int w = 1; w <= F_width; w++)//calculate across widths 1-F_width
+        {
+            freq[h][w] = .5 * (1.0 + correlate(img, offset, offset+w, pixelsPerSample));
+        }
+    }
+    upToDate = true;
 }
 
 double RepeatMap::correlate(vector<color>& img, int beginA, int beginB, int pixelsPerSample)//calculations for a single pixel
 {//correlation will be a value between -1 and 1 representing how closley related 2 sequences are
-	//calculation variables!!!  should all be double to prevent overflow
-	double N = pixelsPerSample;
-	int AVal;		int BVal;
-	
-	double ARedsum = 0,	AGreensum = 0,		ABluesum = 0;   //our tuple of color sums
-	double BRedsum = 0,	BGreensum = 0,		BBluesum = 0;   //our tuple of color sums
-	double ASquaredRed = 0,	ASquaredGreen = 0,	ASquaredBlue = 0;  //this is Aij^2
-	double BSquaredRed = 0,	BSquaredGreen = 0,	BSquaredBlue = 0;  //this is Bij^2	
-	double ABRed = 0, 	ABGreen =0,		ABBlue =0;	//this is A[]*B[]
+    //calculation variables!!!  should all be double to prevent overflow
+    double N = pixelsPerSample;
+    int AVal;		int BVal;
 
-	for (int k = 0; k < pixelsPerSample; k++)
-	{//3 color shades RGB,  2 samples A and B
-		//reds
-		color A = img[beginA + k];
-		color B = img[beginB + k];
-		AVal = A.r;							BVal = B.r;
-		ARedsum += AVal;					BRedsum += BVal;
-		ASquaredRed += (AVal*AVal);			BSquaredRed += (BVal*BVal);
-		ABRed += (AVal * BVal);
-		//Greens
-		AVal = A.g;							BVal = B.g;
-		AGreensum += AVal;					BGreensum += BVal;
-		ASquaredGreen += (AVal*AVal);		BSquaredGreen += (BVal*BVal);
-		ABGreen += (AVal * BVal);
-		//Blues
-		AVal = A.b;							BVal = B.b;
-		ABluesum += AVal;					BBluesum += BVal;
-		ASquaredBlue += (AVal*AVal);		BSquaredBlue += (BVal*BVal);
-		ABBlue += (AVal * BVal);				
-						
-	}   
-	
-	//calculation time
-	double AbarRed = 0,	AbarGreen = 0,			AbarBlue = 0;  //A-tuple for color means
-	double BbarRed = 0,	BbarGreen = 0,			BbarBlue = 0;  //B-tuple for color means
-	AbarRed = ARedsum / N;	AbarGreen = AGreensum / N;	AbarBlue = ABluesum / N;
-	BbarRed = BRedsum / N;	BbarGreen = BGreensum / N;	BbarBlue = BBluesum / N;
-	
-	double numerator_R = ABRed   - BbarRed   * ARedsum   - AbarRed * BRedsum     + AbarRed   * BbarRed   * N;
-	double numerator_G = ABGreen - BbarGreen * AGreensum - AbarGreen * BGreensum + AbarGreen * BbarGreen * N;
-	double numerator_B = ABBlue  - BbarBlue  * ABluesum  - AbarBlue * BBluesum   + AbarBlue  * BbarBlue  * N;	
-	
-	double denom_R1 = (sqrt(ASquaredRed   - ((ARedsum   * ARedsum)  /N)));
-	double denom_R2 = (sqrt(BSquaredRed   - ((BRedsum   * BRedsum)  /N)));
-	double denom_G1 = (sqrt(ASquaredGreen - ((AGreensum * AGreensum)/N)));
-	double denom_G2 = (sqrt(BSquaredGreen - ((BGreensum * BGreensum)/N)));
-	double denom_B1 = (sqrt(ASquaredBlue  - ((ABluesum  * ABluesum) /N)));
-	double denom_B2 = (sqrt(BSquaredBlue  - ((BBluesum  * BBluesum) /N)));
-	
-	double backup = sqrt(1 - (1/N));//if we have 0 instances of a color it will be / 0  div0
-	if(denom_R1 == 0) denom_R1 = backup;
-	if(denom_R2 == 0) denom_R2 = backup;
-	if(denom_G1 == 0) denom_G1 = backup;
-	if(denom_G2 == 0) denom_G2 = backup;
-	if(denom_B1 == 0) denom_B1 = backup;
-	if(denom_B2 == 0) denom_B2 = backup;
+    double ARedsum = 0,	AGreensum = 0,		ABluesum = 0;   //our tuple of color sums
+    double BRedsum = 0,	BGreensum = 0,		BBluesum = 0;   //our tuple of color sums
+    double ASquaredRed = 0,	ASquaredGreen = 0,	ASquaredBlue = 0;  //this is Aij^2
+    double BSquaredRed = 0,	BSquaredGreen = 0,	BSquaredBlue = 0;  //this is Bij^2
+    double ABRed = 0, 	ABGreen =0,		ABBlue =0;	//this is A[]*B[]
 
-	double answer_R = numerator_R / (denom_R1 * denom_R2);
-	double answer_G = numerator_G / (denom_G1 * denom_G2);
-	double answer_B = numerator_B / (denom_B1 * denom_B2);
+    for (int k = 0; k < pixelsPerSample; k++)
+    {//3 color shades RGB,  2 samples A and B
+        //reds
+        color A = img[beginA + k];
+        color B = img[beginB + k];
+        AVal = A.r;							BVal = B.r;
+        ARedsum += AVal;					BRedsum += BVal;
+        ASquaredRed += (AVal*AVal);			BSquaredRed += (BVal*BVal);
+        ABRed += (AVal * BVal);
+        //Greens
+        AVal = A.g;							BVal = B.g;
+        AGreensum += AVal;					BGreensum += BVal;
+        ASquaredGreen += (AVal*AVal);		BSquaredGreen += (BVal*BVal);
+        ABGreen += (AVal * BVal);
+        //Blues
+        AVal = A.b;							BVal = B.b;
+        ABluesum += AVal;					BBluesum += BVal;
+        ASquaredBlue += (AVal*AVal);		BSquaredBlue += (BVal*BVal);
+        ABBlue += (AVal * BVal);
 
-	return (answer_R + answer_G + answer_B)/3;//return the average of RGB correlation
+    }
+
+    //calculation time
+    double AbarRed = 0,	AbarGreen = 0,			AbarBlue = 0;  //A-tuple for color means
+    double BbarRed = 0,	BbarGreen = 0,			BbarBlue = 0;  //B-tuple for color means
+    AbarRed = ARedsum / N;	AbarGreen = AGreensum / N;	AbarBlue = ABluesum / N;
+    BbarRed = BRedsum / N;	BbarGreen = BGreensum / N;	BbarBlue = BBluesum / N;
+
+    double numerator_R = ABRed   - BbarRed   * ARedsum   - AbarRed * BRedsum     + AbarRed   * BbarRed   * N;
+    double numerator_G = ABGreen - BbarGreen * AGreensum - AbarGreen * BGreensum + AbarGreen * BbarGreen * N;
+    double numerator_B = ABBlue  - BbarBlue  * ABluesum  - AbarBlue * BBluesum   + AbarBlue  * BbarBlue  * N;
+
+    double denom_R1 = (sqrt(ASquaredRed   - ((ARedsum   * ARedsum)  /N)));
+    double denom_R2 = (sqrt(BSquaredRed   - ((BRedsum   * BRedsum)  /N)));
+    double denom_G1 = (sqrt(ASquaredGreen - ((AGreensum * AGreensum)/N)));
+    double denom_G2 = (sqrt(BSquaredGreen - ((BGreensum * BGreensum)/N)));
+    double denom_B1 = (sqrt(ASquaredBlue  - ((ABluesum  * ABluesum) /N)));
+    double denom_B2 = (sqrt(BSquaredBlue  - ((BBluesum  * BBluesum) /N)));
+
+    double backup = sqrt(1 - (1/N));//if we have 0 instances of a color it will be / 0  div0
+    if(denom_R1 == 0) denom_R1 = backup;
+    if(denom_R2 == 0) denom_R2 = backup;
+    if(denom_G1 == 0) denom_G1 = backup;
+    if(denom_G2 == 0) denom_G2 = backup;
+    if(denom_B1 == 0) denom_B1 = backup;
+    if(denom_B2 == 0) denom_B2 = backup;
+
+    double answer_R = numerator_R / (denom_R1 * denom_R2);
+    double answer_G = numerator_G / (denom_G1 * denom_G2);
+    double answer_B = numerator_B / (denom_B1 * denom_B2);
+
+    return (answer_R + answer_G + answer_B)/3;//return the average of RGB correlation
 }
 
 int RepeatMap::width()

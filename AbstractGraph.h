@@ -19,51 +19,51 @@ using namespace std;
 
 class AbstractGraph : public QGLWidget
 {
-    Q_OBJECT	
-	
+    Q_OBJECT
+
 protected:
-	int frameCount;
-	const string* sequence;
-	QScrollArea* settingsTab;
+    int frameCount;
+    const string* sequence;
+    QScrollArea* settingsTab;
     GLuint display_object;
 
 public:
     vector<color> outputPixels;
-	GLWidget* glWidget;
-	UiVariables* ui;	
+    GLWidget* glWidget;
+    UiVariables* ui;
     TextureCanvas* textureBuffer;
-	
-	bool hidden;
-	bool upToDate;
-    bool usingTextures;
-	QAction* toggleButton;
 
-	string actionLabel;
-	string actionTooltip;
-	string actionData; 
-	
+    bool hidden;
+    bool upToDate;
+    bool usingTextures;
+    QAction* toggleButton;
+
+    string actionLabel;
+    string actionTooltip;
+    string actionData;
+
     AbstractGraph();
     AbstractGraph(UiVariables* gui, GLWidget* gl);
-	~AbstractGraph();
-	virtual int width();
+    ~AbstractGraph();
+    virtual int width();
 
-	virtual int height();
-	virtual void paint_square(point position, color c);
+    virtual int height();
+    virtual void paint_square(point position, color c);
     virtual void loadTextureCanvas(bool raggedEdge = false);
     virtual void storeDisplay(vector<color>& pixels, int width, bool raggedEdge = false);
-	virtual bool updateInt(int& subject, int& value);
+    virtual bool updateInt(int& subject, int& value);
     virtual bool updateDouble(double& subject, double& value);
     virtual void display();
     virtual GLuint render();
     virtual void calculateOutputPixels() = 0;
-	virtual void displayLegend(float canvasWidth, float canvasHeight);
-	virtual void checkVariables();
+    virtual void displayLegend(float canvasWidth, float canvasHeight);
+    virtual void checkVariables();
     virtual void ensureVisible();
-	virtual void setButtonFont();
+    virtual void setButtonFont();
     virtual void setSequence(const string* seq);
-	virtual string getFileName();
-	virtual QScrollArea* settingsUi();
-	string reverseComplement(string original);
+    virtual string getFileName();
+    virtual QScrollArea* settingsUi();
+    string reverseComplement(string original);
     virtual int current_display_size();
     virtual string mouseClick(point2D pt, bool);
     virtual string SELECT_MouseClick(point2D pt);
@@ -72,26 +72,26 @@ public:
     virtual int adjustForSampleLengthBounds(int index, int sample_length);
     virtual string SELECT_StringFromMouseClick(int index);
     virtual string FIND_StringFromMouseClick(int index);
-	
-inline char complement(char a)
-{
-	if(a == 'A') return 'T';
-	if(a == 'C') return 'G';
-	if(a == 'G') return 'C';
-	if(a == 'T') return 'A';
-	return a;
-}
+
+    inline char complement(char a)
+    {
+        if(a == 'A') return 'T';
+        if(a == 'C') return 'G';
+        if(a == 'G') return 'C';
+        if(a == 'T') return 'A';
+        return a;
+    }
 
 public slots:
-	void invalidate();
+    void invalidate();
     void toggleVisibility();
-	
+
 signals:
-	void displayChanged();
-	void hideSettings(QScrollArea*);
+    void displayChanged();
+    void hideSettings(QScrollArea*);
     void showSettings(QScrollArea*);
     void deleteButton(QAction*);
-	
+
 };
 
 #endif

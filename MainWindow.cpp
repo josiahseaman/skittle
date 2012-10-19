@@ -46,38 +46,38 @@ the primary owner of the UiVariables object that is passed for signals all throu
 
 MainWindow::MainWindow()
 {
-	textArea = NULL;
-	setDockOptions(QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks);
-	setWindowTitle( "Skittle Genome Visualizer");
+    textArea = NULL;
+    setDockOptions(QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks);
+    setWindowTitle( "Skittle Genome Visualizer");
     createDocks();
     createUiVars();
-	createActions();
-	createMenus();
+    createActions();
+    createMenus();
     createToolbars();
     createStatusBar();
     createUiConnections();
 
     readSettings();
     viewManager	= new ViewManager(this, ui);
-	setCentralWidget(viewManager);  
-	createFileConnections();
+    setCentralWidget(viewManager);
+    createFileConnections();
 
     ensureDocksAreVisible();
     setWindowIcon(QIcon(":/skittle.svg"));
-	
-	//openAction->trigger();
+
+    //openAction->trigger();
 }
 
 void MainWindow::addDisplayActions(AbstractGraph* display)
 {
-	if(display->actionLabel.size() > 0)
-	{
-		QAction* presetAction = new QAction(QString(display->actionLabel.c_str()),this);
-		presetAction->setStatusTip(QString(display->actionTooltip.c_str()));
-		presetAction->setToolTip(QString(display->actionTooltip.c_str()));
-		//presetAction->setData(QString(display->actionData.c_str()));
-		display->toggleButton = presetAction;
-		connect(presetAction,SIGNAL(triggered()),display, SLOT(toggleVisibility()));
+    if(display->actionLabel.size() > 0)
+    {
+        QAction* presetAction = new QAction(QString(display->actionLabel.c_str()),this);
+        presetAction->setStatusTip(QString(display->actionTooltip.c_str()));
+        presetAction->setToolTip(QString(display->actionTooltip.c_str()));
+        //presetAction->setData(QString(display->actionData.c_str()));
+        display->toggleButton = presetAction;
+        connect(presetAction,SIGNAL(triggered()),display, SLOT(toggleVisibility()));
         connect(display, SIGNAL(deleteButton(QAction*)), this, SLOT(removeGraphButton(QAction*)));
 
         presetMenu->addAction(presetAction);
@@ -86,12 +86,12 @@ void MainWindow::addDisplayActions(AbstractGraph* display)
         if(!list.isEmpty())
             before = list.first();
         presetToolBar->insertAction(before, presetAction);
-		display->setButtonFont();
-	}
-	else
-	{
-		print("Tried to add display mode with no label, aborting...");
-	}
+        display->setButtonFont();
+    }
+    else
+    {
+        print("Tried to add display mode with no label, aborting...");
+    }
 }
 
 void MainWindow::showUpdateButton()
@@ -116,13 +116,13 @@ void MainWindow::closeAndUpdateSkittle()
 
 void MainWindow::removeGraphButton(QAction* presetAction)
 {
-	presetMenu->removeAction(presetAction);
-	presetToolBar->removeAction(presetAction);
+    presetMenu->removeAction(presetAction);
+    presetToolBar->removeAction(presetAction);
 }
 
 void MainWindow::addDisplayDivider()
 {
-	presetToolBar->addSeparator();	
+    presetToolBar->addSeparator();
 }
 
 void MainWindow::createUiVars()
@@ -180,88 +180,88 @@ void MainWindow::createUiVars()
 
 void MainWindow::createActions()
 {
-	moveAction = new QAction("Move",this);	
-	moveAction->setToolTip(QString("Horizontal and vertical scroll"));
-	resizeAction = new QAction("Resize",this);	
-	resizeAction->setToolTip(QString("Adjust Width and Start position"));
-	zoomAction = new QAction("Zoom",this);	
-	zoomAction->setToolTip(QString("Shift+Click to zoom out"));
-	selectAction = new QAction("Select",this);	
+    moveAction = new QAction("Move",this);
+    moveAction->setToolTip(QString("Horizontal and vertical scroll"));
+    resizeAction = new QAction("Resize",this);
+    resizeAction->setToolTip(QString("Adjust Width and Start position"));
+    zoomAction = new QAction("Zoom",this);
+    zoomAction->setToolTip(QString("Shift+Click to zoom out"));
+    selectAction = new QAction("Select",this);
     selectAction->setToolTip(QString("Displays index and sequence information"));
-	findAction = new QAction("&Find",this);	
+    findAction = new QAction("&Find",this);
     screenCaptureAction = new QAction("Screen &Capture", this);
     screenCaptureAction->setToolTip(QString("Take a screen shot"));
     addAnnotationAction = new QAction("Add Annotation",this);
     nextAnnotationAction = new QAction("Next Annotation",this);
     prevAnnotationAction = new QAction("Previous Annotation",this);
-	//browseCommunityAction = new QAction("Browse Community Research",this);	
-	//delAnnotationAction = new QAction("Delete Current Bookmark",this);	
-	
-	/*****TODO: NOT CURRENTLY IN USE ********/
-	findSequenceAction = new QAction("Find Sequence",this);	
-	findSequenceAction->setStatusTip("Find Arbitrary Sequence");
-	findNextAction = new QAction("Find Next", this);
-	findNextAction->setStatusTip("Jump to Next Instance of Current Sequence");
-	findPrevAction = new QAction("Find Previous", this);
-	findPrevAction->setStatusTip("Jump to Previous Instance of Current Sequence");
-	hilightResultsAction = new QAction("Highlight Results",this);
-	hilightResultsAction->setStatusTip("Highlight All copies of Current Sequence");
-	hilightResultsAction->setCheckable(true);
-	
+    //browseCommunityAction = new QAction("Browse Community Research",this);
+    //delAnnotationAction = new QAction("Delete Current Bookmark",this);
+
+    /*****TODO: NOT CURRENTLY IN USE ********/
+    findSequenceAction = new QAction("Find Sequence",this);
+    findSequenceAction->setStatusTip("Find Arbitrary Sequence");
+    findNextAction = new QAction("Find Next", this);
+    findNextAction->setStatusTip("Jump to Next Instance of Current Sequence");
+    findPrevAction = new QAction("Find Previous", this);
+    findPrevAction->setStatusTip("Jump to Previous Instance of Current Sequence");
+    hilightResultsAction = new QAction("Highlight Results",this);
+    hilightResultsAction->setStatusTip("Highlight All copies of Current Sequence");
+    hilightResultsAction->setCheckable(true);
+
 
     QIcon uIcon = QIcon(":/updatebutton.png");
     updateSkittle =new QAction(uIcon, QString("Click here to update"), this);
     updateSkittle->setVisible(false);
 
-	addViewAction = new QAction("New Window",this);	
-	
-	openAction = new QAction("&Open File",this);
-	openAction->setStatusTip("Open a Sequence File");
-	
+    addViewAction = new QAction("New Window",this);
+
+    openAction = new QAction("&Open File",this);
+    openAction->setStatusTip("Open a Sequence File");
+
     openGtfAction = new QAction("Open Annotation",this);
-	openGtfAction->setStatusTip("Open GTF / GFF Annotation File");
-	
-	exitAction = new QAction("E&xit",this);
-	helpAction = new QAction("Online &Help",this);
-	aboutQtAct = new QAction("About Qt", this);
-	exitAction->setStatusTip("Close Program");
+    openGtfAction->setStatusTip("Open GTF / GFF Annotation File");
+
+    exitAction = new QAction("E&xit",this);
+    helpAction = new QAction("Online &Help",this);
+    aboutQtAct = new QAction("About Qt", this);
+    exitAction->setStatusTip("Close Program");
 }
 
 void MainWindow::createMenus()
 {
-	fileMenu = menuBar()->addMenu("&File");
-	fileMenu->addAction(openAction);
-	fileMenu->addAction(addViewAction);
-	fileMenu->addSeparator();
-	fileMenu->addAction(openGtfAction);
-	fileMenu->addAction(exitAction);
-	/*searchMenu = menuBar()->addMenu("&Search");
-	searchMenu->addAction(findSequenceAction);
-	searchMenu->addAction(findNextAction);
-	searchMenu->addAction(findPrevAction);
-	searchMenu->addAction(hilightResultsAction);*/
+    fileMenu = menuBar()->addMenu("&File");
+    fileMenu->addAction(openAction);
+    fileMenu->addAction(addViewAction);
+    fileMenu->addSeparator();
+    fileMenu->addAction(openGtfAction);
+    fileMenu->addAction(exitAction);
+    /*searchMenu = menuBar()->addMenu("&Search");
+    searchMenu->addAction(findSequenceAction);
+    searchMenu->addAction(findNextAction);
+    searchMenu->addAction(findPrevAction);
+    searchMenu->addAction(hilightResultsAction);*/
     viewMenu = menuBar()->addMenu("&View");
     presetMenu = viewMenu->addMenu("Visualization Graphs");
-	
+
     annotationMenu = menuBar()->addMenu("&Annotations");
-	annotationMenu->addAction(addAnnotationAction);
+    annotationMenu->addAction(addAnnotationAction);
     annotationMenu->addAction(nextAnnotationAction);
     annotationMenu->addAction(prevAnnotationAction);
-	//annotationMenu->addAction(browseCommunityAction);
-	//annotationMenu->addAction(delAnnotationAction);
-	toolMenu = menuBar()->addMenu("&Tools");
-	toolMenu->addAction(moveAction);
-	toolMenu->addAction(resizeAction);
-	toolMenu->addAction(zoomAction);
-	toolMenu->addAction(selectAction);
-	toolMenu->addAction(findAction);
+    //annotationMenu->addAction(browseCommunityAction);
+    //annotationMenu->addAction(delAnnotationAction);
+    toolMenu = menuBar()->addMenu("&Tools");
+    toolMenu->addAction(moveAction);
+    toolMenu->addAction(resizeAction);
+    toolMenu->addAction(zoomAction);
+    toolMenu->addAction(selectAction);
+    toolMenu->addAction(findAction);
     toolMenu->addAction(screenCaptureAction);
-	toolActionGroup = new QActionGroup(this);
-	toolActionGroup->addAction(moveAction);
-	toolActionGroup->addAction(resizeAction);
-	toolActionGroup->addAction(zoomAction);
-	toolActionGroup->addAction(selectAction);
-	toolActionGroup->addAction(findAction);
+    toolActionGroup = new QActionGroup(this);
+    toolActionGroup->addAction(moveAction);
+    toolActionGroup->addAction(resizeAction);
+    toolActionGroup->addAction(zoomAction);
+    toolActionGroup->addAction(selectAction);
+    toolActionGroup->addAction(findAction);
     toolActionGroup->addAction(screenCaptureAction);
 
     colorSettingsMenu = menuBar()->addMenu("Color &Settings");
@@ -277,9 +277,9 @@ void MainWindow::createMenus()
     createColorPalleteAction(QString("Blues"), UiVariables::BLUES, QIcon(":/icons/blues.png"), colorGroup, signalMapper );
     createColorPalleteAction(QString("Reds"), UiVariables::REDS, QIcon(":/icons/reds.png"), colorGroup, signalMapper );
 
-	QMenu* helpMenu = menuBar()->addMenu("&Help");
-	helpMenu->addAction(helpAction);
-	helpMenu->addAction(aboutQtAct);
+    QMenu* helpMenu = menuBar()->addMenu("&Help");
+    helpMenu->addAction(helpAction);
+    helpMenu->addAction(aboutQtAct);
 }
 
 QAction* MainWindow::createColorPalleteAction(QString label, int colorPallete, QIcon palleteIcon, QActionGroup* group, QSignalMapper* signalMapper)
@@ -298,35 +298,35 @@ QAction* MainWindow::createColorPalleteAction(QString label, int colorPallete, Q
 
 void MainWindow::createToolbars()
 {
-	QFont boldFont = QFont();
-	boldFont.setBold(true);
+    QFont boldFont = QFont();
+    boldFont.setBold(true);
 
     annotationToolBar = addToolBar("File Actions");
     annotationToolBar->setObjectName("file");
     annotationToolBar->setIconSize( QSize( 100, 20 ) );
     annotationToolBar->addAction(updateSkittle);
-	annotationToolBar->addAction(openAction);
-	annotationToolBar->addAction(addViewAction);
-	annotationToolBar->addAction(addAnnotationAction);
+    annotationToolBar->addAction(openAction);
+    annotationToolBar->addAction(addViewAction);
+    annotationToolBar->addAction(addAnnotationAction);
     annotationToolBar->addAction(openGtfAction);
     annotationToolBar->addAction(nextAnnotationAction);
     annotationToolBar->addAction(prevAnnotationAction);
-	//annotationToolBar->addAction(browseCommunityAction);
+    //annotationToolBar->addAction(browseCommunityAction);
     //annotationToolBar->addAction(delAnnotationAction);
-	
+
     presetToolBar = new QToolBar("Visualization Graphs");
     presetToolBar->setObjectName("Visualization Graphs");
     presetToolBar->setOrientation(Qt::Horizontal);
-	
+
     toolToolBar = addToolBar("Mouse Tools");
     toolToolBar->setObjectName("Mouse Tools");
-	toolToolBar->addAction(moveAction);
-	toolToolBar->addAction(resizeAction);
-	toolToolBar->addAction(zoomAction);
-	toolToolBar->addAction(selectAction);
-	toolToolBar->addAction(findAction);
+    toolToolBar->addAction(moveAction);
+    toolToolBar->addAction(resizeAction);
+    toolToolBar->addAction(zoomAction);
+    toolToolBar->addAction(selectAction);
+    toolToolBar->addAction(findAction);
     toolToolBar->addAction(screenCaptureAction);
-	
+
     //previous location of createUiVars()
 
     addToolBar(Qt::RightToolBarArea,presetToolBar);
@@ -353,43 +353,43 @@ void MainWindow::createDocks()
     infoDock->setAllowedAreas(Qt::AllDockWidgetAreas);
     infoDock->setFeatures(QDockWidget::NoDockWidgetFeatures);//in particular we want to avoid Closable
     infoDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
-	
+
     tabWidget = new QTabWidget(infoDock);
-//    tabWidget->setSizePolicy(QSizePolicy::Policy 100, QSizePolicy::Policy 50);
-	infoDock->setWidget(tabWidget);
+    //    tabWidget->setSizePolicy(QSizePolicy::Policy 100, QSizePolicy::Policy 50);
+    infoDock->setWidget(tabWidget);
     textArea = new QTextEdit(tabWidget);
     tabWidget->addTab(textArea, QString("Text Output"));
     addDockWidget(Qt::BottomDockWidgetArea, infoDock);
-	
-	/*
-	QWidget *filters = new QWidget;
-	QVBoxLayout *filterLayout = new QVBoxLayout;
-	QTabWidget *tabWidget = new QTabWidget();
-	tabWidget->addTab(new QListWidget, "Presets");
-	//tabWidget->addTab(new QTreeView, "Advanced");
-	QTableWidget *propsWidget = new QTableWidget(4,3);
-	
-	filterLayout->addWidget(tabWidget);
-	filterLayout->addWidget(propsWidget);
-	filters->setLayout(filterLayout);*/
+
+    /*
+    QWidget *filters = new QWidget;
+    QVBoxLayout *filterLayout = new QVBoxLayout;
+    QTabWidget *tabWidget = new QTabWidget();
+    tabWidget->addTab(new QListWidget, "Presets");
+    //tabWidget->addTab(new QTreeView, "Advanced");
+    QTableWidget *propsWidget = new QTableWidget(4,3);
+
+    filterLayout->addWidget(tabWidget);
+    filterLayout->addWidget(propsWidget);
+    filters->setLayout(filterLayout);*/
 }
 
 void MainWindow::createStatusBar()
 {
-	//QLabel *statusTip = new QLabel("This is a status Tip",this);
-	//QProgressBar *processStatus = new QProgressBar(this);
-	//processStatus->setMinimumWidth(300);
-	//processStatus->setMaximumWidth(300);
-	//processStatus->setValue(75);
-	//QLabel *processState = new QLabel("Loading...",this);
-	
-	//statusBar()->addPermanentWidget(processStatus);
-	//statusBar()->addPermanentWidget(processState);
-	statusBar()->showMessage(tr("Ready"));
+    //QLabel *statusTip = new QLabel("This is a status Tip",this);
+    //QProgressBar *processStatus = new QProgressBar(this);
+    //processStatus->setMinimumWidth(300);
+    //processStatus->setMaximumWidth(300);
+    //processStatus->setValue(75);
+    //QLabel *processState = new QLabel("Loading...",this);
+
+    //statusBar()->addPermanentWidget(processStatus);
+    //statusBar()->addPermanentWidget(processState);
+    statusBar()->showMessage(tr("Ready"));
 }
 void MainWindow::createUiConnections()
 {	/******Internal UI Logic*********/
-    connect(exitAction, SIGNAL(triggered()), this, SLOT(close())); 
+    connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
     connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
     connect(helpAction, SIGNAL(triggered()), this, SLOT(helpDialog()));
 
@@ -397,54 +397,54 @@ void MainWindow::createUiConnections()
     
     connect(doubleDisplayWidth, SIGNAL(clicked()), this, SLOT(doubleWidth()));
     connect(halveDisplayWidth, SIGNAL(clicked()), this, SLOT(halveWidth()));
-//    connect(zoomExtents, SIGNAL(clicked()), , SLOT(zoomExtents()));
+    //    connect(zoomExtents, SIGNAL(clicked()), , SLOT(zoomExtents()));
     connect(ui->widthDial, SIGNAL(editingFinished()), this, SLOT(changeWidth()));
-	
+
 }
 void MainWindow::createFileConnections()
 {
-	//Consider making this a function-call chain.... or handling this specifically, in a thread.
+    //Consider making this a function-call chain.... or handling this specifically, in a thread.
     connect(openAction, SIGNAL(triggered()), this, SLOT(open()));
     connect(this, SIGNAL(newFileOpen(QString)), viewManager, SLOT(changeFile(QString)));
 
-	connect(openGtfAction, SIGNAL(triggered()), this, SLOT(openGtf()));
-	connect(this, SIGNAL(newGtfFileOpen(QString)), viewManager, SLOT(addAnnotationDisplay(QString)));	
-	connect(addAnnotationAction, SIGNAL(triggered()), viewManager, SLOT(addBookmark()));
+    connect(openGtfAction, SIGNAL(triggered()), this, SLOT(openGtf()));
+    connect(this, SIGNAL(newGtfFileOpen(QString)), viewManager, SLOT(addAnnotationDisplay(QString)));
+    connect(addAnnotationAction, SIGNAL(triggered()), viewManager, SLOT(addBookmark()));
     connect(nextAnnotationAction, SIGNAL(triggered()), viewManager, SLOT(jumpToNextAnnotation()));
     connect(prevAnnotationAction, SIGNAL(triggered()), viewManager, SLOT(jumpToPrevAnnotation()));
 }
 
 void MainWindow::open()
 {
-	QString fileName = QFileDialog::getOpenFileName(
-		this,"Open Sequence File", 
-		"", 
-        "FASTA files (*.fa *.fasta);; Image files (*.png *.xpm *.jpg);; Text files (*.txt);; All files (*)"
-	);
-	
-    if (!fileName.isEmpty()) 
-		 emit newFileOpen(fileName);
+    QString fileName = QFileDialog::getOpenFileName(
+                this,"Open Sequence File",
+                "",
+                "FASTA files (*.fa *.fasta);; Image files (*.png *.xpm *.jpg);; Text files (*.txt);; All files (*)"
+                );
+
+    if (!fileName.isEmpty())
+        emit newFileOpen(fileName);
 }
 
 void MainWindow::open(QString fileName)
 {
-    if (!fileName.isEmpty()) 
-		 emit newFileOpen(fileName);
+    if (!fileName.isEmpty())
+        emit newFileOpen(fileName);
 }
 
 void MainWindow::changeWindowName(std::string name)
 {
-	string title = "Skittle Genome Visualizer";
-	title.append(name);
-	setWindowTitle( "Skittle Genome Visualizer");
+    string title = "Skittle Genome Visualizer";
+    title.append(name);
+    setWindowTitle( "Skittle Genome Visualizer");
 }
 
 void MainWindow::openGtf()
 {
     QString fileName = QFileDialog::getOpenFileName(this,"Open GTF File", "", tr("Annotation files (*.gtf *.gff);; Any files (*)"));
     
-    if (!fileName.isEmpty()) 
-		 emit newGtfFileOpen(fileName);
+    if (!fileName.isEmpty())
+        emit newGtfFileOpen(fileName);
 }
 
 void MainWindow::changeScale(int scale)
@@ -478,66 +478,66 @@ void MainWindow::halveWidth()
 
 void MainWindow::updateProgress(int val)
 {
-	//processStatus->setValue(val);
+    //processStatus->setValue(val);
 }
 void MainWindow::updateState(QString state){
-	//processState->setText(state);
+    //processState->setText(state);
 }
 void MainWindow::updateStatus(QString tip){
-	statusBar()->showMessage(tip);
+    statusBar()->showMessage(tip);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-	writeSettings();
-	event->accept();
-//	QMainWindow::closeEvent(event);
+    writeSettings();
+    event->accept();
+    //	QMainWindow::closeEvent(event);
 }
 
 void MainWindow::readSettings()
 {
     print("Reading User Settings");
-	QSettings settings("Skittle", "Preferences");
-	settings.beginGroup("mainWindow");
-	restoreGeometry(settings.value("geometry").toByteArray());
+    QSettings settings("Skittle", "Preferences");
+    settings.beginGroup("mainWindow");
+    restoreGeometry(settings.value("geometry").toByteArray());
     restoreState(settings.value("state").toByteArray());
     QList<QAction*> colorIndex = colorGroup->actions();
     colorIndex[settings.value("nucleotideColors").toInt()]->trigger();
-	settings.endGroup();
+    settings.endGroup();
 }
 
 void MainWindow::writeSettings()
 {	
-	print("Writing Settings");
-	QSettings settings("Skittle", "Preferences");
-	settings.beginGroup("mainWindow");
-	settings.setValue("geometry", saveGeometry());
-	settings.setValue("state", saveState());
+    print("Writing Settings");
+    QSettings settings("Skittle", "Preferences");
+    settings.beginGroup("mainWindow");
+    settings.setValue("geometry", saveGeometry());
+    settings.setValue("state", saveState());
     settings.setValue("nucleotideColors", ui->getColorSetting() );
-	settings.endGroup();
+    settings.endGroup();
 }
 
 void MainWindow::helpDialog()
 {
-	/*QMessageBox help(this);
-	help.setText("Up to date help information can be found at http://dnaskittle.com/faq.");
-	help.exec();*/
-	
+    /*QMessageBox help(this);
+    help.setText("Up to date help information can be found at http://dnaskittle.com/faq.");
+    help.exec();*/
+
     QMessageBox mb(this);
 
     QString c("About Qt");
     mb.setWindowTitle(c);
     mb.setText(QString(
-        "<h3>About Skittle</h3>"
-        "<p>Skittle is an Open Source program for browsing genome sequences.</p>"
-        "<p>Up to date help information is available online at "
-		"<a href=\"http://dnaskittle.com/faq/\">http://DNASkittle.com/faq/</a> </p>"
-        "<p>For those new to the program, there is a tutorial at "
-        "<a href=\"http://dnaskittle.com/getting-started/\">http://DNASkittle.com/getting-started/</a>"
-		" that walks through the basic tools of Skittle and some real world"
-		" genome patterns that can be identified with Skittle.</p>"
-		));
-    /** /    
+                   "<h3>About Skittle</h3>"
+                   "<p>Skittle is an Open Source program for browsing genome sequences.</p>"
+                   "<p>Up to date help information is available online at "
+                   "<a href=\"http://dnaskittle.com/faq/\">http://DNASkittle.com/faq/</a> </p>"
+                   "<p>For those new to the program, there is a tutorial at "
+                   "<a href=\"http://dnaskittle.com/getting-started/\">http://DNASkittle.com/getting-started/</a>"
+                   " that walks through the basic tools of Skittle and some real world"
+                   " genome patterns that can be identified with Skittle.</p>"
+                   ));
+    /** /
 #ifndef QT_NO_IMAGEFORMAT_XPM
     QImage logo(qtlogo_xpm);
 #else
@@ -572,15 +572,15 @@ void MainWindow::helpDialog()
 /**********Print Functions**********/
 void MainWindow::print(const char* str)
 {
-	if(textArea != NULL)
-		textArea->append(QString(str));
+    if(textArea != NULL)
+        textArea->append(QString(str));
 }
 void MainWindow::print(QString str)
 {
     if(textArea != NULL)
-		textArea->append(str);
+        textArea->append(str);
 }
 
 void MainWindow::reportFinished(){
-	print("Report Finished");
+    print("Report Finished");
 }

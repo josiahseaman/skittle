@@ -19,35 +19,35 @@ class AnnotationDisplay : public AbstractGraph
     Q_OBJECT
     
 public:
-	
-	AnnotationDisplay(UiVariables* gui, GLWidget* gl, string gtfFileName);
-	~AnnotationDisplay();
+
+    AnnotationDisplay(UiVariables* gui, GLWidget* gl, string gtfFileName);
+    ~AnnotationDisplay();
     void calculateOutputPixels();
-	void display();
-	GLuint render();
+    void display();
+    GLuint render();
     void displayLayout(vector<vector<track_entry> > layout);
     vector<vector<track_entry> > calculateTrackLayout(const vector<track_entry>& track);
-	void newTrack(vector<track_entry> track);
-	string SELECT_MouseClick(point2D pt);
-	int width();
-	void setFileName(string gtfFileName);
-	string getFileName();
+    void newTrack(vector<track_entry> track);
+    string SELECT_MouseClick(point2D pt);
+    int width();
+    void setFileName(string gtfFileName);
+    string getFileName();
     int current_display_size();
     int getNextAnnotationPosition();
     int getPrevAnnotationPosition();
-		
+
 public slots:
-	void addEntry(track_entry entry);
-	
+    void addEntry(track_entry entry);
+
 signals:
 
 private:
-	GLWidget* glWidget;
+    GLWidget* glWidget;
     int max_width;
-	vector<track_entry> gtfTrack;
-	
-	string fileName;
-	void stackEntry(vector<track_entry>& activeEntries, track_entry item);
+    vector<track_entry> gtfTrack;
+
+    string fileName;
+    void stackEntry(vector<track_entry>& activeEntries, track_entry item);
 };
 
 #endif

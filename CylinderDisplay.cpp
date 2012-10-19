@@ -20,13 +20,13 @@
 *********************/
 
 CylinderDisplay::CylinderDisplay(UiVariables* gui, GLWidget* gl)
-:AbstractGraph(gui, gl)
+    :AbstractGraph(gui, gl)
 {
-	turnCylinder = 0;
-	ntLinker = new NucleotideLinker();
-	
-	actionLabel = string("Alignment Cylinder");
-	actionTooltip = string("Best 3D alignment as a Cylinder");
+    turnCylinder = 0;
+    ntLinker = new NucleotideLinker();
+
+    actionLabel = string("Alignment Cylinder");
+    actionTooltip = string("Best 3D alignment as a Cylinder");
     actionData = actionLabel;
 }	
 
@@ -36,17 +36,17 @@ CylinderDisplay::~CylinderDisplay(){
 
 void CylinderDisplay::createSquare()
 {
-		glBegin(GL_QUADS);
-			glVertex3d(.5, .5, 0);
-			glVertex3d(-.5, .5, 0);
-			glVertex3d(-.5, -.5, 0);
-			glVertex3d(.5, -.5, 0);
-		glEnd();	
+    glBegin(GL_QUADS);
+    glVertex3d(.5, .5, 0);
+    glVertex3d(-.5, .5, 0);
+    glVertex3d(-.5, -.5, 0);
+    glVertex3d(.5, -.5, 0);
+    glEnd();
 }
 
 void CylinderDisplay::quickSquare()
 {
-   	glCallList(square);
+    glCallList(square);
 }
 
 void CylinderDisplay::calculateOutputPixels()
@@ -57,16 +57,16 @@ void CylinderDisplay::calculateOutputPixels()
 
 void CylinderDisplay::display()
 {
-	checkVariables();
-	if( !upToDate )
+    checkVariables();
+    if( !upToDate )
     {
         calculateOutputPixels();
-	}
-	glPushMatrix();
-		glTranslated(width()/2, 0, 0);
-		glRotated(turnCylinder, 0,1,0);//rotate cylinder around Y	
-        glCallList(display_object);
-	glPopMatrix();
+    }
+    glPushMatrix();
+    glTranslated(width()/2, 0, 0);
+    glRotated(turnCylinder, 0,1,0);//rotate cylinder around Y
+    glCallList(display_object);
+    glPopMatrix();
 }
 
 /* Cylinder display can have multiple widths in a single frame.
@@ -76,64 +76,64 @@ void CylinderDisplay::display()
 GLuint CylinderDisplay::render()
 {
     qDebug() << "CylinderDisplay::render(): " << ++frameCount;
-	GLuint square = glGenLists(1);
+    GLuint square = glGenLists(1);
     GLuint cylinder_Display_list = glGenLists(1);
-	
-	glNewList(square, GL_COMPILE);
-		createSquare();
-	glEndList();
+
+    glNewList(square, GL_COMPILE);
+    createSquare();
+    glEndList();
 
     int min_width = min(150, max(1, ui->widthDial->value() / 3 ));
     ntLinker->calculate(sequence->substr(ui->startDial->value(), current_display_size()), min_width);
     width_list = ntLinker->smooth(min_width, 80);
-		//ntLinker->tie_up_loose_ends(width_list);
-		//ntLinker->cap_movement(width_list, 1);
+    //ntLinker->tie_up_loose_ends(width_list);
+    //ntLinker->cap_movement(width_list, 1);
 
     glNewList(cylinder_Display_list, GL_COMPILE);
-		
-	if( !width_list.empty() )
-	{
-		max_width = 0;
-		double pi = 3.141592653589793;
-		double y = 0;
+
+    if( !width_list.empty() )
+    {
+        max_width = 0;
+        double pi = 3.141592653589793;
+        double y = 0;
         double angle = 0;
         int min_width = min(150, max(1, ui->widthDial->value() / 3 ));
-		float local_width = width_list[0];
+        float local_width = width_list[0];
         const char* genome = sequence->c_str() + ui->startDial->value();//TODO:not a particularly safe way of accessing
-		glPushMatrix();
-			glScaled(1,-1,1);
-            int temp_display_size = current_display_size();
-            for(int i = 0; i < temp_display_size && y < 200; i++)
-			{
-                if(i >= (int)width_list.size())
-				{
-                    local_width = min_width;
-				}
-				else
-				{
-					local_width = width_list[i];
-				}
-				
-				if(local_width > max_width)
-					max_width = local_width;
-					
-				y += 1.0 / local_width;
-				angle += 1.0 / local_width * 360.0;
+        glPushMatrix();
+        glScaled(1,-1,1);
+        int temp_display_size = current_display_size();
+        for(int i = 0; i < temp_display_size && y < 200; i++)
+        {
+            if(i >= (int)width_list.size())
+            {
+                local_width = min_width;
+            }
+            else
+            {
+                local_width = width_list[i];
+            }
 
-				color c1 = glWidget->colors( genome[i] );//TODO: Optimize pointer function call
+            if(local_width > max_width)
+                max_width = local_width;
 
-				glPushMatrix();
-					glRotated(angle, 0,1,0);//rotate cylinder around Y
-					glTranslated(0, y, local_width/(pi*2));
-				   	glColor3d(c1.r /255.0, c1.g /255.0, c1.b /255.0); 
-				   	//paint_square(p1, c1);
-				   	//createSquare();
-					glCallList(square);
-					//quickSquare();
-				glPopMatrix();
-			}
-		glPopMatrix();
-	}		
+            y += 1.0 / local_width;
+            angle += 1.0 / local_width * 360.0;
+
+            color c1 = glWidget->colors( genome[i] );//TODO: Optimize pointer function call
+
+            glPushMatrix();
+            glRotated(angle, 0,1,0);//rotate cylinder around Y
+            glTranslated(0, y, local_width/(pi*2));
+            glColor3d(c1.r /255.0, c1.g /255.0, c1.b /255.0);
+            //paint_square(p1, c1);
+            //createSquare();
+            glCallList(square);
+            //quickSquare();
+            glPopMatrix();
+        }
+        glPopMatrix();
+    }
 
     glEndList();
     upToDate = true;
@@ -143,8 +143,8 @@ GLuint CylinderDisplay::render()
 
 int CylinderDisplay::width()
 {
-	double pi = 3.141592653589793;
-	return (int)(max_width / pi);
+    double pi = 3.141592653589793;
+    return (int)(max_width / pi);
 }
 
 string CylinderDisplay::SELECT_MouseClick(point2D pt)
@@ -155,5 +155,5 @@ string CylinderDisplay::SELECT_MouseClick(point2D pt)
 /******SLOTS*****/
 void CylinderDisplay::saySomething()
 {
-	ui->print("I see you");
+    ui->print("I see you");
 }

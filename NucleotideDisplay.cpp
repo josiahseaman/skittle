@@ -33,13 +33,13 @@ mouse clicks like "Find" and "Select".  Like all Graphs, it uses TextureCanvas f
 surface.
 **********************************************************/
 NucleotideDisplay::NucleotideDisplay(UiVariables* gui, GLWidget* gl)
-:AbstractGraph(gui, gl)
+    :AbstractGraph(gui, gl)
 {	
     hidden = false;
     invert = false;
-	
-	actionLabel = string("Nucleotide Display");
-	actionTooltip = string("Nucleotides as Colors");
+
+    actionLabel = string("Nucleotide Display");
+    actionTooltip = string("Nucleotides as Colors");
     actionData = actionLabel;
 }
 
@@ -51,8 +51,8 @@ void NucleotideDisplay::calculateOutputPixels()
 {
     const char* genome = sequence->c_str() + ui->startDial->value();//TODO: find a safer way to access this
     sequenceToColors(genome);
-	loadTextureCanvas();
-	upToDate = true;
+    loadTextureCanvas();
+    upToDate = true;
 }
 
 void NucleotideDisplay::sequenceToColors(const char* genome)
@@ -69,29 +69,29 @@ void NucleotideDisplay::sequenceToColors(const char* genome)
 
 void NucleotideDisplay::color_compress()
 {
-	int r = 0;
-	int g = 0;
-	int b = 0;
+    int r = 0;
+    int g = 0;
+    int b = 0;
     int tempScale = ui->scaleDial->value();
     int end = current_display_size() + ui->startDial->value() - tempScale;
     const string& seq = *sequence;
     int hard_end = sequence->size();
     end = min(end, hard_end);
     for(int i = ui->startDial->value(); i < end; )
-	{
+    {
         for(int s = 0; s < tempScale && i < end; ++s)
-		{
+        {
             color current = glWidget->colors(seq[i++]);
-			r += current.r;
-			g += current.g;
-			b += current.b;
-		}
+            r += current.r;
+            g += current.g;
+            b += current.b;
+        }
         outputPixels.push_back(color(r/tempScale, g/tempScale, b/tempScale));
-		r = 0;			
-		g = 0;			
-		b = 0;
-	}
-	upToDate = true;
+        r = 0;
+        g = 0;
+        b = 0;
+    }
+    upToDate = true;
 }
 
 /******SLOTS*****/

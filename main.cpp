@@ -33,8 +33,8 @@ bool checkForSkittleTemp()
   exists.*/
 void checkForLauncherUpdate()
 {
-//    bool found = checkForSkittleTemp();
-//    if(found)//rename SkittleTemp to Skittle
+    //    bool found = checkForSkittleTemp();
+    //    if(found)//rename SkittleTemp to Skittle
     if(checkForSkittleTemp())
     {
         //Sleep(5000);

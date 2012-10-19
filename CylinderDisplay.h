@@ -18,32 +18,32 @@ using namespace std;
 
 class CylinderDisplay : public AbstractGraph 
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	CylinderDisplay(UiVariables* gui, GLWidget* gl);
+    CylinderDisplay(UiVariables* gui, GLWidget* gl);
     ~CylinderDisplay();
-	void createSquare();
-	void quickSquare();
+    void createSquare();
+    void quickSquare();
     void calculateOutputPixels();
-	void display();
+    void display();
     GLuint render();
-	int width();
-	string SELECT_MouseClick(point2D pt);
-	
-	
+    int width();
+    string SELECT_MouseClick(point2D pt);
+
+
 public slots:	
-	void saySomething();
-	
+    void saySomething();
+
 signals:
 
 private:
     float max_width;
-	GLuint square;
-	vector<float> width_list;
-	NucleotideLinker* ntLinker;
-	float turnCylinder;
-	
+    GLuint square;
+    vector<float> width_list;
+    NucleotideLinker* ntLinker;
+    float turnCylinder;
+
 };
 
 #endif

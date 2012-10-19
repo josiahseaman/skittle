@@ -19,20 +19,20 @@ class GLWidget;
 class UiVariables;
 
 struct to_upper {
-  int operator() ( int ch )
-  {
-    return std::toupper ( ch );
-  }
+    int operator() ( int ch )
+    {
+        return std::toupper ( ch );
+    }
 };
 
 class FastaReader : public QObject
 {
-	Q_OBJECT
-	
+    Q_OBJECT
+
 public:
-	
+
     FastaReader(GLWidget* gl, UiVariables* gui);
-	~FastaReader();
+    ~FastaReader();
     const string* seq();
 
 public slots:
@@ -40,21 +40,21 @@ public slots:
     void cancel();
 
 signals:
-	void fileNameChanged(string name);
-	void newFileRead(const string*);
-	
+    void fileNameChanged(string name);
+    void newFileRead(const string*);
+
 private:
     GLWidget* glWidget;
-	UiVariables* ui;
-	char upperCase(char& c);
-	void storeChrName(string n);
+    UiVariables* ui;
+    char upperCase(char& c);
+    void storeChrName(string n);
     void setupProgressBar();
-	string logo();
+    string logo();
 
-	ifstream wordfile;
-	string sequence;
-	QProgressDialog* progressBar;
-	int bytesInFile;//file size, but more specific
+    ifstream wordfile;
+    string sequence;
+    QProgressDialog* progressBar;
+    int bytesInFile;//file size, but more specific
 
     bool cancelled;
 };

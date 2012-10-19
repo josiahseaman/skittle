@@ -22,11 +22,11 @@ AnnotationDisplay::AnnotationDisplay(UiVariables* gui, GLWidget* gl, string gtfF
 {
     max_width = 1;
     hidden = false;
-	
+
     actionLabel = trimPathFromFilename(gtfFileName);
-	actionTooltip = string("Genome annotation locations");
-	actionData = actionLabel; 
-	
+    actionTooltip = string("Genome annotation locations");
+    actionData = actionLabel;
+
     fileName = gtfFileName;
 }
 
@@ -37,15 +37,15 @@ AnnotationDisplay::~AnnotationDisplay()
 
 bool trackCompare(const track_entry& a, const track_entry& b)
 {
-	return a.start < b.start;
+    return a.start < b.start;
 }
 
 void AnnotationDisplay::newTrack(vector<track_entry> track)
 {
-	gtfTrack = vector<track_entry>(track);
-	sort(gtfTrack.begin(), gtfTrack.end(), trackCompare);
-	hidden = false;
-	emit displayChanged();
+    gtfTrack = vector<track_entry>(track);
+    sort(gtfTrack.begin(), gtfTrack.end(), trackCompare);
+    hidden = false;
+    emit displayChanged();
 }
 
 void AnnotationDisplay::calculateOutputPixels()
@@ -56,10 +56,10 @@ void AnnotationDisplay::calculateOutputPixels()
 
 void AnnotationDisplay::display()
 {
-	if( !upToDate )
+    if( !upToDate )
     {
         calculateOutputPixels();
-	}	
+    }
     glCallList(display_object);
 }
 
@@ -68,12 +68,12 @@ GLuint AnnotationDisplay::render()
     qDebug() << "AnnotationDisplay::render(): " << ++frameCount;
     GLuint Annotation_Display_list = glGenLists(1);
     glNewList(Annotation_Display_list, GL_COMPILE);
-        glPushMatrix();
+    glPushMatrix();
 
-        vector<vector<track_entry> > layout = calculateTrackLayout( gtfTrack );
-        displayLayout(layout);
-	
-        glPopMatrix();
+    vector<vector<track_entry> > layout = calculateTrackLayout( gtfTrack );
+    displayLayout(layout);
+
+    glPopMatrix();
     glEndList();
     upToDate = true;
     return Annotation_Display_list;
@@ -104,19 +104,19 @@ void AnnotationDisplay::displayLayout(vector<vector<track_entry> > layout)
     textureBuffer = new TextureCanvas(pixels, max_width);
     glPushMatrix();
     glScaled(1,-1,1);
-        textureBuffer->display();
+    textureBuffer->display();
     glPopMatrix();
 }
 
 vector< vector<track_entry> > AnnotationDisplay::calculateTrackLayout(const vector<track_entry>& annotationFile)
 {
-	max_width = 1;
+    max_width = 1;
     int line_start = ui->startDial->value();
-	int width = ui->widthDial->value();
+    int width = ui->widthDial->value();
     int line_stop = line_start + width;
     int temp_display_size = current_display_size();
     int nextInactiveAnnotation = 0;
-	
+
     if(annotationFile.empty())
         return vector< vector<track_entry> >();
     /** activeEntries is the list annotations that are on the current display line
@@ -124,81 +124,81 @@ vector< vector<track_entry> > AnnotationDisplay::calculateTrackLayout(const vect
         their start and stop positions.*/
     vector<vector<track_entry> > layout;
     vector<track_entry> activeEntries = vector<track_entry>();
-	track_entry blank = track_entry(0,0, color(0,0,0));
-	activeEntries.push_back(blank);
+    track_entry blank = track_entry(0,0, color(0,0,0));
+    activeEntries.push_back(blank);
 
     for(int row = 0; row < temp_display_size / width; row++)//for each line on the screen
-	{
+    {
         //check to see if any of the tracks already in activeEntries stop on this line
         for(int k = 0; k < (int)activeEntries.size(); ++k)
-		{
-			if( !activeEntries[k].isBlank() )
-			{
+        {
+            if( !activeEntries[k].isBlank() )
+            {
                 if( activeEntries[k].stop < line_start )
-				{
-					if( activeEntries[k].col == color(200,200,200) )
-						activeEntries[k] = blank;//remove the entry
-					else
-						activeEntries[k].col = color(200,200,200);
-				}
-			}
-		}
-		//check to match start for a new track
+                {
+                    if( activeEntries[k].col == color(200,200,200) )
+                        activeEntries[k] = blank;//remove the entry
+                    else
+                        activeEntries[k].col = color(200,200,200);
+                }
+            }
+        }
+        //check to match start for a new track
         while(nextInactiveAnnotation < (int)annotationFile.size() && annotationFile[nextInactiveAnnotation].stop < line_start)//assumes tracks are in order
             nextInactiveAnnotation++;
         //keep adding annotations that start on this line
         while(nextInactiveAnnotation < (int)annotationFile.size()
-            && ((annotationFile[nextInactiveAnnotation].start >= line_start && annotationFile[nextInactiveAnnotation].start <= line_stop)//start in range
-                || (annotationFile[nextInactiveAnnotation].stop >= line_start && annotationFile[nextInactiveAnnotation].stop <= line_stop)//end in range
-                || (annotationFile[nextInactiveAnnotation].start < line_start && annotationFile[nextInactiveAnnotation].stop > line_stop)) )//in the middle
-		{
+              && ((annotationFile[nextInactiveAnnotation].start >= line_start && annotationFile[nextInactiveAnnotation].start <= line_stop)//start in range
+                  || (annotationFile[nextInactiveAnnotation].stop >= line_start && annotationFile[nextInactiveAnnotation].stop <= line_stop)//end in range
+                  || (annotationFile[nextInactiveAnnotation].start < line_start && annotationFile[nextInactiveAnnotation].stop > line_stop)) )//in the middle
+        {
             stackEntry(activeEntries, annotationFile[nextInactiveAnnotation++]);		//place new tracks in proper position
-		}
+        }
 
         line_start += width;
         line_stop += width;
         if( (int)activeEntries.size()*2 > max_width)
             max_width = activeEntries.size()*2;
         layout.push_back(activeEntries);
-	}
+    }
     return layout;
 }
 
 void AnnotationDisplay::stackEntry(vector<track_entry>& activeEntries, track_entry item)
 {
-        for(int k = 0; k < (int)activeEntries.size(); ++k)
-		{
-			if( activeEntries[k].isBlank() )
-			{
-				activeEntries[k] = item;
-				return;
-			}
-		}//we reached the end without finding an open spot
-		activeEntries.push_back(item);
+    for(int k = 0; k < (int)activeEntries.size(); ++k)
+    {
+        if( activeEntries[k].isBlank() )
+        {
+            activeEntries[k] = item;
+            return;
+        }
+    }//we reached the end without finding an open spot
+    activeEntries.push_back(item);
 }
 
 string AnnotationDisplay::SELECT_MouseClick(point2D pt)
 {
-	//range check
-	if( pt.x <= width() && pt.x >= 0 )
-	{
-		ui->print("-------------");
-		int start = ui->startDial->value() + pt.y * ui->widthDial->value() + pt.x;
-		int stop = start + ui->widthDial->value();
-		if(!gtfTrack.empty())
-		{
+    //range check
+    if( pt.x <= width() && pt.x >= 0 )
+    {
+        ui->print("-------------");
+        int start = ui->startDial->value() + pt.y * ui->widthDial->value() + pt.x;
+        int stop = start + ui->widthDial->value();
+        if(!gtfTrack.empty())
+        {
             for(int i = 0; i < (int)gtfTrack.size(); ++i)
-			{
-				if(((gtfTrack[i].start >= start && gtfTrack[i].start <= stop)//start in range
-				    || (gtfTrack[i].stop >= start && gtfTrack[i].stop <= stop)//end in range
-					|| (gtfTrack[i].start < start && gtfTrack[i].stop > stop)) )//in the middle
-				{
-					ui->print(gtfTrack[i].toString().c_str());
-				}
-			}
-		}
-	}
-	return string();
+            {
+                if(((gtfTrack[i].start >= start && gtfTrack[i].start <= stop)//start in range
+                    || (gtfTrack[i].stop >= start && gtfTrack[i].stop <= stop)//end in range
+                    || (gtfTrack[i].start < start && gtfTrack[i].stop > stop)) )//in the middle
+                {
+                    ui->print(gtfTrack[i].toString().c_str());
+                }
+            }
+        }
+    }
+    return string();
 }
 
 int AnnotationDisplay::width()
@@ -209,7 +209,7 @@ int AnnotationDisplay::width()
 
 string AnnotationDisplay::getFileName()
 {
-	return fileName;
+    return fileName;
 }
 
 int AnnotationDisplay::current_display_size()
@@ -236,14 +236,14 @@ int AnnotationDisplay::getPrevAnnotationPosition()
 
 void AnnotationDisplay::setFileName(string gtfFileName)
 {
-	fileName = gtfFileName;
+    fileName = gtfFileName;
 }
 
 /******SLOTS*****/
 void AnnotationDisplay::addEntry(track_entry entry)
 {
-	gtfTrack.push_back(entry);
-	sort(gtfTrack.begin(), gtfTrack.end(), trackCompare);
-	emit displayChanged();
+    gtfTrack.push_back(entry);
+    sort(gtfTrack.begin(), gtfTrack.end(), trackCompare);
+    emit displayChanged();
 }
 /**/

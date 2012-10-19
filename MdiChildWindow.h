@@ -17,41 +17,41 @@ using std::vector;
 
 class MdiChildWindow : public QFrame
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
 
-	QScrollBar* horizontalScrollBar;
-	QScrollBar* verticalScrollBar;
-	QFrame* subFrame;
-	GLWidget* glWidget;
+    QScrollBar* horizontalScrollBar;
+    QScrollBar* verticalScrollBar;
+    QFrame* subFrame;
+    GLWidget* glWidget;
     UiVariables* ui;
-	
+
     MdiChildWindow(UiVariables* gui, QSpinBox* pStart, QTabWidget* settings);
     void closeEvent(QCloseEvent *event);
-	void connectWidget();
-	void hideSettingsTabs();
-	void showSettingsTabs();
-	void mousePressEvent(QMouseEvent *event);
-	
+    void connectWidget();
+    void hideSettingsTabs();
+    void showSettingsTabs();
+    void mousePressEvent(QMouseEvent *event);
+
 public slots:
-	void changeLocalStartFromPublicStart(int val);
-	void changeLocalStartFromOffset(int val);
-	void setHorizontalWidth(int val);
-	void setOffsetStep(int val);
-	void setPageSize();
-	void hideSettingsTab(QScrollArea*);
-	void showSettingsTab(QScrollArea*);
+    void changeLocalStartFromPublicStart(int val);
+    void changeLocalStartFromOffset(int val);
+    void setHorizontalWidth(int val);
+    void setOffsetStep(int val);
+    void setPageSize();
+    void hideSettingsTab(QScrollArea*);
+    void showSettingsTab(QScrollArea*);
 
 signals:
-	void subWindowClosing(MdiChildWindow*);
-	void IveBeenClicked(MdiChildWindow*);
+    void subWindowClosing(MdiChildWindow*);
+    void IveBeenClicked(MdiChildWindow*);
 
 private:
-	QSpinBox* publicStart;
-	QTabWidget* settingsDock;
-	vector<QScrollArea*> settingsTabs;
-	
-	void createSettingsTabs();
+    QSpinBox* publicStart;
+    QTabWidget* settingsDock;
+    vector<QScrollArea*> settingsTabs;
+
+    void createSettingsTabs();
 };	
 #endif

@@ -15,27 +15,27 @@ class QLabel;
 
 class SequenceEntry : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	QLabel* label;
-	QLineEdit* lineEdit;
-	QPushButton* removeButton;
-	ColorListEditor* colorBox;
-	string seq;
-	color matchColor;
-	color mismatchColor;
-	
-	SequenceEntry(QLabel* Label, QLineEdit* line);
+    QLabel* label;
+    QLineEdit* lineEdit;
+    QPushButton* removeButton;
+    ColorListEditor* colorBox;
+    string seq;
+    color matchColor;
+    color mismatchColor;
+
+    SequenceEntry(QLabel* Label, QLineEdit* line);
 
 public slots:
-	void setHighlightSequence(const QString&);
-	void removeSequence();
-	void changeColor();
-	
+    void setHighlightSequence(const QString&);
+    void removeSequence();
+    void changeColor();
+
 signals:
-	void colorChanged();
-	void removeEntry(SequenceEntry*);
-	
+    void colorChanged();
+    void removeEntry(SequenceEntry*);
+
 };
 
 #endif

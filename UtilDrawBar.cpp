@@ -22,12 +22,12 @@ vector<float> lowPassFilter(vector<float> scores)
   with the background, giving bar graphs a fake transparent section.  */
 vector<color>& percentageBar(float percentage, int barWidth, vector<color>& line, bool rightJustified)
 {
-//    if(barColor == NULL)
-//    {
-        color barColor = color(65,102,198);
-        if (percentage > 1.0)
-            barColor = color(112,0,174);
-//    }
+    //    if(barColor == NULL)
+    //    {
+    color barColor = color(65,102,198);
+    if (percentage > 1.0)
+        barColor = color(112,0,174);
+    //    }
 
     int size = min( barWidth, max(0, (int)(percentage * barWidth)));
     int filler_size = barWidth - size;

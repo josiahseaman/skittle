@@ -151,13 +151,13 @@ public:
         strand->setText(QApplication::translate("BookmarkDialog", "Positive Strand", 0, QApplication::UnicodeUTF8));
         frame->clear();
         frame->insertItems(0, QStringList()
-         << QApplication::translate("BookmarkDialog", ".", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("BookmarkDialog", "-", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("BookmarkDialog", "+", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("BookmarkDialog", "0", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("BookmarkDialog", "1", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("BookmarkDialog", "2", 0, QApplication::UnicodeUTF8)
-        );
+                           << QApplication::translate("BookmarkDialog", ".", 0, QApplication::UnicodeUTF8)
+                           << QApplication::translate("BookmarkDialog", "-", 0, QApplication::UnicodeUTF8)
+                           << QApplication::translate("BookmarkDialog", "+", 0, QApplication::UnicodeUTF8)
+                           << QApplication::translate("BookmarkDialog", "0", 0, QApplication::UnicodeUTF8)
+                           << QApplication::translate("BookmarkDialog", "1", 0, QApplication::UnicodeUTF8)
+                           << QApplication::translate("BookmarkDialog", "2", 0, QApplication::UnicodeUTF8)
+                           );
         label_7->setText(QApplication::translate("BookmarkDialog", "Frame", 0, QApplication::UnicodeUTF8));
         label_8->setText(QApplication::translate("BookmarkDialog", "Score", 0, QApplication::UnicodeUTF8));
         score->setText(QApplication::translate("BookmarkDialog", ".", 0, QApplication::UnicodeUTF8));
@@ -166,7 +166,7 @@ public:
 };
 
 namespace Ui {
-    class BookmarkDialog: public Ui_BookmarkDialog {};
+class BookmarkDialog: public Ui_BookmarkDialog {};
 } // namespace Ui
 
 QT_END_NAMESPACE

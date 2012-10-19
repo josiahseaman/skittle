@@ -20,7 +20,7 @@
 
 ColorListEditor::ColorListEditor(QWidget *widget) : QComboBox(widget)
 {
-	//srand(time(0));
+    //srand(time(0));
     populateList();
 }
 
@@ -37,34 +37,34 @@ void ColorListEditor::setColor(QColor color)
 /*Gray scale colors have roughly the same r,g, and b values*/
 bool ColorListEditor::notGreyScale(QColor col)
 {
-	int red, green, blue;
-	col.getRgb(&red, &green, &blue);
-	float average = (red + green + blue) / 3.0;
-	int min = (int)(average * .8);
-	int max = (int)(average * 1.2);
-	if( red > max || red < min )
-		return true;
-	if( green > max || green < min )
-		return true;		
-	if( blue > max || blue < min )
-		return true;
-		
-	return false;
+    int red, green, blue;
+    col.getRgb(&red, &green, &blue);
+    float average = (red + green + blue) / 3.0;
+    int min = (int)(average * .8);
+    int max = (int)(average * 1.2);
+    if( red > max || red < min )
+        return true;
+    if( green > max || green < min )
+        return true;
+    if( blue > max || blue < min )
+        return true;
+
+    return false;
 }
 
 QIcon ColorListEditor::createIcon(QColor col)
 {
-	QPixmap pix(30,30);
-	pix.fill(col);
-	return QIcon(pix);
+    QPixmap pix(30,30);
+    pix.fill(col);
+    return QIcon(pix);
 }
 
 void ColorListEditor::insertColorItem(int index, QColor col, QString name)
 {
-	insertItem(index, createIcon(col), name);
-	setItemData(index, col, Qt::WhatsThisRole);
+    insertItem(index, createIcon(col), name);
+    setItemData(index, col, Qt::WhatsThisRole);
 }
-    
+
 void ColorListEditor::populateList()
 {	
     QStringList colorNames = QColor::colorNames();
@@ -73,7 +73,7 @@ void ColorListEditor::populateList()
     insertColorItem(1, QColor(255,0,0), QString("Red"));
     insertColorItem(2, QColor(0,255,0), QString("Green"));
     insertColorItem(3, QColor(0,0,255), QString("Blue"));
-	
+
     int k = 4;
     for (int i = 0; i < colorNames.size(); ++i)
     {

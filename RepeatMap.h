@@ -21,50 +21,50 @@ class RepeatMap : public AbstractGraph
     Q_OBJECT
     
 public:	
-	RepeatMap(UiVariables* gui, GLWidget* gl);
+    RepeatMap(UiVariables* gui, GLWidget* gl);
     ~RepeatMap();
-	QScrollArea* settingsUi();
-	void display();
+    QScrollArea* settingsUi();
+    void display();
     void load_3mer_canvas(vector<float> scores);
-	void link(NucleotideDisplay* nuc_display);
-	void load_canvas();
+    void link(NucleotideDisplay* nuc_display);
+    void load_canvas();
     void calculateOutputPixels();
-	GLuint render();
+    GLuint render();
     void freq_map();
     vector<float> convolution_3mer();
-	int height();
-	string SELECT_MouseClick(point2D pt);
+    int height();
+    string SELECT_MouseClick(point2D pt);
     int getRelativeIndexFromMouseClick(point2D pt);
-	
-	vector<point> bestMatches();
-	void display_freq();
-	void calculate(vector<color>& img, int vote_size);
-	double correlate(vector<color>& img, int beginA, int beginB, int pixelsPerSample);
-	int width();
+
+    vector<point> bestMatches();
+    void display_freq();
+    void calculate(vector<color>& img, int vote_size);
+    double correlate(vector<color>& img, int beginA, int beginB, int pixelsPerSample);
+    int width();
 
     vector<vector<float> > emptyCopy(vector<vector<float> > starter);
 public slots:
-	void changeFStart(int val);
+    void changeFStart(int val);
     void changeGraphWidth(int val);
     void toggle3merGraph(bool m);
-	
+
 signals:
-	void fStartChanged(int);
-	void graphWidthChanged(int);
-	
+    void fStartChanged(int);
+    void graphWidthChanged(int);
+
 protected:
     TextureCanvas* canvas_3mer;
-	NucleotideDisplay* nuc;
-	GLuint display_object;
+    NucleotideDisplay* nuc;
+    GLuint display_object;
     vector< vector<float> > freq;
     int barWidth;
     int spacerWidth;
-	int F_width;
-	int F_start;
-	int F_height;
-	
-	int freq_map_count;
-	int calculate_count;
+    int F_width;
+    int F_start;
+    int F_height;
+
+    int freq_map_count;
+    int calculate_count;
     bool using3merGraph;
 };
 

@@ -64,19 +64,19 @@ GLWidget::GLWidget(UiVariables* gui, QWidget* parentWidget)
 {
     ui = gui;
     parent = dynamic_cast<MdiChildWindow*>(parentWidget);
-	setMouseTracking(true);
-	setMinimumWidth(100);
-	setMinimumHeight(100);
-	frame = 0;
-	
-	setupColorTable();
+    setMouseTracking(true);
+    setMinimumWidth(100);
+    setMinimumHeight(100);
+    frame = 0;
+
+    setupColorTable();
     reader = new FastaReader(this, ui);
     //TODO:this needs to be moved .... somewhere
     connect(reader, SIGNAL(newFileRead(const string*)), this, SLOT(displayString(const string*)));
-	
+
 
     trackReader = new GtfReader(ui);
-	
+
     nuc = new NucleotideDisplay(ui, this);
     bias = new BiasDisplay(ui, this);
     freq = new RepeatMap(ui, this);
@@ -94,31 +94,31 @@ GLWidget::GLWidget(UiVariables* gui, QWidget* parentWidget)
     addGraph(align);
     addGraph(olig);
 
-	border = 10;    
+    border = 10;
     xPosition = 0;
     slideHorizontal(0);
     changeZoom(100);
     canvasWidth = 1;
-	canvasHeight = 1;
+    canvasHeight = 1;
     setTool(RESIZE_TOOL);
     setMouseTracking(true);
     setFocusPolicy(Qt::ClickFocus);
-   	createConnections();
-   	createCursors();
-//   	createButtons();
+    createConnections();
+    createCursors();
+    //   	createButtons();
 
-	srand(time(0));
+    srand(time(0));
 }
 
 GLWidget::~GLWidget()
 {
-	delete reader;
-	delete trackReader;
-	
-	for(int i = graphs.size() -1; i >= 0; --i)
-	{
-		delete graphs[i];
-	}
+    delete reader;
+    delete trackReader;
+
+    for(int i = graphs.size() -1; i >= 0; --i)
+    {
+        delete graphs[i];
+    }
     makeCurrent();//TODO: What does this do???
 }
 
@@ -140,13 +140,13 @@ void GLWidget::addGraph(AbstractGraph* graph)
 void GLWidget::createButtons()
 {
     for(int i = 0; i < (int)graphs.size(); ++i)
-   		emit addGraphMode( graphs[i] );
-   	emit addDivider();
+        emit addGraphMode( graphs[i] );
+    emit addDivider();
 }
 
 void GLWidget::createConnections()
 {
-	connect(trackReader,SIGNAL(BookmarkAdded(track_entry,string)), this,SLOT(addTrackEntry(track_entry,string)));
+    connect(trackReader,SIGNAL(BookmarkAdded(track_entry,string)), this,SLOT(addTrackEntry(track_entry,string)));
 
     /****CONNECT LOCAL VARIABLES*******/
     connect(ui->zoomDial,  SIGNAL(valueChanged(int)), this, SLOT(changeZoom(int)));
@@ -167,36 +167,36 @@ QSize GLWidget::sizeHint() const
 
 double GLWidget::getZoom()
 {
-	return 100.0 / zTransOffset;//inverse of: zTransOffset = 10 + 190 / percent;
+    return 100.0 / zTransOffset;//inverse of: zTransOffset = 10 + 190 / percent;
 }
 
 void GLWidget::setTotalDisplayWidth()
 {	
     //ui->print("SetWidth: ", ui->widthDial->value());
-	int total_width = border;
+    int total_width = border;
     for(int i = 0; i < (int)graphs.size(); ++i)
-	{
-		if(graphs[i]->hidden == false)
-	   		total_width += graphs[i]->width() + border;
-	}
-	double z = getZoom();
-	
-	int val = (int)max(0.0, (double)(total_width)*z - canvasWidth ) ;
-	emit totalWidthChanged(val); 
+    {
+        if(graphs[i]->hidden == false)
+            total_width += graphs[i]->width() + border;
+    }
+    double z = getZoom();
+
+    int val = (int)max(0.0, (double)(total_width)*z - canvasWidth ) ;
+    emit totalWidthChanged(val);
 }
 
 //***********SLOTS*******************
 void GLWidget::changeZoom(int z)
 {
-	double percent = z / 100.0;
-	zTransOffset = 200.0 / percent;
-	updateDisplaySize();
-	setTotalDisplayWidth();
+    double percent = z / 100.0;
+    zTransOffset = 200.0 / percent;
+    updateDisplaySize();
+    setTotalDisplayWidth();
 }
 
 const string* GLWidget::seq()
 {
-	return reader->seq();
+    return reader->seq();
 }
 
 void GLWidget::displayString(const string* sequence)
@@ -204,7 +204,7 @@ void GLWidget::displayString(const string* sequence)
     ui->print("New sequence received.  Size:", sequence->size());
 
     for(int i = 0; i < (int)graphs.size(); ++i)
-	{
+    {
         graphs[i]->setSequence(sequence);
         graphs[i]->invalidate();
     }
@@ -234,18 +234,18 @@ void GLWidget::zoomExtents()
 
 void GLWidget::on_moveButton_clicked()
 {
-	setTool(MOVE_TOOL);
+    setTool(MOVE_TOOL);
 }
 
 void GLWidget::on_selectButton_clicked()
 {
-	setTool(SELECT_TOOL);
+    setTool(SELECT_TOOL);
 }
 
 void GLWidget::on_findButton_clicked()
 {
-	setTool(FIND_TOOL);
-	highlight->ensureVisible();
+    setTool(FIND_TOOL);
+    highlight->ensureVisible();
 }
 
 void GLWidget::on_screenCaptureButton_clicked()
@@ -267,21 +267,21 @@ void GLWidget::on_screenCaptureButton_clicked()
     }
     else
     {
-        #if defined(Q_WS_WIN) && !defined(QT_OPENGL_ES)
-            image = QImage(pictureWidth, height(), QImage::Format_Indexed8);
-            glReadPixels(0, 0, pictureWidth, height(), GL_COLOR_INDEX, GL_UNSIGNED_BYTE, image.bits());
-            const QVector<QColor> pal = QColormap::instance().colormap();
+#if defined(Q_WS_WIN) && !defined(QT_OPENGL_ES)
+        image = QImage(pictureWidth, height(), QImage::Format_Indexed8);
+        glReadPixels(0, 0, pictureWidth, height(), GL_COLOR_INDEX, GL_UNSIGNED_BYTE, image.bits());
+        const QVector<QColor> pal = QColormap::instance().colormap();
 
-            if(pal.size())
+        if(pal.size())
+        {
+            image.setNumColors(pal.size());
+            for(int i = 0; i < pal.size(); i++)
             {
-                image.setNumColors(pal.size());
-                for(int i = 0; i < pal.size(); i++)
-                {
-                    image.setColor(i, pal.at(i).rgb());
-                }
+                image.setColor(i, pal.at(i).rgb());
             }
-            image = image.mirrored();
-        #endif
+        }
+        image = image.mirrored();
+#endif
     }
 
     stringstream namestream;
@@ -360,47 +360,47 @@ void GLWidget::convertFromGLImage(QImage &image, int w, int h, bool alpha_format
 
 void GLWidget::on_resizeButton_clicked()
 {
-	setTool(RESIZE_TOOL);
+    setTool(RESIZE_TOOL);
 }
-	
+
 void GLWidget::on_zoomButton_clicked()
 {
-	setTool(ZOOM_TOOL);
+    setTool(ZOOM_TOOL);
 }
-	
+
 void GLWidget::setTool(int tool)
 {
-	int oldTool = currentTool;
-	currentTool = tool;
-	switch(tool)
-	{
-		case MOVE_TOOL:
-			changeCursor(Qt::SizeAllCursor);
-			break;
-		case RESIZE_TOOL:
-			changeCursor(Qt::SizeHorCursor);
-			break;
-		case FIND_TOOL:
-		case SELECT_TOOL:
-			changeCursor(Qt::CrossCursor);
-			break;
-		case ZOOM_TOOL:
-			setCursor(zoomInCursor);
-			break;
-		default:
-			currentTool = oldTool;
-            ui->print("Error: Tool ID unrecognized: ",  tool);
-	}
+    int oldTool = currentTool;
+    currentTool = tool;
+    switch(tool)
+    {
+    case MOVE_TOOL:
+        changeCursor(Qt::SizeAllCursor);
+        break;
+    case RESIZE_TOOL:
+        changeCursor(Qt::SizeHorCursor);
+        break;
+    case FIND_TOOL:
+    case SELECT_TOOL:
+        changeCursor(Qt::CrossCursor);
+        break;
+    case ZOOM_TOOL:
+        setCursor(zoomInCursor);
+        break;
+    default:
+        currentTool = oldTool;
+        ui->print("Error: Tool ID unrecognized: ",  tool);
+    }
 }
 
 void GLWidget::slideHorizontal(int x)
 {
-	if(x != xPosition)
-	{
-		xPosition = x;
-		emit xOffsetChange((int)(x));
-		updateDisplay();
-	}
+    if(x != xPosition)
+    {
+        xPosition = x;
+        emit xOffsetChange((int)(x));
+        updateDisplay();
+    }
 }
 
 void GLWidget::invalidateDisplayGraphs()
@@ -416,52 +416,52 @@ void GLWidget::invalidateDisplayGraphs()
 
 void GLWidget::updateDisplay()
 {
-	setTotalDisplayWidth();
+    setTotalDisplayWidth();
     //updateDisplaySize();
-	redraw();
+    redraw();
 }
 
 void GLWidget::updateDisplaySize()
 {
-	QSize dimensions = size();
-	double pixelHeight = dimensions.height();
+    QSize dimensions = size();
+    double pixelHeight = dimensions.height();
     int w = ui->widthDial->value();
     double zoom = 100.0 / ui->zoomDial->value();
     int display_lines = static_cast<int>(pixelHeight / 3.0 * zoom + 0.5);//TODO this can be replaced with display_height?
-	
+
     ui->sizeDial->setSingleStep(w * 10);
     if(ui->sizeDial->value() !=  w * display_lines )
-	{
+    {
         ui->sizeDial->setValue( w * display_lines );
-		emit displaySizeChanged();
-	}
+        emit displaySizeChanged();
+    }
 }
 
 AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fName)
 {
-	string fileName = fName.toStdString();
-	if( fileName.empty() )
-	{
-		fileName = trackReader->outputFile();
-	}
+    string fileName = fName.toStdString();
+    if( fileName.empty() )
+    {
+        fileName = trackReader->outputFile();
+    }
 
-	AnnotationDisplay* tempTrackDisplay = findMatchingAnnotationDisplay(fileName);
-	if( tempTrackDisplay != NULL)
-	{
-		ErrorBox msg("The file is already open");
-	}
-	else
-	{
-		vector<track_entry> track = trackReader->readFile(QString(fileName.c_str()));
+    AnnotationDisplay* tempTrackDisplay = findMatchingAnnotationDisplay(fileName);
+    if( tempTrackDisplay != NULL)
+    {
+        ErrorBox msg("The file is already open");
+    }
+    else
+    {
+        vector<track_entry> track = trackReader->readFile(QString(fileName.c_str()));
         ui->print("Annotations Received: ", track.size());
-		if( track.size() > 0)// || trackReader->outputFile().compare(fileName) == 0 )//
-		{
+        if( track.size() > 0)// || trackReader->outputFile().compare(fileName) == 0 )//
+        {
             tempTrackDisplay = new AnnotationDisplay(ui, this, fileName);
             addGraph(tempTrackDisplay);
             tempTrackDisplay->newTrack( track );
-		}
-	}
-	return tempTrackDisplay;
+        }
+    }
+    return tempTrackDisplay;
 } 
 
 void GLWidget::jumpToAnnotation(bool forward)
@@ -495,12 +495,12 @@ AnnotationDisplay* GLWidget::findMatchingAnnotationDisplay(string fileName)
     for ( int n = 0; n < (int)aDisplays.size(); n++)
     {
         if (aDisplays[n]  != NULL && aDisplays[n]->getFileName().compare(fileName) == 0 )
-		{
+        {
             tempTrackDisplay = aDisplays[n];
-			break;
-		}	
-	}
-	return 	tempTrackDisplay;
+            break;
+        }
+    }
+    return 	tempTrackDisplay;
 }
 
 vector<AnnotationDisplay*> GLWidget::getAllAnnotationDisplays()
@@ -517,97 +517,97 @@ vector<AnnotationDisplay*> GLWidget::getAllAnnotationDisplays()
 
 void GLWidget::addTrackEntry(track_entry entry, string gtfFileName)
 {
-	AnnotationDisplay* trackDisplay = addAnnotationDisplay(QString(gtfFileName.c_str()));
-	if (trackDisplay != NULL )
-	{
-		trackDisplay->addEntry(entry);
-	}
+    AnnotationDisplay* trackDisplay = addAnnotationDisplay(QString(gtfFileName.c_str()));
+    if (trackDisplay != NULL )
+    {
+        trackDisplay->addEntry(entry);
+    }
 }
 
 /*****************FUNCTIONS*******************/
 
 int GLWidget::tool()
 {
-	return currentTool;
+    return currentTool;
 }
 
 //***********KEY HANDLING**************
 void GLWidget::keyPressEvent( QKeyEvent *event )
 {
-	if( event->modifiers() & Qt::SHIFT && tool() == ZOOM_TOOL)
-		setCursor(zoomOutCursor);
-		
-	int step = 10;	
+    if( event->modifiers() & Qt::SHIFT && tool() == ZOOM_TOOL)
+        setCursor(zoomOutCursor);
+
+    int step = 10;
     int tenLines = ui->widthDial->value() * step;
     switch ( event->key() )//the keys should be passed directly to the widgets
     {
-		case Qt::Key_Down:
-            ui->changeStart(ui->startDial->value() + tenLines);
-			break;
+    case Qt::Key_Down:
+        ui->changeStart(ui->startDial->value() + tenLines);
+        break;
 
-		case Qt::Key_Up:
-            ui->changeStart(ui->startDial->value() - tenLines);
-			break;
+    case Qt::Key_Up:
+        ui->changeStart(ui->startDial->value() - tenLines);
+        break;
 
-		case Qt::Key_Right:
-            ui->changeWidth(ui->widthDial->value() + ui->scaleDial->value());
-			break;
+    case Qt::Key_Right:
+        ui->changeWidth(ui->widthDial->value() + ui->scaleDial->value());
+        break;
 
-		case Qt::Key_Left:
-            ui->changeWidth(ui->widthDial->value() - ui->scaleDial->value());
-			break;
+    case Qt::Key_Left:
+        ui->changeWidth(ui->widthDial->value() - ui->scaleDial->value());
+        break;
 
-		default:
-			event->ignore();
-			return;
-	}
-	event->accept();
+    default:
+        event->ignore();
+        return;
+    }
+    event->accept();
 }
 
 void GLWidget::keyReleaseEvent( QKeyEvent *event )
 {
-	if( event->key() == Qt::Key_Shift && tool() == ZOOM_TOOL)
-	{
+    if( event->key() == Qt::Key_Shift && tool() == ZOOM_TOOL)
+    {
         setCursor(zoomInCursor);
-		event->accept();
-	}
-	else{
-		QGLWidget::keyReleaseEvent( event );
-	}
+        event->accept();
+    }
+    else{
+        QGLWidget::keyReleaseEvent( event );
+    }
 }
 
 //***********Functions*************
 QPointF GLWidget::pixelToGlCoords(QPoint pCoords, double z)
 {
     glLoadIdentity();
-	GLdouble position[3];
-	GLdouble modelMatrix[16];
+    GLdouble position[3];
+    GLdouble modelMatrix[16];
     glGetDoublev(GL_MODELVIEW_MATRIX,modelMatrix);
-	GLdouble projMatrix[16];
-	glGetDoublev(GL_PROJECTION_MATRIX,projMatrix);
-	int viewport[4];
-	glGetIntegerv(GL_VIEWPORT,viewport);
-	GLdouble mouseX = (GLdouble) pCoords.x();
-	GLdouble mouseY = (GLdouble) pCoords.y();
-	
-	gluUnProject(
-		mouseX,
-		mouseY,
-		z,
-		modelMatrix,
-		projMatrix,
-		viewport,
-		//the next 3 parameters are the pointers to the final array
-		//coordinates. Notice that these MUST be double's
-		&position[0], //-&gt; pointer to your own position (optional)
-		&position[1], // id
-		&position[2] // id
-		);	
-    double zoom = getZoom();	
-	float x = (int)((mouseX / 6.0 + xPosition) / zoom ) - border ;
-	float y = (int)((mouseY / 6.0) / zoom );
-	
-	return QPointF(x, y);
+    GLdouble projMatrix[16];
+    glGetDoublev(GL_PROJECTION_MATRIX,projMatrix);
+    int viewport[4];
+    glGetIntegerv(GL_VIEWPORT,viewport);
+    GLdouble mouseX = (GLdouble) pCoords.x();
+    GLdouble mouseY = (GLdouble) pCoords.y();
+
+    gluUnProject(
+                mouseX,
+                mouseY,
+                z,
+                modelMatrix,
+                projMatrix,
+                viewport,
+                //the next 3 parameters are the pointers to the final array
+                //coordinates. Notice that these MUST be double's
+                &position[0], //-&gt; pointer to your own position (optional)
+                &position[1], // id
+                &position[2] // id
+                );
+    double zoom = getZoom();
+    float x = (int)((mouseX / 6.0 + xPosition) / zoom ) - border ;
+    float y = (int)((mouseY / 6.0) / zoom );
+
+    return QPointF(x, y);
 }
 
 int GLWidget::display_height()
@@ -628,7 +628,7 @@ void GLWidget::initializeGL()
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
     
-   	marker = 0;//glGenLists(1);
+    marker = 0;//glGenLists(1);
 
     for(int i = 0; i < (int)graphs.size(); ++i)
         graphs[i]->setSequence(seq());
@@ -636,50 +636,50 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
-//    qDebug() << "GlWidget Frame: " << ++frame;
+    //    qDebug() << "GlWidget Frame: " << ++frame;
     glMatrixMode(GL_MODELVIEW);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     glPushMatrix();
-	    glTranslated(-xPosition, 0, 0);
-	    double zoom = getZoom();
-	    glScaled(zoom, zoom, zoom);
-	    glTranslated(border,0,0);//to get zoom working right
-	    if( tool() == SELECT_TOOL || tool() == FIND_TOOL)
-	    {
-			glCallList(marker);//possibly replace this with a blinking cursor
-		}	
-		for(int i = 0; i < (int)graphs.size(); ++i)
-		{
-			if(!graphs[i]->hidden)
-			{
-				graphs[i]->display();
-				graphs[i]->displayLegend(canvasWidth / getZoom(), canvasHeight / getZoom());
-                glTranslated(graphs[i]->width() + border, 0 , 0);
-			}
-		}
+    glTranslated(-xPosition, 0, 0);
+    double zoom = getZoom();
+    glScaled(zoom, zoom, zoom);
+    glTranslated(border,0,0);//to get zoom working right
+    if( tool() == SELECT_TOOL || tool() == FIND_TOOL)
+    {
+        glCallList(marker);//possibly replace this with a blinking cursor
+    }
+    for(int i = 0; i < (int)graphs.size(); ++i)
+    {
+        if(!graphs[i]->hidden)
+        {
+            graphs[i]->display();
+            graphs[i]->displayLegend(canvasWidth / getZoom(), canvasHeight / getZoom());
+            glTranslated(graphs[i]->width() + border, 0 , 0);
+        }
+    }
     glPopMatrix();
 }
 
 void GLWidget::resizeGL(int width, int height)
 {
-	glViewport(0, 0, width, height);
+    glViewport(0, 0, width, height);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-	
+
     float pixelToGridRatio = 6.0;
-	canvasWidth = width / pixelToGridRatio;
+    canvasWidth = width / pixelToGridRatio;
     canvasHeight = height / pixelToGridRatio;
-	float left = 0;
-	float right = left + width / pixelToGridRatio;
-	float top = 0;
-	float bottom = top - height / pixelToGridRatio;
-	glOrtho(left, right, bottom, top, 0, 5000);
-	
+    float left = 0;
+    float right = left + width / pixelToGridRatio;
+    float top = 0;
+    float bottom = top - height / pixelToGridRatio;
+    glOrtho(left, right, bottom, top, 0, 5000);
+
     gluLookAt(0, 0, 40, 					//position and direction
-          0, 0, 0,
-          0, 1, 0);
+              0, 0, 0,
+              0, 1, 0);
     
     glMatrixMode(GL_MODELVIEW);
     setTotalDisplayWidth();
@@ -695,44 +695,44 @@ void pushNonEmpty(vector<string>& arr, string str)
 void GLWidget::mousePressEvent(QMouseEvent* event)
 {
     parent->mousePressEvent(event);
-	if(tool() == SELECT_TOOL || tool() == FIND_TOOL)
-		placeMarker(event->pos());
-	QPointF qp = pixelToGlCoords(event->pos());
-	int x = (int)(qp.x());
-	int y = (int)(qp.y());
-		
-	point2D oglCoords = point2D(x,y);	
-	
-	if(tool() == SELECT_TOOL || tool() == FIND_TOOL)
-	{
-		vector<string> responses;
+    if(tool() == SELECT_TOOL || tool() == FIND_TOOL)
+        placeMarker(event->pos());
+    QPointF qp = pixelToGlCoords(event->pos());
+    int x = (int)(qp.x());
+    int y = (int)(qp.y());
+
+    point2D oglCoords = point2D(x,y);
+
+    if(tool() == SELECT_TOOL || tool() == FIND_TOOL)
+    {
+        vector<string> responses;
         /*Progressively decrement x based on the cumulative width of modules
         The order here is important and should match the left to right display order*/
-		for(int i = 0; i < (int)graphs.size(); ++i)
-		{
-			if(!graphs[i]->hidden)
-			{
+        for(int i = 0; i < (int)graphs.size(); ++i)
+        {
+            if(!graphs[i]->hidden)
+            {
                 if(tool() == SELECT_TOOL )
                     pushNonEmpty(responses, graphs[i]->SELECT_MouseClick(oglCoords));
                 if(tool() == FIND_TOOL)
                     pushNonEmpty(responses, graphs[i]->FIND_MouseClick(oglCoords));
-				oglCoords.x -= graphs[i]->width() + border;
-			}
-		}
+                oglCoords.x -= graphs[i]->width() + border;
+            }
+        }
         if(tool() == SELECT_TOOL)
         {
             for(int i = 0; i < (int)responses.size(); ++i)
                 ui->print(responses[i]);
         }
-		if(tool() == FIND_TOOL)
-		{
+        if(tool() == FIND_TOOL)
+        {
             for(int i = 0; i < (int)responses.size(); ++i)
                 highlight->setHighlightSequence(QString(responses[i].c_str()));
         }
-	}
-	if(tool() == ZOOM_TOOL)
-	{
-		float zoomFactor = 1.2;
+    }
+    if(tool() == ZOOM_TOOL)
+    {
+        float zoomFactor = 1.2;
         if(event->modifiers() & Qt::SHIFT) zoomFactor = 0.8;
         else if(event->button() == Qt::RightButton)
         {
@@ -743,111 +743,111 @@ void GLWidget::mousePressEvent(QMouseEvent* event)
         {
             setCursor(zoomInCursor);
         }
-			
+
         int scale = ui->scaleDial->value();//take current scale
         int index = oglCoords.y * (ui->widthDial->value()/scale) + oglCoords.x;
-		index *= scale;
+        index *= scale;
         index = max(0, index + ui->startDial->value());
         int newSize = (int)(ui->sizeDial->value() / zoomFactor);//calculate new projected size
         ui->startDial->setValue( index - (newSize/2) );//set start as centered point - size/2
-		//size should recalculate
-		int newScale = (int)(scale / zoomFactor) + (zoomFactor > 1.0? 0 : 1);//reduce scale by 10-20%  (Nx4)
+        //size should recalculate
+        int newScale = (int)(scale / zoomFactor) + (zoomFactor > 1.0? 0 : 1);//reduce scale by 10-20%  (Nx4)
         int zoom = ui->zoomDial->value();
-		if( zoomFactor > 1.0 )  // we're zooming in
-		{
-			if(scale == 1)
+        if( zoomFactor > 1.0 )  // we're zooming in
+        {
+            if(scale == 1)
                 ui->changeZoom( zoom * zoomFactor );
-			else
+            else
                 ui->changeScale(newScale);
-		}
+        }
         else //zooming out
-		{
-			if(zoom > 100)
+        {
+            if(zoom > 100)
                 ui->changeZoom( max(100, ((int) (zoom * zoomFactor))) );
-			else
+            else
                 ui->changeScale(newScale);//set scale to the new value
         }
-	}
+    }
     lastPos = event->pos();
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
-	QPointF old = pixelToGlCoords(lastPos);
-	QPointF evn = pixelToGlCoords(QPoint(event->x(), event->y()));
-	if(tool() == SELECT_TOOL || tool() == FIND_TOOL)
-		placeMarker(event->pos());
+    QPointF old = pixelToGlCoords(lastPos);
+    QPointF evn = pixelToGlCoords(QPoint(event->x(), event->y()));
+    if(tool() == SELECT_TOOL || tool() == FIND_TOOL)
+        placeMarker(event->pos());
     double zoom = getZoom();
     float dx = (evn.x() - old.x()) * zoom;
     float dy = (evn.y() - old.y()) * zoom;
-    if (event->buttons() & Qt::LeftButton) 
-	{
-		if(event->modifiers() & Qt::ControlModifier)//Qt::ControlModifier
-		{
-			translateOffset(-dx, dy);
-		}
-		else
-		{
-			if(tool() == MOVE_TOOL)
-				translate(-dx, dy);
-			if(tool() == RESIZE_TOOL)
-			{
-				translate(0, dy);//still scroll up/down
+    if (event->buttons() & Qt::LeftButton)
+    {
+        if(event->modifiers() & Qt::ControlModifier)//Qt::ControlModifier
+        {
+            translateOffset(-dx, dy);
+        }
+        else
+        {
+            if(tool() == MOVE_TOOL)
+                translate(-dx, dy);
+            if(tool() == RESIZE_TOOL)
+            {
+                translate(0, dy);//still scroll up/down
                 int value = static_cast<int>(dx * ui->scaleDial->value()*2.0 + ui->widthDial->value() + 0.5);
                 ui->changeWidth(value);
-				
+
             }
-		}
+        }
         invalidateDisplayGraphs();
-    } 
+    }
     lastPos = event->pos();
 }
 
 
 void GLWidget::translate(float dx, float dy)
 {
-	if(dy != 0.0)
-	{
-		int sign = (int)(dy / fabs(dy));
+    if(dy != 0.0)
+    {
+        int sign = (int)(dy / fabs(dy));
         int move = -1* static_cast<int>(dy  + (sign*0.5)) * ui->widthDial->value() * 2;
         int current = ui->startDial->value();
         ui->changeStart( max(1, current+move) );
-	}
-	emit xOffsetChange((int)(xPosition + dx + .5));
+    }
+    emit xOffsetChange((int)(xPosition + dx + .5));
 }
 
 void GLWidget::translateOffset(float dx, float dy)
 {
-	int moveUp = 0;
-	if(dy != 0.0)
-	{
-		int sign = (int)(dy / fabs(dy));
+    int moveUp = 0;
+    if(dy != 0.0)
+    {
+        int sign = (int)(dy / fabs(dy));
         moveUp = -1* static_cast<int>(dy  + (sign*0.5)) * ui->widthDial->value() * 2;
-	}
+    }
     int current = ui->offsetDial->value();
-	if(dx != 0.0)
-	{
-		int sign = (int)(dx / fabs(dx));
-		dx = (int)(dx + (0.5 * sign));
-	}
+    if(dx != 0.0)
+    {
+        int sign = (int)(dx / fabs(dx));
+        dx = (int)(dx + (0.5 * sign));
+    }
     ui->changeOffset( (int)(current + moveUp + dx));
 }
- 
+
 void GLWidget::changeCursor(Qt::CursorShape cNumber)
 {
-	setCursor(QCursor(cNumber));
+    setCursor(QCursor(cNumber));
 }
 
 void GLWidget::placeMarker(QPoint pixelCoords)
 {
-	QPointF qp = pixelToGlCoords(pixelCoords);
-	int x = (int)(qp.x());//round off
-	int y = (int)(qp.y());//round off
-	//glDeleteLists(marker, 1);	
-	marker = glGenLists(1);
+    QPointF qp = pixelToGlCoords(pixelCoords);
+    int x = (int)(qp.x());//round off
+    int y = (int)(qp.y());//round off
+    //glDeleteLists(marker, 1);
+    marker = glGenLists(1);
     glNewList(marker, GL_COMPILE);
-		nuc->paint_square(point(x, -y, 0), color(255,255,0));
-	glEndList();
+    nuc->paint_square(point(x, -y, 0), color(255,255,0));
+    glEndList();
 
     updateDisplay();
 }
@@ -861,47 +861,47 @@ void GLWidget::redraw()
 
 color GLWidget::colors(char nucleotide)
 {
-	return colorTable[ (int)((unsigned char)nucleotide) ];
+    return colorTable[ (int)((unsigned char)nucleotide) ];
 }
 
 void GLWidget::setupColorTable()
 {
     colorTable = vector<color>( 1024, color(150,150,150) );//default = dark grey
-	
-	{ 
-		for(int i = 0; i <= 255; i++)
-			colorTable[i] = spectrum( (double)i / 255.0);
-	}
-	//
-	//based on: http://www.eyesopen.com/docs/html/vida/manual/Ch3DDisplaySubSecMoleculeProteins.html#SECTION0079212000000000000000
-	//[1]  http://www.eyesopen.com/docs/html/vida/manual/node85.html#shapely
-	colorTable[ (int)'A' ] = color(140, 255, 140);//Alanine
-	//colorTable[ (int)'B' ] = color(255,255,255);//	UNUSED
-	colorTable[ (int)'C' ] = color(255, 255, 112);//Cysteine
-	colorTable[ (int)'D' ] = color(160, 0, 66);//Aspartic Acid
-	colorTable[ (int)'E' ] = color(102, 0, 0);//GLutamic Acid
-	colorTable[ (int)'F' ] = color(83, 76, 66);//Phenylalanine
-	colorTable[ (int)'G' ] = color(255, 255, 255);//Glycine
-	colorTable[ (int)'H' ] = color(112, 112, 255);//histidine
-	colorTable[ (int)'I' ] = color(0, 76, 0);//Isoleucine
-	//colorTable[ (int)'J' ] = color( 255,255,255);//	UNUSED
-	colorTable[ (int)'K' ] = color(71, 71, 184);//lysine
-	//colorTable[ (int)'L' ] = color(69, 94, 69);//	UNUSED
-	colorTable[ (int)'M' ] = color(184, 160, 66);//Methionine
-	colorTable[ (int)'N' ] = color(255, 124, 112);//Asparagine
-	//colorTable[ (int)'O' ] = color( 255,255,255);//	UNUSED
-	colorTable[ (int)'P' ] = color(82, 82, 82);//Proline
-	colorTable[ (int)'Q' ] = color(255, 76, 76);//Glutamine GLN
-	colorTable[ (int)'R' ] = color(0, 0, 124);//Arginine
-	colorTable[ (int)'S' ] = color(255, 112, 66);//Serine
-	colorTable[ (int)'T' ] = color(184, 76, 0);//Threonine
-	//colorTable[ (int)'U' ] = color( 255,255,255);//	UNUSED
-	colorTable[ (int)'V' ] = color(255, 140, 255);//Valine
-	colorTable[ (int)'W' ] = color(79, 70, 0);//Tryptophan
-	//colorTable[ (int)'X' ] = color( 255,255,255);//	UNUSED
-	colorTable[ (int)'Y' ] = color(140, 112, 76);//Tyrosine TYR
-	//colorTable[ (int)'Z' ] = color( 255,255,255);//	UNUSED
-	
+
+    {
+        for(int i = 0; i <= 255; i++)
+            colorTable[i] = spectrum( (double)i / 255.0);
+    }
+    //
+    //based on: http://www.eyesopen.com/docs/html/vida/manual/Ch3DDisplaySubSecMoleculeProteins.html#SECTION0079212000000000000000
+    //[1]  http://www.eyesopen.com/docs/html/vida/manual/node85.html#shapely
+    colorTable[ (int)'A' ] = color(140, 255, 140);//Alanine
+    //colorTable[ (int)'B' ] = color(255,255,255);//	UNUSED
+    colorTable[ (int)'C' ] = color(255, 255, 112);//Cysteine
+    colorTable[ (int)'D' ] = color(160, 0, 66);//Aspartic Acid
+    colorTable[ (int)'E' ] = color(102, 0, 0);//GLutamic Acid
+    colorTable[ (int)'F' ] = color(83, 76, 66);//Phenylalanine
+    colorTable[ (int)'G' ] = color(255, 255, 255);//Glycine
+    colorTable[ (int)'H' ] = color(112, 112, 255);//histidine
+    colorTable[ (int)'I' ] = color(0, 76, 0);//Isoleucine
+    //colorTable[ (int)'J' ] = color( 255,255,255);//	UNUSED
+    colorTable[ (int)'K' ] = color(71, 71, 184);//lysine
+    //colorTable[ (int)'L' ] = color(69, 94, 69);//	UNUSED
+    colorTable[ (int)'M' ] = color(184, 160, 66);//Methionine
+    colorTable[ (int)'N' ] = color(255, 124, 112);//Asparagine
+    //colorTable[ (int)'O' ] = color( 255,255,255);//	UNUSED
+    colorTable[ (int)'P' ] = color(82, 82, 82);//Proline
+    colorTable[ (int)'Q' ] = color(255, 76, 76);//Glutamine GLN
+    colorTable[ (int)'R' ] = color(0, 0, 124);//Arginine
+    colorTable[ (int)'S' ] = color(255, 112, 66);//Serine
+    colorTable[ (int)'T' ] = color(184, 76, 0);//Threonine
+    //colorTable[ (int)'U' ] = color( 255,255,255);//	UNUSED
+    colorTable[ (int)'V' ] = color(255, 140, 255);//Valine
+    colorTable[ (int)'W' ] = color(79, 70, 0);//Tryptophan
+    //colorTable[ (int)'X' ] = color( 255,255,255);//	UNUSED
+    colorTable[ (int)'Y' ] = color(140, 112, 76);//Tyrosine TYR
+    //colorTable[ (int)'Z' ] = color( 255,255,255);//	UNUSED
+
 
 
     int colorSetting = ui->getColorSetting();
@@ -960,98 +960,98 @@ void GLWidget::setupColorTable()
 
 color GLWidget::spectrum(double i)
 {
-	i = max(i, 0.0);
-	i = min(i, 1.0);
-	
-	double r = 0.0;
-	double g = 0.0;
-	double b = 0.0;
-	double fourth = 1/4.0;
-		
-	if(i <= 1*fourth)//falling blue, rising red - pink (purple)
-	{
-		r = (i-0*fourth) / fourth;
-		b = 1.0 - (i-0*fourth) / fourth;
-		i = 1.0;
-	}
-	/*else if(i <= 2*fourth)//All red, falling blue - red
-	{
-		r = 1.0;
-		b = 1.0 - (i-1*fourth) / fourth;
-		i = 1.0;
-	}*/
-	else if(i <= 2*fourth)//All Red, rising green - yellow
-	{
-		r = 1.0;
-		g = (i-1*fourth) / fourth;
-		i = 1.0;
-	}
-	else if(i <= 3*fourth)//All green, falling red - green
-	{
-		r = 1.0 - (i-2*fourth) / fourth;
-		g = 1.0;
-		i = 1.0;
-	}
-	else if(i <= 4*fourth)//All green, rising blue - cyan
-	{
-		g = 1.0;
-		b = (i-3*fourth) / fourth;
-		i = 1.0;
-	}/*
-	else if(i <= 5*fourth)//All blue, falling green - blue
-	{
-		g = 1.0 - (i-4*fourth) / fourth;
-		b = 1.0;
-		i = 1.0;
-	}*/
-	
-//	shift from (-1 to 1) over to (0 to 1)
-	int red =   static_cast<int>((r)* 255 + .5);
-	int green = static_cast<int>((g)* 255 + .5);
-	int blue =  static_cast<int>((b)* 255 + .5);
+    i = max(i, 0.0);
+    i = min(i, 1.0);
 
-	return color(red, green, blue);
+    double r = 0.0;
+    double g = 0.0;
+    double b = 0.0;
+    double fourth = 1/4.0;
+
+    if(i <= 1*fourth)//falling blue, rising red - pink (purple)
+    {
+        r = (i-0*fourth) / fourth;
+        b = 1.0 - (i-0*fourth) / fourth;
+        i = 1.0;
+    }
+    /*else if(i <= 2*fourth)//All red, falling blue - red
+    {
+        r = 1.0;
+        b = 1.0 - (i-1*fourth) / fourth;
+        i = 1.0;
+    }*/
+    else if(i <= 2*fourth)//All Red, rising green - yellow
+    {
+        r = 1.0;
+        g = (i-1*fourth) / fourth;
+        i = 1.0;
+    }
+    else if(i <= 3*fourth)//All green, falling red - green
+    {
+        r = 1.0 - (i-2*fourth) / fourth;
+        g = 1.0;
+        i = 1.0;
+    }
+    else if(i <= 4*fourth)//All green, rising blue - cyan
+    {
+        g = 1.0;
+        b = (i-3*fourth) / fourth;
+        i = 1.0;
+    }/*
+    else if(i <= 5*fourth)//All blue, falling green - blue
+    {
+        g = 1.0 - (i-4*fourth) / fourth;
+        b = 1.0;
+        i = 1.0;
+    }*/
+
+    //	shift from (-1 to 1) over to (0 to 1)
+    int red =   static_cast<int>((r)* 255 + .5);
+    int green = static_cast<int>((g)* 255 + .5);
+    int blue =  static_cast<int>((b)* 255 + .5);
+
+    return color(red, green, blue);
 }
 
 void GLWidget::loadFile(QString fileName)
 {
-	if(parent != NULL)
+    if(parent != NULL)
         parent->setWindowTitle( trimPathFromFilename(fileName.toStdString()).c_str());
-	reader->readFile(fileName);
+    reader->readFile(fileName);
 }
 
 vector<QScrollArea*> GLWidget::settingsUi()
 {
-	vector<QScrollArea*> tabs;
-	
-	for(int i =0; i < (int)graphs.size(); ++i)
-	{
-		QScrollArea* tab = graphs[i]->settingsUi();
-		if(tab != NULL)
-			tabs.insert(tabs.begin(),tab);
-	}
-	return tabs;
+    vector<QScrollArea*> tabs;
+
+    for(int i =0; i < (int)graphs.size(); ++i)
+    {
+        QScrollArea* tab = graphs[i]->settingsUi();
+        if(tab != NULL)
+            tabs.insert(tabs.begin(),tab);
+    }
+    return tabs;
 }
 
 void GLWidget::createCursors()
 {
-	QBitmap pic = QBitmap(":/zoomIn.png");
-	if(pic.isNull())
-	{
+    QBitmap pic = QBitmap(":/zoomIn.png");
+    if(pic.isNull())
+    {
         ui->print("Warning: Null pic");
-	}
-	QBitmap mask = QBitmap(":/zoomIn-mask.png");
-	if(mask.isNull())
-	{
+    }
+    QBitmap mask = QBitmap(":/zoomIn-mask.png");
+    if(mask.isNull())
+    {
         ui->print("Warning: Null mask");
-	}
-	zoomInCursor = QCursor( pic, mask);  
-	QBitmap pic2 = QBitmap(":/zoomOut.png");
-	if(pic2.isNull())
-	{
+    }
+    zoomInCursor = QCursor( pic, mask);
+    QBitmap pic2 = QBitmap(":/zoomOut.png");
+    if(pic2.isNull())
+    {
         ui->print("Warning: Null pic2");
-	}
-	zoomOutCursor = QCursor( pic2, mask);  
+    }
+    zoomOutCursor = QCursor( pic2, mask);
 }
 
 void GLWidget::reportOnFinish(int i){
@@ -1062,6 +1062,6 @@ void GLWidget::reportOnFinish(int i){
  * Rethinking this strategy:
  ****************************************/
 //~ void setUi(UiVariables master = NULL){
-	//~ if (NULL == master) return;
-	//~ ui = master
+//~ if (NULL == master) return;
+//~ ui = master
 //~}

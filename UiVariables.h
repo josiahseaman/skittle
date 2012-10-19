@@ -20,18 +20,18 @@ public:
     QSpinBox* scaleDial;
     QSpinBox* zoomDial;
     QSpinBox* offsetDial;
-	QTextEdit* textArea;
+    QTextEdit* textArea;
 
-//	UiVariables();
+    //	UiVariables();
     UiVariables(QTextEdit* text = NULL);
     ~UiVariables();
 
     void print(const char*);
-	void print(std::string s);
-	void printHtml(std::string);
-	void print(const char* s, int num);
-	void printNum(int num);
-	//void print(int num1, int num2); 
+    void print(std::string s);
+    void printHtml(std::string);
+    void print(const char* s, int num);
+    void printNum(int num);
+    //void print(int num1, int num2);
     int getColorSetting();
     int colorSetting;
 

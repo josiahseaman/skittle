@@ -32,9 +32,9 @@ TextureCanvas::TextureCanvas(vector<color>& pixels, int w, bool raggedEdge)
     if(!useTextures)
         colors = vector<color>(pixels);
 
-	//pad the end with white pixels, background color
-	for(int i = 0; i <= w; ++i)
-		pixels.push_back( color(128,128,128) );
+    //pad the end with white pixels, background color
+    for(int i = 0; i <= w; ++i)
+        pixels.push_back( color(128,128,128) );
     
     height = pixels.size() / width;
 
@@ -44,9 +44,9 @@ TextureCanvas::TextureCanvas(vector<color>& pixels, int w, bool raggedEdge)
 
 TextureCanvas::~TextureCanvas()
 {
-	for(unsigned int i = 0; i < canvas.size(); ++i)
-		for(unsigned int k = 0; k < canvas[i].size(); ++k)
-			glDeleteTextures(1, &canvas[i][k].tex_id );	
+    for(unsigned int i = 0; i < canvas.size(); ++i)
+        for(unsigned int k = 0; k < canvas[i].size(); ++k)
+            glDeleteTextures(1, &canvas[i][k].tex_id );
 }
 
 void TextureCanvas::init(int w, bool raggedEdge)
@@ -112,16 +112,16 @@ void TextureCanvas::loadPixelsToCard(vector<color>& pixels, int max_size)
 void TextureCanvas::createEmptyTiles(int canvas_width, int canvas_height, int max_size)
 {
     
-	for(int x = 0; x < canvas_width ; ++x)//populate canvas
-	{
-		canvas.push_back( vector< textureTile >() );	
-		for(int y = 0; y < canvas_height; ++y)
-		{
-			int w = min(width - (x * max_size), max_size);
-			int h = min(height - (y * max_size), max_size);
-			canvas[x].push_back( textureTile(w, h) );
-		}
-	}	
+    for(int x = 0; x < canvas_width ; ++x)//populate canvas
+    {
+        canvas.push_back( vector< textureTile >() );
+        for(int y = 0; y < canvas_height; ++y)
+        {
+            int w = min(width - (x * max_size), max_size);
+            int h = min(height - (y * max_size), max_size);
+            canvas[x].push_back( textureTile(w, h) );
+        }
+    }
 }
 
 void TextureCanvas::display()
@@ -139,50 +139,50 @@ void TextureCanvas::display()
 
 void TextureCanvas::drawTextureSquare()//draws from canvas
 {	
-	int max_size;
+    int max_size;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_size);
-	glPushMatrix();
-	//glTranslated(-1.0, 0.0, 0);
-	for(unsigned int x =0; x < canvas.size(); ++x)
-	{
-		for(unsigned int y = 0; y < canvas[x].size(); ++y)
-		{	
-			textureTile& tile = canvas[x][y];
-			glPushMatrix();
-			glTranslated(x * max_size, y*max_size, 0);
-			glColor3d(1.0,1.0,1.0);
-		    glEnable (GL_TEXTURE_2D); /* enable texture mapping */
-		    glBindTexture (GL_TEXTURE_2D, tile.tex_id); /* bind to our texture, has id of 13 */
-			
-		    glBegin (GL_QUADS);
-		        glTexCoord2f (0.0f,0.0f); /* upper left corner of image */
-		        glVertex3f (0.0f, 0.0f, 0.0f);
-		        glTexCoord2f (1.0f, 0.0f); /* upper right corner of image */
-		        glVertex3f (tile.width, 0.0f, 0.0f);
-		        glTexCoord2f (1.0f, 1.0f); /* lower right corner of image */
-		        glVertex3f (tile.width, tile.height, 0.0f);
-		        glTexCoord2f (0.0f, 1.0f); /* lower left corner of image */
-		        glVertex3f (0.0f, tile.height, 0.0f);
-		    glEnd ();
-		
+    glPushMatrix();
+    //glTranslated(-1.0, 0.0, 0);
+    for(unsigned int x =0; x < canvas.size(); ++x)
+    {
+        for(unsigned int y = 0; y < canvas[x].size(); ++y)
+        {
+            textureTile& tile = canvas[x][y];
+            glPushMatrix();
+            glTranslated(x * max_size, y*max_size, 0);
+            glColor3d(1.0,1.0,1.0);
+            glEnable (GL_TEXTURE_2D); /* enable texture mapping */
+            glBindTexture (GL_TEXTURE_2D, tile.tex_id); /* bind to our texture, has id of 13 */
+
+            glBegin (GL_QUADS);
+            glTexCoord2f (0.0f,0.0f); /* upper left corner of image */
+            glVertex3f (0.0f, 0.0f, 0.0f);
+            glTexCoord2f (1.0f, 0.0f); /* upper right corner of image */
+            glVertex3f (tile.width, 0.0f, 0.0f);
+            glTexCoord2f (1.0f, 1.0f); /* lower right corner of image */
+            glVertex3f (tile.width, tile.height, 0.0f);
+            glTexCoord2f (0.0f, 1.0f); /* lower left corner of image */
+            glVertex3f (0.0f, tile.height, 0.0f);
+            glEnd ();
+
             glDisable (GL_TEXTURE_2D); /* disable texture mapping */
-			glPopMatrix();
-		}
-	}	
-	glPopMatrix();
+            glPopMatrix();
+        }
+    }
+    glPopMatrix();
 }
 
 GLuint TextureCanvas::loadTexture(textureTile& tile)
 {
-	GLuint tex_id;
-	glGenTextures( 1, &tex_id );//TODO: could we store this in tile?
+    GLuint tex_id;
+    glGenTextures( 1, &tex_id );//TODO: could we store this in tile?
     glBindTexture (GL_TEXTURE_2D, tex_id);
     glPixelStorei (GL_UNPACK_ALIGNMENT, 1);
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);//GL_NEAREST
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
-    glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);               
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, tile.width, tile.height, 0, GL_RGB, GL_UNSIGNED_BYTE, &tile.data[0]);
     
     //cout << "Load Texture: " << (unsigned int) tex_id << endl;
@@ -192,23 +192,23 @@ GLuint TextureCanvas::loadTexture(textureTile& tile)
 
 point TextureCanvas::get_position(int index)
 {
-	int x = index % width;
-	int y = index / width;
-	return point(x, y, 0);
+    int x = index % width;
+    int y = index / width;
+    return point(x, y, 0);
 }
 
 void TextureCanvas::paint_square(point position, color c)
 {	
-	glPushMatrix();
-    	glColor3d(c.r /255.0, c.g /255.0, c.b /255.0); 
-        glTranslated(position.x+1, position.y, position.z);
-        glBegin(GL_QUADS);
-	        glVertex3d(.0, .0, 0);
-	        glVertex3d(-1.0, .0, 0);
-	        glVertex3d(-1, -1, 0);
-	        glVertex3d(.0, -1, 0);
-	    glEnd();
-	glPopMatrix();
+    glPushMatrix();
+    glColor3d(c.r /255.0, c.g /255.0, c.b /255.0);
+    glTranslated(position.x+1, position.y, position.z);
+    glBegin(GL_QUADS);
+    glVertex3d(.0, .0, 0);
+    glVertex3d(-1.0, .0, 0);
+    glVertex3d(-1, -1, 0);
+    glVertex3d(.0, -1, 0);
+    glEnd();
+    glPopMatrix();
 }
 
 void TextureCanvas::textureFreeRender()
@@ -222,7 +222,7 @@ void TextureCanvas::textureFreeRender()
         paint_square(p1, colors[i]);
     }
 
-	glPopMatrix();
+    glPopMatrix();
 }
 
 int TextureCanvas::getMaxSize()

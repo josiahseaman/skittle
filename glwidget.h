@@ -51,25 +51,25 @@ class GLWidget : public QGLWidget
 
 public:
     UiVariables* ui;
-	string chromosomeName;
+    string chromosomeName;
     MdiChildWindow* parent;
-	FastaReader* reader;
-	GtfReader*	trackReader;
-	NucleotideDisplay* nuc;//make this private
+    FastaReader* reader;
+    GtfReader*	trackReader;
+    NucleotideDisplay* nuc;//make this private
     RepeatMap* freq;
     BiasDisplay* bias;
-	AnnotationDisplay* gtfTrack;
-	CylinderDisplay* cylinder;
-   	RepeatOverviewDisplay* align;
-   	OligomerDisplay* olig;
-   	HighlightDisplay* highlight;
-   	
-	
+    AnnotationDisplay* gtfTrack;
+    CylinderDisplay* cylinder;
+    RepeatOverviewDisplay* align;
+    OligomerDisplay* olig;
+    HighlightDisplay* highlight;
+
+
     GLWidget(UiVariables *gui, QWidget* parent = 0);
     ~GLWidget();
     void addGraph(AbstractGraph* graph);
-	void createButtons();
-	void createConnections();
+    void createButtons();
+    void createConnections();
 
     QSize minimumSizeHint() const;
     QSize sizeHint() const;
@@ -77,15 +77,15 @@ public:
     void setTotalDisplayWidth();
 
     void keyPressEvent( QKeyEvent *event );
-	void keyReleaseEvent( QKeyEvent *event );
+    void keyReleaseEvent( QKeyEvent *event );
     int tool();
     color colors(char nucleotide);
-	void setupColorTable();
+    void setupColorTable();
     color spectrum(double i);
     
     const string* seq();
-	
-	vector<QScrollArea*> settingsUi();
+
+    vector<QScrollArea*> settingsUi();
 
 
 public slots:
@@ -102,31 +102,31 @@ public slots:
     void setTool(int tool);
     void slideHorizontal(int);
     void invalidateDisplayGraphs();
-	void updateDisplay();
-	void updateDisplaySize();
+    void updateDisplay();
+    void updateDisplaySize();
     void jumpToAnnotation(bool forward);
-	AnnotationDisplay* addAnnotationDisplay(QString fileName);
-	AnnotationDisplay* findMatchingAnnotationDisplay(string fileName);
+    AnnotationDisplay* addAnnotationDisplay(QString fileName);
+    AnnotationDisplay* findMatchingAnnotationDisplay(string fileName);
     vector<AnnotationDisplay*> getAllAnnotationDisplays();
-	void addTrackEntry(track_entry entry, string gtfFileName);
+    void addTrackEntry(track_entry entry, string gtfFileName);
     void loadFile(QString);
-	//void setUi(UiVariables);
+    //void setUi(UiVariables);
     
 signals:
-	void totalWidthChanged(int);
-	void xOffsetChange(int);
-	void printText(QString);
-	void printHtml(QString);
-	void addGraphMode(AbstractGraph*);
-	void addDivider();
+    void totalWidthChanged(int);
+    void xOffsetChange(int);
+    void printText(QString);
+    void printHtml(QString);
+    void addGraphMode(AbstractGraph*);
+    void addDivider();
     void AnnotationDisplayAdded(AnnotationDisplay*);
-	void displaySizeChanged();
-	void hideSettings(QScrollArea*);
+    void displaySizeChanged();
+    void hideSettings(QScrollArea*);
     void showSettings(QScrollArea*);
 
 protected:
-	void displayTrack(const vector<track_entry>& track);
-	QPointF pixelToGlCoords(QPoint pCoords, double z = 0);
+    void displayTrack(const vector<track_entry>& track);
+    QPointF pixelToGlCoords(QPoint pCoords, double z = 0);
     int display_height();
     void initializeGL();
     void paintGL();
@@ -134,16 +134,16 @@ protected:
     void resizeGL(int width, int height);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
-	void translate(float dx, float dy);
-	void translateOffset(float dx, float dy);
+    void translate(float dx, float dy);
+    void translateOffset(float dx, float dy);
     void changeCursor(Qt::CursorShape cNumber);
     void placeMarker(QPoint);
     void redraw();
     void createCursors();
 
 private:
-	vector<AbstractGraph*> graphs;
-	vector<color> colorTable;
+    vector<AbstractGraph*> graphs;
+    vector<color> colorTable;
     GLuint object;
     GLuint marker;
     QCursor zoomInCursor;
@@ -153,12 +153,12 @@ private:
     double zTransOffset;
     QPoint lastPos;
     float canvasWidth;
-	float canvasHeight;
-	int xPosition;
-	int xOrigin;
-	int border;
-	int currentTool;
-	int frame;
+    float canvasHeight;
+    int xPosition;
+    int xOrigin;
+    int border;
+    int currentTool;
+    int frame;
     QImage read_framebuffer(const QSize &size, bool alpha_format, bool include_alpha);
     void convertFromGLImage(QImage &img, int w, int h, bool alpha_format, bool include_alpha);
     int getTotalPixelWidth();

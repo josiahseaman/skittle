@@ -17,7 +17,7 @@
   the justifiedBarGraph is 300% wide (4-1)*100%.
 *******************************************************/
 BiasDisplay::BiasDisplay(UiVariables* gui, GLWidget* gl)
-:NucleotideDisplay(gui, gl)
+    :NucleotideDisplay(gui, gl)
 {
     hidden = true;
     actionLabel = string("Nucleotide Bias");

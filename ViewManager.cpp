@@ -35,23 +35,23 @@ ViewManager::ViewManager(MainWindow* window, UiVariables* gui)
     : QMdiArea(window)
 {
     globalUi = gui;
-	mainWindow = window;
-	activeWidget = NULL;
-	
-	setBackgroundRole(QPalette::Dark);
+    mainWindow = window;
+    activeWidget = NULL;
 
-	createConnections();
-	
-	addNewView();
-	views[0]->showMaximized();
+    setBackgroundRole(QPalette::Dark);
+
+    createConnections();
+
+    addNewView();
+    views[0]->showMaximized();
 }
 
 void ViewManager::createConnections()
 {
-	connect(mainWindow->addViewAction, SIGNAL(triggered()), this, SLOT(addNewView()));
+    connect(mainWindow->addViewAction, SIGNAL(triggered()), this, SLOT(addNewView()));
     connect(mainWindow->syncCheckBox, SIGNAL(stateChanged(int)), this, SLOT(handleWindowSync()));
-	/****CONNECT ui VARIABLES*******/ 
-	
+    /****CONNECT ui VARIABLES*******/
+
     connect(globalUi->widthDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
     connect(globalUi->zoomDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
     connect(globalUi->scaleDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
@@ -69,31 +69,31 @@ void ViewManager::uiToGlwidgetConnections(GLWidget* active)
     connect(mainWindow->resizeAction, SIGNAL(triggered()), active, SLOT(on_resizeButton_clicked()));
     connect(mainWindow->zoomAction, SIGNAL(triggered()), active, SLOT(on_zoomButton_clicked()));
     connect(mainWindow->zoomExtents, SIGNAL(clicked()), active, SLOT(zoomExtents()));
-	
+
     connect( active, SIGNAL(addGraphMode(AbstractGraph*)), mainWindow, SLOT(addDisplayActions(AbstractGraph*)));
-	connect( active, SIGNAL(addDivider()), mainWindow, SLOT(addDisplayDivider()));
-	active->createButtons();
+    connect( active, SIGNAL(addDivider()), mainWindow, SLOT(addDisplayDivider()));
+    active->createButtons();
 }
 
 //public slots
 GLWidget* ViewManager::addNewView(bool suppressOpen)
 {
     UiVariables* localDials = copyUi();
-	broadcastPublicValues(localDials);
-	
+    broadcastPublicValues(localDials);
+
     MdiChildWindow* child = new MdiChildWindow(localDials, globalUi->startDial, mainWindow->tabWidget);//TODO: figure out a better way to manage startDial
-	connect( child, SIGNAL(subWindowClosing(MdiChildWindow*)), this, SLOT(closeSubWindow(MdiChildWindow*)));
+    connect( child, SIGNAL(subWindowClosing(MdiChildWindow*)), this, SLOT(closeSubWindow(MdiChildWindow*)));
     addSubWindow(child);
     child->show();
     views.push_back(child);
-	
-    GLWidget* newGlWidget = child->glWidget;
-	uiToGlwidgetConnections(newGlWidget);
-	changeSelection(child);
 
-	if(suppressOpen == false)
-		mainWindow->openAction->trigger();
-	return newGlWidget;
+    GLWidget* newGlWidget = child->glWidget;
+    uiToGlwidgetConnections(newGlWidget);
+    changeSelection(child);
+
+    if(suppressOpen == false)
+        mainWindow->openAction->trigger();
+    return newGlWidget;
 }
 
 void ViewManager::changeSelection(MdiChildWindow* newActiveMdi)
@@ -101,67 +101,67 @@ void ViewManager::changeSelection(MdiChildWindow* newActiveMdi)
     GLWidget* newActiveGlWidget = newActiveMdi->glWidget;
     GLWidget* oldActiveGlWidget = activeWidget;
     if(newActiveGlWidget == oldActiveGlWidget)
-		return;
-		
-	int tabIndex = mainWindow->tabWidget->currentIndex();
+        return;
+
+    int tabIndex = mainWindow->tabWidget->currentIndex();
     if(oldActiveGlWidget != NULL)//deal with oldActiveGlWidget
-	{
+    {
         oldActiveGlWidget->parent->hideSettingsTabs();
         disconnectLocalPushToGlobal(oldActiveGlWidget, vars(oldActiveGlWidget));
         if(mainWindow->syncCheckBox->isChecked() == false )
             disconnectGlobalPushToLocal(oldActiveGlWidget, vars(oldActiveGlWidget));
-	}
+    }
     //deal with newActiveGlWidget
     connectGlobalPushToLocal(newActiveGlWidget, vars(newActiveGlWidget));//this will not create duplicate connections
     connectLocalPushToGlobal(newActiveGlWidget, vars(newActiveGlWidget));
     newActiveMdi->showSettingsTabs();
 
-	mainWindow->tabWidget->setCurrentIndex(tabIndex);	
+    mainWindow->tabWidget->setCurrentIndex(tabIndex);
     activeWidget = newActiveGlWidget;
-	activeWidget->setTotalDisplayWidth();	
+    activeWidget->setTotalDisplayWidth();
 }
 
 void ViewManager::closeSubWindow(MdiChildWindow* closing)
 {
-	vector<MdiChildWindow*>::iterator it;
-	it = std::find(views.begin(), views.end(), closing);
-	views.erase(it);
-	if(closing->glWidget == activeWidget)
-	{
-		if( views.size() > 0)
-			changeSelection(views[0]);
-		else
-			activeWidget = NULL;
-	}
+    vector<MdiChildWindow*>::iterator it;
+    it = std::find(views.begin(), views.end(), closing);
+    views.erase(it);
+    if(closing->glWidget == activeWidget)
+    {
+        if( views.size() > 0)
+            changeSelection(views[0]);
+        else
+            activeWidget = NULL;
+    }
 }
 
 void ViewManager::changeFile(QString fileName)
 {
-	if(!fileName.isEmpty() )
-	{
-		if(activeWidget == NULL )
-		{
-			addNewView(true);
-		}
-		activeWidget->loadFile(fileName);
-		activeWidget->trackReader->determineOutputFile(fileName);
-	}
+    if(!fileName.isEmpty() )
+    {
+        if(activeWidget == NULL )
+        {
+            addNewView(true);
+        }
+        activeWidget->loadFile(fileName);
+        activeWidget->trackReader->determineOutputFile(fileName);
+    }
 }
 
 void ViewManager::addAnnotationDisplay(QString fileName)
 {
-	if(activeWidget != NULL)
-	{
-		activeWidget->addAnnotationDisplay(fileName);
-	}
+    if(activeWidget != NULL)
+    {
+        activeWidget->addAnnotationDisplay(fileName);
+    }
 }
 
 void ViewManager::addBookmark()
 {
-	if(activeWidget != NULL)
-	{
-		activeWidget->trackReader->addBookmark();
-	}
+    if(activeWidget != NULL)
+    {
+        activeWidget->trackReader->addBookmark();
+    }
 }
 
 void ViewManager::jumpToNextAnnotation()
@@ -181,21 +181,21 @@ void ViewManager::jumpToPrevAnnotation()
 
 void ViewManager::handleWindowSync()
 {
-	if( mainWindow->syncCheckBox->isChecked() )//reconnect all windows
-	{
-		for(int i = 0; i < (int)views.size(); ++i)
+    if( mainWindow->syncCheckBox->isChecked() )//reconnect all windows
+    {
+        for(int i = 0; i < (int)views.size(); ++i)
         {
             connectGlobalPushToLocal(views[i]->glWidget, views[i]->ui);
-		}
-	}
-	else//disconnect all windows but the current one
-	{
-		for(int i = 0; i < (int)views.size(); ++i)
-		{
-			if(views[i]->glWidget != activeWidget)
+        }
+    }
+    else//disconnect all windows but the current one
+    {
+        for(int i = 0; i < (int)views.size(); ++i)
+        {
+            if(views[i]->glWidget != activeWidget)
                 disconnectGlobalPushToLocal(views[i]->glWidget, views[i]->ui);
-		}
-	}
+        }
+    }
 }
 
 void ViewManager::changeGlobalStart()
@@ -203,7 +203,7 @@ void ViewManager::changeGlobalStart()
     UiVariables* local = vars(activeWidget);
     int preOffsetStart = max(1, local->startDial->value() - local->offsetDial->value());
     globalUi->startDial->setValue(preOffsetStart);
-//    globalUi->changeStart(preOffsetStart);
+    //    globalUi->changeStart(preOffsetStart);
 }
 
 void ViewManager::changeAllLocalStarts()
@@ -239,7 +239,7 @@ UiVariables* ViewManager::copyUi()
     localDials->offsetDial->show();
     mainWindow->settingToolBar->addWidget(localDials->offsetDial);
 
-	return localDials;
+    return localDials;
 }
 
 void ViewManager::printNum(int num)
@@ -302,7 +302,7 @@ void ViewManager::disconnectLocalPushToGlobal(GLWidget* active, UiVariables* loc
 
 UiVariables* ViewManager::vars(GLWidget* active)
 {
-	return dynamic_cast<MdiChildWindow*>(active->parent)->ui;
+    return dynamic_cast<MdiChildWindow*>(active->parent)->ui;
 }
 
 void ViewManager::updateCurrentDisplay(){
@@ -311,7 +311,7 @@ void ViewManager::updateCurrentDisplay(){
         for(int i = 0; i < (int)views.size(); ++i)
             views[i]->glWidget->invalidateDisplayGraphs();
     }
-	else {
+    else {
         activeWidget->invalidateDisplayGraphs();
-	}
+    }
 }

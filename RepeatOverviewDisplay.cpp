@@ -66,18 +66,18 @@ RepeatOverviewDisplay::RepeatOverviewDisplay(UiVariables* gui, GLWidget* gl)
     hidden = true;
     charPerIndex = 4;
     internalScale = charPerIndex;
-	sequence = NULL;
+    sequence = NULL;
     packSeq = NULL;
-	countTableShort = NULL;
-	countTableChar = NULL;
-	pSeqSize = 0;
+    countTableShort = NULL;
+    countTableChar = NULL;
+    pSeqSize = 0;
 
-	calcMatchTable();
-	//packSequence is called by setSequence()
-	
-	actionLabel = string("Repeat Overview");
-	actionTooltip = string("Color by the best alignment offset");
-	actionData = actionLabel; 
+    calcMatchTable();
+    //packSequence is called by setSequence()
+
+    actionLabel = string("Repeat Overview");
+    actionTooltip = string("Color by the best alignment offset");
+    actionData = actionLabel;
 }
 void RepeatOverviewDisplay::checkVariables()
 {
@@ -86,19 +86,19 @@ void RepeatOverviewDisplay::checkVariables()
 
 void RepeatOverviewDisplay::calculateOutputPixels()
 {
-	/**/
+    /**/
     qDebug() << "RepeatOverviewDisplay::load: " << ++frameCount;
 
 
     qDebug() << "Width: " << ui->widthDial->value() << "\nScale: " << ui->scaleDial->value() << "\nStart: " << ui->startDial->value();
-	vector<color> alignment_colors;
+    vector<color> alignment_colors;
     int end = max(1, (ui->startDial->value() + current_display_size()) - 251);
     for(int i = ui->startDial->value(); i < end; i += internalScale)
-		alignment_colors.push_back( simpleAlignment(i) );
+        alignment_colors.push_back( simpleAlignment(i) );
 
-	storeDisplay( alignment_colors, width());
+    storeDisplay( alignment_colors, width());
 
-	upToDate = true;
+    upToDate = true;
 }
 
 int RepeatOverviewDisplay::width()
@@ -108,158 +108,158 @@ int RepeatOverviewDisplay::width()
 
 void RepeatOverviewDisplay::displayLegend(float canvasWidth, float canvasHeight)
 {
-	/** /
-	glPushMatrix();
-		glTranslated(0,40,0);
-	vector<color> paintIt;
-	for(int y = 0; y < 10; y++)
-	{
-	for(int i = 0; i < 250; i++)
-	{
+    /** /
+    glPushMatrix();
+        glTranslated(0,40,0);
+    vector<color> paintIt;
+    for(int y = 0; y < 10; y++)
+    {
+    for(int i = 0; i < 250; i++)
+    {
                 paintIt.push_back(alignment_color(scale, i));//spectrum(i/255.0);//internalWidth
-	}
-	}
-	TextureCanvas paint = TextureCanvas( paintIt, 250);
-	paint.display();
-	
-	glPopMatrix();
-	/*/
-	glPushMatrix();
-		glTranslated(0,-canvasHeight,1);//
-		for(int i = 0; i < 250; i++)
-		{
-			glPushMatrix();
-				glTranslated(i,4,0);
-                color c = alignment_color(internalScale, i);//spectrum(i/255.0);
-				glScaled(1,10,1);//*(c.b / 125.0)
-	    		glColor3d(c.r /255.0, c.g /255.0, c.b /255.0); 
-	    	    glBegin(GL_QUADS);
-			        glVertex3d(0, .5, 0);
-			        glVertex3d(-1, .5, 0);
-			        glVertex3d(-1, -.5, 0);
-			        glVertex3d(0, -.5, 0);
-			    glEnd();
-			glPopMatrix();
-		}
-		//TextRender textOutput = TextRender();
-		glColor3d(0,0,0);
-		//textOutput.range_labels(1, 250, point(0.5,2,.3), point(250.5,2,.3), 16);
-		glColor3d(1,1,1);
-		//textOutput.range_labels(1, 250, point(0,1.5,.5), point(250,1.5,.5), 16);
-	glPopMatrix();
-	/**/
+    }
+    }
+    TextureCanvas paint = TextureCanvas( paintIt, 250);
+    paint.display();
+
+    glPopMatrix();
+    /*/
+    glPushMatrix();
+    glTranslated(0,-canvasHeight,1);//
+    for(int i = 0; i < 250; i++)
+    {
+        glPushMatrix();
+        glTranslated(i,4,0);
+        color c = alignment_color(internalScale, i);//spectrum(i/255.0);
+        glScaled(1,10,1);//*(c.b / 125.0)
+        glColor3d(c.r /255.0, c.g /255.0, c.b /255.0);
+        glBegin(GL_QUADS);
+        glVertex3d(0, .5, 0);
+        glVertex3d(-1, .5, 0);
+        glVertex3d(-1, -.5, 0);
+        glVertex3d(0, -.5, 0);
+        glEnd();
+        glPopMatrix();
+    }
+    //TextRender textOutput = TextRender();
+    glColor3d(0,0,0);
+    //textOutput.range_labels(1, 250, point(0.5,2,.3), point(250.5,2,.3), 16);
+    glColor3d(1,1,1);
+    //textOutput.range_labels(1, 250, point(0,1.5,.5), point(250,1.5,.5), 16);
+    glPopMatrix();
+    /**/
 }
 
 
 color RepeatOverviewDisplay::alignment_color(int score, int frequency)
 {
-	color c = glWidget->spectrum((double)(frequency) / 250.0);//
-	color black = color(0,0,0);
+    color c = glWidget->spectrum((double)(frequency) / 250.0);//
+    color black = color(0,0,0);
     c = interpolate(black, c, score / float(internalScale));
-	
-	return c;
+
+    return c;
 }
 
 color RepeatOverviewDisplay::interpolate(color p1, color p3, double progress)//progress goes from 0.0 p1  to 1.0 p2
 {
-	double inverse = 1.0 - progress;
-	int x2 = (int)(p1.r * inverse + p3.r * progress + .5);
-	int y2 = (int)(p1.g * inverse + p3.g * progress + .5);
-	int z2 = (int)(p1.b * inverse + p3.b * progress + .5);
-	return color(x2, y2, z2);
+    double inverse = 1.0 - progress;
+    int x2 = (int)(p1.r * inverse + p3.r * progress + .5);
+    int y2 = (int)(p1.g * inverse + p3.g * progress + .5);
+    int z2 = (int)(p1.b * inverse + p3.b * progress + .5);
+    return color(x2, y2, z2);
 }
 
 int RepeatOverviewDisplay::countMatchesShort(unsigned short int bits)
 {
-	int c = 0;
-	for(int i = 0; i < (int)(sizeof(unsigned short int) * 4); ++i)
-	{
-		if( ((bits >> (i*2)) & 3) == 0)// 3 = 00011 look at last two bits
-			++c;
-	}
-	return c;
+    int c = 0;
+    for(int i = 0; i < (int)(sizeof(unsigned short int) * 4); ++i)
+    {
+        if( ((bits >> (i*2)) & 3) == 0)// 3 = 00011 look at last two bits
+            ++c;
+    }
+    return c;
 }
 
 int RepeatOverviewDisplay::countMatchesChar(unsigned char bits)
 {
-	int c = 0;
-	for(int i = 0; i < 4; ++i)
-	{
-		if( ((bits >> (i*2)) & 3) == 0)// 3 = 00000011 look at last two bits
-			++c;
-	}
-	return c;
+    int c = 0;
+    for(int i = 0; i < 4; ++i)
+    {
+        if( ((bits >> (i*2)) & 3) == 0)// 3 = 00000011 look at last two bits
+            ++c;
+    }
+    return c;
 }
 
 void RepeatOverviewDisplay::calcMatchTable()
 {
-	countTableShort = new int[65536];
-	for(unsigned short int index = 0; true; ++index)
-	{
-		countTableShort[index] = countMatchesShort(index);
-		if(index == 65535)//last possible index: we can't check for this beforehand because of overflow
-			break;
-	}
-	
-	countTableChar = new int[256];
-	for(unsigned short int index = 0; ; ++index)
-	{
-		countTableChar[index] = countMatchesChar(index);
-		if(index == 255)//last possible index: we can't check for this beforehand because of overflow
-			break;
-	}
+    countTableShort = new int[65536];
+    for(unsigned short int index = 0; true; ++index)
+    {
+        countTableShort[index] = countMatchesShort(index);
+        if(index == 65535)//last possible index: we can't check for this beforehand because of overflow
+            break;
+    }
+
+    countTableChar = new int[256];
+    for(unsigned short int index = 0; ; ++index)
+    {
+        countTableChar[index] = countMatchesChar(index);
+        if(index == 255)//last possible index: we can't check for this beforehand because of overflow
+            break;
+    }
 }
 
 void RepeatOverviewDisplay::normalPack(const string* seq)
 {
-	if(packSeq)
-		delete [] packSeq;
-	packSeq = new unsigned char[seq->size() / charPerIndex] ;
-	pSeqSize = seq->size() / charPerIndex;
-	
-	for(unsigned int i = 0; i+charPerIndex < seq->size(); i+=charPerIndex)
-	{
-		unsigned char num = 0;		
-		for(unsigned int n = 0; n < charPerIndex; ++n)
-		{
-			// A 00 C = 01 G = 10 T = 11
-			num = num << 2;
-			if((*seq)[i + n] == 'C')
-				num += 1;
-			else if((*seq)[i + n] == 'G')
-				num += 2;
-			else if((*seq)[i + n] == 'T')
-				num += 3;
-		}
- 		packSeq[i/charPerIndex] = num;
-	}
-	//cout << "Finished packing bits" << endl;	
+    if(packSeq)
+        delete [] packSeq;
+    packSeq = new unsigned char[seq->size() / charPerIndex] ;
+    pSeqSize = seq->size() / charPerIndex;
+
+    for(unsigned int i = 0; i+charPerIndex < seq->size(); i+=charPerIndex)
+    {
+        unsigned char num = 0;
+        for(unsigned int n = 0; n < charPerIndex; ++n)
+        {
+            // A 00 C = 01 G = 10 T = 11
+            num = num << 2;
+            if((*seq)[i + n] == 'C')
+                num += 1;
+            else if((*seq)[i + n] == 'G')
+                num += 2;
+            else if((*seq)[i + n] == 'T')
+                num += 3;
+        }
+        packSeq[i/charPerIndex] = num;
+    }
+    //cout << "Finished packing bits" << endl;
 }
 
 void RepeatOverviewDisplay::shiftMask(char* str, int size)
 {
-	for(int i = size -1; i != -1; --i)
-	{
-		if(i != size-1)
-			str[i+1] |= str[i] << 6;//add the remainder to the following letter  11000000
-			
-		if(i != 0 && str[i-1] << 6 == 0)
-			str[i] = ((unsigned char)str[i]) >> 2;//00111111 create a space in front
-		else
-			str[i] = str[i] >> 2;
-	}
-	if( str[0] == 0)
-		str[0] = 192;//the bit mask should start growing from 0
+    for(int i = size -1; i != -1; --i)
+    {
+        if(i != size-1)
+            str[i+1] |= str[i] << 6;//add the remainder to the following letter  11000000
+
+        if(i != 0 && str[i-1] << 6 == 0)
+            str[i] = ((unsigned char)str[i]) >> 2;//00111111 create a space in front
+        else
+            str[i] = str[i] >> 2;
+    }
+    if( str[0] == 0)
+        str[0] = 192;//the bit mask should start growing from 0
 }
 
 void RepeatOverviewDisplay::shiftString(unsigned char* str, int size)
 {
-	str[size-1] = str[size-1] >> 2;
-	for(int i = size -2; i != -1; --i)
-	{
-		str[i+1] |= str[i] << 6;//add the remainder to the following letter  11000000
-		str[i] = str[i] >> 2;//00111111 create a space in front
-	}	
+    str[size-1] = str[size-1] >> 2;
+    for(int i = size -2; i != -1; --i)
+    {
+        str[i+1] |= str[i] << 6;//add the remainder to the following letter  11000000
+        str[i] = str[i] >> 2;//00111111 create a space in front
+    }
 }
 
 color RepeatOverviewDisplay::simpleAlignment(int index)
@@ -273,94 +273,94 @@ pair<int,int> RepeatOverviewDisplay::getBestAlignment(int index)
 {
     if(packSeq[index/4] == 0)
         return pair<int,int>(0,0);
-		
-	//scale % 4 == 0 always
+
+    //scale % 4 == 0 always
     int reference_size = internalScale / 4 + 2;//sequence bytes = scale / 4.  1 byte of padding for shifts. 1 byte for sub_index.
     int bitmask_size = reference_size + sizeof(long int);
-	int pack_index = index / 4;
-	int sub_index = index % 4;
-	int max_score = 0;
-	int qualifying = 0;
-	int best_freq = 251;
-	unsigned char reference[reference_size];// = packSeq + index/4;
-	char bitmask[bitmask_size];
-	for(int i = 0; i < reference_size; ++i)
-		reference[i] = packSeq[i+pack_index];//copy values
+    int pack_index = index / 4;
+    int sub_index = index % 4;
+    int max_score = 0;
+    int qualifying = 0;
+    int best_freq = 251;
+    unsigned char reference[reference_size];// = packSeq + index/4;
+    char bitmask[bitmask_size];
+    for(int i = 0; i < reference_size; ++i)
+        reference[i] = packSeq[i+pack_index];//copy values
 
     int string_end = internalScale/4;
-	for(int i = 0; i < bitmask_size; ++i)
-	{
-		if( i < string_end)
-			bitmask[i] = 0;
-		else
-			bitmask[i] = 255;
-	}		
-	if(sub_index)
-	{
-		if(sub_index == 1)		bitmask[0] = 192;
-		else if(sub_index == 2)	bitmask[0] = 240;
-		else if(sub_index == 3)	bitmask[0] = 252;
-		
-		if(sub_index == 1)		bitmask[string_end] = 63;
-		else if(sub_index == 2)	bitmask[string_end] = 15;
-		else if(sub_index == 3)	bitmask[string_end] = 3;
-	
-	}
-	else{
-		--string_end;
-	}	
-	for(int i = string_end + 1; i < bitmask_size; ++i)
-		bitmask[i] = 255;//fill the tail with 1's
+    for(int i = 0; i < bitmask_size; ++i)
+    {
+        if( i < string_end)
+            bitmask[i] = 0;
+        else
+            bitmask[i] = 255;
+    }
+    if(sub_index)
+    {
+        if(sub_index == 1)		bitmask[0] = 192;
+        else if(sub_index == 2)	bitmask[0] = 240;
+        else if(sub_index == 3)	bitmask[0] = 252;
 
-	
-	for(int frame = 0; frame < 4; ++frame) // 4 read frames.  Step Size = 2 bits
-	{
-		unsigned char* target = packSeq + pack_index;//a pointer into sequence.  Long int read frame
-		for(int offset = 0; offset < 62; ++offset)// 62 * 4 = 248
-		{
-			int score = 0;
-			for(int position = 0; position < reference_size; position+=sizeof(long int))
-			{
-				unsigned long int diff = (*((unsigned long int*)(reference + position))) ^ (*((unsigned long int*)(target + position)));
-				diff = diff | *((unsigned long int*)(bitmask + position));
-				score += countTableShort[ (unsigned short int)diff ];//NOTE: This inherently assumes long = short*2
-				score += countTableShort[ (unsigned short int)(diff >> 16) ];//and that sizeof(long int)*8 == 32
-			}
-			if(score >= qualifying)
-			{
-				if(offset || frame)//offset = 0 will always come through because of the loop
-				{//it's more important to ensure we don't incur a check on every offset
-					int current_offset = offset * 4 + frame;
-					if(current_offset < best_freq)
-					{
-						max_score = score;
-						qualifying = max(0, (int)(floor(score / 1.1)));
-						best_freq = current_offset;	
-					}
-					else if(score >= (int)(ceil(max_score * 1.1)))
-					{
-						max_score = score;
-						qualifying = max(0, (int)(floor(score / 1.1)));
-						best_freq = current_offset;							
-					}
-						
-				}
-			}
+        if(sub_index == 1)		bitmask[string_end] = 63;
+        else if(sub_index == 2)	bitmask[string_end] = 15;
+        else if(sub_index == 3)	bitmask[string_end] = 3;
 
-			++target;//increment the target to the next offset
-		}
-		shiftString(reference, reference_size);//shift two bits to the left
-		shiftMask(bitmask, bitmask_size);
-	}
-	if(best_freq == 0) best_freq = 1;
+    }
+    else{
+        --string_end;
+    }
+    for(int i = string_end + 1; i < bitmask_size; ++i)
+        bitmask[i] = 255;//fill the tail with 1's
+
+
+    for(int frame = 0; frame < 4; ++frame) // 4 read frames.  Step Size = 2 bits
+    {
+        unsigned char* target = packSeq + pack_index;//a pointer into sequence.  Long int read frame
+        for(int offset = 0; offset < 62; ++offset)// 62 * 4 = 248
+        {
+            int score = 0;
+            for(int position = 0; position < reference_size; position+=sizeof(long int))
+            {
+                unsigned long int diff = (*((unsigned long int*)(reference + position))) ^ (*((unsigned long int*)(target + position)));
+                diff = diff | *((unsigned long int*)(bitmask + position));
+                score += countTableShort[ (unsigned short int)diff ];//NOTE: This inherently assumes long = short*2
+                score += countTableShort[ (unsigned short int)(diff >> 16) ];//and that sizeof(long int)*8 == 32
+            }
+            if(score >= qualifying)
+            {
+                if(offset || frame)//offset = 0 will always come through because of the loop
+                {//it's more important to ensure we don't incur a check on every offset
+                    int current_offset = offset * 4 + frame;
+                    if(current_offset < best_freq)
+                    {
+                        max_score = score;
+                        qualifying = max(0, (int)(floor(score / 1.1)));
+                        best_freq = current_offset;
+                    }
+                    else if(score >= (int)(ceil(max_score * 1.1)))
+                    {
+                        max_score = score;
+                        qualifying = max(0, (int)(floor(score / 1.1)));
+                        best_freq = current_offset;
+                    }
+
+                }
+            }
+
+            ++target;//increment the target to the next offset
+        }
+        shiftString(reference, reference_size);//shift two bits to the left
+        shiftMask(bitmask, bitmask_size);
+    }
+    if(best_freq == 0) best_freq = 1;
     //max_score = scale;
     return pair<int,int>(max_score, best_freq);
 }
 
 void RepeatOverviewDisplay::setSequence(const string* seq)
 {
-	sequence = seq;	
-	normalPack(seq);
+    sequence = seq;
+    normalPack(seq);
 }
 
 void RepeatOverviewDisplay::changeScale(int s)
@@ -371,11 +371,11 @@ void RepeatOverviewDisplay::changeScale(int s)
 
 void RepeatOverviewDisplay::toggleVisibility()
 {
-	if(hidden)
+    if(hidden)
     {
         checkVariables();
-	}
-	AbstractGraph::toggleVisibility();	
+    }
+    AbstractGraph::toggleVisibility();
 }
 
 string RepeatOverviewDisplay::SELECT_StringFromMouseClick(int index)

@@ -17,20 +17,20 @@ using namespace std;
 
 class NucleotideDisplay : public AbstractGraph 
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
     bool invert;
-	
-	NucleotideDisplay(UiVariables* gui, GLWidget* gl);
+
+    NucleotideDisplay(UiVariables* gui, GLWidget* gl);
     ~NucleotideDisplay();
     virtual void calculateOutputPixels();
     virtual void sequenceToColors(const char* genome);
     virtual void color_compress();
-	
+
 public slots:	
-//	void changeWidth(int w);
-	
+    //	void changeWidth(int w);
+
 signals:
 
 };

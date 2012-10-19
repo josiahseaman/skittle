@@ -23,47 +23,47 @@ class OligomerDisplay : public AbstractGraph//: public RepeatMap//
     Q_OBJECT
     
 public:
-	OligomerDisplay(UiVariables* gui, GLWidget* gl);
+    OligomerDisplay(UiVariables* gui, GLWidget* gl);
     ~OligomerDisplay();
-	QScrollArea* settingsUi();
-	void checkVariables();
+    QScrollArea* settingsUi();
+    void checkVariables();
     void calculateOutputPixels();
-	void display();
-	//vector<color> calculateAverageSignature(int, int);
-	//void isochores();
-	void calculateHeatMap();
-	vector<double> fillHalfMatrix(vector<double>& data);
-	vector<double> rotateSquareMatrix(vector<double>& data);
-	void selfCorrelationMap();
-	void superCorrelationMap();
-	vector<double> copyVectorRange(vector<double>& stuff, int index, int length);
-	vector<color> colorNormalized(vector<double> heatData);
-	color redBlueSpectrum(double i);
-	void load_canvas();
-	GLuint render();
-	void freq_map();
+    void display();
+    //vector<color> calculateAverageSignature(int, int);
+    //void isochores();
+    void calculateHeatMap();
+    vector<double> fillHalfMatrix(vector<double>& data);
+    vector<double> rotateSquareMatrix(vector<double>& data);
+    void selfCorrelationMap();
+    void superCorrelationMap();
+    vector<double> copyVectorRange(vector<double>& stuff, int index, int length);
+    vector<color> colorNormalized(vector<double> heatData);
+    color redBlueSpectrum(double i);
+    void load_canvas();
+    GLuint render();
+    void freq_map();
     int oligToNumber(string a);
     string numberToOlig(int);
-	int height();
-	string SELECT_MouseClick(point2D pt);
-	
-	void display_freq();
-	void calculate(vector<color>& img, int vote_size);
-	double correlate(vector<double>& apples, vector<double>& oranges);
-	void assignRanks(vector<point>& temp);
-	double spearmanCorrelation(vector<double>& apples, vector<double>& oranges);
+    int height();
+    string SELECT_MouseClick(point2D pt);
+
+    void display_freq();
+    void calculate(vector<color>& img, int vote_size);
+    double correlate(vector<double>& apples, vector<double>& oranges);
+    void assignRanks(vector<point>& temp);
+    double spearmanCorrelation(vector<double>& apples, vector<double>& oranges);
     int countsGraphWidth();
     int heatMapGraphWidth();
     int width();
-	
-	inline int ACGT_num(char n)
-	{
-		if(n == 'A') return 0;
-		if(n == 'T') return 3;
-		if(n == 'C') return 1;
-		if(n == 'G') return 2;
-		return -100000;//handles up to 8-mer correctly
-	}
+
+    inline int ACGT_num(char n)
+    {
+        if(n == 'A') return 0;
+        if(n == 'T') return 3;
+        if(n == 'C') return 1;
+        if(n == 'G') return 2;
+        return -100000;//handles up to 8-mer correctly
+    }
     inline char num_ACGT(int n)//inverse function of ACGT_num
     {
         if(n == 0) return 'A';
@@ -73,53 +73,53 @@ public:
         return 'N';
     }
 
-	inline int comp_num(char n)
-	{
-		if(n == 'T') return 0;
-		if(n == 'G') return 1;
-		if(n == 'C') return 2;
-		if(n == 'A') return 3;
-		return -100000;//handles up to 8-mer correctly
-	}
-	
+    inline int comp_num(char n)
+    {
+        if(n == 'T') return 0;
+        if(n == 'G') return 1;
+        if(n == 'C') return 2;
+        if(n == 'A') return 3;
+        return -100000;//handles up to 8-mer correctly
+    }
+
 public slots:	
-	void changeMinDelta(double mD);	
-	void changeWordLength(int);
+    void changeMinDelta(double mD);
+    void changeWordLength(int);
     void graphOneDisplay(int);
     void graphTwoDisplay(int);
     void graphThreeDisplay(int);
 
 signals:
-	void wordLengthChanged(int);
-	
+    void wordLengthChanged(int);
+
 private:
-	TextureCanvas* graphBuffer;
-	TextureCanvas* avgBuffer;
-	TextureCanvas* heatMapBuffer;
-	TextureCanvas* correlationBuffer;
-	TextureCanvas* superBuffer;
-	vector< vector<double> > freq;
-	vector<color> pixels;
-	vector<int> boundaryIndices;
-	vector<double> scores;
-	vector<double> correlationScores;
-	int wordLength;
-	int widthMultiplier;
-	int similarityGraphWidth;
-	double minDeltaBoundary;
-	QSpinBox* oligDial;
-	double min_score;
-	double max_score;
-	double range;
-	int F_width;
-	int F_height;
+    TextureCanvas* graphBuffer;
+    TextureCanvas* avgBuffer;
+    TextureCanvas* heatMapBuffer;
+    TextureCanvas* correlationBuffer;
+    TextureCanvas* superBuffer;
+    vector< vector<double> > freq;
+    vector<color> pixels;
+    vector<int> boundaryIndices;
+    vector<double> scores;
+    vector<double> correlationScores;
+    int wordLength;
+    int widthMultiplier;
+    int similarityGraphWidth;
+    double minDeltaBoundary;
+    QSpinBox* oligDial;
+    double min_score;
+    double max_score;
+    double range;
+    int F_width;
+    int F_height;
     bool graphOneOn;
     bool graphTwoOn;
     bool graphThreeOn;
     QCheckBox *graphOne;
     QCheckBox *graphTwo;
     QCheckBox *graphThree;
-	
+
 };
 
 #endif
