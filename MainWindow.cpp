@@ -80,6 +80,8 @@ void MainWindow::addDisplayActions(AbstractGraph* display)
         connect(presetAction,SIGNAL(triggered()),display, SLOT(toggleVisibility()));
         connect(display, SIGNAL(deleteButton(QAction*)), this, SLOT(removeGraphButton(QAction*)));
 
+        //this section of code insets a new displayAction at the beginning of the list, rather than appending it
+        //this is for the sake of the AnnotationDisplays which are added last and listed first
         presetMenu->addAction(presetAction);
         QAction* before = NULL;
         QList<QAction*> list = presetToolBar->actions();
