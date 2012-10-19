@@ -1018,6 +1018,12 @@ void GLWidget::loadFile(QString fileName)
     if(parent != NULL)
         parent->setWindowTitle( trimPathFromFilename(fileName.toStdString()).c_str());
 
+    removeAllAnnotations();
+    reader->readFile(fileName);
+}
+
+bool GLWidget::removeAllAnnotations()
+{
     vector<AnnotationDisplay*> list = getAllAnnotationDisplays();
     for(int i = list.size()-1; i >= 0; --i)
     {
@@ -1026,7 +1032,7 @@ void GLWidget::loadFile(QString fileName)
         graphs.erase(bob);
         delete list[i];//apparently .erase() calls the destructor
     }
-    reader->readFile(fileName);
+    return true;
 }
 
 vector<QScrollArea*> GLWidget::settingsUi()
