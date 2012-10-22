@@ -110,6 +110,7 @@ public slots:
     vector<AnnotationDisplay*> getAllAnnotationDisplays();
     void addTrackEntry(track_entry entry, string gtfFileName);
     void loadFile(QString);
+    bool removeAllAnnotations();
     //void setUi(UiVariables);
     
 signals:

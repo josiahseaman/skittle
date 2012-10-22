@@ -11,7 +11,7 @@
 #endif
 #endif
 
-
+#include <algorithm>
 #include <math.h>
 #include <sstream>
 #include <vector>
@@ -1017,7 +1017,22 @@ void GLWidget::loadFile(QString fileName)
 {
     if(parent != NULL)
         parent->setWindowTitle( trimPathFromFilename(fileName.toStdString()).c_str());
+
+    removeAllAnnotations();
     reader->readFile(fileName);
+}
+
+bool GLWidget::removeAllAnnotations()
+{
+    vector<AnnotationDisplay*> list = getAllAnnotationDisplays();
+    for(int i = list.size()-1; i >= 0; --i)
+    {
+        vector<AbstractGraph*>::iterator bob = std::find(graphs.begin(), graphs.end(),
+                                                        static_cast<AbstractGraph*>(list[i]));
+        graphs.erase(bob);
+        delete list[i];//apparently .erase() calls the destructor
+    }
+    return true;
 }
 
 vector<QScrollArea*> GLWidget::settingsUi()

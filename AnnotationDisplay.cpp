@@ -42,6 +42,7 @@ bool trackCompare(const track_entry& a, const track_entry& b)
 
 void AnnotationDisplay::newTrack(vector<track_entry> track)
 {
+    gtfTrack.clear();
     gtfTrack = vector<track_entry>(track);
     sort(gtfTrack.begin(), gtfTrack.end(), trackCompare);
     hidden = false;
