@@ -355,9 +355,9 @@ void MainWindow::createDocks()
     infoDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
 
     tabWidget = new QTabWidget(infoDock);
-    //    tabWidget->setSizePolicy(QSizePolicy::Policy 100, QSizePolicy::Policy 50);
     infoDock->setWidget(tabWidget);
     textArea = new QTextEdit(tabWidget);
+//    textArea->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     tabWidget->addTab(textArea, QString("Text Output"));
     addDockWidget(Qt::BottomDockWidgetArea, infoDock);
 

@@ -11,6 +11,10 @@ LIBS +=
 INCLUDEPATH += .
 QT           += opengl
 
+
+macx:ICON = skittle.icns
+macx:QMAKE_INFO_PLIST = Info.plist
+
 # Input
 HEADERS += AbstractGraph.h \
            RepeatOverviewDisplay.h \
