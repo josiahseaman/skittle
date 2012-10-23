@@ -145,6 +145,12 @@ void ViewManager::changeFile(QString fileName)
         }
         activeWidget->loadFile(fileName);
         activeWidget->trackReader->determineOutputFile(fileName);
+
+        //Attempt to load the skittle notes file for this file if it exists
+        if (QFile(fileName+"-skittle_notes.gff").exists())
+        {
+            addAnnotationDisplay(fileName+"-skittle_notes.gff");
+        }
     }
 }
 

@@ -1020,12 +1020,6 @@ void GLWidget::loadFile(QString fileName)
 
     removeAllAnnotations();
     reader->readFile(fileName);
-
-    //Attempt to load the skittle notes file for this file if it exists
-    if (QFile(fileName+"-skittle_notes.gff").exists())
-    {
-        addAnnotationDisplay(fileName+"-skittle_notes.gff");
-    }
 }
 
 bool GLWidget::removeAllAnnotations()
