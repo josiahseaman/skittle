@@ -130,6 +130,12 @@ vector<track_entry>  GtfReader::readFile(QString filename)
 
     annotation_track.clear();
 
+    bool skittleNotes = false;
+    if(filename.contains("skittle_notes"))
+    {
+        skittleNotes = true;
+    }
+
     srand(time(0));
     string line;
     while( getline(file, line) )
@@ -149,7 +155,7 @@ vector<track_entry>  GtfReader::readFile(QString filename)
         string chromosomeAnnotation;
         lineStr >> chromosomeAnnotation;
 
-        if(chromosomeRead.compare(chromosomeAnnotation) == 0)
+        if(chromosomeRead.compare(chromosomeAnnotation) == 0 || skittleNotes)
         {
             lineStr.ignore(10000, '\t');//1
             lineStr.ignore(10000, '\t');//2
