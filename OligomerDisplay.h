@@ -56,31 +56,6 @@ public:
     int heatMapGraphWidth();
     int width();
 
-    inline int ACGT_num(char n)
-    {
-        if(n == 'A') return 0;
-        if(n == 'T') return 3;
-        if(n == 'C') return 1;
-        if(n == 'G') return 2;
-        return -100000;//handles up to 8-mer correctly
-    }
-    inline char num_ACGT(int n)//inverse function of ACGT_num
-    {
-        if(n == 0) return 'A';
-        if(n == 3) return 'T';
-        if(n == 1) return 'C';
-        if(n == 2) return 'G';
-        return 'N';
-    }
-
-    inline int comp_num(char n)
-    {
-        if(n == 'T') return 0;
-        if(n == 'G') return 1;
-        if(n == 'C') return 2;
-        if(n == 'A') return 3;
-        return -100000;//handles up to 8-mer correctly
-    }
 
 public slots:	
     void changeMinDelta(double mD);

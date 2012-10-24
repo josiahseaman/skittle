@@ -42,7 +42,7 @@ void BiasDisplay::sequenceToColors(const char* genome)
 
     for(int h = 0; h < height(); h++)
     {
-        vector<int> counts = countNucleotides(genome + h*tempWidth);//TODO: The counting code could be replaced with the code from OligomerDisplay freq_map()
+        vector<int> counts = countNucleotides(genome,  h*tempWidth, h*tempWidth+tempWidth );
         vector<int> bar_sizes;
         float remainder = 0.0;
         float floating_sum = 0.0;
@@ -58,17 +58,6 @@ void BiasDisplay::sequenceToColors(const char* genome)
         outputPixels.insert(outputPixels.end(), bar.begin(), bar.end()  );
     }
     return;
-}
-
-vector<int> BiasDisplay::countNucleotides(const char* genome)
-{
-    vector<int> counts(5,0);
-    int tempWidth = ui->widthDial->value();
-    for(int w = 0; w < tempWidth; w++)
-    {
-        ++counts[ACGT_num(genome[w])];
-    }
-    return counts;
 }
 
 /** Overrides the AbstractGraph::width() because Bias has a fixed size */

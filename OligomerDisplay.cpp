@@ -4,6 +4,7 @@
 #include <math.h>
 #include <QDoubleSpinBox>
 #include <algorithm>
+#include "SkittleUtil.h"
 
 double valueForN = -2.0;
 
@@ -448,7 +449,7 @@ void OligomerDisplay::freq_map()
                 int oligIndex = 0;
                 for(int c = 0; c < wordLength; ++c)
                 {
-                    oligIndex = oligIndex * 4 + ACGT_num( genome[offset + l + c] );
+                    oligIndex = oligIndex * 4 + olig_num( genome[offset + l + c] );
                 }
                 if( oligIndex >= 0 )
                     ++temp_map[oligIndex];
@@ -474,7 +475,7 @@ int OligomerDisplay::oligToNumber(string a)
     int oligIndex = 0;
     for(int c = 0; c < (int)a.size(); ++c)
     {
-        oligIndex = oligIndex * 4 + ACGT_num( a[c] );
+        oligIndex = oligIndex * 4 + olig_num( a[c] );
     }
     return oligIndex;
 }
@@ -486,7 +487,7 @@ string OligomerDisplay::numberToOlig(int oligIndex)
     {
         int remainder = oligIndex % 4;
         oligIndex /= 4;
-        olig.insert(olig.begin(), num_ACGT(remainder));
+        olig.insert(olig.begin(), num_olig(remainder));
     }
     return olig;
 }

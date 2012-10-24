@@ -13,7 +13,6 @@ public:
     BiasDisplay(UiVariables* gui, GLWidget* gl);
     void calculateOutputPixels();
     void sequenceToColors(const char* genome);
-    vector<int> countNucleotides(const char* genome);
 
     virtual int width();
     
