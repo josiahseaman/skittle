@@ -48,6 +48,7 @@ ViewManager::ViewManager(MainWindow* window, UiVariables* gui)
 
 void ViewManager::createConnections()
 {
+    connect(this, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(changeSelection(QMdiSubWindow*)));
     connect(mainWindow->addViewAction, SIGNAL(triggered()), this, SLOT(addNewView()));
     connect(mainWindow->syncCheckBox, SIGNAL(stateChanged(int)), this, SLOT(handleWindowSync()));
     /****CONNECT ui VARIABLES*******/
@@ -61,7 +62,7 @@ void ViewManager::createConnections()
 
 void ViewManager::uiToGlwidgetConnections(GLWidget* active)
 {
-    connect(active->parent, SIGNAL(IveBeenClicked(MdiChildWindow*)), this, SLOT(changeSelection(MdiChildWindow*)));
+//    connect(active->parent, SIGNAL(IveBeenClicked(MdiChildWindow*)), this, SLOT(changeSelection(MdiChildWindow*)));
     connect(mainWindow->moveAction, SIGNAL(triggered()), active, SLOT(on_moveButton_clicked()));
     connect(mainWindow->selectAction, SIGNAL(triggered()), active, SLOT(on_selectButton_clicked()));
     connect(mainWindow->findAction, SIGNAL(triggered()), active, SLOT(on_findButton_clicked()));
@@ -83,7 +84,7 @@ GLWidget* ViewManager::addNewView(bool suppressOpen)
 
     MdiChildWindow* child = new MdiChildWindow(localDials, globalUi->startDial, mainWindow->tabWidget);//TODO: figure out a better way to manage startDial
     connect( child, SIGNAL(subWindowClosing(MdiChildWindow*)), this, SLOT(closeSubWindow(MdiChildWindow*)));
-    addSubWindow(child);
+    QMdiSubWindow* container = addSubWindow(child);
     child->show();
     views.push_back(child);
 
@@ -96,12 +97,25 @@ GLWidget* ViewManager::addNewView(bool suppressOpen)
     return newGlWidget;
 }
 
+void ViewManager::changeSelection(QMdiSubWindow* container)
+{
+    if(container == NULL)
+        return;
+    const QObjectList children = container->children();
+    MdiChildWindow* newActiveMdi = NULL;
+    for(int i = 0; newActiveMdi == NULL && i < (int)children.size(); ++i )//look through children for an MdiChildWindow
+        newActiveMdi = dynamic_cast<MdiChildWindow*>(children.at(i));
+
+    if(newActiveMdi != NULL)
+        changeSelection(newActiveMdi);
+}
+
 void ViewManager::changeSelection(MdiChildWindow* newActiveMdi)
 {
+    if(newActiveMdi == NULL || newActiveMdi->glWidget == activeWidget)
+        return;
     GLWidget* newActiveGlWidget = newActiveMdi->glWidget;
     GLWidget* oldActiveGlWidget = activeWidget;
-    if(newActiveGlWidget == oldActiveGlWidget)
-        return;
 
     int tabIndex = mainWindow->tabWidget->currentIndex();
     if(oldActiveGlWidget != NULL)//deal with oldActiveGlWidget
@@ -147,9 +161,9 @@ void ViewManager::changeFile(QString fileName)
         activeWidget->trackReader->determineOutputFile(fileName);
 
         //Attempt to load the skittle notes file for this file if it exists
-        if (QFile(fileName+"-skittle_notes.gff").exists())
+        if (QFile(fileName + "-skittle_notes.gff").exists())
         {
-            addAnnotationDisplay(fileName+"-skittle_notes.gff");
+            addAnnotationDisplay(fileName + "-skittle_notes.gff");
         }
     }
 }

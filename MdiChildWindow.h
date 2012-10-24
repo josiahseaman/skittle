@@ -10,7 +10,6 @@ class GLWidget;
 class MainWindow;
 class QHBoxLayout;
 class QTabWidget;
-class QFrame;
 class QScrollArea;
 
 using std::vector;

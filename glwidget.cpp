@@ -1030,7 +1030,7 @@ bool GLWidget::removeAllAnnotations()
         vector<AbstractGraph*>::iterator bob = std::find(graphs.begin(), graphs.end(),
                                                         static_cast<AbstractGraph*>(list[i]));
         graphs.erase(bob);
-        delete list[i];//apparently .erase() calls the destructor
+        delete list[i];//apparently .erase() calls the destructor, but what if it's a pointer?
     }
     return true;
 }

@@ -183,6 +183,5 @@ void MdiChildWindow::mousePressEvent(QMouseEvent *event)
 {
     //    qDebug("Window Clicked");
     emit IveBeenClicked(this);
-    QFrame::mousePressEvent(event);
 }
 
