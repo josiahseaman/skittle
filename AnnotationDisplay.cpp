@@ -23,7 +23,7 @@ AnnotationDisplay::AnnotationDisplay(UiVariables* gui, GLWidget* gl, string gtfF
     max_width = 1;
     hidden = false;
 
-    actionLabel = trimPathFromFilename(gtfFileName);
+    actionLabel = trimPathFromFilename(gtfFileName).substr(0,20);
     actionTooltip = string("Genome annotation locations");
     actionData = actionLabel;
 
