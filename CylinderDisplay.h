@@ -32,8 +32,7 @@ public:
     string SELECT_MouseClick(point2D pt);
 
 
-public slots:	
-    void saySomething();
+public slots:
 
 signals:
 

@@ -101,9 +101,12 @@ void HighlightDisplay::display()
         vector<vector<int> > results;
         for(int i = 0; i < (int)seqLines.size(); i++)
         {
-            results.push_back( identifyMatches( seqLines[i]->seq ) );
-            if(reverseCheck->isChecked())
-                results.push_back( identifyMatches( reverseComplement(seqLines[i]->seq) ) );
+            if( !seqLines[i]->seq.empty() )
+            {
+                results.push_back( identifyMatches( seqLines[i]->seq ) );
+                if(reverseCheck->isChecked())
+                    results.push_back( identifyMatches( reverseComplement(seqLines[i]->seq) ) );
+            }
         }
         combine( results );
         loadTextureCanvas();
@@ -254,7 +257,7 @@ void HighlightDisplay::addNewSequence()
 void HighlightDisplay::addNewSequence(string startString)
 {	
     activeSeqEdit = new QLineEdit(settingsBox);
-    activeSeqEdit->setText(startString.c_str());//TODO: may be an empty string
+    activeSeqEdit->setText(startString.c_str());
     std::stringstream ss1;
     ss1 << "Sequence " << ++rowCount;//Sequence number
     QLabel* label = new QLabel(ss1.str().c_str());

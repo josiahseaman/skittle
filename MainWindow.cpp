@@ -206,10 +206,6 @@ void MainWindow::createActions()
     findNextAction->setStatusTip("Jump to Next Instance of Current Sequence");
     findPrevAction = new QAction("Find Previous", this);
     findPrevAction->setStatusTip("Jump to Previous Instance of Current Sequence");
-    hilightResultsAction = new QAction("Highlight Results",this);
-    hilightResultsAction->setStatusTip("Highlight All copies of Current Sequence");
-    hilightResultsAction->setCheckable(true);
-
 
     QIcon uIcon = QIcon(":/updatebutton.png");
     updateSkittle =new QAction(uIcon, QString("Click here to update"), this);
@@ -240,8 +236,7 @@ void MainWindow::createMenus()
     /*searchMenu = menuBar()->addMenu("&Search");
     searchMenu->addAction(findSequenceAction);
     searchMenu->addAction(findNextAction);
-    searchMenu->addAction(findPrevAction);
-    searchMenu->addAction(hilightResultsAction);*/
+    searchMenu->addAction(findPrevAction);*/
     viewMenu = menuBar()->addMenu("&View");
     presetMenu = viewMenu->addMenu("Visualization Graphs");
 

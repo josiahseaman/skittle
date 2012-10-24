@@ -42,7 +42,6 @@ public:
     double correlate(vector<color>& img, int beginA, int beginB, int pixelsPerSample);
     int width();
 
-    vector<vector<float> > emptyCopy(vector<vector<float> > starter);
 public slots:
     void changeFStart(int val);
     void changeGraphWidth(int val);

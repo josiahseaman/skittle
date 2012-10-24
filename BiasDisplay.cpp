@@ -28,7 +28,7 @@ BiasDisplay::BiasDisplay(UiVariables* gui, GLWidget* gl)
 
 void BiasDisplay::calculateOutputPixels()
 {
-    const char* genome = sequence->c_str() + ui->startDial->value();//TODO: find a safer way to access this
+    const char* genome = sequence->c_str() + ui->startDial->value();//TODO: find a safer way to access this, this would require modifying AbstractGraph::calculateOutputPixels() and all child classes
     sequenceToColors(genome);
 
     loadTextureCanvas(true);

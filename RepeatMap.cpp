@@ -273,16 +273,6 @@ vector<float> RepeatMap::convolution_3mer()
     return scores;
 }
 
-vector<vector<float> > RepeatMap::emptyCopy(vector<vector<float> > starter)//TODO: is there a shorter way of allocating this?
-{
-    vector<vector<float> > emptyCopy;
-    for(vector<vector<float> >::iterator iter = starter.begin(); iter != starter.end(); iter++)
-    {
-        emptyCopy.push_back(vector<float>(iter->size(), 0));//adds a new vector of the same size filled with zeros.
-    }
-    return emptyCopy;
-}
-
 int RepeatMap::height()
 {
     F_height = (((long int)current_display_size()) - (F_start-1)*ui->scaleDial->value() - F_width*ui->scaleDial->value() )

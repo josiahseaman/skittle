@@ -120,7 +120,7 @@ GLuint CylinderDisplay::render()
             y += 1.0 / local_width;
             angle += 1.0 / local_width * 360.0;
 
-            color c1 = glWidget->colors( genome[i] );//TODO: Optimize pointer function call
+            color c1 = glWidget->colors( genome[i] );
 
             glPushMatrix();
             glRotated(angle, 0,1,0);//rotate cylinder around Y
@@ -149,11 +149,7 @@ int CylinderDisplay::width()
 
 string CylinderDisplay::SELECT_MouseClick(point2D pt)
 {
-    return string("");//TODO: Not yet implemented.
+    return string("");
 }
 
 /******SLOTS*****/
-void CylinderDisplay::saySomething()
-{
-    ui->print("I see you");
-}

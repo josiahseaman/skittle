@@ -130,7 +130,6 @@ private:
     QAction *findSequenceAction;
     QAction *findNextAction;
     QAction *findPrevAction;
-    QAction *hilightResultsAction;
     QAction *addViewAction;
     QAction *openAction;
     QAction *openGtfAction;

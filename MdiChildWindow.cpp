@@ -1,7 +1,6 @@
 #include "MdiChildWindow.h"
 #include "glwidget.h"
 #include <QtGui/QTabWidget>
-#include "HighlightDisplay.h"  //TODO: remove dependency
 #include <algorithm>
 
 using std::find;
@@ -127,16 +126,7 @@ void MdiChildWindow::setPageSize()
 
 void MdiChildWindow::createSettingsTabs()
 {
-    //QFrame* tab = glWidget->highlight->settingsUi();
-    glWidget->settingsUi();//settingsTabs =
-    /*for(int i = 0; i < (int)temp.size(); ++i)
-    {
-        if( settingsTabs[i] == NULL )
-            ui->print("WARNING: NULL entry in MdiChildWindow::settingsTabs");
-        //else
-            //settingsDock->addTab(settingsTabs[i], settingsTabs[i]->windowTitle());
-
-    }*/
+    glWidget->settingsUi();
     connect( glWidget, SIGNAL(hideSettings(QScrollArea*)), this, SLOT(hideSettingsTab(QScrollArea*)));
     connect( glWidget, SIGNAL(showSettings(QScrollArea*)), this, SLOT(showSettingsTab(QScrollArea*)));
 }

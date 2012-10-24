@@ -63,7 +63,7 @@ void NucleotideDisplay::sequenceToColors(const char* genome)
     else
     {
         for(int i = 0; i < current_display_size(); ++i)
-            outputPixels.push_back( glWidget->colors(genome[i]) );//TODO: Optimize pointer function call
+            outputPixels.push_back( glWidget->colors(genome[i]) );
     }
 }
 

@@ -389,14 +389,13 @@ void OligomerDisplay::load_canvas()
     height();
 
     //set scaling
-    min_score = freq[0][0];//TODO: if value is -1 this will throw everything off
+    min_score = freq[0][0];
     max_score = freq[0][0];
     for( int h = 0; h < F_height; h++)
     {
         for(int w = 0; w < F_width; w++)
         {
-            if( freq[h][w] < min_score)
-                if(freq[h][w] >= 0)
+            if( freq[h][w] < min_score && freq[h][w] >= 0)
                     min_score = freq[h][w];
             if( freq[h][w] > max_score)
                 max_score = freq[h][w];
