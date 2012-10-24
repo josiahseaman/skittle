@@ -43,6 +43,7 @@ GtfReader::GtfReader(UiVariables* gui)
     outputFilename = string("user.gff");
     bytesInFile = 0;
     blockSize = 1000000;
+    chrName = string("");
 }
 
 bool GtfReader::initFile(string fileName)
