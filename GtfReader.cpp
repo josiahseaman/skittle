@@ -149,10 +149,16 @@ vector<track_entry>  GtfReader::readFile(QString filename)
 
         //Get name of chromosome from the beginning of the line and make sure that it matches the current viewed chromosome file
         string chromosomeRead;
-        string chrDelim = "chr";
-        int chrStart = chrName.find(chrDelim);
-        int chrEnd = chrName.find(".fa");
-        chromosomeRead = chrName.substr((chrStart + chrDelim.length()), (chrEnd - (chrStart + chrDelim.length())));
+        if(!chrName.empty()){
+            string chrDelim = "chr";
+            int chrStart = chrName.find(chrDelim);
+            int chrEnd = chrName.find(".fa");
+            chromosomeRead = chrName.substr((chrStart + chrDelim.length()), (chrEnd - (chrStart + chrDelim.length())));
+        }
+        else
+        {
+            chromosomeRead = "NONE";
+        }
         string chromosomeAnnotation;
         lineStr >> chromosomeAnnotation;
 
