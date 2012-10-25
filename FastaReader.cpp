@@ -44,6 +44,7 @@ FastaReader::FastaReader( GLWidget* gl, UiVariables* gui)
     bytesInFile = 0;
     progressBar = NULL;
     cancelled = false;
+    connect(this, SIGNAL(newFileRead(const string*)), glWidget, SLOT(displayString(const string*)));
 }
 FastaReader::~FastaReader()
 {

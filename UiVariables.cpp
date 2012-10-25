@@ -222,7 +222,10 @@ int UiVariables::getColorSetting()
 void UiVariables::changeColorSetting(int newColorSetting)
 {
     colorSetting = newColorSetting;
-    //TODO: add in validity checking
+    //we are not doing validity checking because currently the only thing that accesses this is
+    //a MainWindow call that is hard coded to the values of enum colorPalettes
+    //setting the signal/slot architecture to using enum colorPalettes instead of int
+    //would require creating an extra slot in MainWindow
     emit colorsChanged(newColorSetting);
 }
 

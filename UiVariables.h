@@ -21,6 +21,8 @@ public:
     QSpinBox* zoomDial;
     QSpinBox* offsetDial;
     QTextEdit* textArea;
+    int colorSetting;
+    enum colorPalletes { CLASSIC, COLORBLINDSAFE, BETTERCBSAFE, DRUMS, BLUES, REDS };
 
     //	UiVariables();
     UiVariables(QTextEdit* text = NULL);
@@ -33,10 +35,6 @@ public:
     void printNum(int num);
     //void print(int num1, int num2);
     int getColorSetting();
-    int colorSetting;
-
-    //color palletes
-    enum colorPalletes { CLASSIC, COLORBLINDSAFE, BETTERCBSAFE, DRUMS, BLUES, REDS };
 
 public slots:
     void changeWidth(int newWidth);
