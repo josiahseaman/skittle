@@ -71,10 +71,6 @@ GLWidget::GLWidget(UiVariables* gui, QWidget* parentWidget)
 
     setupColorTable();
     reader = new FastaReader(this, ui);
-    //TODO:this needs to be moved .... somewhere
-    connect(reader, SIGNAL(newFileRead(const string*)), this, SLOT(displayString(const string*)));
-
-
     trackReader = new GtfReader(ui);
 
     nuc = new NucleotideDisplay(ui, this);
@@ -98,8 +94,6 @@ GLWidget::GLWidget(UiVariables* gui, QWidget* parentWidget)
     xPosition = 0;
     slideHorizontal(0);
     changeZoom(100);
-    canvasWidth = 1;
-    canvasHeight = 1;
     setTool(RESIZE_TOOL);
     setMouseTracking(true);
     setFocusPolicy(Qt::ClickFocus);
@@ -119,7 +113,7 @@ GLWidget::~GLWidget()
     {
         delete graphs[i];
     }
-    makeCurrent();//TODO: What does this do???
+    makeCurrent();
 }
 
 void GLWidget::addGraph(AbstractGraph* graph)
@@ -150,7 +144,6 @@ void GLWidget::createConnections()
 
     /****CONNECT LOCAL VARIABLES*******/
     connect(ui->zoomDial,  SIGNAL(valueChanged(int)), this, SLOT(changeZoom(int)));
-    connect(ui->scaleDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
     connect(ui->widthDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
     connect(ui, SIGNAL(colorsChanged(int)), this, SLOT(invalidateDisplayGraphs()));
 }
@@ -179,9 +172,8 @@ void GLWidget::setTotalDisplayWidth()
         if(graphs[i]->hidden == false)
             total_width += graphs[i]->width() + border;
     }
-    double z = getZoom();
 
-    int val = (int)max(0.0, (double)(total_width)*z - canvasWidth ) ;
+    int val = (int)max(0.0, ((double)(total_width) - openGlGridWidth())*getZoom() ) ;
     emit totalWidthChanged(val);
 }
 
@@ -225,7 +217,7 @@ void GLWidget::zoomExtents()
 {
     //these lines zoom out to the full extents of the file
     float pixelWidth = (float)ui->widthDial->value() / (float)ui->scaleDial->value();
-    float pixelsOnScreen = pixelWidth * (display_height()-10);
+    float pixelsOnScreen = pixelWidth * (openGlGridHeight()-10);
     float requiredScale = seq()->size() / pixelsOnScreen;
     int newScale = max(1, (int)(requiredScale + 0.5) );
     ui->startDial->setValue(1);
@@ -423,16 +415,12 @@ void GLWidget::updateDisplay()
 
 void GLWidget::updateDisplaySize()
 {
-    QSize dimensions = size();
-    double pixelHeight = dimensions.height();
     int w = ui->widthDial->value();
-    double zoom = 100.0 / ui->zoomDial->value();
-    int display_lines = static_cast<int>(pixelHeight / 3.0 * zoom + 0.5);//TODO this can be replaced with display_height?
 
     ui->sizeDial->setSingleStep(w * 10);
-    if(ui->sizeDial->value() !=  w * display_lines )
+    if(ui->sizeDial->value() !=  w * openGlGridHeight() )
     {
-        ui->sizeDial->setValue( w * display_lines );
+        ui->sizeDial->setValue( w * openGlGridHeight() );
         emit displaySizeChanged();
     }
 }
@@ -610,15 +598,26 @@ QPointF GLWidget::pixelToGlCoords(QPoint pCoords, double z)
     return QPointF(x, y);
 }
 
-int GLWidget::display_height()
+int GLWidget::openGlGridHeight()
 {
-    /** the height that resizeGL receives is the height of the draw area
-      in pixels.  canvasHeight is the height of the canvas in the Skittle
-      colors grid assuming zoom = 100 (these are OpenGL coordinates).
-      display_height() account for the zoom as well and gives the closest
-      OpenGL grid coordinates.*/
+    QSize dimensions = size();
+    double pixelHeight = dimensions.height();
+    double zoom = 100.0 / ui->zoomDial->value();
+    float pixelToGridRatio = 3.0;
+    int display_lines = static_cast<int>(pixelHeight / pixelToGridRatio * zoom + 0.5);
 
-    return canvasHeight / getZoom();
+    return display_lines;
+}
+
+int GLWidget::openGlGridWidth()
+{
+    QSize dimensions = size();
+    double pixelWidth = dimensions.width();
+    double zoom = 100.0 / ui->zoomDial->value();
+    float pixelToGridRatio = 3.0;
+    int openGLWidth = static_cast<int>(pixelWidth / pixelToGridRatio * zoom + 0.5);
+
+    return openGLWidth;
 }
 
 void GLWidget::initializeGL()
@@ -654,7 +653,7 @@ void GLWidget::paintGL()
         if(!graphs[i]->hidden)
         {
             graphs[i]->display();
-            graphs[i]->displayLegend(canvasWidth / getZoom(), canvasHeight / getZoom());
+            graphs[i]->displayLegend(openGlGridWidth(), openGlGridHeight());
             glTranslated(graphs[i]->width() + border, 0 , 0);
         }
     }
@@ -669,8 +668,6 @@ void GLWidget::resizeGL(int width, int height)
     glLoadIdentity();
 
     float pixelToGridRatio = 6.0;
-    canvasWidth = width / pixelToGridRatio;
-    canvasHeight = height / pixelToGridRatio;
     float left = 0;
     float right = left + width / pixelToGridRatio;
     float top = 0;

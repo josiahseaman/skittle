@@ -128,7 +128,8 @@ signals:
 protected:
     void displayTrack(const vector<track_entry>& track);
     QPointF pixelToGlCoords(QPoint pCoords, double z = 0);
-    int display_height();
+    int openGlGridHeight();
+    int openGlGridWidth();
     void initializeGL();
     void paintGL();
     
@@ -153,8 +154,6 @@ private:
     double yTransOffset;
     double zTransOffset;
     QPoint lastPos;
-    float canvasWidth;
-    float canvasHeight;
     int xPosition;
     int xOrigin;
     int border;

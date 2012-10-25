@@ -84,7 +84,7 @@ GLWidget* ViewManager::addNewView(bool suppressOpen)
 
     MdiChildWindow* child = new MdiChildWindow(localDials, globalUi->startDial, mainWindow->tabWidget);//TODO: figure out a better way to manage startDial
     connect( child, SIGNAL(subWindowClosing(MdiChildWindow*)), this, SLOT(closeSubWindow(MdiChildWindow*)));
-    QMdiSubWindow* container = addSubWindow(child);
+    addSubWindow(child);
     child->show();
     views.push_back(child);
 
