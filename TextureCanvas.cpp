@@ -175,7 +175,7 @@ void TextureCanvas::drawTextureSquare()//draws from canvas
 GLuint TextureCanvas::loadTexture(textureTile& tile)
 {
     GLuint tex_id;
-    glGenTextures( 1, &tex_id );//TODO: could we store this in tile?
+    glGenTextures( 1, &tex_id );
     glBindTexture (GL_TEXTURE_2D, tex_id);
     glPixelStorei (GL_UNPACK_ALIGNMENT, 1);
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
