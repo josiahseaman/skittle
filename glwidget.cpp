@@ -436,7 +436,9 @@ AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fName)
     AnnotationDisplay* tempTrackDisplay = findMatchingAnnotationDisplay(fileName);
     if( tempTrackDisplay != NULL)
     {
-        ErrorBox msg("The file is already open");
+        //if the display already exists, then it will simply return that one,
+        //otherwise it will create a new Display
+//        ErrorBox msg("The file is already open");
     }
     else
     {
@@ -510,6 +512,7 @@ void GLWidget::addTrackEntry(track_entry entry, string gtfFileName)
     {
         trackDisplay->addEntry(entry);
     }
+    makeCurrent();
 }
 
 /*****************FUNCTIONS*******************/
@@ -567,30 +570,9 @@ void GLWidget::keyReleaseEvent( QKeyEvent *event )
 //***********Functions*************
 QPointF GLWidget::pixelToGlCoords(QPoint pCoords, double z)
 {
-    glLoadIdentity();
-    GLdouble position[3];
-    GLdouble modelMatrix[16];
-    glGetDoublev(GL_MODELVIEW_MATRIX,modelMatrix);
-    GLdouble projMatrix[16];
-    glGetDoublev(GL_PROJECTION_MATRIX,projMatrix);
-    int viewport[4];
-    glGetIntegerv(GL_VIEWPORT,viewport);
-    GLdouble mouseX = (GLdouble) pCoords.x();
-    GLdouble mouseY = (GLdouble) pCoords.y();
-
-    gluUnProject(
-                mouseX,
-                mouseY,
-                z,
-                modelMatrix,
-                projMatrix,
-                viewport,
-                //the next 3 parameters are the pointers to the final array
-                //coordinates. Notice that these MUST be double's
-                &position[0], //-&gt; pointer to your own position (optional)
-                &position[1], // id
-                &position[2] // id
-                );
+    double mouseX =  pCoords.x();
+    double mouseY =  pCoords.y();
+    //there was previously an unused GLunproject here
     double zoom = getZoom();
     float x = (int)((mouseX / 6.0 + xPosition) / zoom ) - border ;
     float y = (int)((mouseY / 6.0) / zoom );
@@ -908,7 +890,7 @@ void GLWidget::setupColorTable()
         colorTable[ (int)'C' ] = color(153, 0, 0);//Cytosine
         colorTable[ (int)'G' ] = color(51, 255, 51);//Guanine
         colorTable[ (int)'T' ] = color(0, 153, 204);//Thymine
-        colorTable[ (int)'N' ] = color( 50, 50, 50);//not sequenced
+        colorTable[ (int)'N' ] = color( 200, 200, 200);//not sequenced
 
     }
     else if (colorSetting == UiVariables::BETTERCBSAFE)
@@ -917,7 +899,7 @@ void GLWidget::setupColorTable()
         colorTable[ (int)'C' ] = color(153, 255, 0);//Cytosine
         colorTable[ (int)'G' ] = color(204, 0, 102);//Guanine
         colorTable[ (int)'T' ] = color(255, 102, 0);//Thymine
-        colorTable[ (int)'N' ] = color( 50, 50, 50);//not sequenced
+        colorTable[ (int)'N' ] = color( 200, 200, 200);//not sequenced
     }
     else if (colorSetting == UiVariables::DRUMS)
     {
@@ -925,7 +907,7 @@ void GLWidget::setupColorTable()
         colorTable[ (int)'C' ] = color(224, 0, 0);//Cytosine
         colorTable[ (int)'G' ] = color(0, 192, 0);//Guanine
         colorTable[ (int)'T' ] = color(230, 230, 0);//Thymine
-        colorTable[ (int)'N' ] = color( 50, 50, 50);//not sequenced
+        colorTable[ (int)'N' ] = color( 200, 200, 200);//not sequenced
     }
     else if (colorSetting == UiVariables::BLUES)
     {
@@ -933,7 +915,7 @@ void GLWidget::setupColorTable()
         colorTable[ (int)'C' ] = color(82, 0, 124);//Cytosine
         colorTable[ (int)'G' ] = color(17, 69, 134);//Guanine
         colorTable[ (int)'T' ] = color(14, 112, 118);//Thymine
-        colorTable[ (int)'N' ] = color( 50, 50, 50);//not sequenced
+        colorTable[ (int)'N' ] = color( 200, 200, 200);//not sequenced
     }
     else if (colorSetting == UiVariables::REDS)
     {
@@ -941,7 +923,7 @@ void GLWidget::setupColorTable()
         colorTable[ (int)'C' ] = color(159, 0, 0);// Cytosine
         colorTable[ (int)'G' ] = color(196, 90, 6);// Guanine
         colorTable[ (int)'T' ] = color(218, 186, 8);// Thymine
-        colorTable[ (int)'N' ] = color( 50, 50, 50);//not sequenced
+        colorTable[ (int)'N' ] = color( 200, 200, 200);//not sequenced
     }
 
     // might be interesting for "Highlight A", "Highlight C", etc options which would be rgb except for the one Nuc that was white
@@ -951,7 +933,7 @@ void GLWidget::setupColorTable()
         colorTable[ (int)'C' ] = color(255, 0, 0);//RED - Cytosine
         colorTable[ (int)'G' ] = color(0, 255, 0);//GREEN - Guanine
         colorTable[ (int)'T' ] = color(0, 0, 255);//BLUE - Thymine
-        colorTable[ (int)'N' ] = color( 50, 50, 50);//not sequenced
+        colorTable[ (int)'N' ] = color( 200, 200, 200);//not sequenced
     }
 }
 

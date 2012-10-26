@@ -127,7 +127,7 @@ void TextureCanvas::createEmptyTiles(int canvas_width, int canvas_height, int ma
 void TextureCanvas::display()
 {
     if( this == NULL)//this is to prevent a null pointer exception from crashing the program
-        int howDidThisHappen = 0;//somehow, a graph called ->display() on a null pointer
+        return;//somehow, a graph called ->display() on a null pointer
     else
     {
         if(	!useTextures  )
