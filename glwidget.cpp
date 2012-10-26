@@ -449,8 +449,6 @@ AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fName)
             tempTrackDisplay = new AnnotationDisplay(ui, this, fileName);
             addGraph(tempTrackDisplay);
             tempTrackDisplay->newTrack( track );
-            tempTrackDisplay->settingsUi();
-            paintGL();
         }
     }
     return tempTrackDisplay;

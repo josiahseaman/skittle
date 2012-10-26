@@ -241,19 +241,6 @@ void AnnotationDisplay::setFileName(string gtfFileName)
     fileName = gtfFileName;
 }
 
-QScrollArea* AnnotationDisplay::settingsUi()
-{
-    settingsTab = new QScrollArea();
-    settingsTab->setWindowTitle(QString("Annotation Settings"));
-    QFormLayout* formLayout = new QFormLayout;
-    formLayout->setRowWrapPolicy(QFormLayout::WrapLongRows);
-    settingsTab->setLayout(formLayout);
-
-    settingsTab->hide();
-
-    return settingsTab;
-}
-
 /******SLOTS*****/
 void AnnotationDisplay::addEntry(track_entry entry)
 {
