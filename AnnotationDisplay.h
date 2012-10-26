@@ -35,6 +35,7 @@ public:
     int current_display_size();
     int getNextAnnotationPosition();
     int getPrevAnnotationPosition();
+    QScrollArea* settingsUi();
 
 public slots:
     void addEntry(track_entry entry);
