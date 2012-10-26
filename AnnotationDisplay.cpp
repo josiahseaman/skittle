@@ -180,26 +180,27 @@ void AnnotationDisplay::stackEntry(vector<track_entry>& activeEntries, track_ent
 
 string AnnotationDisplay::SELECT_MouseClick(point2D pt)
 {
+    string allStrings("");
     //range check
     if( pt.x <= width() && pt.x >= 0 )
     {
-        ui->print("-------------");
         int start = ui->startDial->value() + pt.y * ui->widthDial->value() + pt.x;
         int stop = start + ui->widthDial->value();
-        if(!gtfTrack.empty())
+        for(int i = 0; i < (int)gtfTrack.size(); ++i)
         {
-            for(int i = 0; i < (int)gtfTrack.size(); ++i)
+            if(((gtfTrack[i].start >= start && gtfTrack[i].start <= stop)//start in range
+                || (gtfTrack[i].stop >= start && gtfTrack[i].stop <= stop)//end in range
+                || (gtfTrack[i].start < start && gtfTrack[i].stop > stop)) )//in the middle
             {
-                if(((gtfTrack[i].start >= start && gtfTrack[i].start <= stop)//start in range
-                    || (gtfTrack[i].stop >= start && gtfTrack[i].stop <= stop)//end in range
-                    || (gtfTrack[i].start < start && gtfTrack[i].stop > stop)) )//in the middle
-                {
-                    ui->print(gtfTrack[i].toString().c_str());
-                }
+                allStrings.append(gtfTrack[i].toString());
+                allStrings.append(1, '\n');
             }
+
         }
     }
-    return string();
+    if( !allStrings.empty() )
+        allStrings.insert(0,"-------------\n");
+    return allStrings;
 }
 
 int AnnotationDisplay::width()

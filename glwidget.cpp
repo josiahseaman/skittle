@@ -671,33 +671,69 @@ void pushNonEmpty(vector<string>& arr, string str)
         arr.push_back(str);
 }
 
+QString grabFirstNonEmpty(vector<string> array)
+{
+    for(int i = 0; i < (int)array.size(); ++i)
+        if(!array[i].empty())
+            return QString(array[i].substr(0,1000).c_str());//truncating the string in the case where NucleotideDisplay dumps a 1Mbp sequence
+
+    return QString();
+}
+
+bool GLWidget::event(QEvent* event)
+{
+    if (event->type() == QEvent::ToolTip)
+    {
+        QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+        QPointF qp = pixelToGlCoords(helpEvent->pos());
+        point2D oglCoords = point2D((int)(qp.x()),(int)(qp.y()));
+        QString text = grabFirstNonEmpty(mouseOverText(oglCoords));
+        if( !text.isEmpty() )
+        {
+            QToolTip::showText(helpEvent->globalPos(), text);
+        }
+        else{
+            QToolTip::hideText();
+            event->ignore();
+        }
+
+        return true;
+    }
+    return QGLWidget::event(event);
+}
+
+vector<string> GLWidget::mouseOverText(point2D oglCoords)
+{
+    vector<string> responses;
+    /*Progressively decrement x based on the cumulative width of modules
+      The order here is important and should match the left to right display order*/
+    for(int i = 0; i < (int)graphs.size(); ++i)
+    {
+        if(!graphs[i]->hidden)
+        {
+            if(tool() == SELECT_TOOL )
+                pushNonEmpty(responses, graphs[i]->SELECT_MouseClick(oglCoords));
+            if(tool() == FIND_TOOL)
+                pushNonEmpty(responses, graphs[i]->FIND_MouseClick(oglCoords));
+            oglCoords.x -= graphs[i]->width() + border;
+        }
+    }
+    return responses;
+}
+
 void GLWidget::mousePressEvent(QMouseEvent* event)
 {
     parent->mousePressEvent(event);
     if(tool() == SELECT_TOOL || tool() == FIND_TOOL)
         placeMarker(event->pos());
     QPointF qp = pixelToGlCoords(event->pos());
-    int x = (int)(qp.x());
-    int y = (int)(qp.y());
 
-    point2D oglCoords = point2D(x,y);
+    point2D oglCoords = point2D((int)(qp.x()),(int)(qp.y()));
 
     if(tool() == SELECT_TOOL || tool() == FIND_TOOL)
     {
-        vector<string> responses;
-        /*Progressively decrement x based on the cumulative width of modules
-        The order here is important and should match the left to right display order*/
-        for(int i = 0; i < (int)graphs.size(); ++i)
-        {
-            if(!graphs[i]->hidden)
-            {
-                if(tool() == SELECT_TOOL )
-                    pushNonEmpty(responses, graphs[i]->SELECT_MouseClick(oglCoords));
-                if(tool() == FIND_TOOL)
-                    pushNonEmpty(responses, graphs[i]->FIND_MouseClick(oglCoords));
-                oglCoords.x -= graphs[i]->width() + border;
-            }
-        }
+        vector<string> responses = mouseOverText( oglCoords);
+
         if(tool() == SELECT_TOOL)
         {
             for(int i = 0; i < (int)responses.size(); ++i)

@@ -134,6 +134,8 @@ protected:
     void paintGL();
     
     void resizeGL(int width, int height);
+    bool event(QEvent *);
+    vector<string> mouseOverText(point2D oglCoords);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void translate(float dx, float dy);

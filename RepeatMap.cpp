@@ -323,7 +323,7 @@ string RepeatMap::SELECT_MouseClick(point2D pt)
     {
         if(using3merGraph)
             pt.x -= barWidth + spacerWidth;
-        if(pt.x < 0)//clicked on the 3mer detector, not freq_map
+        if(pt.x < 0)//TODO: 3mer mouseText: clicked on the 3mer detector, not freq_map
             return string();
 
         int percentage = freq[pt.y][pt.x+1] * 100;//+1 because offset 1 is the first pixel [0]
@@ -338,7 +338,7 @@ string RepeatMap::SELECT_MouseClick(point2D pt)
             ss << percentage << "% similarity at Offset "<< pt.x+ F_start;
             ss << "\nIndex: " << index << ": " << sequence->substr(index, w);
             ss << "\nIndex: " << index2<< ": " << sequence->substr(index2, w);
-            ui->print(ss.str());
+            return ss.str();
         }
     }
     return string();
