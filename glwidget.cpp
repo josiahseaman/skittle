@@ -856,6 +856,7 @@ void GLWidget::drawSelectionBox(QPointF startPoint,QPointF endPoint)
     if(selectionBoxVisible == true)
     {
 
+        int lineWidth = ui->widthDial->value();
         int spx = (int)(startPoint.x());//round off
         int spy = (int)(startPoint.y());
         int epx = (int)(endPoint.x());
@@ -869,11 +870,47 @@ void GLWidget::drawSelectionBox(QPointF startPoint,QPointF endPoint)
 //            epy = (int)(startPoint.y());
 //        }
 
-        color c = color(255,255,50);
-        nuc->paint_line(point(-1.5, -(spy - 1.5), 0),point((ui->widthDial->value() + 1.5), -spy, 0), c); //top
-        nuc->paint_line(point(-1.5, -(epy + 1), 0),point((ui->widthDial->value() + 1.5), -(epy +2.5), 0), c); //bottom
-        nuc->paint_line(point(-1.5, -(spy - 1.5), 0),point(0, -(epy+2.5), 0), c); //left
-        nuc->paint_line(point(ui->widthDial->value(), -(spy - 1.5), 0),point((ui->widthDial->value() + 1.5), -(epy +2.5), 0), c); //right
+
+
+        // force points to be in bounds and make pretty squared off boxes
+        if (spx < 0)
+            spx = 0;
+        if (spx >= lineWidth)
+        {
+            spx = 0;
+            ++spy;
+        }
+        if (epx < 0)
+        {
+            epx = lineWidth;
+            --epy;
+        }
+        if (epx >= lineWidth)
+            epx = lineWidth;
+
+
+        // hairline edge
+        color c = color(200,185,60);
+        double lineThickness = 0.3;
+        //draw the ragged box
+        nuc->paint_line(point(-lineThickness, -(spy + 1 - lineThickness), 0),point(spx, -(spy + 1), 0), c); //top left
+        nuc->paint_line(point((spx - lineThickness), -(spy - lineThickness), 0),point((lineWidth + lineThickness), -spy, 0), c); //top right
+        nuc->paint_line(point(-lineThickness, -(epy + 1), 0),point((epx + lineThickness), -(epy + 1 + lineThickness), 0), c); //bottom left
+        nuc->paint_line(point(epx, -epy, 0),point((lineWidth + lineThickness), -(epy + lineThickness), 0), c); //bottom right
+        nuc->paint_line(point(-lineThickness, -(spy + 1 - lineThickness), 0),point(0, -(epy + 1 + lineThickness), 0), c); //left
+        nuc->paint_line(point(lineWidth, -spy, 0),point((lineWidth + lineThickness), -(epy + lineThickness), 0), c); //right
+
+        // adjust to taste
+        c = color(255,235,80);
+        lineThickness = max(1.0, (double)(2.75 - (ui->zoomDial->value())/400)); // thickness scales inversely to zoom level
+//        double lineThickness = 1.5;
+        //draw the ragged box
+        nuc->paint_line(point(-lineThickness, -(spy + 1 - lineThickness), 0),point(spx, -(spy + 1), 0), c); //top left
+        nuc->paint_line(point((spx - lineThickness), -(spy - lineThickness), 0),point((lineWidth + lineThickness), -spy, 0), c); //top right
+        nuc->paint_line(point(-lineThickness, -(epy + 1), 0),point((epx + lineThickness), -(epy + 1 + lineThickness), 0), c); //bottom left
+        nuc->paint_line(point(epx, -epy, 0),point((lineWidth + lineThickness), -(epy + lineThickness), 0), c); //bottom right
+        nuc->paint_line(point(-lineThickness, -(spy + 1 - lineThickness), 0),point(0, -(epy + 1 + lineThickness), 0), c); //left
+        nuc->paint_line(point(lineWidth, -spy, 0),point((lineWidth + lineThickness), -(epy + lineThickness), 0), c); //right
 
     }
     else
