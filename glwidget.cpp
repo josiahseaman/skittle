@@ -522,6 +522,46 @@ int GLWidget::tool()
     return currentTool;
 }
 
+void GLWidget::zoomToolActivate(QMouseEvent *event, point2D oglCoords)
+{
+    float zoomFactor = 1.2;
+    if(event->modifiers() & Qt::SHIFT) zoomFactor = 0.8;
+    else if(event->button() == Qt::RightButton)
+    {
+        setCursor(zoomOutCursor);
+        zoomFactor = 0.8;
+    }
+    else
+    {
+        setCursor(zoomInCursor);
+    }
+
+    int scale = ui->scaleDial->value();//take current scale
+    int index = oglCoords.y * (ui->widthDial->value()/scale) + oglCoords.x;
+    index *= scale;
+    index = max(0, index + ui->startDial->value());
+    int newSize = (int)(ui->sizeDial->value() / zoomFactor);//calculate new projected size
+    ui->startDial->setValue( index - (newSize/2) );//set start as centered point - size/2
+    //size should recalculate
+    int newScale = (int)(scale / zoomFactor) + (zoomFactor > 1.0? 0 : 1);//reduce scale by 10-20%  (Nx4)
+    int zoom = ui->zoomDial->value();
+    if( zoomFactor > 1.0 )  // we're zooming in
+    {
+        if(scale == 1)
+            ui->changeZoom( zoom * zoomFactor );
+        else
+            ui->changeScale(newScale);
+    }
+    else //zooming out
+    {
+        if(zoom > 100)
+            ui->changeZoom( max(100, ((int) (zoom * zoomFactor))) );
+        else
+            ui->changeScale(newScale);//set scale to the new value
+    }
+
+}
+
 //***********KEY HANDLING**************
 void GLWidget::keyPressEvent( QKeyEvent *event )
 {
@@ -629,6 +669,10 @@ void GLWidget::paintGL()
     if( tool() == SELECT_TOOL || tool() == FIND_TOOL)
     {
         glCallList(marker);//possibly replace this with a blinking cursor
+    }
+    else if ( tool() == ZOOM_TOOL && selectionBoxVisible == true)
+    {
+        drawSelectionBox(startPoint, endPoint);
     }
     for(int i = 0; i < (int)graphs.size(); ++i)
     {
@@ -747,41 +791,9 @@ void GLWidget::mousePressEvent(QMouseEvent* event)
     }
     if(tool() == ZOOM_TOOL)
     {
-        float zoomFactor = 1.2;
-        if(event->modifiers() & Qt::SHIFT) zoomFactor = 0.8;
-        else if(event->button() == Qt::RightButton)
-        {
-            setCursor(zoomOutCursor);
-            zoomFactor = 0.8;
-        }
-        else
-        {
-            setCursor(zoomInCursor);
-        }
-
-        int scale = ui->scaleDial->value();//take current scale
-        int index = oglCoords.y * (ui->widthDial->value()/scale) + oglCoords.x;
-        index *= scale;
-        index = max(0, index + ui->startDial->value());
-        int newSize = (int)(ui->sizeDial->value() / zoomFactor);//calculate new projected size
-        ui->startDial->setValue( index - (newSize/2) );//set start as centered point - size/2
-        //size should recalculate
-        int newScale = (int)(scale / zoomFactor) + (zoomFactor > 1.0? 0 : 1);//reduce scale by 10-20%  (Nx4)
-        int zoom = ui->zoomDial->value();
-        if( zoomFactor > 1.0 )  // we're zooming in
-        {
-            if(scale == 1)
-                ui->changeZoom( zoom * zoomFactor );
-            else
-                ui->changeScale(newScale);
-        }
-        else //zooming out
-        {
-            if(zoom > 100)
-                ui->changeZoom( max(100, ((int) (zoom * zoomFactor))) );
-            else
-                ui->changeScale(newScale);//set scale to the new value
-        }
+        startPoint = endPoint = qp; //m:display box, record current pos
+        selectionBoxVisible = true;
+//        drawSelectionBox(qp,qp);
     }
     lastPos = event->pos();
 }
@@ -812,12 +824,63 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
                 ui->changeWidth(value);
 
             }
+            if(tool() == ZOOM_TOOL && selectionBoxVisible == true)
+            {
+                endPoint =  evn; //m:set second pos
+            }
         }
         invalidateDisplayGraphs();
     }
     lastPos = event->pos();
 }
 
+void GLWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+    QPointF qp = pixelToGlCoords(event->pos());
+    int x = (int)(qp.x());
+    int y = (int)(qp.y());
+    point2D oglCoords = point2D(x,y);
+
+    if(tool() == ZOOM_TOOL && selectionBoxVisible == true)
+    {
+        selectionBoxVisible=false;
+        zoomToolActivate(event, oglCoords);
+        ui->print("start y is: ", startPoint.y());
+        ui->print("end y is: ", endPoint.y());
+    }
+}
+
+//m:draw Selection box
+void GLWidget::drawSelectionBox(QPointF startPoint,QPointF endPoint)
+{
+    if(selectionBoxVisible == true)
+    {
+
+        int spx = (int)(startPoint.x());//round off
+        int spy = (int)(startPoint.y());
+        int epx = (int)(endPoint.x());
+        int epy = (int)(endPoint.y());
+
+//        if (spy < epy) //if you drag up, swap the top and bottom of the box
+//        {
+//            spx = (int)(endPoint.x());
+//            spy = (int)(endPoint.y());
+//            epx = (int)(startPoint.x());
+//            epy = (int)(startPoint.y());
+//        }
+
+        color c = color(255,255,50);
+        nuc->paint_line(point(-1.5, -(spy - 1.5), 0),point((ui->widthDial->value() + 1.5), -spy, 0), c); //top
+        nuc->paint_line(point(-1.5, -(epy + 1), 0),point((ui->widthDial->value() + 1.5), -(epy +2.5), 0), c); //bottom
+        nuc->paint_line(point(-1.5, -(spy - 1.5), 0),point(0, -(epy+2.5), 0), c); //left
+        nuc->paint_line(point(ui->widthDial->value(), -(spy - 1.5), 0),point((ui->widthDial->value() + 1.5), -(epy +2.5), 0), c); //right
+
+    }
+    else
+    {
+        //m:clear the paint?
+    }
+}
 
 void GLWidget::translate(float dx, float dy)
 {

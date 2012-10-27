@@ -95,6 +95,21 @@ void AbstractGraph::paint_square(point position, color c)
     glPopMatrix();
 }
 
+void AbstractGraph::paint_line(point startPoint, point endPoint, color c)
+{
+    glPushMatrix();
+    glColor3d(c.r /255.0, c.g /255.0, c.b /255.0);
+//    glTranslated(-1.5, startPoint.y, startPoint.z);
+
+    glBegin(GL_QUADS);
+    glVertex3d(startPoint.x, startPoint.y, 0);
+    glVertex3d(endPoint.x, startPoint.y, 0);
+    glVertex3d(endPoint.x, endPoint.y, 0);
+    glVertex3d(startPoint.x, endPoint.y, 0);
+    glEnd();
+    glPopMatrix();
+}
+
 void AbstractGraph::loadTextureCanvas(bool raggedEdge)
 {
     storeDisplay( outputPixels, width(), raggedEdge );

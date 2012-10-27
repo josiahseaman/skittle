@@ -79,6 +79,7 @@ public:
     void keyPressEvent( QKeyEvent *event );
     void keyReleaseEvent( QKeyEvent *event );
     int tool();
+    void zoomToolActivate(QMouseEvent *event, point2D oglCoords);
     color colors(char nucleotide);
     void setupColorTable();
     color spectrum(double i);
@@ -138,6 +139,8 @@ protected:
     vector<string> mouseOverText(point2D oglCoords);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void drawSelectionBox(QPointF startPoint, QPointF endPoint);
     void translate(float dx, float dy);
     void translateOffset(float dx, float dy);
     void changeCursor(Qt::CursorShape cNumber);
@@ -164,6 +167,9 @@ private:
     QImage read_framebuffer(const QSize &size, bool alpha_format, bool include_alpha);
     void convertFromGLImage(QImage &img, int w, int h, bool alpha_format, bool include_alpha);
     int getTotalPixelWidth();
+    bool selectionBoxVisible;
+    QPointF startPoint;
+    QPointF endPoint;
 };
 //! [3]
 /* Alu Consensus Sequence 290bp
