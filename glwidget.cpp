@@ -793,7 +793,6 @@ void GLWidget::mousePressEvent(QMouseEvent* event)
     {
         startPoint = endPoint = qp; //m:display box, record current pos
         selectionBoxVisible = true;
-//        drawSelectionBox(qp,qp);
     }
     lastPos = event->pos();
 }
@@ -845,8 +844,6 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event)
     {
         selectionBoxVisible=false;
         zoomToolActivate(event, oglCoords);
-        ui->print("start y is: ", startPoint.y());
-        ui->print("end y is: ", endPoint.y());
     }
 }
 
@@ -856,19 +853,19 @@ void GLWidget::drawSelectionBox(QPointF startPoint,QPointF endPoint)
     if(selectionBoxVisible == true)
     {
 
-        int lineWidth = ui->widthDial->value();
+        int lineWidth = nuc->width();
         int spx = (int)(startPoint.x());//round off
         int spy = (int)(startPoint.y());
         int epx = (int)(endPoint.x());
         int epy = (int)(endPoint.y());
 
-//        if (spy < epy) //if you drag up, swap the top and bottom of the box
-//        {
-//            spx = (int)(endPoint.x());
-//            spy = (int)(endPoint.y());
-//            epx = (int)(startPoint.x());
-//            epy = (int)(startPoint.y());
-//        }
+        if (spy > epy || spy == epy && spx > epx) //if you drag up, swap the top and bottom of the box
+        {
+            spx = (int)(endPoint.x());
+            spy = (int)(endPoint.y());
+            epx = (int)(startPoint.x());
+            epy = (int)(startPoint.y());
+        }
 
 
 
@@ -894,8 +891,10 @@ void GLWidget::drawSelectionBox(QPointF startPoint,QPointF endPoint)
         double lineThickness = 0.3;
         //draw the ragged box
         nuc->paint_line(point(-lineThickness, -(spy + 1 - lineThickness), 0),point(spx, -(spy + 1), 0), c); //top left
+        nuc->paint_line(point((spx - lineThickness), -(spy - lineThickness), 0),point(spx, -(spy + 1), 0), c); //top jog
         nuc->paint_line(point((spx - lineThickness), -(spy - lineThickness), 0),point((lineWidth + lineThickness), -spy, 0), c); //top right
         nuc->paint_line(point(-lineThickness, -(epy + 1), 0),point((epx + lineThickness), -(epy + 1 + lineThickness), 0), c); //bottom left
+        nuc->paint_line(point(epx, -epy, 0),point((epx + lineThickness), -(epy + 1 + lineThickness), 0), c); //bottom jog
         nuc->paint_line(point(epx, -epy, 0),point((lineWidth + lineThickness), -(epy + lineThickness), 0), c); //bottom right
         nuc->paint_line(point(-lineThickness, -(spy + 1 - lineThickness), 0),point(0, -(epy + 1 + lineThickness), 0), c); //left
         nuc->paint_line(point(lineWidth, -spy, 0),point((lineWidth + lineThickness), -(epy + lineThickness), 0), c); //right
