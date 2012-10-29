@@ -6,8 +6,7 @@
 #include <vector>
 #include "BasicTypes.h"
 #include "TextureCanvas.h"
-#include <utility>
-#include <pair.h>
+#include <utility> //includes std::pair
 #include "SkittleUtil.h"
 /**
 *  This is the base class for all Grapher objects.

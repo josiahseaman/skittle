@@ -3,8 +3,7 @@
 #include "glwidget.h"
 #include <sstream>
 #include <math.h>
-#include <utility>
-#include <pair.h>
+#include <utility>  //includes std::pair
 #include "SkittleUtil.h"
 
 

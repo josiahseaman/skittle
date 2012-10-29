@@ -5,9 +5,11 @@
 //#include <QCursor>
 #if defined(Q_WS_MAC)
 #include <OpenGL/glu.h>
+//#include <pair.h>
 #else
 #ifndef QT_LINUXBASE
 #   include <GL/glu.h>
+//#   include <pair>
 #endif
 #endif
 
@@ -15,8 +17,7 @@
 #include <math.h>
 #include <sstream>
 #include <vector>
-#include <utility>
-#include <pair.h>
+#include <utility> //includes std::pair
 
 #include <stdlib.h>
 #include <ctime>
@@ -35,6 +36,7 @@
 #include "SkittleUtil.h"
 
 using std::string;
+using std::pair;
 
 /** ***********************************
 GLWidget is the primary display interface for Skittle.  It handles the OpenGL
