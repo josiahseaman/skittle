@@ -58,6 +58,7 @@ void TextureCanvas::init(int w, bool raggedEdge)
 
 int TextureCanvas::checkForDisplayDriver()
 {
+    max_size = 0;
     useTextures = false;
     //verify that textures can be allocated
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_size);
