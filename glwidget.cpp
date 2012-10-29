@@ -2,14 +2,11 @@
 #include <QtGui>
 #include <QtOpenGL>
 #include <QBitmap>
-//#include <QCursor>
 #if defined(Q_WS_MAC)
 #include <OpenGL/glu.h>
-//#include <pair.h>
 #else
 #ifndef QT_LINUXBASE
 #   include <GL/glu.h>
-//#   include <pair>
 #endif
 #endif
 
@@ -399,17 +396,22 @@ void GLWidget::setTool(int tool)
     switch(tool)
     {
     case MOVE_TOOL:
-        changeCursor(Qt::SizeAllCursor);
+        changeCursor(Qt::OpenHandCursor);//previously Qt::SizeAllCursor
         break;
     case RESIZE_TOOL:
-        changeCursor(Qt::SizeHorCursor);
+        changeCursor(Qt::SplitHCursor);//previously Qt::SizeHorCursor
         break;
     case FIND_TOOL:
-    case SELECT_TOOL:
         changeCursor(Qt::CrossCursor);
+        break;
+    case SELECT_TOOL:
+        changeCursor(Qt::WhatsThisCursor);//previously Qt::CrossCursor);
         break;
     case ZOOM_TOOL:
         setCursor(zoomInCursor);
+        break;
+    case ANNOTATE_TOOL:
+        changeCursor(Qt::IBeamCursor);
         break;
     default:
         currentTool = oldTool;
