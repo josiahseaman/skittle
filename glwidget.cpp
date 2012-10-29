@@ -262,6 +262,12 @@ void GLWidget::on_findButton_clicked()
     highlight->ensureVisible();
 }
 
+void GLWidget::on_addAnnotationButton_clicked()
+{
+    ui->print("ANNOTATE selected");
+    setTool(ANNOTATE_TOOL);
+}
+
 void GLWidget::on_screenCaptureButton_clicked()
 {
     makeCurrent();

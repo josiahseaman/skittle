@@ -65,18 +65,18 @@ bool GtfReader::initFile(string fileName)
 }
 
 /**SLOTS**/
-void GtfReader::addBookmark()//int start, int end)
+void GtfReader::addBookmark(int start, int end)
 {
     QDialog parent;
     Ui_BookmarkDialog dialog;
     dialog.setupUi(&parent);
 
-    std::stringstream ss;
-    ss << ui->startDial->value();
-    dialog.start->setText( QString( ss.str().c_str() ) );
-    std::stringstream ss2;
-    ss2 << ui->startDial->value() + ui->sizeDial->value();
-    dialog.end->setText( QString(ss2.str().c_str() ) );
+    std::stringstream startText;
+    startText << start;
+    dialog.start->setText( QString( startText.str().c_str() ) );
+    std::stringstream endText;
+    endText << end;
+    dialog.end->setText( QString(endText.str().c_str() ) );
     dialog.sequence->setText( QString(chrName.c_str()) );
 
     parent.show();

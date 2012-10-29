@@ -24,9 +24,9 @@ public:
     GtfReader(UiVariables *ui);
     vector<track_entry> readFile(QString name);
     string outputFile();
+    void addBookmark(int start, int end);
 
 public slots:
-    void addBookmark();
     void determineOutputFile(QString file);
 
 signals:

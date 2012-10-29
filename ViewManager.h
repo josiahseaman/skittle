@@ -32,7 +32,6 @@ public slots:
     void closeSubWindow(MdiChildWindow* closing);
     void changeFile(QString);
     void addAnnotationDisplay(QString);
-    void addBookmark();
     void jumpToNextAnnotation();
     void jumpToPrevAnnotation();
 

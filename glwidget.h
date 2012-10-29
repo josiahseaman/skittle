@@ -98,6 +98,7 @@ public slots:
     void on_moveButton_clicked();
     void on_selectButton_clicked();
     void on_findButton_clicked();
+    void on_addAnnotationButton_clicked();
     void on_screenCaptureButton_clicked();
     void on_resizeButton_clicked();
     void on_zoomButton_clicked();
@@ -184,5 +185,6 @@ TGAACCCGGGAGGCGGAGGTTGCAGTGAGCCGAGATCGCGCCACTGCACTCCAGCCTGGGCGACAGAGCGAGACTCCGTC
 #define ZOOM_TOOL 4
 #define FIND_TOOL 5
 #define SCREENCAPTURE_TOOL 6
+#define ANNOTATE_TOOL 7
 
 #endif

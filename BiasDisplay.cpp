@@ -81,7 +81,7 @@ string BiasDisplay::SELECT_MouseClick(point2D pt)
         index = index + ui->startDial->value();
         int end = index + tempWidth;
         const char* genome = sequence->c_str();
-        vector<int> counts = countNucleotides(genome,  index, end );//TODO: possibly slow to recalculate vs. storing
+        vector<int> counts = countNucleotides(genome,  index, end );
         char r[] = {'C','G','A','T','N'};
         float col = pt.x / (float)max_bar_width;
         if(col >= 1.5)//if it's more than halfway through the middle column

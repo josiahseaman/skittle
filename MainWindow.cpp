@@ -190,10 +190,11 @@ void MainWindow::createActions()
     zoomAction->setToolTip(QString("Shift+Click to zoom out"));
     selectAction = new QAction("Select",this);
     selectAction->setToolTip(QString("Displays index and sequence information"));
+    addAnnotationAction = new QAction("Annotate Region",this);
+    addAnnotationAction->setToolTip(QString("Select a region and enter text to create a new annotation in ..skittle_notes.gtf"));
     findAction = new QAction("&Find",this);
     screenCaptureAction = new QAction("Screen &Capture", this);
     screenCaptureAction->setToolTip(QString("Take a screen shot"));
-    addAnnotationAction = new QAction("Add Annotation",this);
     nextAnnotationAction = new QAction("Next Annotation",this);
     prevAnnotationAction = new QAction("Previous Annotation",this);
     //browseCommunityAction = new QAction("Browse Community Research",this);
@@ -304,7 +305,6 @@ void MainWindow::createToolbars()
     annotationToolBar->addAction(updateSkittle);
     annotationToolBar->addAction(openAction);
     annotationToolBar->addAction(addViewAction);
-    annotationToolBar->addAction(addAnnotationAction);
     annotationToolBar->addAction(openGtfAction);
     annotationToolBar->addAction(nextAnnotationAction);
     annotationToolBar->addAction(prevAnnotationAction);
@@ -322,6 +322,7 @@ void MainWindow::createToolbars()
     toolToolBar->addAction(zoomAction);
     toolToolBar->addAction(selectAction);
     toolToolBar->addAction(findAction);
+    toolToolBar->addAction(addAnnotationAction);
     toolToolBar->addAction(screenCaptureAction);
 
     //previous location of createUiVars()
@@ -405,7 +406,6 @@ void MainWindow::createFileConnections()
 
     connect(openGtfAction, SIGNAL(triggered()), this, SLOT(openGtf()));
     connect(this, SIGNAL(newGtfFileOpen(QString)), viewManager, SLOT(addAnnotationDisplay(QString)));
-    connect(addAnnotationAction, SIGNAL(triggered()), viewManager, SLOT(addBookmark()));
     connect(nextAnnotationAction, SIGNAL(triggered()), viewManager, SLOT(jumpToNextAnnotation()));
     connect(prevAnnotationAction, SIGNAL(triggered()), viewManager, SLOT(jumpToPrevAnnotation()));
 }
