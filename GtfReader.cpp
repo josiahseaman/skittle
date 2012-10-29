@@ -152,13 +152,23 @@ vector<track_entry>  GtfReader::readFile(QString filename)
         }
 
         //Ask user if our parsed chromosome name is correct
-        bool ok;
-        QString temp = QInputDialog::getText(0, tr("Current Chromosome Name"), tr("Auto generated Chromosome Name.\nDoes this match your Annotation File's Chromosome Name format?"), QLineEdit::Normal, QString::fromStdString(chromosomeRead), &ok);
+        QStringList items;
+        items  = getChromosomes();
 
-        if(ok && !temp.isEmpty())
+        bool ok;
+        int index = items.indexOf(QString::fromStdString(chromosomeRead));
+        if (index == -1)
         {
-            chromosomeRead = temp.toStdString();
+            index = 0;
+            QString temp = QInputDialog::getItem(0, tr("Current Chromosome Name"), tr("Please pick the name of the current chromosome from the Annotation File."), items, index, false, &ok);
+
+            if(ok && !temp.isEmpty())
+            {
+                chromosomeRead = temp.toStdString();
+            }
         }
+        file.close();
+        initFile(filename.toStdString());
     }
 
     srand(time(0));
@@ -196,6 +206,30 @@ vector<track_entry>  GtfReader::readFile(QString filename)
     }
     file.close();
     return annotation_track;
+}
+
+QStringList GtfReader::getChromosomes()
+{
+    QStringList list;
+
+    srand(time(0));
+    string line;
+    while(getline(file, line))
+    {
+        stringstream lineStr(line);
+
+        string chromosomeName;
+        lineStr >> chromosomeName;
+
+        QString cn = QString::fromStdString(chromosomeName);
+
+        if(!list.contains(cn))
+            list.append(cn);
+    }
+
+    list.removeDuplicates();
+
+    return list;
 }
 
 /*PRIVATE FUNCTIONS*/

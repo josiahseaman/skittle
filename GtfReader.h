@@ -22,7 +22,7 @@ public:
     string chrName;
 
     GtfReader(UiVariables *ui);
-    vector<track_entry> readFile(QString name);
+    vector<track_entry> readFile(QString filename);
     string outputFile();
     void addBookmark(int start, int end);
 
@@ -45,6 +45,7 @@ private:
     QProgressDialog* progressBar;
     int bytesInFile;//file size, but more specific
     int blockSize;
+    QStringList getChromosomes();
 };
 
 #endif
