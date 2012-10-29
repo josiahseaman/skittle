@@ -1,6 +1,7 @@
 #include "BiasDisplay.h"
 #include "glwidget.h"
 #include "SkittleUtil.h"
+#include <sstream>
 
 /** **********************************************
   BiasDisplay shows the line per line usage bias of the
@@ -66,3 +67,34 @@ int BiasDisplay::width()
     return max_bar_width * 3;
 }
 
+int BiasDisplay::getRelativeIndexFromMouseClick(point2D pt)
+{
+    return getBeginningOfLineFromMouseClick( pt);
+}
+
+string BiasDisplay::SELECT_MouseClick(point2D pt)
+{
+    if( pt.x < width() && pt.x >= 0  )
+    {
+        int tempWidth = ui->widthDial->value();
+        int index = pt.y * tempWidth;
+        index = index + ui->startDial->value();
+        int end = index + tempWidth;
+        const char* genome = sequence->c_str();
+        vector<int> counts = countNucleotides(genome,  index, end );//TODO: possibly slow to recalculate vs. storing
+        char r[] = {'C','G','A','T','N'};
+        float col = pt.x / (float)max_bar_width;
+        if(col >= 1.5)//if it's more than halfway through the middle column
+            col += 1.0;//add one column to compensate for G/A sharing the same space.
+        int column = (int)col;//drops the floating point
+        char character = r[column];
+        float count = counts[ACGT_num(character)];
+        int percent = count / tempWidth * 100.0;
+        stringstream ss;
+        ss << character << "  Count: " << counts[ACGT_num(character)] << " = "
+           << percent << "%" << " at Index: "<< index << " - "<< end;
+
+        return ss.str();
+    }
+    return string();
+}

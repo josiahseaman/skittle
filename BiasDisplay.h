@@ -13,9 +13,11 @@ public:
     BiasDisplay(UiVariables* gui, GLWidget* gl);
     void calculateOutputPixels();
     void sequenceToColors(const char* genome);
-
     virtual int width();
-    
+
+    virtual int getRelativeIndexFromMouseClick(point2D pt);
+    virtual string SELECT_MouseClick(point2D pt);
+
 signals:
     
 public slots:

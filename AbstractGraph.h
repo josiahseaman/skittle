@@ -70,6 +70,7 @@ public:
     virtual string SELECT_MouseClick(point2D pt);
     virtual string FIND_MouseClick(point2D pt);
     virtual int getRelativeIndexFromMouseClick(point2D pt);
+    virtual int getBeginningOfLineFromMouseClick(point2D pt);
     virtual int adjustForSampleLengthBounds(int index, int sample_length);
     virtual string SELECT_StringFromMouseClick(int index);
     virtual string FIND_StringFromMouseClick(int index);

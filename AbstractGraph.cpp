@@ -276,6 +276,18 @@ int AbstractGraph::getRelativeIndexFromMouseClick(point2D pt)
         return -1;
 }
 
+int AbstractGraph::getBeginningOfLineFromMouseClick(point2D pt)
+{
+    if( pt.x < width() && pt.x >= 0 && pt.y <= height() )//check if it is inside the box
+    {
+        int index = pt.y * ui->widthDial->value();
+        index = max(0, index);
+        return index;
+    }
+    else
+        return -1;
+}
+
 int AbstractGraph::adjustForSampleLengthBounds(int index, int sample_length)
 {
     index = min((int)current_display_size()-sample_length-1, index);

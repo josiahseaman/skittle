@@ -507,12 +507,10 @@ string OligomerDisplay::SELECT_MouseClick(point2D pt)
     //this only supports the countsGraph freq
     if( pt.x < countsGraphWidth() && pt.x >= 0  )
     {
-        int index = pt.y * ui->widthDial->value();
-        index = index + ui->startDial->value();
         stringstream ss;
         ss << numberToOlig(pt.x) << "  Count: " << freq[pt.y][pt.x];
         //<< "\nSequence:" << sequence->substr(index, w);
-        return ss.str().c_str();
+        return ss.str();
     }
     return string();
 }
