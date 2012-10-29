@@ -94,6 +94,7 @@ public slots:
     void changeZoom(int z);
     void displayString(const string* sequence);
     void zoomExtents();
+    void zoomRange(int startIndex, int endIndex);
     void on_moveButton_clicked();
     void on_selectButton_clicked();
     void on_findButton_clicked();

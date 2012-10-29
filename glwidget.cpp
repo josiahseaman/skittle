@@ -223,6 +223,28 @@ void GLWidget::zoomExtents()
     ui->startDial->setValue(1);
     ui->changeScale(newScale);
 }
+void GLWidget::zoomRange(int startIndex, int endIndex) //make sure startIndex < endIndex when Called
+{
+    float pixelWidth = (float)ui->widthDial->value() / (float)ui->scaleDial->value();
+    float pixelsOnScreen = pixelWidth * (openGlGridHeight()-10);
+    int selectionSize = abs(endIndex - startIndex);
+    float requiredScale = (selectionSize) / pixelsOnScreen;
+    int newScale = max(1, (int)(requiredScale + 0.5) );
+    if (newScale == 1)
+    {
+        float requiredLines = selectionSize/pixelWidth;
+        float screenHeight = openGlGridHeight() * ((float)ui->zoomDial->value() / 100); //how many pixels at zoom 100
+        float screenWidth = openGlGridWidth() * ((float)ui->zoomDial->value() / 100) - 40;
+        float requiredZoom = (screenHeight / requiredLines); // not percent based
+        if (pixelWidth * (requiredZoom) > screenWidth) // if the zoom level makes the line wider than the screen just zoom to fit the widt
+            requiredZoom = screenWidth / pixelWidth;
+        int newZoom = max(100,(int)(requiredZoom * 100)); //now it's in percent
+        ui->changeZoom(newZoom);
+    }
+
+    ui->startDial->setValue(startIndex);
+    ui->changeScale(newScale);
+}
 
 void GLWidget::on_moveButton_clicked()
 {
@@ -524,42 +546,63 @@ int GLWidget::tool()
 
 void GLWidget::zoomToolActivate(QMouseEvent *event, point2D oglCoords)
 {
-    float zoomFactor = 1.2;
-    if(event->modifiers() & Qt::SHIFT) zoomFactor = 0.8;
-    else if(event->button() == Qt::RightButton)
+
+    if (abs((int)endPoint.y() - (int)startPoint.y()) < 2)
     {
-        setCursor(zoomOutCursor);
-        zoomFactor = 0.8;
-    }
-    else
-    {
-        setCursor(zoomInCursor);
+        float zoomFactor = 1.2;
+        if(event->modifiers() & Qt::SHIFT) zoomFactor = 0.8;
+        else if(event->button() == Qt::RightButton)
+        {
+            setCursor(zoomOutCursor);
+            zoomFactor = 0.8;
+        }
+        else
+        {
+            setCursor(zoomInCursor);
+        }
+
+        int scale = ui->scaleDial->value();//take current scale
+        int index = oglCoords.y * (ui->widthDial->value()/scale) + oglCoords.x;
+        index *= scale;
+        index = max(0, index + ui->startDial->value());
+        int newSize = (int)(ui->sizeDial->value() / zoomFactor);//calculate new projected size
+        ui->startDial->setValue( index - (newSize/2) );//set start as centered point - size/2
+        //size should recalculate
+        int newScale = (int)(scale / zoomFactor) + (zoomFactor > 1.0? 0 : 1);//reduce scale by 10-20%  (Nx4)
+        int zoom = ui->zoomDial->value();
+        if( zoomFactor > 1.0 )  // we're zooming in
+        {
+            if(scale == 1)
+                ui->changeZoom( zoom * zoomFactor );
+            else
+                ui->changeScale(newScale);
+        }
+        else //zooming out
+        {
+            if(zoom > 100)
+                ui->changeZoom( max(100, ((int) (zoom * zoomFactor))) );
+            else
+                ui->changeScale(newScale);//set scale to the new value
+        }
     }
 
-    int scale = ui->scaleDial->value();//take current scale
-    int index = oglCoords.y * (ui->widthDial->value()/scale) + oglCoords.x;
-    index *= scale;
-    index = max(0, index + ui->startDial->value());
-    int newSize = (int)(ui->sizeDial->value() / zoomFactor);//calculate new projected size
-    ui->startDial->setValue( index - (newSize/2) );//set start as centered point - size/2
-    //size should recalculate
-    int newScale = (int)(scale / zoomFactor) + (zoomFactor > 1.0? 0 : 1);//reduce scale by 10-20%  (Nx4)
-    int zoom = ui->zoomDial->value();
-    if( zoomFactor > 1.0 )  // we're zooming in
+    else // user selected range
     {
-        if(scale == 1)
-            ui->changeZoom( zoom * zoomFactor );
-        else
-            ui->changeScale(newScale);
-    }
-    else //zooming out
-    {
-        if(zoom > 100)
-            ui->changeZoom( max(100, ((int) (zoom * zoomFactor))) );
-        else
-            ui->changeScale(newScale);//set scale to the new value
-    }
+        int startIndex = 1;
+        int endIndex = 1;
 
+        for(int i = 0; i < (int)graphs.size(); ++i)
+        {
+            if(!graphs[i]->hidden)
+            {
+                float spx = startPoint.x() - graphs[i]->width() + border;
+                float epx = endPoint.x() - graphs[i]->width() + border;
+                startIndex = graphs[i]->getRelativeIndexFromMouseClick(point2D(spx,startPoint.y()));
+                endIndex = graphs[i]->getRelativeIndexFromMouseClick(point2D(epx,endPoint.y()));
+            }
+        }
+        zoomRange(startIndex,endIndex);
+    }
 }
 
 //***********KEY HANDLING**************
@@ -842,7 +885,7 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 
     if(tool() == ZOOM_TOOL && selectionBoxVisible == true)
     {
-        selectionBoxVisible=false;
+        selectionBoxVisible = false;
         zoomToolActivate(event, oglCoords);
     }
 }
@@ -869,7 +912,7 @@ void GLWidget::drawSelectionBox(QPointF startPoint,QPointF endPoint)
 
 
 
-        // force points to be in bounds and make pretty squared off boxes
+        // force points to be in bounds and make pretty squared off boxes  (TODO: move to mouseMove event)
         if (spx < 0)
             spx = 0;
         if (spx >= lineWidth)
