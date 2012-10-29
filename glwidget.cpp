@@ -848,6 +848,8 @@ void GLWidget::mousePressEvent(QMouseEvent* event)
                 highlight->setHighlightSequence(QString(responses[i].c_str()));
         }
     }
+    if(tool() == MOVE_TOOL )
+        changeCursor(Qt::ClosedHandCursor);
     if(tool() == ZOOM_TOOL)
     {
         startPoint = endPoint = qp; //m:display box, record current pos
@@ -899,6 +901,8 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event)
     int y = (int)(qp.y());
     point2D oglCoords = point2D(x,y);
 
+    if(tool() == MOVE_TOOL )
+        changeCursor(Qt::OpenHandCursor);
     if( selectionBoxVisible == true )
     {
         selectionBoxVisible = false;

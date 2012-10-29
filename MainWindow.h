@@ -102,7 +102,7 @@ private:
     QActionGroup *toolActionGroup;
     QActionGroup *colorGroup;
 
-    QToolBar *annotationToolBar;
+    QToolBar *fileToolBar;
     QToolBar *presetToolBar;
     QToolBar *toolToolBar;
     QToolBar *settingToolBar;

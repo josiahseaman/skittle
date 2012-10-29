@@ -80,7 +80,7 @@ void MainWindow::addDisplayActions(AbstractGraph* display)
         connect(presetAction,SIGNAL(triggered()),display, SLOT(toggleVisibility()));
         connect(display, SIGNAL(deleteButton(QAction*)), this, SLOT(removeGraphButton(QAction*)));
 
-        //this section of code insets a new displayAction at the beginning of the list, rather than appending it
+        //this section of code inserts a new displayAction at the beginning of the list, rather than appending it
         //this is for the sake of the AnnotationDisplays which are added last and listed first
         presetMenu->addAction(presetAction);
         QAction* before = NULL;
@@ -190,7 +190,7 @@ void MainWindow::createActions()
     zoomAction->setToolTip(QString("Shift+Click to zoom out"));
     selectAction = new QAction("Select",this);
     selectAction->setToolTip(QString("Displays index and sequence information"));
-    addAnnotationAction = new QAction("Annotate Region",this);
+    addAnnotationAction = new QAction("Annotate",this);
     addAnnotationAction->setToolTip(QString("Select a region and enter text to create a new annotation in ..skittle_notes.gtf"));
     findAction = new QAction("&Find",this);
     screenCaptureAction = new QAction("Screen &Capture", this);
@@ -233,6 +233,7 @@ void MainWindow::createMenus()
     fileMenu->addAction(addViewAction);
     fileMenu->addSeparator();
     fileMenu->addAction(openGtfAction);
+    fileMenu->addAction(screenCaptureAction);
     fileMenu->addAction(exitAction);
     /*searchMenu = menuBar()->addMenu("&Search");
     searchMenu->addAction(findSequenceAction);
@@ -242,25 +243,25 @@ void MainWindow::createMenus()
     presetMenu = viewMenu->addMenu("Visualization Graphs");
 
     annotationMenu = menuBar()->addMenu("&Annotations");
-    annotationMenu->addAction(addAnnotationAction);
     annotationMenu->addAction(nextAnnotationAction);
     annotationMenu->addAction(prevAnnotationAction);
     //annotationMenu->addAction(browseCommunityAction);
     //annotationMenu->addAction(delAnnotationAction);
-    toolMenu = menuBar()->addMenu("&Tools");
+
+    toolMenu = menuBar()->addMenu("&Mouse Tools");
     toolMenu->addAction(moveAction);
     toolMenu->addAction(resizeAction);
     toolMenu->addAction(zoomAction);
     toolMenu->addAction(selectAction);
     toolMenu->addAction(findAction);
-    toolMenu->addAction(screenCaptureAction);
+    toolMenu->addAction(addAnnotationAction);
     toolActionGroup = new QActionGroup(this);
     toolActionGroup->addAction(moveAction);
     toolActionGroup->addAction(resizeAction);
     toolActionGroup->addAction(zoomAction);
     toolActionGroup->addAction(selectAction);
     toolActionGroup->addAction(findAction);
-    toolActionGroup->addAction(screenCaptureAction);
+    toolActionGroup->addAction(addAnnotationAction);
 
     colorSettingsMenu = menuBar()->addMenu("Color &Settings");
     colorGroup = new QActionGroup( this );
@@ -299,15 +300,16 @@ void MainWindow::createToolbars()
     QFont boldFont = QFont();
     boldFont.setBold(true);
 
-    annotationToolBar = addToolBar("File Actions");
-    annotationToolBar->setObjectName("file");
-    annotationToolBar->setIconSize( QSize( 100, 20 ) );
-    annotationToolBar->addAction(updateSkittle);
-    annotationToolBar->addAction(openAction);
-    annotationToolBar->addAction(addViewAction);
-    annotationToolBar->addAction(openGtfAction);
-    annotationToolBar->addAction(nextAnnotationAction);
-    annotationToolBar->addAction(prevAnnotationAction);
+    fileToolBar = addToolBar("File Actions");
+    fileToolBar->setObjectName("file");
+    fileToolBar->setIconSize( QSize( 100, 20 ) );
+    fileToolBar->addAction(updateSkittle);
+    fileToolBar->addAction(openAction);
+    fileToolBar->addAction(addViewAction);
+    fileToolBar->addAction(openGtfAction);
+    fileToolBar->addAction(nextAnnotationAction);
+    fileToolBar->addAction(prevAnnotationAction);
+    fileToolBar->addAction(screenCaptureAction);
     //annotationToolBar->addAction(browseCommunityAction);
     //annotationToolBar->addAction(delAnnotationAction);
 
@@ -323,13 +325,12 @@ void MainWindow::createToolbars()
     toolToolBar->addAction(selectAction);
     toolToolBar->addAction(findAction);
     toolToolBar->addAction(addAnnotationAction);
-    toolToolBar->addAction(screenCaptureAction);
 
     //previous location of createUiVars()
 
     addToolBar(Qt::RightToolBarArea,presetToolBar);
     addToolBar(Qt::LeftToolBarArea,toolToolBar);
-    addToolBar(Qt::LeftToolBarArea,annotationToolBar);
+    addToolBar(Qt::LeftToolBarArea,fileToolBar);
     addToolBar(Qt::TopToolBarArea,settingToolBar);
 
 }
@@ -338,7 +339,7 @@ void MainWindow::ensureDocksAreVisible()
 {
     presetToolBar->setVisible(true);
     toolToolBar->setVisible(true);
-    annotationToolBar->setVisible(true);
+    fileToolBar->setVisible(true);
     settingToolBar->setVisible(true);
     infoDock->setVisible(true);
 
