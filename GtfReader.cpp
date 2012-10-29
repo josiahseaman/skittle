@@ -152,7 +152,13 @@ vector<track_entry>  GtfReader::readFile(QString filename)
         }
 
         //Ask user if our parsed chromosome name is correct
+        bool ok;
+        QString temp = QInputDialog::getText(0, tr("Current Chromosome Name"), tr("Auto generated Chromosome Name.\nDoes this match your Annotation File's Chromosome Name format?"), QLineEdit::Normal, QString::fromStdString(chromosomeRead), &ok);
 
+        if(ok && !temp.isEmpty())
+        {
+            chromosomeRead = temp.toStdString();
+        }
     }
 
     srand(time(0));
