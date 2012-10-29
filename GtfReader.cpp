@@ -132,9 +132,27 @@ vector<track_entry>  GtfReader::readFile(QString filename)
     annotation_track.clear();
 
     bool skittleNotes = false;
+    string chromosomeRead;
     if(filename.contains("skittle_notes"))
     {
         skittleNotes = true;
+    }
+    //Get name of chromosome from the beginning of the line and make sure that it matches the current viewed chromosome file
+    else
+    {
+        if(!chrName.empty()){
+            string chrDelim = "chr";
+            int chrStart = chrName.find(chrDelim);
+            int chrEnd = chrName.find(".fa");
+            chromosomeRead = chrName.substr((chrStart + chrDelim.length()), (chrEnd - (chrStart + chrDelim.length())));
+        }
+        else
+        {
+            chromosomeRead = "NONE";
+        }
+
+        //Ask user if our parsed chromosome name is correct
+
     }
 
     srand(time(0));
@@ -147,18 +165,6 @@ vector<track_entry>  GtfReader::readFile(QString filename)
         int stop = 0;
         //string repClass;
 
-        //Get name of chromosome from the beginning of the line and make sure that it matches the current viewed chromosome file
-        string chromosomeRead;
-        if(!chrName.empty()){
-            string chrDelim = "chr";
-            int chrStart = chrName.find(chrDelim);
-            int chrEnd = chrName.find(".fa");
-            chromosomeRead = chrName.substr((chrStart + chrDelim.length()), (chrEnd - (chrStart + chrDelim.length())));
-        }
-        else
-        {
-            chromosomeRead = "NONE";
-        }
         string chromosomeAnnotation;
         lineStr >> chromosomeAnnotation;
 
