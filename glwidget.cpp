@@ -895,10 +895,18 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event)
     int y = (int)(qp.y());
     point2D oglCoords = point2D(x,y);
 
-    if(tool() == ZOOM_TOOL && selectionBoxVisible == true)
+    if( selectionBoxVisible == true )
     {
         selectionBoxVisible = false;
-        zoomToolActivate(event, oglCoords);
+        if(tool() == ZOOM_TOOL  )
+            zoomToolActivate(event, oglCoords);
+
+        if (tool() == ANNOTATE_TOOL )
+        {
+            int start = 1;
+            int end = 2;
+            trackReader->addBookmark(start, end);
+        }
     }
 }
 
