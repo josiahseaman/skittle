@@ -63,8 +63,14 @@ inline string trimPathFromFilename(string path)
     return path.substr(startI+1, sizeI-1);
 }
 
-
+inline bool rangeOverlap(int selectionStart, int selectionEnd, int subjectStart, int subjectEnd)
+{
+    return ((selectionStart >= subjectStart && selectionStart <= subjectEnd)//start in range
+            || (selectionEnd >= subjectStart && selectionEnd <= subjectEnd)//end in range
+            || (selectionStart < subjectStart && selectionEnd > subjectEnd));//in the middle
 }
+
+} // end of namespace SkittleUtil
 
 using namespace SkittleUtil;//this should propagate to any file that includes SkittleUtil.h
 #endif // SKITTLEUTIL_H

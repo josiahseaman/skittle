@@ -149,9 +149,7 @@ vector< vector<track_entry> > AnnotationDisplay::calculateTrackLayout(const vect
             nextInactiveAnnotation++;
         //keep adding annotations that start on this line
         while(nextInactiveAnnotation < (int)annotationFile.size()
-              && ((annotationFile[nextInactiveAnnotation].start >= line_start && annotationFile[nextInactiveAnnotation].start <= line_stop)//start in range
-                  || (annotationFile[nextInactiveAnnotation].stop >= line_start && annotationFile[nextInactiveAnnotation].stop <= line_stop)//end in range
-                  || (annotationFile[nextInactiveAnnotation].start < line_start && annotationFile[nextInactiveAnnotation].stop > line_stop)) )//in the middle
+              && rangeOverlap(annotationFile[nextInactiveAnnotation].start, annotationFile[nextInactiveAnnotation].stop, line_start, line_stop))
         {
             stackEntry(activeEntries, annotationFile[nextInactiveAnnotation++]);		//place new tracks in proper position
         }

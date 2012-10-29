@@ -15,6 +15,8 @@
 #include <math.h>
 #include <sstream>
 #include <vector>
+#include <utility>
+#include <pair.h>
 
 #include <stdlib.h>
 #include <ctime>
@@ -597,14 +599,18 @@ void GLWidget::zoomToolActivate(QMouseEvent *event, point2D oglCoords)
         int startIndex = 1;
         int endIndex = 1;
 
+        int spx = startPoint.x();
+        int epx = endPoint.x();
+
         for(int i = 0; i < (int)graphs.size(); ++i)
         {
             if(!graphs[i]->hidden)
             {
-                float spx = startPoint.x() - graphs[i]->width() + border;
-                float epx = endPoint.x() - graphs[i]->width() + border;
-                startIndex = graphs[i]->getRelativeIndexFromMouseClick(point2D(spx,startPoint.y()));
-                endIndex = graphs[i]->getRelativeIndexFromMouseClick(point2D(epx,endPoint.y()));
+                pair<int,int> indices = graphs[i]->getIndicesFromPoints(point2D(spx,startPoint.y()),point2D(epx,endPoint.y()));
+                startIndex = min(indices.first,indices.second);
+                endIndex = max(indices.first,indices.second);
+                spx = spx - graphs[i]->width() + border;
+                epx = epx - graphs[i]->width() + border;
             }
         }
         zoomRange(startIndex,endIndex);
@@ -908,7 +914,7 @@ void GLWidget::drawSelectionBox(QPointF startPoint,QPointF endPoint)
         int epx = (int)(endPoint.x());
         int epy = (int)(endPoint.y());
 
-        if (spy > epy || spy == epy && spx > epx) //if you drag up, swap the top and bottom of the box
+        if (spy > epy || (spy == epy && spx > epx)) //if you drag up, swap the top and bottom of the box
         {
             spx = (int)(endPoint.x());
             spy = (int)(endPoint.y());

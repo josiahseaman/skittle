@@ -6,6 +6,9 @@
 #include <vector>
 #include "BasicTypes.h"
 #include "TextureCanvas.h"
+#include <utility>
+#include <pair.h>
+#include "SkittleUtil.h"
 /**
 *  This is the base class for all Grapher objects.
 */
@@ -70,6 +73,7 @@ public:
     virtual string SELECT_MouseClick(point2D pt);
     virtual string FIND_MouseClick(point2D pt);
     virtual int getRelativeIndexFromMouseClick(point2D pt);
+    virtual pair<int,int> getIndicesFromPoints(point2D startPoint, point2D endPoint);
     virtual int getBeginningOfLineFromMouseClick(point2D pt);
     virtual int adjustForSampleLengthBounds(int index, int sample_length);
     virtual string SELECT_StringFromMouseClick(int index);

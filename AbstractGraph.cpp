@@ -3,6 +3,9 @@
 #include "glwidget.h"
 #include <sstream>
 #include <math.h>
+#include <utility>
+#include <pair.h>
+#include "SkittleUtil.h"
 
 
 /** *****************
@@ -274,6 +277,21 @@ int AbstractGraph::getRelativeIndexFromMouseClick(point2D pt)
     }
     else
         return -1;
+}
+pair<int,int> AbstractGraph::getIndicesFromPoints(point2D startPoint, point2D endPoint)
+{
+    if (rangeOverlap(startPoint.x,endPoint.x,0,width()))
+    {
+        int spx = min(max(startPoint.x,0),width()); //force value between 0 and width
+        int epx = min(max(endPoint.x,0),width());
+        int startIndex = startPoint.y * ui->widthDial->value() + spx * ui->scaleDial->value();
+        int endIndex = endPoint.y * ui->widthDial->value() + epx * ui->scaleDial->value();
+        startIndex = max(0, startIndex);
+        endIndex = max(0, endIndex);
+        return pair<int,int>(startIndex,endIndex);
+    }
+    else
+        return pair<int,int>(-1,-1);
 }
 
 int AbstractGraph::getBeginningOfLineFromMouseClick(point2D pt)

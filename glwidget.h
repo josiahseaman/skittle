@@ -28,6 +28,7 @@
 #include "BasicTypes.h"
 #include "UiVariables.h"
 #include "MdiChildWindow.h"
+#include "SkittleUtil.h"
 
 class UiVariables;
 class FastaReader;
