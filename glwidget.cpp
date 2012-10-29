@@ -670,7 +670,7 @@ void GLWidget::paintGL()
     {
         glCallList(marker);//possibly replace this with a blinking cursor
     }
-    else if ( tool() == ZOOM_TOOL && selectionBoxVisible == true)
+    if ( tool() == ZOOM_TOOL && selectionBoxVisible == true)
     {
         drawSelectionBox(startPoint, endPoint);
     }
