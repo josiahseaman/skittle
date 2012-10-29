@@ -283,8 +283,8 @@ pair<int,int> AbstractGraph::getIndicesFromPoints(point2D startPoint, point2D en
     {
         int spx = min(max(startPoint.x,0),width()); //force value between 0 and width
         int epx = min(max(endPoint.x,0),width());
-        int startIndex = startPoint.y * ui->widthDial->value() + spx * ui->scaleDial->value();
-        int endIndex = endPoint.y * ui->widthDial->value() + epx * ui->scaleDial->value();
+        int startIndex = startPoint.y * ui->widthDial->value() + spx * ui->scaleDial->value() + ui->startDial->value();
+        int endIndex = endPoint.y * ui->widthDial->value() + epx * ui->scaleDial->value() + ui->startDial->value();
         startIndex = max(0, startIndex);
         endIndex = max(0, endIndex);
         return pair<int,int>(startIndex,endIndex);

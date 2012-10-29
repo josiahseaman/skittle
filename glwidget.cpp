@@ -216,15 +216,9 @@ void GLWidget::displayString(const string* sequence)
 
 void GLWidget::zoomExtents()
 {
-    //these lines zoom out to the full extents of the file
-    float pixelWidth = (float)ui->widthDial->value() / (float)ui->scaleDial->value();
-    float pixelsOnScreen = pixelWidth * (openGlGridHeight()-10);
-    float requiredScale = seq()->size() / pixelsOnScreen;
-    int newScale = max(1, (int)(requiredScale + 0.5) );
-    ui->startDial->setValue(1);
-    ui->changeScale(newScale);
+    zoomRange(1,seq()->size());
 }
-void GLWidget::zoomRange(int startIndex, int endIndex) //make sure startIndex < endIndex when Called
+void GLWidget::zoomRange(int startIndex, int endIndex)
 {
     float pixelWidth = (float)ui->widthDial->value() / (float)ui->scaleDial->value();
     float pixelsOnScreen = pixelWidth * (openGlGridHeight()-10);
@@ -235,7 +229,7 @@ void GLWidget::zoomRange(int startIndex, int endIndex) //make sure startIndex < 
     {
         float requiredLines = selectionSize/pixelWidth;
         float screenHeight = openGlGridHeight() * ((float)ui->zoomDial->value() / 100); //how many pixels at zoom 100
-        float screenWidth = openGlGridWidth() * ((float)ui->zoomDial->value() / 100) - 40;
+        float screenWidth = openGlGridWidth() * ((float)ui->zoomDial->value() / 100) - 50;
         float requiredZoom = (screenHeight / requiredLines); // not percent based
         if (pixelWidth * (requiredZoom) > screenWidth) // if the zoom level makes the line wider than the screen just zoom to fit the widt
             requiredZoom = screenWidth / pixelWidth;
@@ -243,7 +237,7 @@ void GLWidget::zoomRange(int startIndex, int endIndex) //make sure startIndex < 
         ui->changeZoom(newZoom);
     }
 
-    ui->startDial->setValue(startIndex);
+    ui->startDial->setValue(min(startIndex,endIndex));
     ui->changeScale(newScale);
 }
 
@@ -559,7 +553,7 @@ int GLWidget::tool()
 void GLWidget::zoomToolActivate(QMouseEvent *event, point2D oglCoords)
 {
 
-    if (abs((int)endPoint.y() - (int)startPoint.y()) < 2)
+    if (abs((int)endPoint.y() - (int)startPoint.y()) < 2 && abs((int)endPoint.x() - (int)startPoint.x()) < 2)
     {
         float zoomFactor = 1.2;
         if(event->modifiers() & Qt::SHIFT) zoomFactor = 0.8;
@@ -613,11 +607,15 @@ void GLWidget::zoomToolActivate(QMouseEvent *event, point2D oglCoords)
                 pair<int,int> indices = graphs[i]->getIndicesFromPoints(point2D(spx,startPoint.y()),point2D(epx,endPoint.y()));
                 startIndex = min(indices.first,indices.second);
                 endIndex = max(indices.first,indices.second);
+                if (startIndex > 0 && endIndex > 0 && endIndex < seq()->size())
+                {
+                    zoomRange(startIndex,endIndex);
+                    break;
+                }
                 spx = spx - graphs[i]->width() + border;
                 epx = epx - graphs[i]->width() + border;
             }
         }
-        zoomRange(startIndex,endIndex);
     }
 }
 
@@ -852,7 +850,13 @@ void GLWidget::mousePressEvent(QMouseEvent* event)
         changeCursor(Qt::ClosedHandCursor);
     if(tool() == ZOOM_TOOL)
     {
-        startPoint = endPoint = qp; //m:display box, record current pos
+        if (qp.x() < 0) //force position inside graph
+            startPoint = QPointF(0,qp.y());
+        else if (qp.x() >= nuc->width())
+            startPoint = QPointF(0,(qp.y()+1));
+        else
+            startPoint = qp;
+        endPoint = startPoint;
         selectionBoxVisible = true;
     }
     lastPos = event->pos();
@@ -886,7 +890,13 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
             }
             if(tool() == ZOOM_TOOL && selectionBoxVisible == true)
             {
-                endPoint =  evn; //m:set second pos
+
+                if (evn.x() < 0) // force position inside graph
+                    endPoint = QPointF(0,(evn.y()-1));
+                else if (evn.x() >= nuc->width())
+                    endPoint = QPointF(nuc->width(),evn.y());
+                else
+                    endPoint = evn;
             }
         }
         invalidateDisplayGraphs();
@@ -941,20 +951,20 @@ void GLWidget::drawSelectionBox(QPointF startPoint,QPointF endPoint)
 
 
         // force points to be in bounds and make pretty squared off boxes  (TODO: move to mouseMove event)
-        if (spx < 0)
-            spx = 0;
-        if (spx >= lineWidth)
-        {
-            spx = 0;
-            ++spy;
-        }
-        if (epx < 0)
-        {
-            epx = lineWidth;
-            --epy;
-        }
-        if (epx >= lineWidth)
-            epx = lineWidth;
+//        if (spx < 0)
+//            spx = 0;
+//        if (spx >= lineWidth)
+//        {
+//            spx = 0;
+//            ++spy;
+//        }
+//        if (epx < 0)
+//        {
+//            epx = lineWidth;
+//            --epy;
+//        }
+//        if (epx >= lineWidth)
+//            epx = lineWidth;
 
 
         // hairline edge
