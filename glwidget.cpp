@@ -599,7 +599,7 @@ pair<int, int> GLWidget::getSelectionOutcome()
     int startIndex = 1;
     int endIndex = 1;
 
-    point2D spTemp= startPoint;
+    point2D spTemp = startPoint;
     point2D epTemp = endPoint;
 
     for(int i = 0; i < (int)graphs.size(); ++i)
@@ -825,9 +825,11 @@ vector<string> GLWidget::mouseOverText(point2D oglCoords)
 void GLWidget::mousePressEvent(QMouseEvent* event)
 {
     parent->mousePressEvent(event);
+
+    startPoint = pixelToGlCoords(event->pos());
+
     if(tool() == SELECT_TOOL || tool() == FIND_TOOL)
         placeMarker(event->pos());
-    startPoint = pixelToGlCoords(event->pos());
 
     if(tool() == SELECT_TOOL || tool() == FIND_TOOL)
     {
@@ -851,13 +853,6 @@ void GLWidget::mousePressEvent(QMouseEvent* event)
         selectionBoxVisible = true;
     }
 
-//    if (pos.x < 0) //force position inside graph
-//        startPoint = point2D(0, pos.y);
-//    else if (pos.x >= nuc->width())
-//        startPoint = point2D(0,(pos.y + 1));
-//    else
-//        startPoint = pos;
-
     endPoint = startPoint;
 
     mousePressPosition = event->pos();
@@ -867,6 +862,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
     point2D old = pixelToGlCoords(mouseMovePosition);
     endPoint = pixelToGlCoords(event->pos());
+
     if(tool() == SELECT_TOOL || tool() == FIND_TOOL)
         placeMarker(event->pos());
     double zoom = getZoom();
@@ -891,12 +887,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         }
         if(tool() == ZOOM_TOOL && selectionBoxVisible )
         {
-//            if (evn.x() < 0) // force position inside graph
-//                endPoint = point2D(0,(evn.y()-1));
-//            else if (evn.x() >= nuc->width())
-//                endPoint = point2D(nuc->width(),evn.y());
-//            else
-//                endPoint = evn;
+
         }
 
         invalidateDisplayGraphs();
@@ -933,12 +924,13 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 }
 
 //m:draw Selection box
-void GLWidget::drawSelectionBox(point2D start,point2D end)
+void GLWidget::drawSelectionBox(point2D start,point2D end) //, int lineStart, int lineEnd
 {
     if(selectionBoxVisible)
     {
 
-        int lineWidth = nuc->width();
+        int lineEnd = nuc->width();
+        int lineStart = 0;
 
         if (start.y > end.y || (start.y == end.y && start.x > end.x)) //if you drag up,
         {
@@ -947,21 +939,21 @@ void GLWidget::drawSelectionBox(point2D start,point2D end)
             end = temp;
         }
 
-        // force points to be in bounds and make pretty squared off boxes  (TODO: move to mouseMove event)
-//        if (start.x < 0)
-//            start.x = 0;
-//        if (start.x >= lineWidth)
-//        {
-//            start.x = 0;
-//            ++start.y;
-//        }
-//        if (end.x < 0)
-//        {
-//            end.x = lineWidth;
-//            --end.y;
-//        }
-//        if (end.x >= lineWidth)
-//            end.x = lineWidth;
+        // force points to be in bounds and make pretty squared off boxes
+        if (start.x < lineStart)
+            start.x = lineStart;
+        if (start.x >= lineEnd)
+        {
+            start.x = lineStart;
+            ++start.y;
+        }
+        if (end.x < lineStart)
+        {
+            end.x = lineEnd;
+            --end.y;
+        }
+        if (end.x >= lineEnd)
+            end.x = lineEnd;
 
 
         // hairline edge
@@ -970,12 +962,12 @@ void GLWidget::drawSelectionBox(point2D start,point2D end)
         //draw the ragged box
         nuc->paint_line(point2D(-lineThickness, -(start.y + 1 - lineThickness)),        point2D(start.x, -(start.y + 1)), c); //top left
         nuc->paint_line(point2D((start.x - lineThickness), -(start.y - lineThickness)), point2D(start.x, -(start.y + 1)), c); //top jog
-        nuc->paint_line(point2D((start.x - lineThickness), -(start.y - lineThickness)), point2D((lineWidth + lineThickness), -start.y), c); //top right
+        nuc->paint_line(point2D((start.x - lineThickness), -(start.y - lineThickness)), point2D((lineEnd + lineThickness), -start.y), c); //top right
         nuc->paint_line(point2D(-lineThickness, -(end.y + 1)),                          point2D((end.x + lineThickness), -(end.y + 1 + lineThickness)), c); //bottom left
         nuc->paint_line(point2D(end.x, -end.y),                                         point2D((end.x + lineThickness), -(end.y + 1 + lineThickness)), c); //bottom jog
-        nuc->paint_line(point2D(end.x, -end.y),                                         point2D((lineWidth + lineThickness), -(end.y + lineThickness)), c); //bottom right
-        nuc->paint_line(point2D(-lineThickness, -(start.y + 1 - lineThickness)),        point2D(0, -(end.y + 1 + lineThickness)), c); //left
-        nuc->paint_line(point2D(lineWidth, -start.y),                                   point2D((lineWidth + lineThickness), -(end.y + lineThickness)), c); //right
+        nuc->paint_line(point2D(end.x, -end.y),                                         point2D((lineEnd + lineThickness), -(end.y + lineThickness)), c); //bottom right
+        nuc->paint_line(point2D(-lineThickness, -(start.y + 1 - lineThickness)),        point2D(lineStart, -(end.y + 1 + lineThickness)), c); //left
+        nuc->paint_line(point2D(lineEnd, -start.y),                                     point2D((lineEnd + lineThickness), -(end.y + lineThickness)), c); //right
 
         // adjust to taste
         c = color(255,235,80);
@@ -983,16 +975,12 @@ void GLWidget::drawSelectionBox(point2D start,point2D end)
 //        double lineThickness = 1.5;
         //draw the ragged box
         nuc->paint_line(point2D(-lineThickness, -(start.y + 1 - lineThickness)),        point2D(start.x, -(start.y + 1)), c); //top left
-        nuc->paint_line(point2D((start.x - lineThickness), -(start.y - lineThickness)), point2D((lineWidth + lineThickness), -start.y), c); //top right
+        nuc->paint_line(point2D((start.x - lineThickness), -(start.y - lineThickness)), point2D((lineEnd + lineThickness), -start.y), c); //top right
         nuc->paint_line(point2D(-lineThickness, -(end.y + 1)),                          point2D((end.x + lineThickness), -(end.y + 1 + lineThickness)), c); //bottom left
-        nuc->paint_line(point2D(end.x, -end.y),                                         point2D((lineWidth + lineThickness), -(end.y + lineThickness)), c); //bottom right
-        nuc->paint_line(point2D(-lineThickness, -(start.y + 1 - lineThickness)),        point2D(0, -(end.y + 1 + lineThickness)), c); //left
-        nuc->paint_line(point2D(lineWidth, -start.y),                                   point2D((lineWidth + lineThickness), -(end.y + lineThickness)), c); //right
+        nuc->paint_line(point2D(end.x, -end.y),                                         point2D((lineEnd + lineThickness), -(end.y + lineThickness)), c); //bottom right
+        nuc->paint_line(point2D(-lineThickness, -(start.y + 1 - lineThickness)),        point2D(lineStart, -(end.y + 1 + lineThickness)), c); //left
+        nuc->paint_line(point2D(lineEnd, -start.y),                                     point2D((lineEnd + lineThickness), -(end.y + lineThickness)), c); //right
 
-    }
-    else
-    {
-        //m:clear the paint?
     }
 }
 
@@ -1110,6 +1098,14 @@ void GLWidget::setupColorTable()
         colorTable[ (int)'C' ] = color(153, 255, 0);//Cytosine
         colorTable[ (int)'G' ] = color(204, 0, 102);//Guanine
         colorTable[ (int)'T' ] = color(255, 102, 0);//Thymine
+        colorTable[ (int)'N' ] = color( 200, 200, 200);//not sequenced
+    }
+    else if (colorSetting == UiVariables::DARK)
+    {
+        colorTable[ (int)'A' ] = color(131, 106, 7);//Adenine
+        colorTable[ (int)'C' ] = color(110, 54, 76);//Cytosine
+        colorTable[ (int)'G' ] = color(13, 94, 58);//Guanine
+        colorTable[ (int)'T' ] = color(40, 75, 163);//Thymine
         colorTable[ (int)'N' ] = color( 200, 200, 200);//not sequenced
     }
     else if (colorSetting == UiVariables::DRUMS)

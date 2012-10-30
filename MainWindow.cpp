@@ -270,8 +270,9 @@ void MainWindow::createMenus()
     connect(this, SIGNAL(colorSelected(int)), ui, SLOT(changeColorSetting(int)));
 
     createColorPalleteAction(QString("Classic"), UiVariables::CLASSIC, QIcon(":/icons/classic.png"), colorGroup, signalMapper );
-    createColorPalleteAction(QString("Color Blind Safe 1"), UiVariables::COLORBLINDSAFE, QIcon(":/icons/colorblindsafe.png"), colorGroup, signalMapper );
-    createColorPalleteAction(QString("Color Blind Safe 2"), UiVariables::BETTERCBSAFE, QIcon(":/icons/colorblindsafe2.png"), colorGroup, signalMapper );
+    createColorPalleteAction(QString("Summer (Color Blind Safe)"), UiVariables::COLORBLINDSAFE, QIcon(":/icons/colorblindsafe.png"), colorGroup, signalMapper );
+    createColorPalleteAction(QString("Spring (Color Blind Safe)"), UiVariables::BETTERCBSAFE, QIcon(":/icons/colorblindsafe2.png"), colorGroup, signalMapper );
+    createColorPalleteAction(QString("Dark Classic"), UiVariables::DARK, QIcon(":/icons/dark.png"), colorGroup, signalMapper );
     createColorPalleteAction(QString("DRuMS"), UiVariables::DRUMS, QIcon(":/icons/drums.png"), colorGroup, signalMapper );
     createColorPalleteAction(QString("Blues"), UiVariables::BLUES, QIcon(":/icons/blues.png"), colorGroup, signalMapper );
     createColorPalleteAction(QString("Reds"), UiVariables::REDS, QIcon(":/icons/reds.png"), colorGroup, signalMapper );

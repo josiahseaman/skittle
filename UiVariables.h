@@ -22,7 +22,7 @@ public:
     QSpinBox* offsetDial;
     QTextEdit* textArea;
     int colorSetting;
-    enum colorPalletes { CLASSIC, COLORBLINDSAFE, BETTERCBSAFE, DRUMS, BLUES, REDS };
+    enum colorPalletes { CLASSIC, COLORBLINDSAFE, BETTERCBSAFE, DARK, DRUMS, BLUES, REDS };
 
     //	UiVariables();
     UiVariables(QTextEdit* text = NULL);
