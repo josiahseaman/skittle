@@ -149,7 +149,7 @@ void MainWindow::createUiVars()
     settingToolBar->addWidget(doubleDisplayWidth);
     halveDisplayWidth = new QPushButton("/2",this);
     settingToolBar->addWidget(halveDisplayWidth);
-    zoomExtents = new QPushButton("Scale to \nChromosome",this);
+    zoomExtents = new QPushButton("Fit Whole \nFile",this);
     settingToolBar->addWidget(zoomExtents);
 
     settingToolBar->addWidget(new QLabel("Scale"));

@@ -95,7 +95,7 @@ GLWidget::GLWidget(UiVariables* gui, QWidget* parentWidget)
     selectionBoxVisible = false;
     border = 10;
     xPosition = 0;
-    mouseMovePosition = QPoint();
+    mouseMovePosition = QPoint();//you may want to initialize press and release points, start/end
     slideHorizontal(0);
     changeZoom(100);
     setTool(RESIZE_TOOL);
