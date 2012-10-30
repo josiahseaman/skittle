@@ -80,7 +80,8 @@ public:
     void keyPressEvent( QKeyEvent *event );
     void keyReleaseEvent( QKeyEvent *event );
     int tool();
-    void zoomToolActivate(QMouseEvent *event, point2D oglCoords);
+    void zoomToolActivate(bool zoomOut = false);
+    pair<int, int> getSelectionOutcome();
     color colors(char nucleotide);
     void setupColorTable();
     color spectrum(double i);
@@ -131,7 +132,7 @@ signals:
 
 protected:
     void displayTrack(const vector<track_entry>& track);
-    QPointF pixelToGlCoords(QPoint pCoords, double z = 0);
+    point2D pixelToGlCoords(QPoint pCoords, double z = 0);
     int openGlGridHeight();
     int openGlGridWidth();
     void initializeGL();
@@ -143,7 +144,7 @@ protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
-    void drawSelectionBox(QPointF startPoint, QPointF endPoint);
+    void drawSelectionBox(point2D start, point2D end);
     void translate(float dx, float dy);
     void translateOffset(float dx, float dy);
     void changeCursor(Qt::CursorShape cNumber);
@@ -161,7 +162,6 @@ private:
     double xTransOffset;
     double yTransOffset;
     double zTransOffset;
-    QPoint lastPos;
     int xPosition;
     int xOrigin;
     int border;
@@ -171,8 +171,11 @@ private:
     void convertFromGLImage(QImage &img, int w, int h, bool alpha_format, bool include_alpha);
     int getTotalPixelWidth();
     bool selectionBoxVisible;
-    QPointF startPoint;
-    QPointF endPoint;
+    point2D startPoint;
+    point2D endPoint;
+    QPoint mousePressPosition;
+    QPoint mouseMovePosition;
+    QPoint mouseReleasePosition;
 };
 //! [3]
 /* Alu Consensus Sequence 290bp

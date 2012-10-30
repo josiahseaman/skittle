@@ -70,6 +70,7 @@ GLWidget::GLWidget(UiVariables* gui, QWidget* parentWidget)
     setMinimumHeight(100);
     frame = 0;
 
+
     setupColorTable();
     reader = new FastaReader(this, ui);
     trackReader = new GtfReader(ui);
@@ -91,8 +92,10 @@ GLWidget::GLWidget(UiVariables* gui, QWidget* parentWidget)
     addGraph(nuc);
     addGraph(cylinder);
 
+    selectionBoxVisible = false;
     border = 10;
     xPosition = 0;
+    mouseMovePosition = QPoint();
     slideHorizontal(0);
     changeZoom(100);
     setTool(RESIZE_TOOL);
@@ -227,7 +230,7 @@ void GLWidget::zoomRange(int startIndex, int endIndex)
     int newScale = max(1, (int)(requiredScale + 0.5) );
     if (newScale == 1)
     {
-        float requiredLines = selectionSize/pixelWidth;
+        float requiredLines = selectionSize / pixelWidth;
         float screenHeight = openGlGridHeight() * ((float)ui->zoomDial->value() / 100); //how many pixels at zoom 100
         float screenWidth = openGlGridWidth() * ((float)ui->zoomDial->value() / 100) - 50;
         float requiredZoom = (screenHeight / requiredLines); // not percent based
@@ -413,6 +416,11 @@ void GLWidget::setTool(int tool)
     }
 }
 
+int GLWidget::tool()
+{
+    return currentTool;
+}
+
 void GLWidget::slideHorizontal(int x)
 {
     if(x != xPosition)
@@ -545,30 +553,17 @@ void GLWidget::addTrackEntry(track_entry entry, string gtfFileName)
 
 /*****************FUNCTIONS*******************/
 
-int GLWidget::tool()
-{
-    return currentTool;
-}
 
-void GLWidget::zoomToolActivate(QMouseEvent *event, point2D oglCoords)
+void GLWidget::zoomToolActivate(bool zoomOut)
 {
-
-    if (abs((int)endPoint.y() - (int)startPoint.y()) < 2 && abs((int)endPoint.x() - (int)startPoint.x()) < 2)
+    if(zoomOut || (abs(endPoint.y - startPoint.y) < 2 && abs(endPoint.x - startPoint.x) < 2))
     {
         float zoomFactor = 1.2;
-        if(event->modifiers() & Qt::SHIFT) zoomFactor = 0.8;
-        else if(event->button() == Qt::RightButton)
-        {
-            setCursor(zoomOutCursor);
+        if(zoomOut)
             zoomFactor = 0.8;
-        }
-        else
-        {
-            setCursor(zoomInCursor);
-        }
 
         int scale = ui->scaleDial->value();//take current scale
-        int index = oglCoords.y * (ui->widthDial->value()/scale) + oglCoords.x;
+        int index = startPoint.y * (ui->widthDial->value()/scale) + startPoint.x;
         index *= scale;
         index = max(0, index + ui->startDial->value());
         int newSize = (int)(ui->sizeDial->value() / zoomFactor);//calculate new projected size
@@ -591,32 +586,38 @@ void GLWidget::zoomToolActivate(QMouseEvent *event, point2D oglCoords)
                 ui->changeScale(newScale);//set scale to the new value
         }
     }
-
     else // user selected range
     {
-        int startIndex = 1;
-        int endIndex = 1;
+        pair<int,int> results = getSelectionOutcome();
+        if(results.first != -1)
+            zoomRange(results.first, results.second);
+    }
+}
 
-        int spx = startPoint.x();
-        int epx = endPoint.x();
+pair<int, int> GLWidget::getSelectionOutcome()
+{
+    int startIndex = 1;
+    int endIndex = 1;
 
-        for(int i = 0; i < (int)graphs.size(); ++i)
+    point2D spTemp= startPoint;
+    point2D epTemp = endPoint;
+
+    for(int i = 0; i < (int)graphs.size(); ++i)
+    {
+        if(!graphs[i]->hidden)
         {
-            if(!graphs[i]->hidden)
+            pair<int,int> indices = graphs[i]->getIndicesFromPoints(spTemp, epTemp);
+            startIndex = min(indices.first, indices.second);
+            endIndex = max(indices.first, indices.second);
+            if (startIndex > 0 && endIndex > 0 )//&& endIndex < seq()->size())
             {
-                pair<int,int> indices = graphs[i]->getIndicesFromPoints(point2D(spx,startPoint.y()),point2D(epx,endPoint.y()));
-                startIndex = min(indices.first,indices.second);
-                endIndex = max(indices.first,indices.second);
-                if (startIndex > 0 && endIndex > 0 && endIndex < seq()->size())
-                {
-                    zoomRange(startIndex,endIndex);
-                    break;
-                }
-                spx = spx - graphs[i]->width() + border;
-                epx = epx - graphs[i]->width() + border;
+                return pair<int,int>(startIndex,endIndex);
             }
+            spTemp.x -= graphs[i]->width() + border;
+            epTemp.x -= graphs[i]->width() + border;
         }
     }
+    return pair<int,int>(-1,-1);
 }
 
 //***********KEY HANDLING**************
@@ -665,16 +666,16 @@ void GLWidget::keyReleaseEvent( QKeyEvent *event )
 }
 
 //***********Functions*************
-QPointF GLWidget::pixelToGlCoords(QPoint pCoords, double z)
+point2D GLWidget::pixelToGlCoords(QPoint pCoords, double z)
 {
     double mouseX =  pCoords.x();
     double mouseY =  pCoords.y();
     //there was previously an unused GLunproject here
     double zoom = getZoom();
-    float x = (int)((mouseX / 6.0 + xPosition) / zoom ) - border ;
-    float y = (int)((mouseY / 6.0) / zoom );
+    int x = (int)((mouseX / 6.0 + xPosition) / zoom ) - border ;
+    int y = (int)((mouseY / 6.0) / zoom );
 
-    return QPointF(x, y);
+    return point2D(x, y);
 }
 
 int GLWidget::openGlGridHeight()
@@ -727,7 +728,7 @@ void GLWidget::paintGL()
     {
         glCallList(marker);//possibly replace this with a blinking cursor
     }
-    if ( tool() == ZOOM_TOOL && selectionBoxVisible == true)
+    if (selectionBoxVisible)// tool() == ZOOM_TOOL &&  )
     {
         drawSelectionBox(startPoint, endPoint);
     }
@@ -786,8 +787,7 @@ bool GLWidget::event(QEvent* event)
     if (event->type() == QEvent::ToolTip)
     {
         QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
-        QPointF qp = pixelToGlCoords(helpEvent->pos());
-        point2D oglCoords = point2D((int)(qp.x()),(int)(qp.y()));
+        point2D oglCoords = pixelToGlCoords(helpEvent->pos());
         QString text = grabFirstNonEmpty(mouseOverText(oglCoords));
         if( !text.isEmpty() )
         {
@@ -827,13 +827,11 @@ void GLWidget::mousePressEvent(QMouseEvent* event)
     parent->mousePressEvent(event);
     if(tool() == SELECT_TOOL || tool() == FIND_TOOL)
         placeMarker(event->pos());
-    QPointF qp = pixelToGlCoords(event->pos());
-
-    point2D oglCoords = point2D((int)(qp.x()),(int)(qp.y()));
+    startPoint = pixelToGlCoords(event->pos());
 
     if(tool() == SELECT_TOOL || tool() == FIND_TOOL)
     {
-        vector<string> responses = mouseOverText( oglCoords);
+        vector<string> responses = mouseOverText( startPoint);
 
         if(tool() == SELECT_TOOL)
         {
@@ -848,37 +846,40 @@ void GLWidget::mousePressEvent(QMouseEvent* event)
     }
     if(tool() == MOVE_TOOL )
         changeCursor(Qt::ClosedHandCursor);
-    if(tool() == ZOOM_TOOL)
+    if(tool() == ZOOM_TOOL || tool() == ANNOTATE_TOOL )
     {
-        if (qp.x() < 0) //force position inside graph
-            startPoint = QPointF(0,qp.y());
-        else if (qp.x() >= nuc->width())
-            startPoint = QPointF(0,(qp.y()+1));
-        else
-            startPoint = qp;
-        endPoint = startPoint;
         selectionBoxVisible = true;
     }
-    lastPos = event->pos();
+
+//    if (pos.x < 0) //force position inside graph
+//        startPoint = point2D(0, pos.y);
+//    else if (pos.x >= nuc->width())
+//        startPoint = point2D(0,(pos.y + 1));
+//    else
+//        startPoint = pos;
+
+    endPoint = startPoint;
+
+    mousePressPosition = event->pos();
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    QPointF old = pixelToGlCoords(lastPos);
-    QPointF evn = pixelToGlCoords(QPoint(event->x(), event->y()));
+    point2D old = pixelToGlCoords(mouseMovePosition);
+    endPoint = pixelToGlCoords(event->pos());
     if(tool() == SELECT_TOOL || tool() == FIND_TOOL)
         placeMarker(event->pos());
     double zoom = getZoom();
-    float dx = (evn.x() - old.x()) * zoom;
-    float dy = (evn.y() - old.y()) * zoom;
+    float dx = (endPoint.x - old.x) * zoom;
+    float dy = (endPoint.y - old.y) * zoom;
+
     if (event->buttons() & Qt::LeftButton)
     {
-        if(event->modifiers() & Qt::ControlModifier)//Qt::ControlModifier
+        if((tool()== RESIZE_TOOL || tool()== MOVE_TOOL) && (event->modifiers() & Qt::ControlModifier))
         {
             translateOffset(-dx, dy);
         }
-        else
-        {
+        else{
             if(tool() == MOVE_TOOL)
                 translate(-dx, dy);
             if(tool() == RESIZE_TOOL)
@@ -886,111 +887,107 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
                 translate(0, dy);//still scroll up/down
                 int value = static_cast<int>(dx * ui->scaleDial->value()*2.0 + ui->widthDial->value() + 0.5);
                 ui->changeWidth(value);
-
-            }
-            if(tool() == ZOOM_TOOL && selectionBoxVisible == true)
-            {
-
-                if (evn.x() < 0) // force position inside graph
-                    endPoint = QPointF(0,(evn.y()-1));
-                else if (evn.x() >= nuc->width())
-                    endPoint = QPointF(nuc->width(),evn.y());
-                else
-                    endPoint = evn;
             }
         }
+        if(tool() == ZOOM_TOOL && selectionBoxVisible )
+        {
+//            if (evn.x() < 0) // force position inside graph
+//                endPoint = point2D(0,(evn.y()-1));
+//            else if (evn.x() >= nuc->width())
+//                endPoint = point2D(nuc->width(),evn.y());
+//            else
+//                endPoint = evn;
+        }
+
         invalidateDisplayGraphs();
     }
-    lastPos = event->pos();
+    mouseMovePosition = event->pos();
 }
 
 void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    QPointF qp = pixelToGlCoords(event->pos());
-    int x = (int)(qp.x());
-    int y = (int)(qp.y());
-    point2D oglCoords = point2D(x,y);
+    mouseReleasePosition = event->pos();
+    endPoint = pixelToGlCoords(event->pos());
 
     if(tool() == MOVE_TOOL )
         changeCursor(Qt::OpenHandCursor);
-    if( selectionBoxVisible == true )
+    if( selectionBoxVisible)
     {
         selectionBoxVisible = false;
         if(tool() == ZOOM_TOOL  )
-            zoomToolActivate(event, oglCoords);
-
+        {
+            bool zoomingOut = (event->modifiers() & Qt::SHIFT) || (event->button() == Qt::RightButton);
+            if(zoomingOut)
+                setCursor(zoomOutCursor);
+            else
+                setCursor(zoomInCursor);
+            zoomToolActivate(zoomingOut);
+        }
         if (tool() == ANNOTATE_TOOL )
         {
-            int start = 1;
-            int end = 2;
-            trackReader->addBookmark(start, end);
+            pair<int,int> results = getSelectionOutcome();
+            if(results.first != -1)
+                trackReader->addBookmark(results.first, results.second);
         }
     }
 }
 
 //m:draw Selection box
-void GLWidget::drawSelectionBox(QPointF startPoint,QPointF endPoint)
+void GLWidget::drawSelectionBox(point2D start,point2D end)
 {
-    if(selectionBoxVisible == true)
+    if(selectionBoxVisible)
     {
 
         int lineWidth = nuc->width();
-        int spx = (int)(startPoint.x());//round off
-        int spy = (int)(startPoint.y());
-        int epx = (int)(endPoint.x());
-        int epy = (int)(endPoint.y());
 
-        if (spy > epy || (spy == epy && spx > epx)) //if you drag up, swap the top and bottom of the box
+        if (start.y > end.y || (start.y == end.y && start.x > end.x)) //if you drag up,
         {
-            spx = (int)(endPoint.x());
-            spy = (int)(endPoint.y());
-            epx = (int)(startPoint.x());
-            epy = (int)(startPoint.y());
+            point2D temp = start;//swap the top and bottom of the box
+            start = end;
+            end = temp;
         }
 
-
-
         // force points to be in bounds and make pretty squared off boxes  (TODO: move to mouseMove event)
-//        if (spx < 0)
-//            spx = 0;
-//        if (spx >= lineWidth)
+//        if (start.x < 0)
+//            start.x = 0;
+//        if (start.x >= lineWidth)
 //        {
-//            spx = 0;
-//            ++spy;
+//            start.x = 0;
+//            ++start.y;
 //        }
-//        if (epx < 0)
+//        if (end.x < 0)
 //        {
-//            epx = lineWidth;
-//            --epy;
+//            end.x = lineWidth;
+//            --end.y;
 //        }
-//        if (epx >= lineWidth)
-//            epx = lineWidth;
+//        if (end.x >= lineWidth)
+//            end.x = lineWidth;
 
 
         // hairline edge
         color c = color(200,185,60);
         double lineThickness = 0.3;
         //draw the ragged box
-        nuc->paint_line(point(-lineThickness, -(spy + 1 - lineThickness), 0),point(spx, -(spy + 1), 0), c); //top left
-        nuc->paint_line(point((spx - lineThickness), -(spy - lineThickness), 0),point(spx, -(spy + 1), 0), c); //top jog
-        nuc->paint_line(point((spx - lineThickness), -(spy - lineThickness), 0),point((lineWidth + lineThickness), -spy, 0), c); //top right
-        nuc->paint_line(point(-lineThickness, -(epy + 1), 0),point((epx + lineThickness), -(epy + 1 + lineThickness), 0), c); //bottom left
-        nuc->paint_line(point(epx, -epy, 0),point((epx + lineThickness), -(epy + 1 + lineThickness), 0), c); //bottom jog
-        nuc->paint_line(point(epx, -epy, 0),point((lineWidth + lineThickness), -(epy + lineThickness), 0), c); //bottom right
-        nuc->paint_line(point(-lineThickness, -(spy + 1 - lineThickness), 0),point(0, -(epy + 1 + lineThickness), 0), c); //left
-        nuc->paint_line(point(lineWidth, -spy, 0),point((lineWidth + lineThickness), -(epy + lineThickness), 0), c); //right
+        nuc->paint_line(point2D(-lineThickness, -(start.y + 1 - lineThickness)),        point2D(start.x, -(start.y + 1)), c); //top left
+        nuc->paint_line(point2D((start.x - lineThickness), -(start.y - lineThickness)), point2D(start.x, -(start.y + 1)), c); //top jog
+        nuc->paint_line(point2D((start.x - lineThickness), -(start.y - lineThickness)), point2D((lineWidth + lineThickness), -start.y), c); //top right
+        nuc->paint_line(point2D(-lineThickness, -(end.y + 1)),                          point2D((end.x + lineThickness), -(end.y + 1 + lineThickness)), c); //bottom left
+        nuc->paint_line(point2D(end.x, -end.y),                                         point2D((end.x + lineThickness), -(end.y + 1 + lineThickness)), c); //bottom jog
+        nuc->paint_line(point2D(end.x, -end.y),                                         point2D((lineWidth + lineThickness), -(end.y + lineThickness)), c); //bottom right
+        nuc->paint_line(point2D(-lineThickness, -(start.y + 1 - lineThickness)),        point2D(0, -(end.y + 1 + lineThickness)), c); //left
+        nuc->paint_line(point2D(lineWidth, -start.y),                                   point2D((lineWidth + lineThickness), -(end.y + lineThickness)), c); //right
 
         // adjust to taste
         c = color(255,235,80);
         lineThickness = max(1.0, (double)(2.75 - (ui->zoomDial->value())/400)); // thickness scales inversely to zoom level
 //        double lineThickness = 1.5;
         //draw the ragged box
-        nuc->paint_line(point(-lineThickness, -(spy + 1 - lineThickness), 0),point(spx, -(spy + 1), 0), c); //top left
-        nuc->paint_line(point((spx - lineThickness), -(spy - lineThickness), 0),point((lineWidth + lineThickness), -spy, 0), c); //top right
-        nuc->paint_line(point(-lineThickness, -(epy + 1), 0),point((epx + lineThickness), -(epy + 1 + lineThickness), 0), c); //bottom left
-        nuc->paint_line(point(epx, -epy, 0),point((lineWidth + lineThickness), -(epy + lineThickness), 0), c); //bottom right
-        nuc->paint_line(point(-lineThickness, -(spy + 1 - lineThickness), 0),point(0, -(epy + 1 + lineThickness), 0), c); //left
-        nuc->paint_line(point(lineWidth, -spy, 0),point((lineWidth + lineThickness), -(epy + lineThickness), 0), c); //right
+        nuc->paint_line(point2D(-lineThickness, -(start.y + 1 - lineThickness)),        point2D(start.x, -(start.y + 1)), c); //top left
+        nuc->paint_line(point2D((start.x - lineThickness), -(start.y - lineThickness)), point2D((lineWidth + lineThickness), -start.y), c); //top right
+        nuc->paint_line(point2D(-lineThickness, -(end.y + 1)),                          point2D((end.x + lineThickness), -(end.y + 1 + lineThickness)), c); //bottom left
+        nuc->paint_line(point2D(end.x, -end.y),                                         point2D((lineWidth + lineThickness), -(end.y + lineThickness)), c); //bottom right
+        nuc->paint_line(point2D(-lineThickness, -(start.y + 1 - lineThickness)),        point2D(0, -(end.y + 1 + lineThickness)), c); //left
+        nuc->paint_line(point2D(lineWidth, -start.y),                                   point2D((lineWidth + lineThickness), -(end.y + lineThickness)), c); //right
 
     }
     else
@@ -1035,13 +1032,11 @@ void GLWidget::changeCursor(Qt::CursorShape cNumber)
 
 void GLWidget::placeMarker(QPoint pixelCoords)
 {
-    QPointF qp = pixelToGlCoords(pixelCoords);
-    int x = (int)(qp.x());//round off
-    int y = (int)(qp.y());//round off
+    point2D pt = pixelToGlCoords(pixelCoords);
     //glDeleteLists(marker, 1);
     marker = glGenLists(1);
     glNewList(marker, GL_COMPILE);
-    nuc->paint_square(point(x, -y, 0), color(255,255,0));
+    nuc->paint_square(point(pt.x, -pt.y, 0), color(255,255,0));
     glEndList();
 
     updateDisplay();

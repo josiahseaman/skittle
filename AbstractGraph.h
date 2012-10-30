@@ -51,7 +51,7 @@ public:
 
     virtual int height();
     virtual void paint_square(point position, color c);
-    virtual void paint_line(point startPoint, point endPoint, color c);
+    virtual void paint_line(point2D startPoint, point2D endPoint, color c);
     virtual void loadTextureCanvas(bool raggedEdge = false);
     virtual void storeDisplay(vector<color>& pixels, int width, bool raggedEdge = false);
     virtual bool updateInt(int& subject, int& value);
