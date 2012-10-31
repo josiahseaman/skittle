@@ -90,7 +90,7 @@ QScrollArea* RepeatMap::settingsUi()
     
     QSpinBox* graphWidthDial  = new QSpinBox(settingsTab);
     graphWidthDial->setMinimum(1);
-    graphWidthDial->setMaximum(250);
+    graphWidthDial->setMaximum(500);
     graphWidthDial->setSingleStep(10);
     graphWidthDial->setValue(F_width);
     formLayout->addRow("Graph Display Width:", graphWidthDial);
@@ -292,7 +292,6 @@ void RepeatMap::changeFStart(int val)
 
 void RepeatMap::changeGraphWidth(int val)
 {
-    val = min(250, val);
     if(updateInt(F_width, val))
     {
         //freq.clear();
@@ -387,7 +386,7 @@ void RepeatMap::calculate(vector<color>& img, int pixelsPerSample)//constructs t
         int offset = h * pixelsPerSample;
         for(int w = 1; w <= F_width; w++)//calculate across widths 1-F_width
         {
-            freq[h][w] = .5 * (1.0 + correlate(img, offset, offset+w, pixelsPerSample));
+            freq[h][w] = .5 * (1.0 + correlate(img, offset, offset + w + F_start, pixelsPerSample));
         }
     }
     upToDate = true;
@@ -462,7 +461,7 @@ double RepeatMap::correlate(vector<color>& img, int beginA, int beginB, int pixe
 int RepeatMap::width()
 {
     int w = F_width;
-    if(using3merGraph)
+    if(using3merGraph && ui->scaleDial->value() == 1)
         w += barWidth + spacerWidth;
     return w;
 }

@@ -595,7 +595,6 @@ void GLWidget::zoomToolActivate(bool zoomOut)
             zoomRange(results.first, results.second);
         }
     }
-    ui->print("offset is ", getSelectionOutcome(true).first);
 
     emit xOffsetChange(getSelectionOutcome(true).first);
 
