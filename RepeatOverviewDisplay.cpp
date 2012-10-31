@@ -404,7 +404,7 @@ int RepeatOverviewDisplay::getRelativeIndexFromMouseClick(point2D pt)
 {
     if( pt.x < width() && pt.x >= 0 && pt.y <= height() )//check if it is inside the box
     {
-        int index = pt.y * width()*internalScale //the bp per line is not quite ui.widthDial.value() because it needs to be a multiple of 4.
+        int index = pt.y * width()*internalScale //the bp per line is not quite ui->widthDial->value() because it needs to be a multiple of 4.
                 + pt.x * internalScale;
         index = max(0, index);
         return index;
