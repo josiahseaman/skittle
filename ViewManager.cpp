@@ -11,30 +11,24 @@
 /** *******************************************
 ViewManager is the 'Multiple Document Interface' responsible for coordinating the existance of
 multiple windows being open inside Skittle at any one time.  Each window is tied to one file.
-The user has the option of keeping all windows in sync with each other or treating them as
-different instances of the program through the mainWindow->syncCheckBox.
 
-In the case wherethe windows are synced, changes to the dials are connected to each window and
-propagate to display updates.  In the case where they are not synced, switching between active
-windows actually changes the values of the dials to stored values.  This requires the creation
-of local copies of UiVariables, one for each window (MdiChildWindow).  The conditional connections
-go from the Global UiVariables set to each othe local UiVariables.  When a new window becomes
-active, the old variables must be disconnected, the globals are updated, and the new active
-variables are connected to them.  ViewManager contains all the logic for this dance of connections,
-values, and updates.  Look at addNewView() to see what happens when a new player comes on stage.
+Changes to the dials are connected to each window and propagate to display updates.
+Offsets must be handled as a special condition.  Look at addNewView() to see what happens
+when a new player comes on stage.
 
 Window Hierarchy:
 MainWindow -> (1) Viewmanager -> (many) MdiChildWindow -> (1) GLWidget -> (1)FastaReader -> (1)File
 MainWindow is at the top of a window hierarchy.  The center widget of MainWindow is a single
 ViewManager which inherits from MdiArea.  The multiple document interface (MDI) can have multiple
-MdiChildWindows.  Each MdiChildWindow has only one GLWidget tied to one file.  MainWindow is
-the primary owner of the UiVariables object that is passed for signals all throughout the program.
+MdiChildWindows.  Each MdiChildWindow has only one GLWidget tied to one file.
+UiVariables is a singleton and can be accessed anywhere by calling UiVariables::Instance().  It
+is responsible for maintaining state all throughout the program.
 ********************************************/
 
 ViewManager::ViewManager(MainWindow* window, UiVariables* gui)
     : QMdiArea(window)
 {
-    globalUi = gui;
+    ui = gui;
     mainWindow = window;
     activeWidget = NULL;
 
@@ -43,21 +37,21 @@ ViewManager::ViewManager(MainWindow* window, UiVariables* gui)
     createConnections();
 
     addNewView();
-    views[0]->showMaximized();
+    if(activeWidget)
+        activeWidget->showMaximized();//if there's only one window, I'd like it maximized
 }
 
 void ViewManager::createConnections()
 {
     connect(this, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(changeSelection(QMdiSubWindow*)));
     connect(mainWindow->addViewAction, SIGNAL(triggered()), this, SLOT(addNewView()));
-    connect(mainWindow->syncCheckBox, SIGNAL(stateChanged(int)), this, SLOT(handleWindowSync()));
     /****CONNECT ui VARIABLES*******/
 
-    connect(globalUi->widthDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
-    connect(globalUi->zoomDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
-    connect(globalUi->scaleDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
-    connect(globalUi->startDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
-    connect(globalUi->sizeDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
+    connect(ui->widthDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
+    connect(ui->zoomDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
+    connect(ui->scaleDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
+    connect(ui->startDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
+    connect(ui->sizeDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
 }
 
 void ViewManager::uiToGlwidgetConnections(GLWidget* active)
@@ -80,6 +74,8 @@ void ViewManager::uiToGlwidgetConnections(GLWidget* active)
 //public slots
 GLWidget* ViewManager::addNewView(bool suppressOpen)
 {
+    if(activeWidget)
+        activeWidget->showNormal();//this should be the equivalent of clicking 'restore' or not maximized
     int offsetIndex = newOffsetDial();
 
     MdiChildWindow* child = new MdiChildWindow(offsetIndex, mainWindow->tabWidget);
@@ -114,24 +110,18 @@ void ViewManager::changeSelection(MdiChildWindow* newActiveMdi)
 {
     if(newActiveMdi == NULL || newActiveMdi->glWidget == activeWidget)
         return;
-    GLWidget* newActiveGlWidget = newActiveMdi->glWidget;
+
     GLWidget* oldActiveGlWidget = activeWidget;
 
     int tabIndex = mainWindow->tabWidget->currentIndex();
     if(oldActiveGlWidget != NULL)//deal with oldActiveGlWidget
     {
         oldActiveGlWidget->parent->hideSettingsTabs();
-        disconnectLocalPushToGlobal(oldActiveGlWidget, vars(oldActiveGlWidget));
-        if(mainWindow->syncCheckBox->isChecked() == false )
-            disconnectGlobalPushToLocal(oldActiveGlWidget, vars(oldActiveGlWidget));
     }
-    //deal with newActiveGlWidget
-    connectGlobalPushToLocal(newActiveGlWidget, vars(newActiveGlWidget));//this will not create duplicate connections
-    connectLocalPushToGlobal(newActiveGlWidget, vars(newActiveGlWidget));
     newActiveMdi->showSettingsTabs();
 
     mainWindow->tabWidget->setCurrentIndex(tabIndex);
-    activeWidget = newActiveGlWidget;
+    activeWidget = newActiveMdi->glWidget ;
     activeWidget->setTotalDisplayWidth();
 }
 
@@ -191,47 +181,18 @@ void ViewManager::jumpToPrevAnnotation()
     }
 }
 
-void ViewManager::handleWindowSync()
-{
-    if( mainWindow->syncCheckBox->isChecked() )//reconnect all windows
-    {
-        for(int i = 0; i < (int)views.size(); ++i)
-        {
-            connectGlobalPushToLocal(views[i]->glWidget, views[i]->ui);
-        }
-    }
-    else//disconnect all windows but the current one
-    {
-        for(int i = 0; i < (int)views.size(); ++i)
-        {
-            if(views[i]->glWidget != activeWidget)
-                disconnectGlobalPushToLocal(views[i]->glWidget, views[i]->ui);
-        }
-    }
-}
-
 void ViewManager::changeGlobalStart()
 {
 //    UiVariables* local = vars(activeWidget);
-    int preOffsetStart = max(1, globalUi->startDial->value() - globalUi->getOffsetDial(0)->value());//TODO: use widget offsetIndex
-    globalUi->changeStart(preOffsetStart);
+    int preOffsetStart = max(1, ui->startDial->value() - ui->getOffsetDial(0)->value());//TODO: use widget offsetIndex
+    ui->changeStart(preOffsetStart);
 }
 
 //PRIVATE FUNCTIONS//
-void ViewManager::broadcastPublicValues(UiVariables* local)
-{
-    local->startDial->setValue(globalUi->startDial->value());
-    local->sizeDial->setValue(globalUi->sizeDial->value());
-    local->widthDial->setValue(globalUi->widthDial->value());
-    local->scaleDial->setValue(globalUi->scaleDial->value());
-    local->zoomDial->setValue(globalUi->zoomDial->value());
-    local->colorSetting = globalUi->colorSetting;
-}
-
 int ViewManager::newOffsetDial()
 {
-    int offsetIndex = globalUi->newOffsetDial();
-    QSpinBox* offset = globalUi->getOffsetDial(offsetIndex);
+    int offsetIndex = ui->newOffsetDial();
+    QSpinBox* offset = ui->getOffsetDial(offsetIndex);
     if(offset)
     {
         offset->show();
@@ -240,73 +201,13 @@ int ViewManager::newOffsetDial()
     return offsetIndex;
 }
 
-void ViewManager::printNum(int num)
-{
-    globalUi->print("Global:  ", num);
-}
-
-void ViewManager::printNum2(int num)
-{
-    globalUi->print("Local:   ", num);
-}
-
-void ViewManager::connectGlobalPushToLocal(GLWidget* active, UiVariables* local) //all windows are listening with syncCheckbox
-{
-    /** We are using Qt::UniqueConnection just to make sure we aren't forming duplicate connections */
-    //connect(globalUi->sizeDial, SIGNAL(valueChanged(int)), local->sizeDial   , SLOT(setValue(int)));
-    connect(globalUi->widthDial	, SIGNAL(valueChanged(int)), local             , SLOT(changeWidth(int)), Qt::UniqueConnection);
-    connect(globalUi->scaleDial	, SIGNAL(valueChanged(int)), local             , SLOT(changeScale(int)), Qt::UniqueConnection);
-    connect(globalUi->zoomDial  , SIGNAL(valueChanged(int)), local->zoomDial   , SLOT(setValue(int)), Qt::UniqueConnection);
-    connect(globalUi, SIGNAL(internalsUpdated()), active, SLOT(invalidateDisplayGraphs()), Qt::UniqueConnection);
-    connect(globalUi, SIGNAL(colorsChanged(int)), local, SLOT(changeColorSetting(int)), Qt::UniqueConnection); // Should never be disconnected
-}
-
-void ViewManager::connectLocalPushToGlobal(GLWidget* active, UiVariables* local) //only active window gets to push to globalUi
-{
-    connect(local->sizeDial	 , SIGNAL(valueChanged(int)), globalUi->sizeDial	, SLOT(setValue(int)));
-    connect(local->widthDial , SIGNAL(valueChanged(int)), globalUi->widthDial	, SLOT(setValue(int)));
-    connect(local->startDial , SIGNAL(valueChanged(int)), this, SLOT(changeGlobalStart()));//NEW:widget -> local->start -> vMan.slots -> pub.start
-    connect(local->scaleDial , SIGNAL(valueChanged(int)), globalUi->scaleDial	, SLOT(setValue(int)));
-    connect(local->zoomDial	 , SIGNAL(valueChanged(int)), globalUi->zoomDial	, SLOT(setValue(int)));
-
-    //when a local copy is updated, globals is updated but without this line, the other
-    //GLwidgets fail to refresh.
-    connect(local, SIGNAL(internalsUpdated()), globalUi, SIGNAL(internalsUpdated()));
-}
-
-void ViewManager::disconnectGlobalPushToLocal(GLWidget* active, UiVariables* local)
-{
-    disconnect(globalUi->sizeDial		, SIGNAL(valueChanged(int)), local->sizeDial	, SLOT(setValue(int)));
-    disconnect(globalUi->widthDial      , SIGNAL(valueChanged(int)), local              , SLOT(changeWidth(int)));
-    disconnect(globalUi->scaleDial      , SIGNAL(valueChanged(int)), local              , SLOT(changeScale(int)));
-    disconnect(globalUi->zoomDial		, SIGNAL(valueChanged(int)), local->zoomDial	, SLOT(setValue(int)));
-    disconnect(globalUi, SIGNAL(internalsUpdated()), active, SLOT(invalidateDisplayGraphs()));
-}
-
-void ViewManager::disconnectLocalPushToGlobal(GLWidget* active, UiVariables* local)
-{
-    disconnect(local->sizeDial	, SIGNAL(valueChanged(int)), globalUi->sizeDial	, SLOT(setValue(int)));
-    disconnect(local->widthDial	, SIGNAL(valueChanged(int)), globalUi->widthDial	, SLOT(setValue(int)));
-    disconnect(local->startDial , SIGNAL(valueChanged(int)), this, SLOT(changeGlobalStart()));
-    disconnect(local->scaleDial	, SIGNAL(valueChanged(int)), globalUi->scaleDial	, SLOT(setValue(int)));
-    disconnect(local->zoomDial	, SIGNAL(valueChanged(int)), globalUi->zoomDial	, SLOT(setValue(int)));
-    disconnect(local, SIGNAL(internalsUpdated()), globalUi, SIGNAL(internalsUpdated()));
-
-}
-
-
 UiVariables* ViewManager::vars(GLWidget* active)
 {
     return dynamic_cast<MdiChildWindow*>(active->parent)->ui;
 }
 
-void ViewManager::updateCurrentDisplay(){
-    if (mainWindow->syncCheckBox->isChecked())
-    {
-        for(int i = 0; i < (int)views.size(); ++i)
-            views[i]->glWidget->invalidateDisplayGraphs();
-    }
-    else {
-        activeWidget->invalidateDisplayGraphs();
-    }
+void ViewManager::updateCurrentDisplay()
+{
+    for(int i = 0; i < (int)views.size(); ++i)
+        views[i]->glWidget->invalidateDisplayGraphs();
 }

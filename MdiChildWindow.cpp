@@ -8,8 +8,7 @@ using std::find;
 /** ************************************************
 MdiChildWindow acts as the interface between ViewManager and GLWidget. It means that a subwindow
 inside of skittle can be minimized, restored, and closed.  Multiple files can be laid out side by
-side for comparison.  ViewManager and MdiChildWindow handle the synchronization of variables between
-windows.  When MainWindow::syncCheckBox is checked variable updates from the user propagate to all
+side for comparison.  ViewManager and MdiChildWindow handle the start offset between
 windows.  Each window that is created makes a new ui->offsetDial that manages the relative offset between
 the local and global start position (positive or negative).  The other function of MdiChildWindow
 is to ensure that the correct settings tabs for the active window are displayed on the Information Display

@@ -114,7 +114,6 @@ private:
     QPushButton *doubleDisplayWidth;
     QPushButton *halveDisplayWidth;
     QPushButton *zoomExtents;
-    QCheckBox* syncCheckBox;
 
 
     QAction *moveAction;

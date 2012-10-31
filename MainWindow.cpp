@@ -173,10 +173,6 @@ void MainWindow::createUiVars()
     settingToolBar->addWidget(multiW);
     settingToolBar->addSeparator();
     //QActionGroup* multiGroup = new QActionGroup(this);
-    syncCheckBox = new QCheckBox("Synchronize Views", this);
-    syncCheckBox->setCheckState(Qt::Checked);
-    //multiGroup->addWidget(syncCheckBox);
-    settingToolBar->addWidget(syncCheckBox);
     settingToolBar->addWidget( new QLabel("Offsets:"));
 
 }
