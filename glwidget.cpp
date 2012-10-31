@@ -596,8 +596,6 @@ void GLWidget::zoomToolActivate(bool zoomOut)
         }
     }
 
-    emit xOffsetChange(getSelectionOutcome(true).first);
-
 }
 
 pair<int, int> GLWidget::getSelectionOutcome(bool getGraphConstraints)
@@ -1113,8 +1111,8 @@ void GLWidget::setupColorTable()
     }
     else if (colorSetting == UiVariables::DARK)
     {
-        colorTable[ (int)'A' ] = color(131, 106, 7);//Adenine
-        colorTable[ (int)'C' ] = color(110, 54, 76);//Cytosine
+        colorTable[ (int)'A' ] = color(152, 147, 173);//Adenine
+        colorTable[ (int)'C' ] = color(84, 40, 59);//Cytosine
         colorTable[ (int)'G' ] = color(13, 94, 58);//Guanine
         colorTable[ (int)'T' ] = color(40, 75, 163);//Thymine
         colorTable[ (int)'N' ] = color( 200, 200, 200);//not sequenced
