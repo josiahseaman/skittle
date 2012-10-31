@@ -113,20 +113,20 @@ void RepeatMap::display()
 
     if( !upToDate )
     {
-        if((ui->scaleDial->value() > 1)&& nuc != NULL)
+        if((ui->getScale() > 1)&& nuc != NULL)
         {
             nuc->checkVariables();
             if(!nuc->upToDate)
             {
                 nuc->calculateOutputPixels();
             }
-            int displayWidth = ui->getWidth() / ui->scaleDial->value();
+            int displayWidth = ui->getWidth() / ui->getScale();
             calculate(nuc->outputPixels, displayWidth);
         }
         else
         {
             freq_map();
-            if(using3merGraph && ui->scaleDial->value() == 1)
+            if(using3merGraph && ui->getScale() == 1)
             {
                 vector<float> scores_3mer = convolution_3mer();
                 vector<float> smoothed_scores = lowPassFilter(scores_3mer);
@@ -137,7 +137,7 @@ void RepeatMap::display()
     load_canvas();
     glPushMatrix();
     glScaled(1,-1,1);
-    if(using3merGraph && ui->scaleDial->value() == 1)// && canvas_3mer != NULL)
+    if(using3merGraph && ui->getScale() == 1)// && canvas_3mer != NULL)
     {
         canvas_3mer->display();
         glTranslated(barWidth+spacerWidth, 0, 0);
@@ -146,7 +146,7 @@ void RepeatMap::display()
 
 
     //Draw Red indicator according to Width
-    int displayWidth = ui->getWidth() / ui->scaleDial->value();
+    int displayWidth = ui->getWidth() / ui->getScale();
 
     glColor4f(1,0,0, 1);//red
     glTranslated(displayWidth - F_start, 500, 0);
@@ -216,7 +216,7 @@ GLuint RepeatMap::render()
 
 void RepeatMap::freq_map()
 {
-    qDebug() << "Width: " << ui->getWidth() << "\nScale: " << ui->scaleDial->value() << "\nStart: " << ui->getStart(glWidget);
+    qDebug() << "Width: " << ui->getWidth() << "\nScale: " << ui->getScale() << "\nStart: " << ui->getStart(glWidget);
 
     const char* genome = sequence->c_str() + ui->getStart(glWidget);//TODO: find a safer way to access this
     for( int h = 0; h < height(); h++)
@@ -275,7 +275,7 @@ vector<float> RepeatMap::convolution_3mer()
 
 int RepeatMap::height()
 {
-    F_height = (((long int)current_display_size()) - (F_start-1)*ui->scaleDial->value() - F_width*ui->scaleDial->value() )
+    F_height = (((long int)current_display_size()) - (F_start-1)*ui->getScale() - F_width*ui->getScale() )
             / ui->getWidth();
 
     F_height = max(0, min(400, F_height) );
@@ -326,7 +326,7 @@ string RepeatMap::SELECT_MouseClick(point2D pt)
             return string();
 
         int percentage = freq[pt.y][pt.x+1] * 100;//+1 because offset 1 is the first pixel [0]
-        pt.x *= ui->scaleDial->value();
+        pt.x *= ui->getScale();
         int index = pt.y * ui->getWidth();
         index = index + ui->getStart(glWidget);
         int index2 = index + pt.x + F_start;
@@ -351,7 +351,7 @@ int RepeatMap::getRelativeIndexFromMouseClick(point2D pt)
 /***Correlation***/
 vector<point> RepeatMap::bestMatches()
 {
-    //calculate(color_avgs, width() / ui->scaleDial->value());
+    //calculate(color_avgs, width() / ui->getScale());
 
     vector<point> best_matches;
     for(int h =0; h < height(); h++)
@@ -461,7 +461,7 @@ double RepeatMap::correlate(vector<color>& img, int beginA, int beginB, int pixe
 int RepeatMap::width()
 {
     int w = F_width;
-    if(using3merGraph && ui->scaleDial->value() == 1)
+    if(using3merGraph && ui->getScale() == 1)
         w += barWidth + spacerWidth;
     return w;
 }

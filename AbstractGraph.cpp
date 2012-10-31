@@ -215,7 +215,7 @@ void AbstractGraph::setSequence(const string* seq)
 
 int AbstractGraph::width() 
 {
-    return ui->getWidth() / ui->scaleDial->value();
+    return ui->getWidth() / ui->getScale();
 }
 
 QScrollArea* AbstractGraph::settingsUi()
@@ -270,7 +270,7 @@ int AbstractGraph::getRelativeIndexFromMouseClick(point2D pt)
 {
     if( pt.x < width() && pt.x >= 0 && pt.y <= height() )//check if it is inside the box
     {
-        int index = pt.y * ui->getWidth() + pt.x * ui->scaleDial->value();
+        int index = pt.y * ui->getWidth() + pt.x * ui->getScale();
         index = max(0, index);
         return index;
     }

@@ -223,7 +223,7 @@ void GLWidget::zoomExtents()
 void GLWidget::zoomRange(int startIndex, int endIndex)
 {
     int newZoom = -1;
-    float pixelWidth = (float)ui->getWidth() / (float)ui->scaleDial->value();
+    float pixelWidth = (float)ui->getWidth() / (float)ui->getScale();
     float pixelsOnScreen = pixelWidth * (openGlGridHeight()-10);
     int selectionSize = abs(endIndex - startIndex);
     float requiredScale = (selectionSize) / pixelsOnScreen;
@@ -301,7 +301,7 @@ void GLWidget::on_screenCaptureButton_clicked()
     }
 
     stringstream namestream;
-    namestream << chromosomeName << "_w-" << ui->getWidth() << "_st-" << ui->getStart(glWidget) << "_sc-" << ui->scaleDial->value() << ".png";
+    namestream << chromosomeName << "_w-" << ui->getWidth() << "_st-" << ui->getStart(glWidget) << "_sc-" << ui->getScale() << ".png";
 
     QString filename = QFileDialog::getSaveFileName(this, tr("Save Image"), namestream.str().c_str(), tr("Images (*.png *.jpg)"));
 
@@ -451,7 +451,6 @@ void GLWidget::updateDisplaySize()
 {
     int w = ui->getWidth();
 
-//    ui->sizeDial->setSingleStep(w * 10);//we can no longer change the step size directly, and it wasn't very useful
     if(ui->sizeDial->value() !=  w * openGlGridHeight() )
     {
         ui->sizeDial->setValue( w * openGlGridHeight() );
@@ -561,7 +560,7 @@ void GLWidget::zoomToolActivate(bool zoomOut)
         if(zoomOut)
             zoomFactor = 0.8;
 
-        int scale = ui->scaleDial->value();//take current scale
+        int scale = ui->getScale();//take current scale
         int index = startPoint.y * (ui->getWidth()/scale) + startPoint.x;
         index *= scale;
         index = max(0, index + ui->getStart(glWidget));
@@ -648,11 +647,11 @@ void GLWidget::keyPressEvent( QKeyEvent *event )
         break;
 
     case Qt::Key_Right:
-        ui->setWidth(ui->getWidth() + ui->scaleDial->value());
+        ui->setWidth(ui->getWidth() + ui->getScale());
         break;
 
     case Qt::Key_Left:
-        ui->setWidth(ui->getWidth() - ui->scaleDial->value());
+        ui->setWidth(ui->getWidth() - ui->getScale());
         break;
 
     default:
@@ -890,7 +889,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
             if(tool() == RESIZE_TOOL)
             {
                 translate(0, dy);//still scroll up/down
-                int value = static_cast<int>(dx * ui->scaleDial->value()*2.0 + ui->getWidth() + 0.5);
+                int value = static_cast<int>(dx * ui->getScale()*2.0 + ui->getWidth() + 0.5);
                 ui->setWidth(value);
             }
         }

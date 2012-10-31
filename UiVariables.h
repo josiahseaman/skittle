@@ -16,7 +16,6 @@ class UiVariables : public QObject
     Q_OBJECT
 
 public:
-    QSpinBox* scaleDial;
     QSpinBox* zoomDial;
     QSpinBox* sizeDial;
     QTextEdit* textArea;
@@ -40,6 +39,7 @@ public slots:
     void setAllVariables(int width, int scale, int zoom, int start, int size);
     int getWidth();
     void setWidth(int newWidth);
+    int getScale();
     void setScale(int newScale);
     int getStart(GLWidget* gl);
     void setStart(GLWidget *saysWho, int start);
@@ -65,6 +65,7 @@ private:
 
     QSpinBox* startDial;
     QSpinBox* widthDial;
+    QSpinBox* scaleDial;
 
 };
 #endif

@@ -81,7 +81,7 @@ RepeatOverviewDisplay::RepeatOverviewDisplay(UiVariables* gui, GLWidget* gl)
 }
 void RepeatOverviewDisplay::checkVariables()
 {
-    internalScale = max(charPerIndex, (int)(ui->scaleDial->value() / charPerIndex) * charPerIndex);
+    internalScale = max(charPerIndex, (int)(ui->getScale() / charPerIndex) * charPerIndex);
 }
 
 void RepeatOverviewDisplay::calculateOutputPixels()
@@ -90,7 +90,7 @@ void RepeatOverviewDisplay::calculateOutputPixels()
     qDebug() << "RepeatOverviewDisplay::load: " << ++frameCount;
 
 
-    qDebug() << "Width: " << ui->getWidth() << "\nScale: " << ui->scaleDial->value() << "\nStart: " << ui->getStart(glWidget);
+    qDebug() << "Width: " << ui->getWidth() << "\nScale: " << ui->getScale() << "\nStart: " << ui->getStart(glWidget);
     vector<color> alignment_colors;
     int end = max(1, (ui->getStart(glWidget) + current_display_size()) - 251);
     for(int i = ui->getStart(glWidget); i < end; i += internalScale)
@@ -399,7 +399,7 @@ string RepeatOverviewDisplay::FIND_StringFromMouseClick(int index)
 
 /** This method had to be reimplemented in RepeatOverview because the indices
 will be out of sync with the display unless it uses internalScale as opposed
-to ui->scaleDial->value().  */
+to ui->getScale().  */
 int RepeatOverviewDisplay::getRelativeIndexFromMouseClick(point2D pt)
 {
     if( pt.x < width() && pt.x >= 0 && pt.y <= height() )//check if it is inside the box

@@ -58,7 +58,7 @@ void NucleotideDisplay::calculateOutputPixels()
 void NucleotideDisplay::sequenceToColors(const char* genome)
 {
     outputPixels.clear();
-    if( ui->scaleDial->value() > 1)
+    if( ui->getScale() > 1)
         color_compress();
     else
     {
@@ -72,7 +72,7 @@ void NucleotideDisplay::color_compress()
     int r = 0;
     int g = 0;
     int b = 0;
-    int tempScale = ui->scaleDial->value();
+    int tempScale = ui->getScale();
     int end = current_display_size() + ui->getStart(glWidget) - tempScale;
     const string& seq = *sequence;
     int hard_end = sequence->size();

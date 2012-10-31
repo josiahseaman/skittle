@@ -133,7 +133,7 @@ vector<int> HighlightDisplay::identifyMatches(string find)
     int match_minimum = (int)(255 * percentage_match);
     const char* seq = (sequence->c_str() + ui->getStart(glWidget));//TODO:not a particularly safe way of accessing
     int offset = 0;
-    int tempScale = ui->scaleDial->value();
+    int tempScale = ui->getScale();
     for(int i = 0; i < (int)scores.size(); i+=tempScale)
     {
         vector<unsigned short int>::iterator bestMatch = max_element(scores.begin()+i, scores.begin()+i+tempScale);

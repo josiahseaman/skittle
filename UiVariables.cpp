@@ -194,10 +194,16 @@ void UiVariables::setWidth(int newWidth)
             scaleDial->setValue(newScale);
         }
         widthDial->setValue(newWidth);
+        sizeDial->setSingleStep(newWidth*10);
         oldWidth = newWidth;
         oldScale = newScale;
         emit internalsUpdated();
     }
+}
+
+int UiVariables::getScale()
+{
+    return scaleDial->value();
 }
 
 void UiVariables::setScale(int newScale)
