@@ -434,7 +434,7 @@ void OligomerDisplay::freq_map()
 {
     //ui->print("OligomerDisplay: ", ++frameCount);
     height();
-    const char* genome = sequence->c_str() + ui->startDial->value();//TODO: find a safer way to access this
+    const char* genome = sequence->c_str() + ui->getStart(glWidget);//TODO: find a safer way to access this
     for( int h = 0; h < F_height; h++)
     {
         vector<int> temp_map = vector<int>(F_width, 0);

@@ -34,6 +34,8 @@ public:
     void mousePressEvent(QMouseEvent *event);
 
 public slots:
+    void checkScrollBars();
+    void changeStart(int val);
     void setHorizontalWidth(int val);
     void setPageSize();
     void hideSettingsTab(QScrollArea*);

@@ -74,6 +74,12 @@ UiVariables::UiVariables(QTextEdit* text)
     connect(scaleDial, SIGNAL(valueChanged(int)), this, SIGNAL(internalsUpdated()));
     connect(zoomDial, SIGNAL(valueChanged(int)), this, SIGNAL(internalsUpdated()));
     connect(startDial, SIGNAL(valueChanged(int)), this, SIGNAL(internalsUpdated()));*/
+
+    connect(widthDial, SIGNAL(editingFinished()), this, SIGNAL(internalsUpdated()));
+    connect(scaleDial, SIGNAL(editingFinished()), this, SIGNAL(internalsUpdated()));
+    connect(zoomDial,  SIGNAL(editingFinished()), this, SIGNAL(internalsUpdated()));
+    connect(startDial, SIGNAL(editingFinished()), this, SIGNAL(internalsUpdated()));
+    connect(sizeDial,  SIGNAL(editingFinished()), this, SIGNAL(internalsUpdated()));
 }
 
 UiVariables::~UiVariables()
@@ -92,7 +98,7 @@ UiVariables* UiVariables::Instance()//static
     return pointerInstance;
 }
 
-int UiVariables::newOffsetDial(GLWidget* gl)
+void UiVariables::newOffsetDial(GLWidget* gl)
 {
     QSpinBox* offsetDial = new QSpinBox();
     offsetDial->setMinimum(-40000000);
@@ -101,7 +107,7 @@ int UiVariables::newOffsetDial(GLWidget* gl)
     offsetDial->setSingleStep(1);
     offsets[gl] = offsetDial;
 
-    return offsets.size() - 1;
+    connect(offsetDial, SIGNAL(editingFinished()), this, SIGNAL(internalsUpdated()));
 }
 
 QSpinBox* UiVariables::getOffsetDial(GLWidget* gl)
@@ -145,14 +151,28 @@ void UiVariables::printNum(int num)
 
     print(ss1.str().c_str() );
 }
-/*
-void UiVariables::print(int num1, int num2)
-{
-    stringstream ss1;
-    ss1 << num1 << ", " << num2;
 
-    print( ss1.str().c_str() );
-}*/
+void UiVariables::setVariables(int width, int scale, int zoom, int start, int size)
+{
+    //TODO: add validity checking
+    if(width != -1)
+        widthDial->setValue(width);
+    if(scale != -1)
+    {
+        if(width == -1)
+            changeScale(scale);
+        else
+            scaleDial->setValue(scale);
+    }
+    if(zoom != -1)
+        zoomDial->setValue(zoom);
+    if(start != -1)
+        startDial->setValue(start);
+    if(size != -1)
+        sizeDial->setValue(size);
+
+    emit internalsUpdated();
+}
 
 void UiVariables::changeWidth(int newWidth)
 {
@@ -208,13 +228,28 @@ void UiVariables::changeScale()
     changeScale(scaleDial->value());
 }
 
-void UiVariables::changeStart(int start)
+void UiVariables::changeStart(GLWidget* saysWho, int start)
 {
-    if(start != startDial->value())
+    QSpinBox* dial = getOffsetDial(saysWho);
+    if(dial)
     {
-        startDial->setValue(start);
-        emit internalsUpdated();
+        int newStart = max(1, start - dial->value() );
+        int current = startDial->value();
+        if(newStart != current)
+        {
+            startDial->setValue(newStart);
+            emit internalsUpdated();
+        }
     }
+}
+int UiVariables::getStart(GLWidget* gl)
+{
+    QSpinBox* dial = getOffsetDial(gl);
+    if(dial)
+    {
+        return max(1, startDial->value() + dial->value());
+    }
+    return startDial->value();
 }
 
 void UiVariables::changeZoom(int zoom)
@@ -256,3 +291,14 @@ void UiVariables::changeColorSetting(int newColorSetting)
     emit colorsChanged(newColorSetting);
 }
 
+vector<QSpinBox*> UiVariables::getDialPointers()
+{
+    vector<QSpinBox*> dials;
+    dials.push_back( widthDial );
+    dials.push_back(scaleDial );
+    dials.push_back(zoomDial );
+    dials.push_back(startDial );
+    dials.push_back(sizeDial );
+
+    return dials;
+}

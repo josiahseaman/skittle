@@ -64,6 +64,7 @@ GLWidget::GLWidget(UiVariables* gui, QWidget* parentWidget)
     : QGLWidget(parentWidget)
 {
     ui = gui;
+    glWidget = this;
     parent = dynamic_cast<MdiChildWindow*>(parentWidget);
     setMouseTracking(true);
     setMinimumWidth(100);
@@ -204,9 +205,7 @@ void GLWidget::displayString(const string* sequence)
         graphs[i]->setSequence(sequence);
         graphs[i]->invalidate();
     }
-    ui->startDial->setValue(1);
-    ui->changeScale(1);
-    ui->changeWidth(128);
+    ui->setVariables(128, 1, 100, 1, -1);
 
     //zoomExtents();
 
@@ -223,6 +222,7 @@ void GLWidget::zoomExtents()
 }
 void GLWidget::zoomRange(int startIndex, int endIndex)
 {
+    int newZoom = -1;
     float pixelWidth = (float)ui->widthDial->value() / (float)ui->scaleDial->value();
     float pixelsOnScreen = pixelWidth * (openGlGridHeight()-10);
     int selectionSize = abs(endIndex - startIndex);
@@ -236,12 +236,10 @@ void GLWidget::zoomRange(int startIndex, int endIndex)
         float requiredZoom = (screenHeight / requiredLines); // not percent based
         if (pixelWidth * (requiredZoom) > screenWidth) // if the zoom level makes the line wider than the screen just zoom to fit the widt
             requiredZoom = screenWidth / pixelWidth;
-        int newZoom = max(100,(int)(requiredZoom * 100)); //now it's in percent
-        ui->changeZoom(newZoom);
+        newZoom = max(100,(int)(requiredZoom * 100)); //now it's in percent
     }
 
-    ui->startDial->setValue(min(startIndex,endIndex));
-    ui->changeScale(newScale);
+    ui->setVariables(-1, newScale, newZoom, min(startIndex,endIndex), -1 );
 }
 
 void GLWidget::on_moveButton_clicked()
@@ -303,7 +301,7 @@ void GLWidget::on_screenCaptureButton_clicked()
     }
 
     stringstream namestream;
-    namestream << chromosomeName << "_w-" << ui->widthDial->value() << "_st-" << ui->startDial->value() << "_sc-" << ui->scaleDial->value() << ".png";
+    namestream << chromosomeName << "_w-" << ui->widthDial->value() << "_st-" << ui->getStart(glWidget) << "_sc-" << ui->scaleDial->value() << ".png";
 
     QString filename = QFileDialog::getSaveFileName(this, tr("Save Image"), namestream.str().c_str(), tr("Images (*.png *.jpg)"));
 
@@ -507,7 +505,7 @@ void GLWidget::jumpToAnnotation(bool forward)
     }
     //jump to the first one (min)
     if(startPosition < (int)seq()->size())
-        ui->changeStart(startPosition);
+        ui->changeStart(glWidget, startPosition);
     else if (startPosition <= 1)
         ui->print("You have reached the beginning of the file.");
     else
@@ -566,26 +564,31 @@ void GLWidget::zoomToolActivate(bool zoomOut)
         int scale = ui->scaleDial->value();//take current scale
         int index = startPoint.y * (ui->widthDial->value()/scale) + startPoint.x;
         index *= scale;
-        index = max(0, index + ui->startDial->value());
+        index = max(0, index + ui->getStart(glWidget));
         int newSize = (int)(ui->sizeDial->value() / zoomFactor);//calculate new projected size
-        ui->startDial->setValue( index - (newSize/2) );//set start as centered point - size/2
+        int newStart = index - (newSize/2);//set start as centered point - size/2
         //size should recalculate
         int newScale = (int)(scale / zoomFactor) + (zoomFactor > 1.0? 0 : 1);//reduce scale by 10-20%  (Nx4)
         int zoom = ui->zoomDial->value();
+        int newZoom = -1;
         if( zoomFactor > 1.0 )  // we're zooming in
         {
             if(scale == 1)
-                ui->changeZoom( zoom * zoomFactor );
-            else
-                ui->changeScale(newScale);
+            {
+                newZoom =  zoom * zoomFactor ;
+                newScale = -1;
+            }
         }
         else //zooming out
         {
             if(zoom > 100)
-                ui->changeZoom( max(100, ((int) (zoom * zoomFactor))) );
-            else
-                ui->changeScale(newScale);//set scale to the new value
+            {
+                newZoom = max(100, ((int) (zoom * zoomFactor))) ;
+                newScale = -1;
+            }
         }
+        ui->setVariables(-1, newScale, newZoom, newStart, newSize);
+
     }
     else // user selected range
     {
@@ -637,11 +640,11 @@ void GLWidget::keyPressEvent( QKeyEvent *event )
     switch ( event->key() )//the keys should be passed directly to the widgets
     {
     case Qt::Key_Down:
-        ui->changeStart(ui->startDial->value() + tenLines);
+        ui->changeStart(glWidget, ui->getStart(glWidget) + tenLines);
         break;
 
     case Qt::Key_Up:
-        ui->changeStart(ui->startDial->value() - tenLines);
+        ui->changeStart(glWidget, ui->getStart(glWidget) - tenLines);
         break;
 
     case Qt::Key_Right:
@@ -999,8 +1002,8 @@ void GLWidget::translate(float dx, float dy)
     {
         int sign = (int)(dy / fabs(dy));
         int move = -1* static_cast<int>(dy  + (sign*0.5)) * ui->widthDial->value() * 2;
-        int current = ui->startDial->value();
-        ui->changeStart( max(1, current+move) );
+        int current = ui->getStart(glWidget);
+        ui->changeStart(glWidget, max(1, current+move) );
     }
     emit xOffsetChange((int)(xPosition + dx + .5));
 }

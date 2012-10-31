@@ -49,7 +49,7 @@ NucleotideDisplay::~NucleotideDisplay()
 
 void NucleotideDisplay::calculateOutputPixels()
 {
-    const char* genome = sequence->c_str() + ui->startDial->value();//TODO: find a safer way to access this
+    const char* genome = sequence->c_str() + ui->getStart(glWidget);//TODO: find a safer way to access this
     sequenceToColors(genome);
     loadTextureCanvas();
     upToDate = true;
@@ -73,11 +73,11 @@ void NucleotideDisplay::color_compress()
     int g = 0;
     int b = 0;
     int tempScale = ui->scaleDial->value();
-    int end = current_display_size() + ui->startDial->value() - tempScale;
+    int end = current_display_size() + ui->getStart(glWidget) - tempScale;
     const string& seq = *sequence;
     int hard_end = sequence->size();
     end = min(end, hard_end);
-    for(int i = ui->startDial->value(); i < end; )
+    for(int i = ui->getStart(glWidget); i < end; )
     {
         for(int s = 0; s < tempScale && i < end; ++s)
         {

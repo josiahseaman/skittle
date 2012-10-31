@@ -90,10 +90,10 @@ void RepeatOverviewDisplay::calculateOutputPixels()
     qDebug() << "RepeatOverviewDisplay::load: " << ++frameCount;
 
 
-    qDebug() << "Width: " << ui->widthDial->value() << "\nScale: " << ui->scaleDial->value() << "\nStart: " << ui->startDial->value();
+    qDebug() << "Width: " << ui->widthDial->value() << "\nScale: " << ui->scaleDial->value() << "\nStart: " << ui->getStart(glWidget);
     vector<color> alignment_colors;
-    int end = max(1, (ui->startDial->value() + current_display_size()) - 251);
-    for(int i = ui->startDial->value(); i < end; i += internalScale)
+    int end = max(1, (ui->getStart(glWidget) + current_display_size()) - 251);
+    for(int i = ui->getStart(glWidget); i < end; i += internalScale)
         alignment_colors.push_back( simpleAlignment(i) );
 
     storeDisplay( alignment_colors, width());

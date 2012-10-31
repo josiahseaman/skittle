@@ -18,7 +18,6 @@ class UiVariables : public QObject
 public:
     QSpinBox* sizeDial;
     QSpinBox* widthDial;
-    QSpinBox* startDial;
     QSpinBox* scaleDial;
     QSpinBox* zoomDial;
     QTextEdit* textArea;
@@ -27,7 +26,7 @@ public:
 
     static UiVariables* Instance();
 
-    int newOffsetDial(GLWidget* gl);
+    void newOffsetDial(GLWidget* gl);
     QSpinBox* getOffsetDial(GLWidget* gl);
 
     void print(const char*);
@@ -35,15 +34,17 @@ public:
     void printHtml(std::string);
     void print(const char* s, int num);
     void printNum(int num);
-    //void print(int num1, int num2);
     int getColorSetting();
+    vector<QSpinBox *> getDialPointers();
 
 public slots:
+    void setVariables(int width, int scale, int zoom, int start, int size);
     void changeWidth(int newWidth);
     void changeWidth();
     void changeScale(int newScale);
     void changeScale();
-    void changeStart(int start);
+    void changeStart(GLWidget *saysWho, int start);
+    int getStart(GLWidget* gl);
     void changeZoom(int zoom);
     void diffOffset(GLWidget *gl, int deltaO);
     void changeColorSetting(int set);
@@ -64,6 +65,7 @@ private:
     int oldWidth;
     static int const maxSaneWidth = 4000;
 
+    QSpinBox* startDial;
 
 };
 #endif

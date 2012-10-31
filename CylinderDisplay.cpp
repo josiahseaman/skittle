@@ -84,7 +84,7 @@ GLuint CylinderDisplay::render()
     glEndList();
 
     int min_width = min(150, max(1, ui->widthDial->value() / 3 ));
-    ntLinker->calculate(sequence->substr(ui->startDial->value(), current_display_size()), min_width);
+    ntLinker->calculate(sequence->substr(ui->getStart(glWidget), current_display_size()), min_width);
     width_list = ntLinker->smooth(min_width, 80);
     //ntLinker->tie_up_loose_ends(width_list);
     //ntLinker->cap_movement(width_list, 1);
@@ -99,7 +99,7 @@ GLuint CylinderDisplay::render()
         double angle = 0;
         int min_width = min(150, max(1, ui->widthDial->value() / 3 ));
         float local_width = width_list[0];
-        const char* genome = sequence->c_str() + ui->startDial->value();//TODO:not a particularly safe way of accessing
+        const char* genome = sequence->c_str() + ui->getStart(glWidget);//TODO:not a particularly safe way of accessing
         glPushMatrix();
         glScaled(1,-1,1);
         int temp_display_size = current_display_size();

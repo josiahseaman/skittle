@@ -155,6 +155,7 @@ protected:
 private:
     vector<AbstractGraph*> graphs;
     vector<color> colorTable;
+    GLWidget* glWidget;
     GLuint object;
     GLuint marker;
     QCursor zoomInCursor;

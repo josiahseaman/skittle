@@ -34,7 +34,6 @@ public slots:
     void addAnnotationDisplay(QString);
     void jumpToNextAnnotation();
     void jumpToPrevAnnotation();
-    void changeGlobalStart();
     void updateCurrentDisplay();
 
 private:

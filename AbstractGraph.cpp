@@ -162,7 +162,7 @@ string AbstractGraph::getFileName()
 
 int AbstractGraph::current_display_size()
 {
-    return min( ui->sizeDial->value(), max(0, ((int)sequence->size() - ui->startDial->value())) );
+    return min( ui->sizeDial->value(), max(0, ((int)sequence->size() - ui->getStart(glWidget))) );
 }
 
 
@@ -284,8 +284,8 @@ pair<int,int> AbstractGraph::getIndicesFromPoints(point2D startPoint, point2D en
         int spx = min(max(startPoint.x,0),(width() - 1)); //force value between 0 and width
         int epx = min(max(endPoint.x,0),(width() - 1));
         //we use Relative index here for the graphs that overwrite that function
-        int startIndex = getRelativeIndexFromMouseClick(point2D(spx, startPoint.y)) + ui->startDial->value();
-        int endIndex = getRelativeIndexFromMouseClick(point2D(epx, endPoint.y)) + ui->startDial->value();
+        int startIndex = getRelativeIndexFromMouseClick(point2D(spx, startPoint.y)) + ui->getStart(glWidget);
+        int endIndex = getRelativeIndexFromMouseClick(point2D(epx, endPoint.y)) + ui->getStart(glWidget);
 //        startIndex = max(0, startIndex);
 //        endIndex = max(0, endIndex);
         return pair<int,int>(startIndex,endIndex);
@@ -309,7 +309,7 @@ int AbstractGraph::getBeginningOfLineFromMouseClick(point2D pt)
 int AbstractGraph::adjustForSampleLengthBounds(int index, int sample_length)
 {
     index = min((int)current_display_size()-sample_length-1, index);
-    index = min( index + ui->startDial->value(), ((int)sequence->size()) - sample_length-1 );
+    index = min( index + ui->getStart(glWidget), ((int)sequence->size()) - sample_length-1 );
     return index;
 }
 

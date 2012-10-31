@@ -131,7 +131,7 @@ vector<int> HighlightDisplay::identifyMatches(string find)
     int findSize = find.size();
     int remainingLength = 0;
     int match_minimum = (int)(255 * percentage_match);
-    const char* seq = (sequence->c_str() + ui->startDial->value());//TODO:not a particularly safe way of accessing
+    const char* seq = (sequence->c_str() + ui->getStart(glWidget));//TODO:not a particularly safe way of accessing
     int offset = 0;
     int tempScale = ui->scaleDial->value();
     for(int i = 0; i < (int)scores.size(); i+=tempScale)
@@ -167,7 +167,7 @@ vector<unsigned short int> HighlightDisplay::calculate(string find)
     vector<unsigned short int> scores;
     int findSize = find.size();
 
-    int start = ui->startDial->value();
+    int start = ui->getStart(glWidget);
     unsigned short int maxMismatches = findSize - static_cast<unsigned short int>((float)findSize * percentage_match + .999);
     //at 50%   1 = 0,  2 = 1, 3 = 1
     const string& seq = *sequence;

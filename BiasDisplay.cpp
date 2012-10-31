@@ -29,7 +29,7 @@ BiasDisplay::BiasDisplay(UiVariables* gui, GLWidget* gl)
 
 void BiasDisplay::calculateOutputPixels()
 {
-    const char* genome = sequence->c_str() + ui->startDial->value();//TODO: find a safer way to access this, this would require modifying AbstractGraph::calculateOutputPixels() and all child classes
+    const char* genome = sequence->c_str() + ui->getStart(glWidget);//TODO: find a safer way to access this, this would require modifying AbstractGraph::calculateOutputPixels() and all child classes
     sequenceToColors(genome);
 
     loadTextureCanvas(true);
@@ -78,7 +78,7 @@ string BiasDisplay::SELECT_MouseClick(point2D pt)
     {
         int tempWidth = ui->widthDial->value();
         int index = pt.y * tempWidth;
-        index = index + ui->startDial->value();
+        index = index + ui->getStart(glWidget);
         int end = index + tempWidth;
         const char* genome = sequence->c_str();
         vector<int> counts = countNucleotides(genome,  index, end );

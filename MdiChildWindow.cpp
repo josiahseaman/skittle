@@ -55,11 +55,11 @@ MdiChildWindow::MdiChildWindow(QTabWidget *settings)//TODO: use offsetDialIndex 
     setAttribute(Qt::WA_DeleteOnClose);
     
     /**Scrollbars**/
-    connect(glWidget, SIGNAL(displaySizeChanged()), this, SLOT(setPageSize()) );
+    connect(glWidget, SIGNAL(displaySizeChanged()), this, SLOT(checkScrollBars()) );
     //connect(ui->sizeDial, SIGNAL(valueChanged(int)), this, SLOT(setPageSize()) );
-    connect(verticalScrollBar, SIGNAL(valueChanged(int)), ui->startDial, SLOT(setValue(int)));
-    connect(verticalScrollBar, SIGNAL(valueChanged(int)), glWidget, SLOT(invalidateDisplayGraphs())); // 'cause setTracking(FALSE)
-    connect(ui->startDial, SIGNAL(valueChanged(int)), verticalScrollBar, SLOT(setValue(int)));
+    connect(verticalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(changeStart(int)));
+//    connect(verticalScrollBar, SIGNAL(valueChanged(int)), glWidget, SLOT(invalidateDisplayGraphs())); // 'cause setTracking(FALSE)
+    connect(ui, SIGNAL(internalsUpdated()), this, SLOT(checkScrollBars()) );
     /**/
     createSettingsTabs();
     connectWidget();
@@ -84,6 +84,18 @@ void MdiChildWindow::connectWidget()
     connect(horizontalScrollBar, SIGNAL(valueChanged(int)), glWidget, SLOT(slideHorizontal(int)));
     connect(glWidget, SIGNAL(xOffsetChange(int)), horizontalScrollBar, SLOT(setValue(int)));
     connect(glWidget, SIGNAL(totalWidthChanged(int)), this, SLOT(setHorizontalWidth(int)));
+}
+
+void MdiChildWindow::checkScrollBars()
+{
+    verticalScrollBar->setValue( ui->getStart(glWidget) );
+    setPageSize();
+    //TODO: move other scrollbar connections in here
+}
+
+void MdiChildWindow::changeStart(int val)
+{
+    ui->changeStart(glWidget, val);
 }
 
 void MdiChildWindow::setHorizontalWidth(int val)

@@ -50,8 +50,6 @@ public slots:
     void updateStatus(QString);
     void changeWindowName(std::string name);
     void openGtf();
-    void changeScale(int scale = -1);
-    void changeWidth(int width = -1);
     void doubleWidth();
     void halveWidth();
     void addDisplayActions(AbstractGraph*);

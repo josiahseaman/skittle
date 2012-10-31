@@ -143,8 +143,10 @@ void MainWindow::createUiVars()
     //Note:Creating the visual representation of UiVariables is split between Mainwindow and the UiVariables constructor
     ui = UiVariables::Instance();
     ui->textArea = textArea;
+    vector<QSpinBox*> dials = ui->getDialPointers();
+    int i = 0;
     settingToolBar->addWidget(new QLabel("Width"));
-    settingToolBar->addWidget(ui->widthDial);
+    settingToolBar->addWidget(dials[i++]);
 
     doubleDisplayWidth = new QPushButton("x2",this);
     settingToolBar->addWidget(doubleDisplayWidth);
@@ -154,16 +156,16 @@ void MainWindow::createUiVars()
     settingToolBar->addWidget(zoomExtents);
 
     settingToolBar->addWidget(new QLabel("Scale"));
-    settingToolBar->addWidget(ui->scaleDial);
+    settingToolBar->addWidget(dials[i++]);
 
     settingToolBar->addWidget(new QLabel("Zoom"));
-    settingToolBar->addWidget(ui->zoomDial);
+    settingToolBar->addWidget(dials[i++]);
 
     settingToolBar->addWidget(new QLabel("Start Index"));
-    settingToolBar->addWidget(ui->startDial);
+    settingToolBar->addWidget(dials[i++]);
 
     settingToolBar->addWidget(new QLabel("Display Length"));
-    settingToolBar->addWidget(ui->sizeDial);
+    settingToolBar->addWidget(dials[i++]);
 
 
     //settingToolBar->addSeparator();
@@ -388,13 +390,10 @@ void MainWindow::createUiConnections()
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
     connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
     connect(helpAction, SIGNAL(triggered()), this, SLOT(helpDialog()));
-
-    connect(ui->scaleDial, SIGNAL(editingFinished()), this, SLOT(changeScale()));
     
     connect(doubleDisplayWidth, SIGNAL(clicked()), this, SLOT(doubleWidth()));
     connect(halveDisplayWidth, SIGNAL(clicked()), this, SLOT(halveWidth()));
     //    connect(zoomExtents, SIGNAL(clicked()), , SLOT(zoomExtents()));
-    connect(ui->widthDial, SIGNAL(editingFinished()), this, SLOT(changeWidth()));
 
 }
 void MainWindow::createFileConnections()
@@ -442,32 +441,14 @@ void MainWindow::openGtf()
         emit newGtfFileOpen(fileName);
 }
 
-void MainWindow::changeScale(int scale)
-{
-    if(scale == -1)
-        ui->changeScale();
-    else
-        ui->changeScale(scale);
-    viewManager->updateCurrentDisplay();
-}
-
-void MainWindow::changeWidth(int width)
-{
-    if( width == -1)
-        ui->changeWidth();
-    else
-        ui->changeWidth(width);
-    viewManager->updateCurrentDisplay();
-}
-
 void MainWindow::doubleWidth()
 {
-    changeWidth( 2 * ui->widthDial->value() );
+    ui->changeWidth( 2 * ui->widthDial->value() );
 }
 
 void MainWindow::halveWidth()
 {
-    changeWidth( (int)(0.5 * ui->widthDial->value()) );
+    ui->changeWidth( (int)(0.5 * ui->widthDial->value()) );
 }
 
 

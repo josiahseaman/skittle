@@ -38,7 +38,7 @@ ViewManager::ViewManager(MainWindow* window, UiVariables* gui)
 
     addNewView();
     if(activeWidget)
-        activeWidget->showMaximized();//if there's only one window, I'd like it maximized
+        activeWidget->parent->showMaximized();//if there's only one window, I'd like it maximized
 }
 
 void ViewManager::createConnections()
@@ -46,12 +46,7 @@ void ViewManager::createConnections()
     connect(this, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(changeSelection(QMdiSubWindow*)));
     connect(mainWindow->addViewAction, SIGNAL(triggered()), this, SLOT(addNewView()));
     /****CONNECT ui VARIABLES*******/
-
-    connect(ui->widthDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
-    connect(ui->zoomDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
-    connect(ui->scaleDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
-    connect(ui->startDial, SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
-    connect(ui->sizeDial,  SIGNAL(editingFinished()), this, SLOT(updateCurrentDisplay()));
+    connect(ui, SIGNAL(internalsUpdated()), this, SLOT(updateCurrentDisplay()));
 }
 
 void ViewManager::uiToGlwidgetConnections(GLWidget* active)
@@ -75,7 +70,7 @@ void ViewManager::uiToGlwidgetConnections(GLWidget* active)
 GLWidget* ViewManager::addNewView(bool suppressOpen)
 {
     if(activeWidget)
-        activeWidget->showNormal();//this should be the equivalent of clicking 'restore' or not maximized
+        activeWidget->parent->showNormal();//this should be the equivalent of clicking 'restore' or not maximized
 
     MdiChildWindow* child = new MdiChildWindow(mainWindow->tabWidget);
     connect( child, SIGNAL(subWindowClosing(MdiChildWindow*)), this, SLOT(closeSubWindow(MdiChildWindow*)));
@@ -179,13 +174,6 @@ void ViewManager::jumpToPrevAnnotation()
     {
         activeWidget->jumpToAnnotation(false);
     }
-}
-
-void ViewManager::changeGlobalStart()
-{
-//    UiVariables* local = vars(activeWidget);
-    int preOffsetStart = max(1, ui->startDial->value() - ui->getOffsetDial(activeWidget)->value());
-    ui->changeStart(preOffsetStart);
 }
 
 //PRIVATE FUNCTIONS//
