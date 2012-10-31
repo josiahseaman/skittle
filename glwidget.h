@@ -93,7 +93,7 @@ public:
 
 public slots:
     void reportOnFinish(int);
-    void changeZoom(int z);
+    void changeZoom();
     void displayString(const string* sequence);
     void zoomExtents();
     void zoomRange(int startIndex, int endIndex);

@@ -256,16 +256,22 @@ void UiVariables::setStart(GLWidget* saysWho, int start)
         }
     }
 }
+
+int UiVariables::getZoom()
+{
+    return zoomDial->value();
+}
+
 void UiVariables::setZoom(int zoom)
 {
-    if(zoom != zoomDial->value())
+    if(zoom != getZoom())
     {
         zoomDial->setValue(zoom);
         emit internalsUpdated();
     }
 }
 
-void UiVariables::diffOffset(GLWidget* gl, int deltaO)
+void UiVariables::setOffsetDelta(GLWidget* gl, int deltaO)
 {
     if(deltaO != 0)
     {

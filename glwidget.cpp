@@ -98,7 +98,7 @@ GLWidget::GLWidget(UiVariables* gui, QWidget* parentWidget)
     xPosition = 0;
     mouseMovePosition = QPoint();//you may want to initialize press and release points, start/end
     slideHorizontal(0);
-    changeZoom(100);
+    zTransOffset = 2.0;
     setTool(RESIZE_TOOL);
     setMouseTracking(true);
     setFocusPolicy(Qt::ClickFocus);
@@ -148,8 +148,7 @@ void GLWidget::createConnections()
     connect(trackReader,SIGNAL(BookmarkAdded(track_entry,string)), this,SLOT(addTrackEntry(track_entry,string)));
 
     /****CONNECT LOCAL VARIABLES*******/
-    connect(ui->zoomDial,  SIGNAL(valueChanged(int)), this, SLOT(changeZoom(int)));
-    connect(ui, SIGNAL(internalsUpdated()), this, SLOT(updateDisplaySize()));
+    connect(ui, SIGNAL(internalsUpdated()), this, SLOT(changeZoom()));
     connect(ui, SIGNAL(colorsChanged(int)), this, SLOT(invalidateDisplayGraphs()));
 }
 
@@ -183,10 +182,15 @@ void GLWidget::setTotalDisplayWidth()
 }
 
 //***********SLOTS*******************
-void GLWidget::changeZoom(int z)
+void GLWidget::changeZoom()
 {
-    double percent = z / 100.0;
-    zTransOffset = 200.0 / percent;
+    int currentZoom = ui->getZoom();
+    double percent = currentZoom / 100.0;
+    double newZ =  200.0 / percent;
+    if(newZ != zTransOffset)
+    {
+        zTransOffset = newZ;
+    }
     updateDisplaySize();
     setTotalDisplayWidth();
 }
@@ -208,18 +212,14 @@ void GLWidget::displayString(const string* sequence)
     ui->setAllVariables(128, 1, 100, 1, -1);
 
     //zoomExtents();
-
-    updateDisplaySize();
-    ui->zoomDial->setValue(ui->zoomDial->value() + 1);
-    this->updateDisplay();
-    ui->zoomDial->setValue(ui->zoomDial->value() - 1);
-    this->updateDisplay();
+    changeZoom();
 }
 
 void GLWidget::zoomExtents()
 {
     zoomRange(1,seq()->size());
 }
+
 void GLWidget::zoomRange(int startIndex, int endIndex)
 {
     int newZoom = -1;
@@ -231,8 +231,8 @@ void GLWidget::zoomRange(int startIndex, int endIndex)
     if (newScale == 1)
     {
         float requiredLines = selectionSize / pixelWidth;
-        float screenHeight = openGlGridHeight() * ((float)ui->zoomDial->value() / 100); //how many pixels at zoom 100
-        float screenWidth = openGlGridWidth() * ((float)ui->zoomDial->value() / 100) - 50;
+        float screenHeight = openGlGridHeight() * ((float)ui->getZoom() / 100); //how many pixels at zoom 100
+        float screenWidth = openGlGridWidth() * ((float)ui->getZoom() / 100) - 50;
         float requiredZoom = (screenHeight / requiredLines); // not percent based
         if (pixelWidth * (requiredZoom) > screenWidth) // if the zoom level makes the line wider than the screen just zoom to fit the widt
             requiredZoom = screenWidth / pixelWidth;
@@ -568,7 +568,7 @@ void GLWidget::zoomToolActivate(bool zoomOut)
         int newStart = index - (newSize/2);//set start as centered point - size/2
         //size should recalculate
         int newScale = (int)(scale / zoomFactor) + (zoomFactor > 1.0? 0 : 1);//reduce scale by 10-20%  (Nx4)
-        int zoom = ui->zoomDial->value();
+        int zoom = ui->getZoom();
         int newZoom = -1;
         if( zoomFactor > 1.0 )  // we're zooming in
         {
@@ -690,7 +690,7 @@ int GLWidget::openGlGridHeight()
 {
     QSize dimensions = size();
     double pixelHeight = dimensions.height();
-    double zoom = 100.0 / ui->zoomDial->value();
+    double zoom = 100.0 / ui->getZoom();
     float pixelToGridRatio = 3.0;
     int display_lines = static_cast<int>(pixelHeight / pixelToGridRatio * zoom + 0.5);
 
@@ -701,7 +701,7 @@ int GLWidget::openGlGridWidth()
 {
     QSize dimensions = size();
     double pixelWidth = dimensions.width();
-    double zoom = 100.0 / ui->zoomDial->value();
+    double zoom = 100.0 / ui->getZoom();
     float pixelToGridRatio = 3.0;
     int openGLWidth = static_cast<int>(pixelWidth / pixelToGridRatio * zoom + 0.5);
 
@@ -981,7 +981,7 @@ void GLWidget::drawSelectionBox(point2D start,point2D end) //, int lineStart, in
 
             // adjust to taste
             c = color(255,235,80);
-            lineThickness = max(1.0, (double)(2.75 - (ui->zoomDial->value())/400)); // thickness scales inversely to zoom level
+            lineThickness = max(1.0, (double)(2.75 - (ui->getZoom())/400)); // thickness scales inversely to zoom level
             //        double lineThickness = 1.5;
             //draw the ragged box
             nuc->paint_line(point((lineStart - lineThickness), -(start.y + 1 - lineThickness),0),   point(start.x, -(start.y + 1),0), c); //top left
@@ -1021,7 +1021,7 @@ void GLWidget::translateOffset(float dx, float dy)
         int sign = (int)(dx / fabs(dx));
         dx = (int)(dx + (0.5 * sign));
     }
-    ui->diffOffset( this, (int)( moveUp + dx));
+    ui->setOffsetDelta( this, (int)( moveUp + dx));
 }
 
 void GLWidget::changeCursor(Qt::CursorShape cNumber)
