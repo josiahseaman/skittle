@@ -438,7 +438,7 @@ void OligomerDisplay::freq_map()
     for( int h = 0; h < F_height; h++)
     {
         vector<int> temp_map = vector<int>(F_width, 0);
-        int tempWidth = ui->widthDial->value();
+        int tempWidth = ui->getWidth();
         int offset = h * tempWidth;
 
         if(genome[offset] != 'N' && genome[offset+tempWidth] != 'N')
@@ -494,7 +494,7 @@ string OligomerDisplay::numberToOlig(int oligIndex)
 
 int OligomerDisplay::height()
 {
-    F_height = (current_display_size() - wordLength ) / ui->widthDial->value();
+    F_height = (current_display_size() - wordLength ) / ui->getWidth();
 
     F_height = max(1, min(400, F_height) );
 

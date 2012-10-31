@@ -39,7 +39,7 @@ void BiasDisplay::calculateOutputPixels()
 void BiasDisplay::sequenceToColors(const char* genome)
 {
     outputPixels.clear();
-    int tempWidth = ui->widthDial->value();
+    int tempWidth = ui->getWidth();
 
     for(int h = 0; h < height(); h++)
     {
@@ -76,7 +76,7 @@ string BiasDisplay::SELECT_MouseClick(point2D pt)
 {
     if( pt.x < width() && pt.x >= 0  )
     {
-        int tempWidth = ui->widthDial->value();
+        int tempWidth = ui->getWidth();
         int index = pt.y * tempWidth;
         index = index + ui->getStart(glWidget);
         int end = index + tempWidth;

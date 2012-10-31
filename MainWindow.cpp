@@ -443,12 +443,12 @@ void MainWindow::openGtf()
 
 void MainWindow::doubleWidth()
 {
-    ui->setWidth( 2 * ui->widthDial->value() );
+    ui->setWidth( 2 * ui->getWidth() );
 }
 
 void MainWindow::halveWidth()
 {
-    ui->setWidth( (int)(0.5 * ui->widthDial->value()) );
+    ui->setWidth( (int)(0.5 * ui->getWidth()) );
 }
 
 

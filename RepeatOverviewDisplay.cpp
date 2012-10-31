@@ -90,7 +90,7 @@ void RepeatOverviewDisplay::calculateOutputPixels()
     qDebug() << "RepeatOverviewDisplay::load: " << ++frameCount;
 
 
-    qDebug() << "Width: " << ui->widthDial->value() << "\nScale: " << ui->scaleDial->value() << "\nStart: " << ui->getStart(glWidget);
+    qDebug() << "Width: " << ui->getWidth() << "\nScale: " << ui->scaleDial->value() << "\nStart: " << ui->getStart(glWidget);
     vector<color> alignment_colors;
     int end = max(1, (ui->getStart(glWidget) + current_display_size()) - 251);
     for(int i = ui->getStart(glWidget); i < end; i += internalScale)
@@ -103,7 +103,7 @@ void RepeatOverviewDisplay::calculateOutputPixels()
 
 int RepeatOverviewDisplay::width()
 {
-    return max(1, (int)((float)ui->widthDial->value() / (float)internalScale + 0.5));
+    return max(1, (int)((float)ui->getWidth() / (float)internalScale + 0.5));
 }
 
 void RepeatOverviewDisplay::displayLegend(float canvasWidth, float canvasHeight)
@@ -404,7 +404,7 @@ int RepeatOverviewDisplay::getRelativeIndexFromMouseClick(point2D pt)
 {
     if( pt.x < width() && pt.x >= 0 && pt.y <= height() )//check if it is inside the box
     {
-        int index = pt.y * width()*internalScale //the bp per line is not quite ui->widthDial->value() because it needs to be a multiple of 4.
+        int index = pt.y * width()*internalScale //the bp per line is not quite ui->getWidth() because it needs to be a multiple of 4.
                 + pt.x * internalScale;
         index = max(0, index);
         return index;

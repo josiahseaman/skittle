@@ -113,7 +113,7 @@ vector< vector<track_entry> > AnnotationDisplay::calculateTrackLayout(const vect
 {
     max_width = 1;
     int line_start = ui->getStart(glWidget);
-    int width = ui->widthDial->value();
+    int width = ui->getWidth();
     int line_stop = line_start + width;
     int temp_display_size = current_display_size();
     int nextInactiveAnnotation = 0;
@@ -182,8 +182,8 @@ string AnnotationDisplay::SELECT_MouseClick(point2D pt)
     //range check
     if( pt.x <= width() && pt.x >= 0 )
     {
-        int start = ui->getStart(glWidget) + pt.y * ui->widthDial->value() + pt.x;
-        int stop = start + ui->widthDial->value();
+        int start = ui->getStart(glWidget) + pt.y * ui->getWidth() + pt.x;
+        int stop = start + ui->getWidth();
         for(int i = 0; i < (int)gtfTrack.size(); ++i)
         {
             if(((gtfTrack[i].start >= start && gtfTrack[i].start <= stop)//start in range
@@ -220,7 +220,7 @@ int AnnotationDisplay::current_display_size()
 int AnnotationDisplay::getNextAnnotationPosition()
 {
     int i = 0;
-    int lineStart = ui->getStart(glWidget) + ui->widthDial->value();//this is the start position at the _end_ of the line
+    int lineStart = ui->getStart(glWidget) + ui->getWidth();//this is the start position at the _end_ of the line
     while( i < (int)gtfTrack.size() && gtfTrack[i].start < lineStart )//assumes tracks are in order
         i++;
     return gtfTrack[i].start;

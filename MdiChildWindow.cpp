@@ -107,7 +107,7 @@ void MdiChildWindow::setPageSize()
 {
     //ui->print("setPageSize", ui->sizeDial->value());
     if( glWidget != NULL)
-        verticalScrollBar->setMaximum( max(0, (int)(glWidget->seq()->size() - ui->widthDial->value()) ) );
+        verticalScrollBar->setMaximum( max(0, (int)(glWidget->seq()->size() - ui->getWidth()) ) );
     verticalScrollBar->setPageStep(ui->sizeDial->value());
 }
 

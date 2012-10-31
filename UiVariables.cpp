@@ -174,6 +174,11 @@ void UiVariables::setAllVariables(int width, int scale, int zoom, int start, int
     emit internalsUpdated();
 }
 
+int UiVariables::getWidth()
+{
+    return widthDial->value();
+}
+
 void UiVariables::setWidth(int newWidth)
 {
     if(newWidth < 1)
@@ -202,7 +207,7 @@ void UiVariables::setScale(int newScale)
 
     if(scaleDial->value() != newScale)
     {
-        int display_width = max( 1, widthDial->value() / scaleDial->value());
+        int display_width = max( 1, getWidth() / scaleDial->value());
 
         int display_size = sizeDial->value() / scaleDial->value();
         display_size = max( 1, display_size);
@@ -221,6 +226,16 @@ void UiVariables::setScale(int newScale)
     }
 }
 
+int UiVariables::getStart(GLWidget* gl)
+{
+    QSpinBox* dial = getOffsetDial(gl);
+    if(dial)
+    {
+        return max(1, startDial->value() + dial->value());
+    }
+    return startDial->value();
+}
+
 void UiVariables::setStart(GLWidget* saysWho, int start)
 {
     QSpinBox* dial = getOffsetDial(saysWho);
@@ -235,16 +250,6 @@ void UiVariables::setStart(GLWidget* saysWho, int start)
         }
     }
 }
-int UiVariables::getStart(GLWidget* gl)
-{
-    QSpinBox* dial = getOffsetDial(gl);
-    if(dial)
-    {
-        return max(1, startDial->value() + dial->value());
-    }
-    return startDial->value();
-}
-
 void UiVariables::setZoom(int zoom)
 {
     if(zoom != zoomDial->value())

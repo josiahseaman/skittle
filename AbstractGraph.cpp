@@ -80,7 +80,7 @@ GLuint AbstractGraph::render()
 
 int AbstractGraph::height()
 {
-    return current_display_size() / ui->widthDial->value();
+    return current_display_size() / ui->getWidth();
 }
 
 void AbstractGraph::paint_square(point position, color c)
@@ -215,7 +215,7 @@ void AbstractGraph::setSequence(const string* seq)
 
 int AbstractGraph::width() 
 {
-    return ui->widthDial->value() / ui->scaleDial->value();
+    return ui->getWidth() / ui->scaleDial->value();
 }
 
 QScrollArea* AbstractGraph::settingsUi()
@@ -241,7 +241,7 @@ string AbstractGraph::mouseClick(point2D pt, bool selectTool)
     int index = getRelativeIndexFromMouseClick(pt);
     if( index > -1)
     {
-        int sample_length = ui->widthDial->value();
+        int sample_length = ui->getWidth();
         index = adjustForSampleLengthBounds(index, sample_length);
         if(selectTool)
             return SELECT_StringFromMouseClick(index);
@@ -270,7 +270,7 @@ int AbstractGraph::getRelativeIndexFromMouseClick(point2D pt)
 {
     if( pt.x < width() && pt.x >= 0 && pt.y <= height() )//check if it is inside the box
     {
-        int index = pt.y * ui->widthDial->value() + pt.x * ui->scaleDial->value();
+        int index = pt.y * ui->getWidth() + pt.x * ui->scaleDial->value();
         index = max(0, index);
         return index;
     }
@@ -298,7 +298,7 @@ int AbstractGraph::getBeginningOfLineFromMouseClick(point2D pt)
 {
     if( pt.x < width() && pt.x >= 0 && pt.y <= height() )//check if it is inside the box
     {
-        int index = pt.y * ui->widthDial->value();
+        int index = pt.y * ui->getWidth();
         index = max(0, index);
         return index;
     }
@@ -315,7 +315,7 @@ int AbstractGraph::adjustForSampleLengthBounds(int index, int sample_length)
 
 string AbstractGraph::SELECT_StringFromMouseClick(int index)
 {
-    int sample_length = ui->widthDial->value();
+    int sample_length = ui->getWidth();
     std::stringstream ss;
     ss << "Index: " << index << "  Sequence: " << sequence->substr(index, sample_length);
     //string chromosome = glWidget->chromosomeName;
@@ -327,6 +327,6 @@ string AbstractGraph::SELECT_StringFromMouseClick(int index)
 
 string AbstractGraph::FIND_StringFromMouseClick(int index)
 {
-    int sample_length = ui->widthDial->value();
+    int sample_length = ui->getWidth();
     return sequence->substr(index, min(500, sample_length));
 }

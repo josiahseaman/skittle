@@ -83,7 +83,7 @@ GLuint CylinderDisplay::render()
     createSquare();
     glEndList();
 
-    int min_width = min(150, max(1, ui->widthDial->value() / 3 ));
+    int min_width = min(150, max(1, ui->getWidth() / 3 ));
     ntLinker->calculate(sequence->substr(ui->getStart(glWidget), current_display_size()), min_width);
     width_list = ntLinker->smooth(min_width, 80);
     //ntLinker->tie_up_loose_ends(width_list);
@@ -97,7 +97,7 @@ GLuint CylinderDisplay::render()
         double pi = 3.141592653589793;
         double y = 0;
         double angle = 0;
-        int min_width = min(150, max(1, ui->widthDial->value() / 3 ));
+        int min_width = min(150, max(1, ui->getWidth() / 3 ));
         float local_width = width_list[0];
         const char* genome = sequence->c_str() + ui->getStart(glWidget);//TODO:not a particularly safe way of accessing
         glPushMatrix();

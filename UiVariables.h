@@ -16,10 +16,9 @@ class UiVariables : public QObject
     Q_OBJECT
 
 public:
-    QSpinBox* sizeDial;
-    QSpinBox* widthDial;
     QSpinBox* scaleDial;
     QSpinBox* zoomDial;
+    QSpinBox* sizeDial;
     QTextEdit* textArea;
     int colorSetting;
     enum colorPalletes { CLASSIC, COLORBLINDSAFE, BETTERCBSAFE, DARK, DRUMS, BLUES, REDS };
@@ -39,10 +38,11 @@ public:
 
 public slots:
     void setAllVariables(int width, int scale, int zoom, int start, int size);
+    int getWidth();
     void setWidth(int newWidth);
     void setScale(int newScale);
-    void setStart(GLWidget *saysWho, int start);
     int getStart(GLWidget* gl);
+    void setStart(GLWidget *saysWho, int start);
     void setZoom(int zoom);
     void diffOffset(GLWidget *gl, int deltaO);
     void changeColorSetting(int set);
@@ -64,6 +64,7 @@ private:
     static int const maxSaneWidth = 4000;
 
     QSpinBox* startDial;
+    QSpinBox* widthDial;
 
 };
 #endif

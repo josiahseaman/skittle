@@ -149,7 +149,7 @@ void GLWidget::createConnections()
 
     /****CONNECT LOCAL VARIABLES*******/
     connect(ui->zoomDial,  SIGNAL(valueChanged(int)), this, SLOT(changeZoom(int)));
-    connect(ui->widthDial, SIGNAL(valueChanged(int)), this, SLOT(updateDisplaySize()));
+    connect(ui, SIGNAL(internalsUpdated()), this, SLOT(updateDisplaySize()));
     connect(ui, SIGNAL(colorsChanged(int)), this, SLOT(invalidateDisplayGraphs()));
 }
 
@@ -170,7 +170,7 @@ double GLWidget::getZoom()
 
 void GLWidget::setTotalDisplayWidth()
 {	
-    //ui->print("SetWidth: ", ui->widthDial->value());
+    //ui->print("SetWidth: ", ui->getWidth());
     int total_width = border;
     for(int i = 0; i < (int)graphs.size(); ++i)
     {
@@ -223,7 +223,7 @@ void GLWidget::zoomExtents()
 void GLWidget::zoomRange(int startIndex, int endIndex)
 {
     int newZoom = -1;
-    float pixelWidth = (float)ui->widthDial->value() / (float)ui->scaleDial->value();
+    float pixelWidth = (float)ui->getWidth() / (float)ui->scaleDial->value();
     float pixelsOnScreen = pixelWidth * (openGlGridHeight()-10);
     int selectionSize = abs(endIndex - startIndex);
     float requiredScale = (selectionSize) / pixelsOnScreen;
@@ -301,7 +301,7 @@ void GLWidget::on_screenCaptureButton_clicked()
     }
 
     stringstream namestream;
-    namestream << chromosomeName << "_w-" << ui->widthDial->value() << "_st-" << ui->getStart(glWidget) << "_sc-" << ui->scaleDial->value() << ".png";
+    namestream << chromosomeName << "_w-" << ui->getWidth() << "_st-" << ui->getStart(glWidget) << "_sc-" << ui->scaleDial->value() << ".png";
 
     QString filename = QFileDialog::getSaveFileName(this, tr("Save Image"), namestream.str().c_str(), tr("Images (*.png *.jpg)"));
 
@@ -449,9 +449,9 @@ void GLWidget::updateDisplay()
 
 void GLWidget::updateDisplaySize()
 {
-    int w = ui->widthDial->value();
+    int w = ui->getWidth();
 
-    ui->sizeDial->setSingleStep(w * 10);
+//    ui->sizeDial->setSingleStep(w * 10);//we can no longer change the step size directly, and it wasn't very useful
     if(ui->sizeDial->value() !=  w * openGlGridHeight() )
     {
         ui->sizeDial->setValue( w * openGlGridHeight() );
@@ -562,7 +562,7 @@ void GLWidget::zoomToolActivate(bool zoomOut)
             zoomFactor = 0.8;
 
         int scale = ui->scaleDial->value();//take current scale
-        int index = startPoint.y * (ui->widthDial->value()/scale) + startPoint.x;
+        int index = startPoint.y * (ui->getWidth()/scale) + startPoint.x;
         index *= scale;
         index = max(0, index + ui->getStart(glWidget));
         int newSize = (int)(ui->sizeDial->value() / zoomFactor);//calculate new projected size
@@ -636,7 +636,7 @@ void GLWidget::keyPressEvent( QKeyEvent *event )
         setCursor(zoomOutCursor);
 
     int step = 10;
-    int tenLines = ui->widthDial->value() * step;
+    int tenLines = ui->getWidth() * step;
     switch ( event->key() )//the keys should be passed directly to the widgets
     {
     case Qt::Key_Down:
@@ -648,11 +648,11 @@ void GLWidget::keyPressEvent( QKeyEvent *event )
         break;
 
     case Qt::Key_Right:
-        ui->setWidth(ui->widthDial->value() + ui->scaleDial->value());
+        ui->setWidth(ui->getWidth() + ui->scaleDial->value());
         break;
 
     case Qt::Key_Left:
-        ui->setWidth(ui->widthDial->value() - ui->scaleDial->value());
+        ui->setWidth(ui->getWidth() - ui->scaleDial->value());
         break;
 
     default:
@@ -890,7 +890,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
             if(tool() == RESIZE_TOOL)
             {
                 translate(0, dy);//still scroll up/down
-                int value = static_cast<int>(dx * ui->scaleDial->value()*2.0 + ui->widthDial->value() + 0.5);
+                int value = static_cast<int>(dx * ui->scaleDial->value()*2.0 + ui->getWidth() + 0.5);
                 ui->setWidth(value);
             }
         }
@@ -1001,7 +1001,7 @@ void GLWidget::translate(float dx, float dy)
     if(dy != 0.0)
     {
         int sign = (int)(dy / fabs(dy));
-        int move = -1* static_cast<int>(dy  + (sign*0.5)) * ui->widthDial->value() * 2;
+        int move = -1* static_cast<int>(dy  + (sign*0.5)) * ui->getWidth() * 2;
         int current = ui->getStart(glWidget);
         ui->setStart(glWidget, max(1, current+move) );
     }
@@ -1014,7 +1014,7 @@ void GLWidget::translateOffset(float dx, float dy)
     if(dy != 0.0)
     {
         int sign = (int)(dy / fabs(dy));
-        moveUp = -1* static_cast<int>(dy  + (sign*0.5)) * ui->widthDial->value() * 2;
+        moveUp = -1* static_cast<int>(dy  + (sign*0.5)) * ui->getWidth() * 2;
     }
 //    int current = ui->offsetDial->value();
     if(dx != 0.0)
