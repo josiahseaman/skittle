@@ -38,14 +38,12 @@ public:
     vector<QSpinBox *> getDialPointers();
 
 public slots:
-    void setVariables(int width, int scale, int zoom, int start, int size);
-    void changeWidth(int newWidth);
-    void changeWidth();
-    void changeScale(int newScale);
-    void changeScale();
-    void changeStart(GLWidget *saysWho, int start);
+    void setAllVariables(int width, int scale, int zoom, int start, int size);
+    void setWidth(int newWidth);
+    void setScale(int newScale);
+    void setStart(GLWidget *saysWho, int start);
     int getStart(GLWidget* gl);
-    void changeZoom(int zoom);
+    void setZoom(int zoom);
     void diffOffset(GLWidget *gl, int deltaO);
     void changeColorSetting(int set);
 signals:

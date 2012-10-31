@@ -95,7 +95,7 @@ void MdiChildWindow::checkScrollBars()
 
 void MdiChildWindow::changeStart(int val)
 {
-    ui->changeStart(glWidget, val);
+    ui->setStart(glWidget, val);
 }
 
 void MdiChildWindow::setHorizontalWidth(int val)

@@ -366,7 +366,7 @@ void RepeatOverviewDisplay::setSequence(const string* seq)
 void RepeatOverviewDisplay::changeScale(int s)
 {
     ui->print("RepeatOverviewDisplay::changeScale ", s);
-    ui->changeScale(s);
+    ui->setScale(s);
 }
 
 void RepeatOverviewDisplay::toggleVisibility()

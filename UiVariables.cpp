@@ -152,7 +152,7 @@ void UiVariables::printNum(int num)
     print(ss1.str().c_str() );
 }
 
-void UiVariables::setVariables(int width, int scale, int zoom, int start, int size)
+void UiVariables::setAllVariables(int width, int scale, int zoom, int start, int size)
 {
     //TODO: add validity checking
     if(width != -1)
@@ -160,7 +160,7 @@ void UiVariables::setVariables(int width, int scale, int zoom, int start, int si
     if(scale != -1)
     {
         if(width == -1)
-            changeScale(scale);
+            setScale(scale);
         else
             scaleDial->setValue(scale);
     }
@@ -174,7 +174,7 @@ void UiVariables::setVariables(int width, int scale, int zoom, int start, int si
     emit internalsUpdated();
 }
 
-void UiVariables::changeWidth(int newWidth)
+void UiVariables::setWidth(int newWidth)
 {
     if(newWidth < 1)
         newWidth = 1;
@@ -194,11 +194,8 @@ void UiVariables::changeWidth(int newWidth)
         emit internalsUpdated();
     }
 }
-void UiVariables::changeWidth()
-{
-    changeWidth(widthDial->value());
-}
-void UiVariables::changeScale(int newScale)
+
+void UiVariables::setScale(int newScale)
 {
     if(newScale < 1)
         newScale = 1;
@@ -223,12 +220,8 @@ void UiVariables::changeScale(int newScale)
         emit internalsUpdated();
     }
 }
-void UiVariables::changeScale()
-{
-    changeScale(scaleDial->value());
-}
 
-void UiVariables::changeStart(GLWidget* saysWho, int start)
+void UiVariables::setStart(GLWidget* saysWho, int start)
 {
     QSpinBox* dial = getOffsetDial(saysWho);
     if(dial)
@@ -252,7 +245,7 @@ int UiVariables::getStart(GLWidget* gl)
     return startDial->value();
 }
 
-void UiVariables::changeZoom(int zoom)
+void UiVariables::setZoom(int zoom)
 {
     if(zoom != zoomDial->value())
     {

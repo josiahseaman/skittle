@@ -205,7 +205,7 @@ void GLWidget::displayString(const string* sequence)
         graphs[i]->setSequence(sequence);
         graphs[i]->invalidate();
     }
-    ui->setVariables(128, 1, 100, 1, -1);
+    ui->setAllVariables(128, 1, 100, 1, -1);
 
     //zoomExtents();
 
@@ -239,7 +239,7 @@ void GLWidget::zoomRange(int startIndex, int endIndex)
         newZoom = max(100,(int)(requiredZoom * 100)); //now it's in percent
     }
 
-    ui->setVariables(-1, newScale, newZoom, min(startIndex,endIndex), -1 );
+    ui->setAllVariables(-1, newScale, newZoom, min(startIndex,endIndex), -1 );
 }
 
 void GLWidget::on_moveButton_clicked()
@@ -505,7 +505,7 @@ void GLWidget::jumpToAnnotation(bool forward)
     }
     //jump to the first one (min)
     if(startPosition < (int)seq()->size())
-        ui->changeStart(glWidget, startPosition);
+        ui->setStart(glWidget, startPosition);
     else if (startPosition <= 1)
         ui->print("You have reached the beginning of the file.");
     else
@@ -587,7 +587,7 @@ void GLWidget::zoomToolActivate(bool zoomOut)
                 newScale = -1;
             }
         }
-        ui->setVariables(-1, newScale, newZoom, newStart, newSize);
+        ui->setAllVariables(-1, newScale, newZoom, newStart, newSize);
 
     }
     else // user selected range
@@ -640,19 +640,19 @@ void GLWidget::keyPressEvent( QKeyEvent *event )
     switch ( event->key() )//the keys should be passed directly to the widgets
     {
     case Qt::Key_Down:
-        ui->changeStart(glWidget, ui->getStart(glWidget) + tenLines);
+        ui->setStart(glWidget, ui->getStart(glWidget) + tenLines);
         break;
 
     case Qt::Key_Up:
-        ui->changeStart(glWidget, ui->getStart(glWidget) - tenLines);
+        ui->setStart(glWidget, ui->getStart(glWidget) - tenLines);
         break;
 
     case Qt::Key_Right:
-        ui->changeWidth(ui->widthDial->value() + ui->scaleDial->value());
+        ui->setWidth(ui->widthDial->value() + ui->scaleDial->value());
         break;
 
     case Qt::Key_Left:
-        ui->changeWidth(ui->widthDial->value() - ui->scaleDial->value());
+        ui->setWidth(ui->widthDial->value() - ui->scaleDial->value());
         break;
 
     default:
@@ -891,7 +891,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
             {
                 translate(0, dy);//still scroll up/down
                 int value = static_cast<int>(dx * ui->scaleDial->value()*2.0 + ui->widthDial->value() + 0.5);
-                ui->changeWidth(value);
+                ui->setWidth(value);
             }
         }
         if(tool() == ZOOM_TOOL && selectionBoxVisible )
@@ -1003,7 +1003,7 @@ void GLWidget::translate(float dx, float dy)
         int sign = (int)(dy / fabs(dy));
         int move = -1* static_cast<int>(dy  + (sign*0.5)) * ui->widthDial->value() * 2;
         int current = ui->getStart(glWidget);
-        ui->changeStart(glWidget, max(1, current+move) );
+        ui->setStart(glWidget, max(1, current+move) );
     }
     emit xOffsetChange((int)(xPosition + dx + .5));
 }
