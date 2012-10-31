@@ -556,6 +556,7 @@ void GLWidget::addTrackEntry(track_entry entry, string gtfFileName)
 
 void GLWidget::zoomToolActivate(bool zoomOut)
 {
+
     if(zoomOut || (abs(endPoint.y - startPoint.y) < 2 && abs(endPoint.x - startPoint.x) < 2))
     {
         float zoomFactor = 1.2;
@@ -590,31 +591,39 @@ void GLWidget::zoomToolActivate(bool zoomOut)
     {
         pair<int,int> results = getSelectionOutcome();
         if(results.first != -1)
+        {
             zoomRange(results.first, results.second);
+        }
     }
+    ui->print("offset is ", getSelectionOutcome(true).first);
+
+    emit xOffsetChange(getSelectionOutcome(true).first);
+
 }
 
-pair<int, int> GLWidget::getSelectionOutcome()
+pair<int, int> GLWidget::getSelectionOutcome(bool getGraphConstraints)
 {
     int startIndex = 1;
     int endIndex = 1;
-
-    point2D spTemp = startPoint;
-    point2D epTemp = endPoint;
+    int xOffset = 0;
 
     for(int i = 0; i < (int)graphs.size(); ++i)
     {
         if(!graphs[i]->hidden)
         {
-            pair<int,int> indices = graphs[i]->getIndicesFromPoints(spTemp, epTemp);
+            pair<int,int> indices = graphs[i]->getIndicesFromPoints(point2D((startPoint.x - xOffset),startPoint.y), point2D((endPoint.x - xOffset),endPoint.y));
             startIndex = min(indices.first, indices.second);
             endIndex = max(indices.first, indices.second);
             if (startIndex > 0 && endIndex > 0 )//&& endIndex < seq()->size())
             {
-                return pair<int,int>(startIndex,endIndex);
+                if(getGraphConstraints)
+                {
+                    return pair<int,int>(xOffset,(xOffset + graphs[i]->width()));
+                }
+                else // default behavior returns indicies
+                    return pair<int,int>(startIndex,endIndex);
             }
-            spTemp.x -= graphs[i]->width() + border;
-            epTemp.x -= graphs[i]->width() + border;
+            xOffset += graphs[i]->width() + border;
         }
     }
     return pair<int,int>(-1,-1);
@@ -929,9 +938,6 @@ void GLWidget::drawSelectionBox(point2D start,point2D end) //, int lineStart, in
     if(selectionBoxVisible)
     {
 
-        int lineEnd = nuc->width();
-        int lineStart = 0;
-
         if (start.y > end.y || (start.y == end.y && start.x > end.x)) //if you drag up,
         {
             point2D temp = start;//swap the top and bottom of the box
@@ -939,48 +945,54 @@ void GLWidget::drawSelectionBox(point2D start,point2D end) //, int lineStart, in
             end = temp;
         }
 
-        // force points to be in bounds and make pretty squared off boxes
-        if (start.x < lineStart)
-            start.x = lineStart;
-        if (start.x >= lineEnd)
+        pair<int,int> graphConstraints = getSelectionOutcome(true); //
+        int lineStart = graphConstraints.first;
+        int lineEnd = graphConstraints.second;
+
+        if (lineStart != -1) // force points to be in bounds and make pretty squared off boxes
         {
-            start.x = lineStart;
-            ++start.y;
+            if (start.x < lineStart)
+                start.x = lineStart;
+            if (start.x >= lineEnd)
+            {
+                start.x = lineStart;
+                ++start.y;
+            }
+            if (end.x > lineEnd)
+                end.x = lineEnd;
+            if (end.x < lineStart)
+            {
+                end.x = lineEnd;
+                --end.y;
+            }
+
+
+            // hairline edge
+            color c = color(200,185,60);
+            double lineThickness = 0.3;
+            //draw the ragged box edge
+            nuc->paint_line(point((lineStart - lineThickness), -(start.y + 1 - lineThickness),0),   point(start.x, -(start.y + 1),0), c); //top left
+            nuc->paint_line(point((start.x - lineThickness), -(start.y - lineThickness),0),         point(start.x, -(start.y + 1),0), c); //top jog
+            nuc->paint_line(point((start.x - lineThickness), -(start.y - lineThickness),0),         point((lineEnd + lineThickness), -start.y,0), c); //top right
+            nuc->paint_line(point((lineStart - lineThickness), -(end.y + 1),0),                     point((end.x + lineThickness), -(end.y + 1 + lineThickness),0), c); //bottom left
+            nuc->paint_line(point(end.x, -end.y,0),                                                 point((end.x + lineThickness), -(end.y + 1 + lineThickness),0), c); //bottom jog
+            nuc->paint_line(point(end.x, -end.y,0),                                                 point((lineEnd + lineThickness), -(end.y + lineThickness),0), c); //bottom right
+            nuc->paint_line(point((lineStart - lineThickness), -(start.y + 1 - lineThickness),0),   point(lineStart, -(end.y + 1 + lineThickness),0), c); //left
+            nuc->paint_line(point(lineEnd, -start.y,0),                                             point((lineEnd + lineThickness), -(end.y + lineThickness),0), c); //right
+
+            // adjust to taste
+            c = color(255,235,80);
+            lineThickness = max(1.0, (double)(2.75 - (ui->zoomDial->value())/400)); // thickness scales inversely to zoom level
+            //        double lineThickness = 1.5;
+            //draw the ragged box
+            nuc->paint_line(point((lineStart - lineThickness), -(start.y + 1 - lineThickness),0),   point(start.x, -(start.y + 1),0), c); //top left
+            nuc->paint_line(point((start.x - lineThickness), -(start.y - lineThickness),0),         point((lineEnd + lineThickness), -start.y,0), c); //top right
+            nuc->paint_line(point((lineStart - lineThickness), -(end.y + 1),0),                     point((end.x + lineThickness), -(end.y + 1 + lineThickness),0), c); //bottom left
+            nuc->paint_line(point(end.x, -end.y,0),                                                 point((lineEnd + lineThickness), -(end.y + lineThickness),0), c); //bottom right
+            nuc->paint_line(point((lineStart - lineThickness), -(start.y + 1 - lineThickness),0),   point(lineStart, -(end.y + 1 + lineThickness),0), c); //left
+            nuc->paint_line(point(lineEnd, -start.y,0),                                             point((lineEnd + lineThickness), -(end.y + lineThickness),0), c); //right
+
         }
-        if (end.x < lineStart)
-        {
-            end.x = lineEnd;
-            --end.y;
-        }
-        if (end.x >= lineEnd)
-            end.x = lineEnd;
-
-
-        // hairline edge
-        color c = color(200,185,60);
-        double lineThickness = 0.3;
-        //draw the ragged box
-        nuc->paint_line(point2D(-lineThickness, -(start.y + 1 - lineThickness)),        point2D(start.x, -(start.y + 1)), c); //top left
-        nuc->paint_line(point2D((start.x - lineThickness), -(start.y - lineThickness)), point2D(start.x, -(start.y + 1)), c); //top jog
-        nuc->paint_line(point2D((start.x - lineThickness), -(start.y - lineThickness)), point2D((lineEnd + lineThickness), -start.y), c); //top right
-        nuc->paint_line(point2D(-lineThickness, -(end.y + 1)),                          point2D((end.x + lineThickness), -(end.y + 1 + lineThickness)), c); //bottom left
-        nuc->paint_line(point2D(end.x, -end.y),                                         point2D((end.x + lineThickness), -(end.y + 1 + lineThickness)), c); //bottom jog
-        nuc->paint_line(point2D(end.x, -end.y),                                         point2D((lineEnd + lineThickness), -(end.y + lineThickness)), c); //bottom right
-        nuc->paint_line(point2D(-lineThickness, -(start.y + 1 - lineThickness)),        point2D(lineStart, -(end.y + 1 + lineThickness)), c); //left
-        nuc->paint_line(point2D(lineEnd, -start.y),                                     point2D((lineEnd + lineThickness), -(end.y + lineThickness)), c); //right
-
-        // adjust to taste
-        c = color(255,235,80);
-        lineThickness = max(1.0, (double)(2.75 - (ui->zoomDial->value())/400)); // thickness scales inversely to zoom level
-//        double lineThickness = 1.5;
-        //draw the ragged box
-        nuc->paint_line(point2D(-lineThickness, -(start.y + 1 - lineThickness)),        point2D(start.x, -(start.y + 1)), c); //top left
-        nuc->paint_line(point2D((start.x - lineThickness), -(start.y - lineThickness)), point2D((lineEnd + lineThickness), -start.y), c); //top right
-        nuc->paint_line(point2D(-lineThickness, -(end.y + 1)),                          point2D((end.x + lineThickness), -(end.y + 1 + lineThickness)), c); //bottom left
-        nuc->paint_line(point2D(end.x, -end.y),                                         point2D((lineEnd + lineThickness), -(end.y + lineThickness)), c); //bottom right
-        nuc->paint_line(point2D(-lineThickness, -(start.y + 1 - lineThickness)),        point2D(lineStart, -(end.y + 1 + lineThickness)), c); //left
-        nuc->paint_line(point2D(lineEnd, -start.y),                                     point2D((lineEnd + lineThickness), -(end.y + lineThickness)), c); //right
-
     }
 }
 

@@ -97,7 +97,7 @@ void AbstractGraph::paint_square(point position, color c)
     glPopMatrix();
 }
 
-void AbstractGraph::paint_line(point2D startPoint, point2D endPoint, color c)
+void AbstractGraph::paint_line(point startPoint, point endPoint, color c)
 {
     glPushMatrix();
     glColor3d(c.r /255.0, c.g /255.0, c.b /255.0);
@@ -281,8 +281,8 @@ pair<int,int> AbstractGraph::getIndicesFromPoints(point2D startPoint, point2D en
 {
     if (rangeOverlap(startPoint.x,endPoint.x,0,width()))
     {
-        int spx = min(max(startPoint.x,0),width()); //force value between 0 and width
-        int epx = min(max(endPoint.x,0),width());
+        int spx = min(max(startPoint.x,0),(width() - 1)); //force value between 0 and width
+        int epx = min(max(endPoint.x,0),(width() - 1));
         //we use Relative index here for the graphs that overwrite that function
         int startIndex = getRelativeIndexFromMouseClick(point2D(spx, startPoint.y)) + ui->startDial->value();
         int endIndex = getRelativeIndexFromMouseClick(point2D(epx, endPoint.y)) + ui->startDial->value();

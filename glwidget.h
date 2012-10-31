@@ -81,7 +81,7 @@ public:
     void keyReleaseEvent( QKeyEvent *event );
     int tool();
     void zoomToolActivate(bool zoomOut = false);
-    pair<int, int> getSelectionOutcome();
+    pair<int, int> getSelectionOutcome(bool getGraphConstraints = false);
     color colors(char nucleotide);
     void setupColorTable();
     color spectrum(double i);
