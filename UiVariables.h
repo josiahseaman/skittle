@@ -3,9 +3,11 @@
 
 #include <string>
 #include <QWidget>
+#include <map>
 
 class QTextEdit;
 class QSpinBox;
+class GLWidget;
 
 using namespace std;
 
@@ -25,8 +27,8 @@ public:
 
     static UiVariables* Instance();
 
-    int newOffsetDial();
-    QSpinBox* getOffsetDial(int offsetIndex);
+    int newOffsetDial(GLWidget* gl);
+    QSpinBox* getOffsetDial(GLWidget* gl);
 
     void print(const char*);
     void print(std::string s);
@@ -43,7 +45,7 @@ public slots:
     void changeScale();
     void changeStart(int start);
     void changeZoom(int zoom);
-    void diffOffset(int deltaO);
+    void diffOffset(GLWidget *gl, int deltaO);
     void changeColorSetting(int set);
 signals:
     void internalsUpdated();
@@ -57,7 +59,7 @@ private:
 
     ~UiVariables();
     static UiVariables* pointerInstance;
-    vector<QSpinBox*> offsets;
+    map<GLWidget*, QSpinBox*> offsets;
     int oldScale;
     int oldWidth;
     static int const maxSaneWidth = 4000;

@@ -1019,7 +1019,7 @@ void GLWidget::translateOffset(float dx, float dy)
         int sign = (int)(dx / fabs(dx));
         dx = (int)(dx + (0.5 * sign));
     }
-    ui->diffOffset( (int)( moveUp + dx));
+    ui->diffOffset( this, (int)( moveUp + dx));
 }
 
 void GLWidget::changeCursor(Qt::CursorShape cNumber)

@@ -76,15 +76,15 @@ GLWidget* ViewManager::addNewView(bool suppressOpen)
 {
     if(activeWidget)
         activeWidget->showNormal();//this should be the equivalent of clicking 'restore' or not maximized
-    int offsetIndex = newOffsetDial();
 
-    MdiChildWindow* child = new MdiChildWindow(offsetIndex, mainWindow->tabWidget);
+    MdiChildWindow* child = new MdiChildWindow(mainWindow->tabWidget);
     connect( child, SIGNAL(subWindowClosing(MdiChildWindow*)), this, SLOT(closeSubWindow(MdiChildWindow*)));
     addSubWindow(child);
     child->show();
     views.push_back(child);
 
     GLWidget* newGlWidget = child->glWidget;
+    newOffsetDial(newGlWidget);
     uiToGlwidgetConnections(newGlWidget);
     changeSelection(child);
 
@@ -184,21 +184,22 @@ void ViewManager::jumpToPrevAnnotation()
 void ViewManager::changeGlobalStart()
 {
 //    UiVariables* local = vars(activeWidget);
-    int preOffsetStart = max(1, ui->startDial->value() - ui->getOffsetDial(0)->value());//TODO: use widget offsetIndex
+    int preOffsetStart = max(1, ui->startDial->value() - ui->getOffsetDial(activeWidget)->value());
     ui->changeStart(preOffsetStart);
 }
 
 //PRIVATE FUNCTIONS//
-int ViewManager::newOffsetDial()
+bool ViewManager::newOffsetDial(GLWidget* gl)
 {
-    int offsetIndex = ui->newOffsetDial();
-    QSpinBox* offset = ui->getOffsetDial(offsetIndex);
+    ui->newOffsetDial(gl);
+    QSpinBox* offset = ui->getOffsetDial(gl);
     if(offset)
     {
         offset->show();
         mainWindow->settingToolBar->addWidget(offset);
+        return true;
     }
-    return offsetIndex;
+    return false;
 }
 
 UiVariables* ViewManager::vars(GLWidget* active)

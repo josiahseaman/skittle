@@ -26,7 +26,7 @@ public:
     GLWidget* glWidget;
     UiVariables* ui;
 
-    MdiChildWindow(int offsetIndex, QTabWidget* settings);
+    MdiChildWindow(QTabWidget* settings);
     void closeEvent(QCloseEvent *event);
     void connectWidget();
     void hideSettingsTabs();
@@ -44,7 +44,6 @@ signals:
     void IveBeenClicked(MdiChildWindow*);
 
 private:
-    int offsetIndex;
     QTabWidget* settingsDock;
     vector<QScrollArea*> settingsTabs;
 

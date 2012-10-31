@@ -17,7 +17,6 @@ class QActionGroup;
 class QDockWidget;
 class QTextEdit;
 class QLineEdit;
-class QSpinBox;
 class QComboBox;
 class QPushButton;
 class QProgressBar;

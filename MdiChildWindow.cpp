@@ -22,11 +22,10 @@ MdiChildWindows.  Each MdiChildWindow has only one GLWidget tied to one file.  M
 the primary owner of the UiVariables object that is passed for signals all throughout the program.
 *************************************************/
 
-MdiChildWindow::MdiChildWindow(int offsetDialIndex, QTabWidget *settings)//TODO: use offsetDialIndex in ui.getStart()
+MdiChildWindow::MdiChildWindow(QTabWidget *settings)//TODO: use offsetDialIndex in ui.getStart()
     :QFrame()
 {
     ui = UiVariables::Instance();
-    offsetIndex =  offsetDialIndex;
     settingsDock = settings;
     horizontalScrollBar = new QScrollBar();
     horizontalScrollBar->setOrientation(Qt::Horizontal);
@@ -73,8 +72,8 @@ void MdiChildWindow::closeEvent(QCloseEvent *event)
     //QScrollBar* verticalScrollBar;
     //QFrame* subFrame;
     emit subWindowClosing(this);
+    delete ui->getOffsetDial(glWidget);//->hide()
     delete glWidget;
-    ui->getOffsetDial(offsetIndex)->hide();
     for(int i = 0; i < (int)settingsTabs.size(); ++i)
         delete settingsTabs[i];
     event->accept();

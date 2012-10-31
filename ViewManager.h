@@ -42,7 +42,7 @@ private:
     MainWindow* mainWindow;
     UiVariables* ui;
 
-    int newOffsetDial();
+    bool newOffsetDial(GLWidget *gl);
     UiVariables* vars(GLWidget* active);
 
 };

@@ -92,21 +92,22 @@ UiVariables* UiVariables::Instance()//static
     return pointerInstance;
 }
 
-int UiVariables::newOffsetDial()
+int UiVariables::newOffsetDial(GLWidget* gl)
 {
     QSpinBox* offsetDial = new QSpinBox();
     offsetDial->setMinimum(-40000000);
     offsetDial->setMaximum(40000000);
     offsetDial->setValue(0);
     offsetDial->setSingleStep(1);
-    offsets.push_back(offsetDial);
+    offsets[gl] = offsetDial;
 
     return offsets.size() - 1;
 }
 
-QSpinBox* UiVariables::getOffsetDial(int offsetIndex)
+QSpinBox* UiVariables::getOffsetDial(GLWidget* gl)
 {
-    return offsets.at(offsetIndex);
+    QSpinBox* r = offsets[gl];
+    return r;
 }
 
 void UiVariables::print(char const* s)
@@ -225,13 +226,13 @@ void UiVariables::changeZoom(int zoom)
     }
 }
 
-void UiVariables::diffOffset(int deltaO)
+void UiVariables::diffOffset(GLWidget* gl, int deltaO)
 {
-    if(!offsets.empty())
+    if(deltaO != 0)
     {
-        if(deltaO != 0)
+        QSpinBox* offsetDial = offsets[gl];
+        if(offsetDial)
         {
-            QSpinBox* offsetDial = offsets[0];//TODO: use offsetIndex from calling method
             int offset = offsetDial->value() + deltaO;
             offsetDial->setValue(offset);
 
