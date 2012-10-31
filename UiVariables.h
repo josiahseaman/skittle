@@ -19,14 +19,14 @@ public:
     QSpinBox* startDial;
     QSpinBox* scaleDial;
     QSpinBox* zoomDial;
-    QSpinBox* offsetDial;
     QTextEdit* textArea;
     int colorSetting;
     enum colorPalletes { CLASSIC, COLORBLINDSAFE, BETTERCBSAFE, DARK, DRUMS, BLUES, REDS };
 
-    //	UiVariables();
-    UiVariables(QTextEdit* text = NULL);
-    ~UiVariables();
+    static UiVariables* Instance();
+
+    int newOffsetDial();
+    QSpinBox* getOffsetDial(int offsetIndex);
 
     void print(const char*);
     void print(std::string s);
@@ -43,13 +43,21 @@ public slots:
     void changeScale();
     void changeStart(int start);
     void changeZoom(int zoom);
-    void changeOffset(int offset);
+    void diffOffset(int deltaO);
     void changeColorSetting(int set);
 signals:
     void internalsUpdated();
     void colorsChanged(int);
 
 private:
+    //	UiVariables();
+    UiVariables(QTextEdit* text = NULL);
+    UiVariables(UiVariables const&){}             // copy constructor is private
+    UiVariables& operator = (UiVariables const&){return *Instance();}  // assignment operator is private
+
+    ~UiVariables();
+    static UiVariables* pointerInstance;
+    vector<QSpinBox*> offsets;
     int oldScale;
     int oldWidth;
     static int const maxSaneWidth = 4000;

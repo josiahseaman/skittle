@@ -23,11 +23,11 @@ MdiChildWindows.  Each MdiChildWindow has only one GLWidget tied to one file.  M
 the primary owner of the UiVariables object that is passed for signals all throughout the program.
 *************************************************/
 
-MdiChildWindow::MdiChildWindow(UiVariables *gui, QSpinBox* pStart, QTabWidget* settings)
+MdiChildWindow::MdiChildWindow(int offsetDialIndex, QTabWidget *settings)//TODO: use offsetDialIndex in ui.getStart()
     :QFrame()
 {
-    ui = gui;
-    publicStart = pStart;
+    ui = UiVariables::Instance();
+    offsetIndex =  offsetDialIndex;
     settingsDock = settings;
     horizontalScrollBar = new QScrollBar();
     horizontalScrollBar->setOrientation(Qt::Horizontal);
@@ -68,22 +68,6 @@ MdiChildWindow::MdiChildWindow(UiVariables *gui, QSpinBox* pStart, QTabWidget* s
     setPageSize();
 }	
 
-void MdiChildWindow::changeLocalStartFromPublicStart(int val)
-{
-    int start = val;
-    int offset = ui->offsetDial->value();
-
-    ui->changeStart((int)max(0, start + offset));
-    //emit startChangeFromPublicStart((int)max(0, start + offset));
-}
-
-void MdiChildWindow::changeLocalStartFromOffset(int val)
-{
-    int start = publicStart->value();
-    int offset = ui->offsetDial->value();
-    ui->startDial->setValue((int)max(0, start + offset));
-}
-
 void MdiChildWindow::closeEvent(QCloseEvent *event)
 {
     //QScrollBar* horizontalScrollBar;
@@ -91,7 +75,7 @@ void MdiChildWindow::closeEvent(QCloseEvent *event)
     //QFrame* subFrame;
     emit subWindowClosing(this);
     delete glWidget;
-    delete ui->offsetDial;//->hide();
+    ui->getOffsetDial(offsetIndex)->hide();
     for(int i = 0; i < (int)settingsTabs.size(); ++i)
         delete settingsTabs[i];
     event->accept();
@@ -102,18 +86,11 @@ void MdiChildWindow::connectWidget()
     connect(horizontalScrollBar, SIGNAL(valueChanged(int)), glWidget, SLOT(slideHorizontal(int)));
     connect(glWidget, SIGNAL(xOffsetChange(int)), horizontalScrollBar, SLOT(setValue(int)));
     connect(glWidget, SIGNAL(totalWidthChanged(int)), this, SLOT(setHorizontalWidth(int)));
-    connect(ui->widthDial, SIGNAL(valueChanged(int)), this, SLOT(setOffsetStep(int)));
-    connect(ui->offsetDial, SIGNAL(valueChanged(int)), this, SLOT(changeLocalStartFromOffset(int)));
 }
 
 void MdiChildWindow::setHorizontalWidth(int val)
 {
     horizontalScrollBar->setMaximum( max(0, val) );
-}
-
-void MdiChildWindow::setOffsetStep(int val)
-{
-    ui->offsetDial->setSingleStep(val);
 }
 
 void MdiChildWindow::setPageSize()

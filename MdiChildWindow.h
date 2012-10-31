@@ -26,7 +26,7 @@ public:
     GLWidget* glWidget;
     UiVariables* ui;
 
-    MdiChildWindow(UiVariables* gui, QSpinBox* pStart, QTabWidget* settings);
+    MdiChildWindow(int offsetIndex, QTabWidget* settings);
     void closeEvent(QCloseEvent *event);
     void connectWidget();
     void hideSettingsTabs();
@@ -34,10 +34,7 @@ public:
     void mousePressEvent(QMouseEvent *event);
 
 public slots:
-    void changeLocalStartFromPublicStart(int val);
-    void changeLocalStartFromOffset(int val);
     void setHorizontalWidth(int val);
-    void setOffsetStep(int val);
     void setPageSize();
     void hideSettingsTab(QScrollArea*);
     void showSettingsTab(QScrollArea*);
@@ -47,7 +44,7 @@ signals:
     void IveBeenClicked(MdiChildWindow*);
 
 private:
-    QSpinBox* publicStart;
+    int offsetIndex;
     QTabWidget* settingsDock;
     vector<QScrollArea*> settingsTabs;
 

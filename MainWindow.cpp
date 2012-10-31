@@ -141,7 +141,8 @@ void MainWindow::createUiVars()
 
 
     //Note:Creating the visual representation of UiVariables is split between Mainwindow and the UiVariables constructor
-    ui = new UiVariables(textArea);
+    ui = UiVariables::Instance();
+    ui->textArea = textArea;
     settingToolBar->addWidget(new QLabel("Width"));
     settingToolBar->addWidget(ui->widthDial);
 

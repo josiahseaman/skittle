@@ -1013,13 +1013,13 @@ void GLWidget::translateOffset(float dx, float dy)
         int sign = (int)(dy / fabs(dy));
         moveUp = -1* static_cast<int>(dy  + (sign*0.5)) * ui->widthDial->value() * 2;
     }
-    int current = ui->offsetDial->value();
+//    int current = ui->offsetDial->value();
     if(dx != 0.0)
     {
         int sign = (int)(dx / fabs(dx));
         dx = (int)(dx + (0.5 * sign));
     }
-    ui->changeOffset( (int)(current + moveUp + dx));
+    ui->diffOffset( (int)( moveUp + dx));
 }
 
 void GLWidget::changeCursor(Qt::CursorShape cNumber)

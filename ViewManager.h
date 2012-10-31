@@ -37,7 +37,6 @@ public slots:
 
     void handleWindowSync();
     void changeGlobalStart();
-    void changeAllLocalStarts();
     void printNum(int num);
     void printNum2(int num);
     void updateCurrentDisplay();
@@ -50,7 +49,7 @@ private:
 
     void broadcastLocalValues(UiVariables local);
     void broadcastPublicValues(UiVariables *local);
-    UiVariables* copyUi();
+    int newOffsetDial();
     void connectGlobalPushToLocal(GLWidget *, UiVariables*);//all windows are listening with syncCheckbox
     void connectLocalPushToGlobal(GLWidget *, UiVariables*);//only active window gets to push to globalUi
     void disconnectGlobalPushToLocal(GLWidget *, UiVariables*);

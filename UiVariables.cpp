@@ -18,6 +18,10 @@ You should also use the print functions to provide data to the user in a format
 that can be copy and pasted without the need to write a file.
 **********************************/
 
+// Global static pointer used to ensure a single instance of the class.
+UiVariables* UiVariables::pointerInstance = NULL;
+
+
 UiVariables::UiVariables(QTextEdit* text)
 {
     textArea = text;
@@ -60,12 +64,6 @@ UiVariables::UiVariables(QTextEdit* text)
     sizeDial->setSuffix(" bp");
     sizeDial->setButtonSymbols(QAbstractSpinBox::NoButtons);
 
-    offsetDial = new QSpinBox();
-    offsetDial->setMinimum(-40000000);
-    offsetDial->setMaximum(40000000);
-    offsetDial->setValue(0);
-    offsetDial->setSingleStep(widthDial->value());
-    offsetDial->hide();
     oldScale = 1;
     oldWidth = 128;
 
@@ -83,6 +81,34 @@ UiVariables::~UiVariables()
     //delete all the individual dial pointers?
 }
 
+/** *********************
+  Singleton design pattern: Making the constructor private at Instance() static
+  ensures that there is only ever one UiVariables.
+  ************************/
+UiVariables* UiVariables::Instance()//static
+{
+    if(pointerInstance == NULL)
+        pointerInstance = new UiVariables();
+    return pointerInstance;
+}
+
+int UiVariables::newOffsetDial()
+{
+    QSpinBox* offsetDial = new QSpinBox();
+    offsetDial->setMinimum(-40000000);
+    offsetDial->setMaximum(40000000);
+    offsetDial->setValue(0);
+    offsetDial->setSingleStep(1);
+    offsets.push_back(offsetDial);
+
+    return offsets.size() - 1;
+}
+
+QSpinBox* UiVariables::getOffsetDial(int offsetIndex)
+{
+    return offsets.at(offsetIndex);
+}
+
 void UiVariables::print(char const* s)
 {
     if(textArea != NULL)
@@ -94,7 +120,7 @@ void UiVariables::print(char const* s)
 
 void UiVariables::print(std::string s)
 {
-    textArea->append(QString(s.c_str()));
+    print(s.c_str());
 }
 
 void UiVariables::printHtml(std::string s)
@@ -108,7 +134,7 @@ void UiVariables::print(const char* s, int num)
     std::stringstream ss1;
     ss1 << s << num;
 
-    textArea->append(QString( ss1.str().c_str() ));
+    print( ss1.str().c_str() );
 }
 
 void UiVariables::printNum(int num)
@@ -116,7 +142,7 @@ void UiVariables::printNum(int num)
     std::stringstream ss1;
     ss1 << num;
 
-    textArea->append(QString( ss1.str().c_str() ));
+    print(ss1.str().c_str() );
 }
 /*
 void UiVariables::print(int num1, int num2)
@@ -124,7 +150,7 @@ void UiVariables::print(int num1, int num2)
     stringstream ss1;
     ss1 << num1 << ", " << num2;
 
-    textArea->append(QString( ss1.str().c_str() ));
+    print( ss1.str().c_str() );
 }*/
 
 void UiVariables::changeWidth(int newWidth)
@@ -199,16 +225,16 @@ void UiVariables::changeZoom(int zoom)
     }
 }
 
-void UiVariables::changeOffset(int offset)
+void UiVariables::diffOffset(int deltaO)
 {
-    if(offsetDial != NULL)
+    if(!offsets.empty())
     {
-        if(offset != offsetDial->value())
+        if(deltaO != 0)
         {
+            QSpinBox* offsetDial = offsets[0];//TODO: use offsetIndex from calling method
+            int offset = offsetDial->value() + deltaO;
             offsetDial->setValue(offset);
-            //            startDial->setValue(preOffset + offset    );
-            //            oldOffset
-            //                    global_start
+
             emit internalsUpdated();
         }
     }
