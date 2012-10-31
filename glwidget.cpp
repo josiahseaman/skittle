@@ -450,12 +450,7 @@ void GLWidget::updateDisplay()
 void GLWidget::updateDisplaySize()
 {
     int w = ui->getWidth();
-
-    if(ui->sizeDial->value() !=  w * openGlGridHeight() )
-    {
-        ui->sizeDial->setValue( w * openGlGridHeight() );
-        emit displaySizeChanged();
-    }
+    ui->setSize( w * openGlGridHeight() );
 }
 
 AnnotationDisplay* GLWidget::addAnnotationDisplay(QString fName)
@@ -564,7 +559,7 @@ void GLWidget::zoomToolActivate(bool zoomOut)
         int index = startPoint.y * (ui->getWidth()/scale) + startPoint.x;
         index *= scale;
         index = max(0, index + ui->getStart(glWidget));
-        int newSize = (int)(ui->sizeDial->value() / zoomFactor);//calculate new projected size
+        int newSize = (int)(ui->getSize() / zoomFactor);//calculate new projected size
         int newStart = index - (newSize/2);//set start as centered point - size/2
         //size should recalculate
         int newScale = (int)(scale / zoomFactor) + (zoomFactor > 1.0? 0 : 1);//reduce scale by 10-20%  (Nx4)

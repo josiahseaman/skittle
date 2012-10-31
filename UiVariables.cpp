@@ -248,8 +248,7 @@ void UiVariables::setStart(GLWidget* saysWho, int start)
     if(dial)
     {
         int newStart = max(1, start - dial->value() );
-        int current = startDial->value();
-        if(newStart != current)
+        if(valueIsGoingToChange(startDial, newStart))
         {
             startDial->setValue(newStart);
             emit internalsUpdated();
@@ -264,9 +263,23 @@ int UiVariables::getZoom()
 
 void UiVariables::setZoom(int zoom)
 {
-    if(zoom != getZoom())
+    if(valueIsGoingToChange(zoomDial, zoom))
     {
         zoomDial->setValue(zoom);
+        emit internalsUpdated();
+    }
+}
+
+int UiVariables::getSize()
+{
+    return sizeDial->value();
+}
+
+void UiVariables::setSize(int size)
+{
+    if(valueIsGoingToChange(sizeDial, size))
+    {
+        sizeDial->setValue(size);
         emit internalsUpdated();
     }
 }
@@ -284,6 +297,13 @@ void UiVariables::setOffsetDelta(GLWidget* gl, int deltaO)
             emit internalsUpdated();
         }
     }
+}
+
+bool UiVariables::valueIsGoingToChange(QSpinBox* dial, int val)
+{
+    return (val != dial->value() &&
+            val >= dial->minimum() &&
+            val <= dial->maximum());
 }
 
 int UiVariables::getColorSetting()

@@ -162,7 +162,7 @@ string AbstractGraph::getFileName()
 
 int AbstractGraph::current_display_size()
 {
-    return min( ui->sizeDial->value(), max(0, ((int)sequence->size() - ui->getStart(glWidget))) );
+    return min( ui->getSize(), max(0, ((int)sequence->size() - ui->getStart(glWidget))) );
 }
 
 

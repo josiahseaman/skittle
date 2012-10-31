@@ -214,7 +214,7 @@ string AnnotationDisplay::getFileName()
 
 int AnnotationDisplay::current_display_size()
 {
-    return ui->sizeDial->value();
+    return ui->getSize();
 }
 
 int AnnotationDisplay::getNextAnnotationPosition()

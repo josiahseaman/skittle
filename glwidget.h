@@ -126,7 +126,6 @@ signals:
     void addGraphMode(AbstractGraph*);
     void addDivider();
     void AnnotationDisplayAdded(AnnotationDisplay*);
-    void displaySizeChanged();
     void hideSettings(QScrollArea*);
     void showSettings(QScrollArea*);
 

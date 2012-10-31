@@ -16,7 +16,6 @@ class UiVariables : public QObject
     Q_OBJECT
 
 public:
-    QSpinBox* sizeDial;
     QTextEdit* textArea;
     int colorSetting;
     enum colorPalletes { CLASSIC, COLORBLINDSAFE, BETTERCBSAFE, DARK, DRUMS, BLUES, REDS };
@@ -30,6 +29,7 @@ public:
     void printHtml(std::string);
     void print(const char* s, int num);
     void printNum(int num);
+    bool valueIsGoingToChange(QSpinBox* dial, int val);
     int getColorSetting();
     vector<QSpinBox *> getDialPointers();
 
@@ -43,6 +43,9 @@ public slots:
     void setStart(GLWidget *saysWho, int start);
     int getZoom();
     void setZoom(int zoom);
+    int getSize();
+    void setSize(int size);
+
     QSpinBox* getOffsetDial(GLWidget* gl);
     void setOffsetDelta(GLWidget *gl, int deltaO);
     void changeColorSetting(int set);
@@ -67,6 +70,7 @@ private:
     QSpinBox* scaleDial;
     QSpinBox* zoomDial;
     QSpinBox* startDial;
+    QSpinBox* sizeDial;
 
 };
 #endif

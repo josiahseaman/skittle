@@ -55,8 +55,6 @@ MdiChildWindow::MdiChildWindow(QTabWidget *settings)//TODO: use offsetDialIndex 
     setAttribute(Qt::WA_DeleteOnClose);
     
     /**Scrollbars**/
-    connect(glWidget, SIGNAL(displaySizeChanged()), this, SLOT(checkScrollBars()) );
-    //connect(ui->sizeDial, SIGNAL(valueChanged(int)), this, SLOT(setPageSize()) );
     connect(verticalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(changeStart(int)));
 //    connect(verticalScrollBar, SIGNAL(valueChanged(int)), glWidget, SLOT(invalidateDisplayGraphs())); // 'cause setTracking(FALSE)
     connect(ui, SIGNAL(internalsUpdated()), this, SLOT(checkScrollBars()) );
@@ -105,10 +103,10 @@ void MdiChildWindow::setHorizontalWidth(int val)
 
 void MdiChildWindow::setPageSize()
 {
-    //ui->print("setPageSize", ui->sizeDial->value());
+    //ui->print("setPageSize", ui->getSize());
     if( glWidget != NULL)
         verticalScrollBar->setMaximum( max(0, (int)(glWidget->seq()->size() - ui->getWidth()) ) );
-    verticalScrollBar->setPageStep(ui->sizeDial->value());
+    verticalScrollBar->setPageStep(ui->getSize());
 }
 
 void MdiChildWindow::createSettingsTabs()
