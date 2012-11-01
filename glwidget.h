@@ -74,7 +74,7 @@ public:
 
     QSize minimumSizeHint() const;
     QSize sizeHint() const;
-    double getZoom();
+    double pixelsToOpenGlGridRatio();
     void setTotalDisplayWidth();
 
     void keyPressEvent( QKeyEvent *event );
@@ -93,7 +93,6 @@ public:
 
 public slots:
     void reportOnFinish(int);
-    void changeZoom();
     void displayString(const string* sequence);
     void zoomExtents();
     void zoomRange(int startIndex, int endIndex);
@@ -131,7 +130,7 @@ signals:
 
 protected:
     void displayTrack(const vector<track_entry>& track);
-    point2D pixelToGlCoords(QPoint pCoords, double z = 0);
+    point2D pixelToGlCoords(QPoint mouse);
     int openGlGridHeight();
     int openGlGridWidth();
     void initializeGL();
@@ -159,11 +158,7 @@ private:
     GLuint marker;
     QCursor zoomInCursor;
     QCursor zoomOutCursor;
-    double xTransOffset;
-    double yTransOffset;
-    double zTransOffset;
     int xPosition;
-    int xOrigin;
     int border;
     int currentTool;
     int frame;

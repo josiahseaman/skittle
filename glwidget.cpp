@@ -97,8 +97,6 @@ GLWidget::GLWidget(UiVariables* gui, QWidget* parentWidget)
     border = 10;
     xPosition = 0;
     mouseMovePosition = QPoint();//you may want to initialize press and release points, start/end
-    slideHorizontal(0);
-    zTransOffset = 2.0;
     setTool(RESIZE_TOOL);
     setMouseTracking(true);
     setFocusPolicy(Qt::ClickFocus);
@@ -162,39 +160,22 @@ QSize GLWidget::sizeHint() const
     return QSize(450, 300);
 }
 
-double GLWidget::getZoom()
+double GLWidget::pixelsToOpenGlGridRatio()
 {
-    return 100.0 / zTransOffset;//inverse of: zTransOffset = 10 + 190 / percent;
+    return ui->getZoom() / 100.0 * 3.0;//this make pixel->gl 3x size by default
+    //these are not 1:1 so that users have an easy time seeing the Skittle pixels
 }
 
 void GLWidget::setTotalDisplayWidth()
 {	
-    //ui->print("SetWidth: ", ui->getWidth());
-    int total_width = border;
-    for(int i = 0; i < (int)graphs.size(); ++i)
-    {
-        if(graphs[i]->hidden == false)
-            total_width += graphs[i]->width() + border;
-    }
+    int fullPixelWidth = getTotalPixelWidth();
 
-    int val = (int)max(0.0, ((double)(total_width) - openGlGridWidth())*getZoom() ) ;
+    int val = (int)max(0.0, ((double)(fullPixelWidth)/(double)pixelsToOpenGlGridRatio() - openGlGridWidth()) ) ;
+    qDebug() << "HorizontalBar Width: "  << val;
     emit totalWidthChanged(val);
 }
 
 //***********SLOTS*******************
-void GLWidget::changeZoom()
-{
-    int currentZoom = ui->getZoom();
-    double percent = currentZoom / 100.0;
-    double newZ =  200.0 / percent;
-    if(newZ != zTransOffset)
-    {
-        zTransOffset = newZ;
-    }
-    updateDisplaySize();
-    setTotalDisplayWidth();
-}
-
 const string* GLWidget::seq()
 {
     return reader->seq();
@@ -210,9 +191,6 @@ void GLWidget::displayString(const string* sequence)
         graphs[i]->invalidate();
     }
     ui->setAllVariables(128, 1, 100, 1, -1);
-
-    //zoomExtents();
-    changeZoom();
 }
 
 void GLWidget::zoomExtents()
@@ -221,12 +199,12 @@ void GLWidget::zoomExtents()
 }
 
 void GLWidget::zoomRange(int startIndex, int endIndex)
-{
+{//TODO:refactor this with pixelToGlCoords
     int newZoom = -1;
     float pixelWidth = (float)ui->getWidth() / (float)ui->getScale();
-    float pixelsOnScreen = pixelWidth * (openGlGridHeight()-10);
+    float skixelsOnScreen = pixelWidth * (openGlGridHeight()-10);
     int selectionSize = abs(endIndex - startIndex);
-    float requiredScale = (selectionSize) / pixelsOnScreen;
+    float requiredScale = (selectionSize) / skixelsOnScreen;
     int newScale = max(1, (int)(requiredScale + 0.5) );
     if (newScale == 1)
     {
@@ -317,13 +295,13 @@ void GLWidget::on_screenCaptureButton_clicked()
 
 int GLWidget::getTotalPixelWidth()
 {
-    int pixelWidth = border;
+    int skixelWidth = border;
     for(int i = 0; i < (int)graphs.size(); ++i)
     {
         if(graphs[i]->hidden == false)
-            pixelWidth += graphs[i]->width() + border;
+            skixelWidth += graphs[i]->width() + border;
     }
-    return pixelWidth * getZoom() * 6;
+    return skixelWidth * pixelsToOpenGlGridRatio();
 }
 
 QImage GLWidget::read_framebuffer(const QSize &size, bool alpha_format, bool include_alpha)
@@ -424,7 +402,7 @@ void GLWidget::slideHorizontal(int x)
     if(x != xPosition)
     {
         xPosition = x;
-        emit xOffsetChange((int)(x));
+//        emit xOffsetChange((int)(x));
         updateDisplay();
     }
 }
@@ -442,8 +420,6 @@ void GLWidget::invalidateDisplayGraphs()
 
 void GLWidget::updateDisplay()
 {
-    setTotalDisplayWidth();
-    //updateDisplaySize();
     redraw();
 }
 
@@ -669,14 +645,10 @@ void GLWidget::keyReleaseEvent( QKeyEvent *event )
 }
 
 //***********Functions*************
-point2D GLWidget::pixelToGlCoords(QPoint pCoords, double z)
+point2D GLWidget::pixelToGlCoords(QPoint mouse)
 {
-    double mouseX =  pCoords.x();
-    double mouseY =  pCoords.y();
-    //there was previously an unused GLunproject here
-    double zoom = getZoom();
-    int x = (int)((mouseX / 6.0 + xPosition) / zoom ) - border ;
-    int y = (int)((mouseY / 6.0) / zoom );
+    int x = mouse.x() / pixelsToOpenGlGridRatio() - border + xPosition;
+    int y = mouse.y() / pixelsToOpenGlGridRatio();
 
     return point2D(x, y);
 }
@@ -685,22 +657,15 @@ int GLWidget::openGlGridHeight()
 {
     QSize dimensions = size();
     double pixelHeight = dimensions.height();
-    double zoom = 100.0 / ui->getZoom();
-    float pixelToGridRatio = 3.0;
-    int display_lines = static_cast<int>(pixelHeight / pixelToGridRatio * zoom + 0.5);
-
-    return display_lines;
+    return pixelToGlCoords(QPoint(0,pixelHeight)).y;
 }
 
 int GLWidget::openGlGridWidth()
 {
     QSize dimensions = size();
     double pixelWidth = dimensions.width();
-    double zoom = 100.0 / ui->getZoom();
-    float pixelToGridRatio = 3.0;
-    int openGLWidth = static_cast<int>(pixelWidth / pixelToGridRatio * zoom + 0.5);
-
-    return openGLWidth;
+    double adjustedX = pixelWidth + xPosition * pixelsToOpenGlGridRatio();
+    return pixelToGlCoords(QPoint(adjustedX,0)).x;
 }
 
 void GLWidget::initializeGL()
@@ -718,13 +683,17 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
+    updateDisplaySize();
+    setTotalDisplayWidth();
+    makeCurrent();
+
     //    qDebug() << "GlWidget Frame: " << ++frame;
     glMatrixMode(GL_MODELVIEW);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     glPushMatrix();
-    glTranslated(-xPosition, 0, 0);
-    double zoom = getZoom();
+    glTranslated(-xPosition * pixelsToOpenGlGridRatio() , 0, 0);
+    double zoom = pixelsToOpenGlGridRatio();
     glScaled(zoom, zoom, zoom);
     glTranslated(border,0,0);//to get zoom working right
     if( tool() == SELECT_TOOL || tool() == FIND_TOOL)
@@ -754,11 +723,10 @@ void GLWidget::resizeGL(int width, int height)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    float pixelToGridRatio = 6.0;
     float left = 0;
-    float right = left + width / pixelToGridRatio;
+    float right = left + width;
     float top = 0;
-    float bottom = top - height / pixelToGridRatio;
+    float bottom = top - height;
     glOrtho(left, right, bottom, top, 0, 5000);
 
     gluLookAt(0, 0, 40, 					//position and direction
@@ -868,9 +836,8 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 
     if(tool() == SELECT_TOOL || tool() == FIND_TOOL)
         placeMarker(event->pos());
-    double zoom = getZoom();
-    float dx = (endPoint.x - old.x) * zoom;
-    float dy = (endPoint.y - old.y) * zoom;
+    float dx = (endPoint.x - old.x);
+    float dy = (endPoint.y - old.y);
 
     if (event->buttons() & Qt::LeftButton)
     {
@@ -884,7 +851,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
             if(tool() == RESIZE_TOOL)
             {
                 translate(0, dy);//still scroll up/down
-                int value = static_cast<int>(dx * ui->getScale()*2.0 + ui->getWidth() + 0.5);
+                int value = static_cast<int>(dx * ui->getScale() + ui->getWidth() + 0.5);
                 ui->setWidth(value);
             }
         }
@@ -995,11 +962,11 @@ void GLWidget::translate(float dx, float dy)
     if(dy != 0.0)
     {
         int sign = (int)(dy / fabs(dy));
-        int move = -1* static_cast<int>(dy  + (sign*0.5)) * ui->getWidth() * 2;
+        int move = -1* static_cast<int>(dy  + (sign*0.5)) * ui->getWidth();
         int current = ui->getStart(glWidget);
         ui->setStart(glWidget, max(1, current+move) );
     }
-    emit xOffsetChange((int)(xPosition + dx + .5));
+    slideHorizontal((int)(xPosition + dx + .5));
 }
 
 void GLWidget::translateOffset(float dx, float dy)
@@ -1272,3 +1239,6 @@ void GLWidget::reportOnFinish(int i){
 //~ if (NULL == master) return;
 //~ ui = master
 //~}
+
+
+//end
