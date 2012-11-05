@@ -166,13 +166,14 @@ double GLWidget::pixelsToOpenGlGridRatio()
     //these are not 1:1 so that users have an easy time seeing the Skittle pixels
 }
 
-void GLWidget::setTotalDisplayWidth()
+int GLWidget::setHorizontalScrollbarRange()
 {	
     int fullPixelWidth = getTotalPixelWidth();
 
     int val = (int)max(0.0, ((double)(fullPixelWidth)/(double)pixelsToOpenGlGridRatio() - openGlGridWidth()) ) ;
     qDebug() << "HorizontalBar Width: "  << val;
     emit totalWidthChanged(val);
+    return val;
 }
 
 //***********SLOTS*******************
@@ -399,10 +400,10 @@ int GLWidget::tool()
 
 void GLWidget::slideHorizontal(int x)
 {
-    if(x != xPosition)
+    if(x != xPosition && x > 0 && x < setHorizontalScrollbarRange())
     {
         xPosition = x;
-//        emit xOffsetChange((int)(x));
+        emit xOffsetChange((int)(x));
         updateDisplay();
     }
 }
@@ -647,7 +648,7 @@ void GLWidget::keyReleaseEvent( QKeyEvent *event )
 //***********Functions*************
 point2D GLWidget::pixelToGlCoords(QPoint mouse)
 {
-    int x = mouse.x() / pixelsToOpenGlGridRatio() - border + xPosition;
+    int x = mouse.x() / pixelsToOpenGlGridRatio() - border + xPosition;//TODO: scrollbar problem may be here
     int y = mouse.y() / pixelsToOpenGlGridRatio();
 
     return point2D(x, y);
@@ -664,8 +665,8 @@ int GLWidget::openGlGridWidth()
 {
     QSize dimensions = size();
     double pixelWidth = dimensions.width();
-    double adjustedX = pixelWidth + xPosition * pixelsToOpenGlGridRatio();
-    return pixelToGlCoords(QPoint(adjustedX,0)).x;
+//    double adjustedX = pixelWidth;// + xPosition * pixelsToOpenGlGridRatio();//TODO: scrollbar problem may be here
+    return pixelWidth / pixelsToOpenGlGridRatio();
 }
 
 void GLWidget::initializeGL()
@@ -684,7 +685,7 @@ void GLWidget::initializeGL()
 void GLWidget::paintGL()
 {
     updateDisplaySize();
-    setTotalDisplayWidth();
+    setHorizontalScrollbarRange();
     makeCurrent();
 
     //    qDebug() << "GlWidget Frame: " << ++frame;
@@ -734,7 +735,7 @@ void GLWidget::resizeGL(int width, int height)
               0, 1, 0);
     
     glMatrixMode(GL_MODELVIEW);
-    setTotalDisplayWidth();
+    setHorizontalScrollbarRange();
     updateDisplaySize();
 }
 

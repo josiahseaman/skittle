@@ -117,7 +117,7 @@ void ViewManager::changeSelection(MdiChildWindow* newActiveMdi)
 
     mainWindow->tabWidget->setCurrentIndex(tabIndex);
     activeWidget = newActiveMdi->glWidget ;
-    activeWidget->setTotalDisplayWidth();
+    activeWidget->setHorizontalScrollbarRange();
 }
 
 void ViewManager::closeSubWindow(MdiChildWindow* closing)

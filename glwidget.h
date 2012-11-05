@@ -75,7 +75,7 @@ public:
     QSize minimumSizeHint() const;
     QSize sizeHint() const;
     double pixelsToOpenGlGridRatio();
-    void setTotalDisplayWidth();
+    int setHorizontalScrollbarRange();
 
     void keyPressEvent( QKeyEvent *event );
     void keyReleaseEvent( QKeyEvent *event );
