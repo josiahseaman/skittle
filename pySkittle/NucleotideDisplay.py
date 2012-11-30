@@ -4,24 +4,20 @@ Created on Nov 29, 2012
 '''
 from SkittleGraphTransforms import sequenceToColors
 from SkittleGraphTransforms import colorCompress
+from SkittleStatePackets import StatePacket
     
-    
-def calculateOutputPixels(seq, width, start, scale, length):
-    seq = seq[start-1 : (start-1) + length] #substrings the relevant part
+def calculateOutputPixels(state):
+    assert isinstance(state, StatePacket) 
+    seq = state.seq[state.start-1 : (state.start-1) + state.length] #substrings the relevant part
     pixels = sequenceToColors(seq) 
-    if scale > 1:
-        pixels = colorCompress(pixels, scale)
+    if state.scale > 1:
+        pixels = colorCompress(pixels, state.scale)
     return pixels
     
 if __name__ == '__main__':
     print 'Nucleotide Display test case'
-    seq = 'ACGTACGTACGTACGT'
-    scale = 2
-    start = 3
-    length = len(seq) - (start-1)
-    print calculateOutputPixels(seq, 10, start, scale, length)
-    print "Correct Answer is:"
-    print "[(0, 127, 127), (127, 0, 0), (0, 127, 127), (127, 0, 0), (0, 127, 127), (127, 0, 0)]"
+    state = StatePacket()
+    print calculateOutputPixels(state)
 
     
     
