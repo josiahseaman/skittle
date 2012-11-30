@@ -9,7 +9,7 @@ from SkittleStatePackets import StatePacket
 def calculateOutputPixels(state):
     assert isinstance(state, StatePacket) 
     seq = state.seq[state.start-1 : (state.start-1) + state.length] #substrings the relevant part
-    pixels = sequenceToColors(seq) 
+    pixels = sequenceToColors(seq, state.colorPalette) 
     if state.scale > 1:
         pixels = colorCompress(pixels, state.scale)
     return pixels

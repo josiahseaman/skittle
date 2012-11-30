@@ -8,7 +8,8 @@ from SkittleStatePackets import RepeatMapState
 from SkittleStatePackets import StatePacket
 
 '''
-classdocs
+These are the functions that are specific to the use of RepeatMap and not generally applicable.  
+These functions use RepeatMapState to emulate an object with state.
 '''
 def height(repeatMapState, pixels, width, scale):
     

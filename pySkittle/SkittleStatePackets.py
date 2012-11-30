@@ -22,7 +22,6 @@ class StatePacket():
         self.activeGraphs = {"Nucleotide Display": None, "Repeat Map": RepeatMapState()}
     
 class RepeatMapState():
-    
     def __init__(self):
         '''Constructor used for test default values.'''
         self.barWidth = 20
