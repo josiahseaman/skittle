@@ -58,13 +58,28 @@ colorPalettes = {
         'N': ( 200, 200, 200)}#not sequenced
     }
 
-def reverseComplement(original):
+def reverseComplement(originalSequence):
     complement = {'A':'T', 'C':'G', 'G':'C', 'T':'A', 'N':'N'}
-    size = len(original)
+    size = len(originalSequence)
     rc = str(size, 'N')
     for x in range(size):
-        rc[x] = complement(original[size-x-1])
+        rc[x] = complement(originalSequence[size-x-1])
     return rc
+
+def normalizeDictionary(listing):
+    if len(listing) is 0: return listing
+    total = 0
+    for value in listing.itervalues():
+        total +=  value
+    for key, value in listing.items():
+        listing[key] = value*1.0 / total
+    return listing
+
+def countNucleotides(seq):
+    counts = {}
+    for c in seq:
+        counts[c] = 1 + counts.get(c,0) #defaults to 0 
+    return counts
 
 def colorCompress(pixels, scale):
     compressed = []
@@ -134,6 +149,10 @@ def correlateColors(coloredPixels, beginA, beginB, comparisonLength):
     return resultSum / len(coloredPixels[0])
         
 if __name__ == '__main__':
+    counts = countNucleotides('AAAACGCCGTN')
+    print counts
+    print normalizeDictionary(counts)
+    '''
     print 'Correlation test case'
     sample = [1,2,3,4,5,6,7,8,9,8,7,6,5,4,3,2,1]
     print correlate(sample, 0, 3, len(sample)/2) 
@@ -142,4 +161,4 @@ if __name__ == '__main__':
     print
     for start in range(len(sample)-4):
         print correlate(sample, 0, start, 4),
-    
+    '''
