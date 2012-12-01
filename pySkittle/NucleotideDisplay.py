@@ -2,16 +2,18 @@
 Created on Nov 29, 2012
 @author: Josiah
 '''
-from SkittleGraphTransforms import sequenceToColors
-from SkittleGraphTransforms import colorCompress
+from SkittleGraphTransforms import *
 from SkittleStatePackets import StatePacket
     
 def calculateOutputPixels(state):
     assert isinstance(state, StatePacket) 
-    seq = state.seq[state.start-1 : (state.start-1) + state.length] #substrings the relevant part
-    pixels = sequenceToColors(seq, state.colorPalette) 
+    seq = state.seq[state.start-1 : (state.start-1) + state.length] #substrings the relevant part 
     if state.scale > 1:
-        pixels = colorCompress(pixels, state.scale)
+        counts = countNucleotideGroups(seq, state.scale)
+        counts = map(lambda group: normalizeDictionary(group), counts)
+        pixels = countListToColorSpace(counts, state.colorPalette)
+    else:        
+        pixels = sequenceToColors(seq, state.colorPalette)
     return pixels
     
 if __name__ == '__main__':

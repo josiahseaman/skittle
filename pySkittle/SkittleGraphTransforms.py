@@ -66,11 +66,21 @@ def reverseComplement(originalSequence):
         rc[x] = complement(originalSequence[size-x-1])
     return rc
 
+'''Final step for Nucleotide Display that transforms normalized counts into a list of colors'''
+def countListToColorSpace(countList, colorPalette):
+    colorMapping = colorPalettes[colorPalette]
+    pixels = []
+    for counts in countList:
+        resultingColor = [0, 0, 0]
+        for character, magnitude in counts.items():
+            colorContribution = map(lambda c: c * magnitude, colorMapping[character]) #scales color amount by magnitude for each channel
+            resultingColor =  map(sum, zip(colorContribution, resultingColor))
+        pixels.append( resultingColor )
+    return pixels
+
 def normalizeDictionary(listing):
     if len(listing) is 0: return listing
-    total = 0
-    for value in listing.itervalues():
-        total +=  value
+    total = reduce(lambda Sum, val: Sum+val, listing.values(), 0)
     for key, value in listing.items():
         listing[key] = value*1.0 / total
     return listing
@@ -81,6 +91,15 @@ def countNucleotides(seq):
         counts[c] = 1 + counts.get(c,0) #defaults to 0 
     return counts
 
+'''Returns a list of dictionaries that show the counts per grouping (usually scale)'''
+def countNucleotideGroups(seq, groupSize):
+    resultVector = []
+    chunks = len(seq)/groupSize #'''This may truncate a seq that is of uneven size'''
+    for chunk in range(chunks):
+        resultVector.append(countNucleotides( seq[chunk*groupSize : (chunk+1)*groupSize] ) )
+    return resultVector
+
+'''Deprecated.  Nucleotide Display uses normalized counts now''' 
 def colorCompress(pixels, scale):
     compressed = []
     for i in range(0, len(pixels)- scale, scale):
@@ -91,7 +110,8 @@ def colorCompress(pixels, scale):
             b += pixels[i+s][2]
         compressed.append((r / scale, g/scale, b/scale))
     return compressed
-        
+
+'''Optimized function for Nucleotide to color mapping at scale 1'''        
 def sequenceToColors(seq, colorPalette):
     pixels = []
     colorMapping = colorPalettes[colorPalette]
@@ -149,10 +169,14 @@ def correlateColors(coloredPixels, beginA, beginB, comparisonLength):
     return resultSum / len(coloredPixels[0])
         
 if __name__ == '__main__':
+    a = [ 1, 2, 3]
+    b = [-1,-2,-3]
+    print map(sum, zip(a,b))
+    '''
     counts = countNucleotides('AAAACGCCGTN')
     print counts
     print normalizeDictionary(counts)
-    '''
+    
     print 'Correlation test case'
     sample = [1,2,3,4,5,6,7,8,9,8,7,6,5,4,3,2,1]
     print correlate(sample, 0, 3, len(sample)/2) 
