@@ -37,10 +37,13 @@ def calculateOutputPixels(state, repeatMapState):
     
     pixels = NucleotideDisplay.calculateOutputPixels(state)
     scores = correlationMap(repeatMapState, pixels, state.width, state.scale) #2D array
-    threemer_scores = map(lambda line: sensitiveTestForSpecificFrequency(line), scores)
-    print threemer_scores
     return scores
     
+def calculate3merOutputPixels(state, repeatMapState):
+    scores = calculateOutputPixels(state, repeatMapState)
+    threemer_scores = map(lambda line: sensitiveTestForSpecificFrequency(line, 3, 20), scores)
+    return threemer_scores
+
         
 if __name__ == '__main__':
     print 'Repeat Map test case'

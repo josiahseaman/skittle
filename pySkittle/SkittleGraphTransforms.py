@@ -55,7 +55,8 @@ colorPalettes = {
         'T': (0, 0, 255),
         'N': ( 200, 200, 200)}#not sequenced
     }
-
+'''Returns the reverse complementary sequence.  This is the sequence as it would be read on the
+side of the DNA strand (double helix).'''
 def reverseComplement(originalSequence):
     complement = {'A':'T', 'C':'G', 'G':'C', 'T':'A', 'N':'N'}
     size = len(originalSequence)
@@ -123,7 +124,7 @@ def average(values):
 
 '''Pearson correlation coefficient between signals x and y.
 Thanks to http://stackoverflow.com/users/34935/dfrankow for the definition'''
-def pearson_def(x, y):
+def __pearsonCorrelation__(x, y):
     assert len(x) == len(y), (len(x) , " vs. " , len(y)) 
     n = len(x)
     assert n > 0, "Array is empty"
@@ -144,19 +145,24 @@ def pearson_def(x, y):
     base = math.sqrt(xdiff2 * ydiff2)
     return diffprod / base
 
-
-def correlate(greyPixels, beginA, beginB, comparisonLength):
+'''Calculates the Pearson Correlation Coefficient for a two spots on the same sequence "floatList".
+It ensures that both strings are of the same length and creates substrings for calculation. '''
+def correlate(floatList, beginA, beginB, comparisonLength):
     #manipulate signal strings before passing to correlation
-    A = greyPixels[beginA: beginA + comparisonLength]
-    B = greyPixels[beginB: beginB + comparisonLength]
+    A = floatList[beginA: beginA + comparisonLength]
+    B = floatList[beginB: beginB + comparisonLength]
     if(len(A) == len(B)):
-        return pearson_def(A, B)
+        return __pearsonCorrelation__(A, B)
     else:
         return None
     
+'''This method is simply a convenience proxy for the correlate(floatList) method.  It splits a color into
+parts, feeds them through correlate individually, then averages the scores at the end.'''    
 def correlateColors(coloredPixels, beginA, beginB, comparisonLength):
-    if len(coloredPixels) == 0 or len(coloredPixels[0]) == 0:
+    if len(coloredPixels) == 0:
         return None
+    if hasattr(coloredPixels, "__getitem__"):#we didn't actually receive a composite list
+        return correlate(coloredPixels, beginA, beginB, comparisonLength)
     resultSum = 0.0
     for part in range(len(coloredPixels[0])):
         currentChannel = map(lambda x : x[part], coloredPixels)
@@ -166,8 +172,11 @@ def correlateColors(coloredPixels, beginA, beginB, comparisonLength):
         resultSum += correlation
     return resultSum / len(coloredPixels[0])
         
-        
-def sensitiveTestForSpecificFrequency(seq, frequency = 3, numberOfSamples = 20):
+'''This method takes a series of floating point numbers.  It checks each multiple of "frequency" and determines
+if the sum of samples at frequency are greater than the background level.  It then returns the frequency score.
+If there is no difference, this number will be 0.0.  This score is not currently normalized. This method is used
+to find the 3-periodicity bias found in most protein coding sequences.'''        
+def sensitiveTestForSpecificFrequency(floatList, frequency = 3, numberOfSamples = 20):
     assert isinstance(frequency, int), "Please use an integer offset frequency."
     reach = numberOfSamples * frequency
     mask = [] #float
@@ -178,11 +187,10 @@ def sensitiveTestForSpecificFrequency(seq, frequency = 3, numberOfSamples = 20):
             mask.append(-1 * (1/(frequency-1)))
 
     score = 0.0
-    for x in range( min( len(mask), len(seq))):
-        if seq[x] is not None:
-            score += mask[x] * seq[x]
+    for x in range( min( len(mask), len(floatList))):
+        if floatList[x] is not None:
+            score += mask[x] * floatList[x]
         #score += min((float)0.5, mask[x] * freq[y][x])//the amount that any position can affect is capped because of tandem repeats with 100% similarity
-        
     return score
 
 
