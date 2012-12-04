@@ -3,7 +3,8 @@ Created on Nov 29, 2012
 @author: Josiah Seaman
 '''
 import NucleotideDisplay
-from SkittleGraphTransforms import correlateColors 
+from SkittleGraphTransforms import correlateColors ,\
+    sensitiveTestForSpecificFrequency
 from SkittleStatePackets import RepeatMapState
 from SkittleStatePackets import StatePacket
 
@@ -35,7 +36,9 @@ def calculateOutputPixels(state, repeatMapState):
     assert isinstance(state, StatePacket)
     
     pixels = NucleotideDisplay.calculateOutputPixels(state)
-    scores = correlationMap(repeatMapState, pixels, state.width, state.scale)
+    scores = correlationMap(repeatMapState, pixels, state.width, state.scale) #2D array
+    threemer_scores = map(lambda line: sensitiveTestForSpecificFrequency(line), scores)
+    print threemer_scores
     return scores
     
         

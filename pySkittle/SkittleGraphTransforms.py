@@ -14,7 +14,6 @@ colorPalettes = {
         'T': (0, 153, 204),
         'N': ( 200, 200, 200)},#not sequenced
 
-    
 "BETTERCBSAFE" : 
         {'A': (0, 204, 204),
         'C': (153, 255, 0),
@@ -49,7 +48,6 @@ colorPalettes = {
         'T': (218, 186, 8),
         'N': ( 200, 200, 200)},#not sequenced
     
-
 "Classic" : 
         {'A': (0, 0, 0),
         'C': (255, 0, 0),
@@ -79,7 +77,7 @@ def countListToColorSpace(countList, colorPalette):
     return pixels
 
 def normalizeDictionary(listing):
-    if len(listing) is 0: return listing
+    if len(listing) == 0: return listing
     total = reduce(lambda Sum, val: Sum+val, listing.values(), 0)
     for key, value in listing.items():
         listing[key] = value*1.0 / total
@@ -157,7 +155,7 @@ def correlate(greyPixels, beginA, beginB, comparisonLength):
         return None
     
 def correlateColors(coloredPixels, beginA, beginB, comparisonLength):
-    if len(coloredPixels) is 0 or len(coloredPixels[0]) is 0:
+    if len(coloredPixels) == 0 or len(coloredPixels[0]) == 0:
         return None
     resultSum = 0.0
     for part in range(len(coloredPixels[0])):
@@ -168,10 +166,31 @@ def correlateColors(coloredPixels, beginA, beginB, comparisonLength):
         resultSum += correlation
     return resultSum / len(coloredPixels[0])
         
+        
+def sensitiveTestForSpecificFrequency(seq, frequency = 3, numberOfSamples = 20):
+    assert isinstance(frequency, int), "Please use an integer offset frequency."
+    reach = numberOfSamples * frequency
+    mask = [] #float
+    for i in range(reach):#create mask:
+        if (i % frequency == 0):
+            mask.append(1.0)
+        else:
+            mask.append(-1 * (1/(frequency-1)))
+
+    score = 0.0
+    for x in range( min( len(mask), len(seq))):
+        if seq[x] is not None:
+            score += mask[x] * seq[x]
+        #score += min((float)0.5, mask[x] * freq[y][x])//the amount that any position can affect is capped because of tandem repeats with 100% similarity
+        
+    return score
+
+
 if __name__ == '__main__':
     a = [ 1, 2, 3]
     b = [-1,-2,-3]
-    print map(sum, zip(a,b))
+    
+    
     '''
     counts = countNucleotides('AAAACGCCGTN')
     print counts
