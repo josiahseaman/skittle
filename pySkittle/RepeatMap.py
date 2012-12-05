@@ -19,6 +19,7 @@ def calculateOutputPixels(state, repeatMapState):
     
     pixels = NucleotideDisplay.calculateOutputPixels(state)
     scores = correlationMap(state, repeatMapState, pixels) #2D array
+    #TODO convert from floating point to grey pixels
     return scores
     
 def calculate3merOutputPixels(state, repeatMapState):

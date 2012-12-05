@@ -5,6 +5,7 @@ Created on Nov 29, 2012
 '''
 #import numpy
 import math
+from SkittleStatePackets import *
 
 colorPalettes = {
 "COLORBLINDSAFE" : 
@@ -177,6 +178,8 @@ Y axis is each display line of the sequence.  X axis is the frequency space star
 and proceeding to RepeatMapState.F_width.  When used in Repeat Map, ColoredPixels is 
 the color compressed sequence from the Nucleotide Display.'''
 def correlationMap( state, repeatMapState, coloredPixels):
+    assert isinstance(repeatMapState, RepeatMapState)
+    assert isinstance(state, StatePacket)
     pixelsPerSample = state.width / state.scale
     freq = []
     for h in range(repeatMapState.height(repeatMapState, state, coloredPixels)):
@@ -213,7 +216,6 @@ def sensitiveTestForSpecificFrequency(floatList, frequency = 3, numberOfSamples 
 if __name__ == '__main__':
     a = [ 1, 2, 3]
     b = [-1,-2,-3]
-    
     
     '''
     counts = countNucleotides('AAAACGCCGTN')
