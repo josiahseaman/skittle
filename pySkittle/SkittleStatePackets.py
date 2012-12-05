@@ -22,6 +22,12 @@ class StatePacket():
         self.activeGraphs = {"Nucleotide Display": None, "Repeat Map": RepeatMapState()}
     
 class RepeatMapState():
+    def height(self, state, pixels):
+        assert isinstance(state, StatePacket)
+        F_height = ((len(pixels)) - (self.F_start-1)*state.scale - self.F_width*state.scale ) / state.width
+        F_height = max(0, min(400, F_height) )
+        return F_height
+    
     def __init__(self):
         '''Constructor used for test default values.'''
         self.barWidth = 20

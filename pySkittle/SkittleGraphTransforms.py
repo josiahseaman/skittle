@@ -172,6 +172,22 @@ def correlateColors(coloredPixels, beginA, beginB, comparisonLength):
         resultSum += correlation
     return resultSum / len(coloredPixels[0])
         
+'''Creates a grey scale map of floating point correlation values.  Used by Repeat Map.
+Y axis is each display line of the sequence.  X axis is the frequency space starting at offset 0
+and proceeding to RepeatMapState.F_width.  When used in Repeat Map, ColoredPixels is 
+the color compressed sequence from the Nucleotide Display.'''
+def correlationMap( state, repeatMapState, coloredPixels):
+    pixelsPerSample = state.width / state.scale
+    freq = []
+    for h in range(repeatMapState.height(repeatMapState, state, coloredPixels)):
+        freq.append([None]*(repeatMapState.F_width+1))
+        offset = h * pixelsPerSample
+        for w in range(1, len(freq[h])):#calculate across widths 1:F_width
+            coefficient = correlateColors(coloredPixels, offset, offset + w + repeatMapState.F_start, pixelsPerSample)
+            if coefficient != None:
+                freq[h][w] = .5 * (1.0 + coefficient)
+    return freq
+          
 '''This method takes a series of floating point numbers.  It checks each multiple of "frequency" and determines
 if the sum of samples at frequency are greater than the background level.  It then returns the frequency score.
 If there is no difference, this number will be 0.0.  This score is not currently normalized. This method is used
