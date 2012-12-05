@@ -39,13 +39,27 @@ public class Install implements Runnable {
     private MainWindow window;
     
     /**
+     * What OS we are running on
+     */
+    private static String OS = null;
+    
+    /**
      * Constructor for the installer object
      * 
      * @param window The parent MainWindow that started the install process
      */
-    public Install(MainWindow window){
+    public Install(MainWindow window, String OS){
+        this.OS = OS;
+        
         //Set the path to the skittle install folder
-        String skittlePathString = System.getProperty("user.home") + "/AppData/Roaming/Skittle/";
+        String skittlePathString = null;
+        
+        if(isWindows()){
+            skittlePathString = System.getProperty("user.home") + "/AppData/Roaming/Skittle/";
+        }
+        else if(isMac()){
+            skittlePathString = "/Applications/";
+        }
         skittlePath = new File(skittlePathString);
         
         this.window = window;
@@ -147,7 +161,12 @@ public class Install implements Runnable {
                 fileInfoSplit = fileInfo.split(" ");
                 
                 //Download the file
-                downloadFile(fileInfoSplit[2]);
+                if(isWindows() && !fileInfoSplit[2].contains(".app")){
+                    downloadFile(fileInfoSplit[2]);
+                }
+                else if(isMac() && fileInfoSplit[2].contains(".app")){
+                    downloadFile(fileInfoSplit[2]);
+                }
                 
                 //Update the progress bar
                 window.SetProgressBarPercent(window.GetProgressBarPercent() + percentInterval);
@@ -161,5 +180,13 @@ public class Install implements Runnable {
         
         window.ChangeInstallState(true);
         window.Launch(false);
+    }
+    
+    public static boolean isWindows(){
+        return OS.startsWith("Windows");
+    }
+    
+    public static boolean isMac(){
+        return OS.startsWith("Mac");
     }
 }

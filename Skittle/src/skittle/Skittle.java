@@ -26,14 +26,36 @@ public class Skittle {
     private static boolean installed;
     
     /**
+     * What OS we are running on
+     */
+    private static String OS = null;
+    
+    /**
      * Main entry point of the main thread
      * 
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        //Find out what OS we are running on first
+        getOSName();
+        
         //Check to see if Skittle is installed already
-        String skittlePath = System.getProperty("user.home") + "/AppData/Roaming/Skittle/";
-        File skittleExe = new File(skittlePath + "SkittleToo.exe");
+        String skittlePath = null;
+        File skittleExe = null;
+        
+        if(isWindows()){
+            skittlePath = System.getProperty("user.home") + "/AppData/Roaming/Skittle/";
+            skittleExe = new File(skittlePath + "SkittleToo.exe");
+        }
+        else if(isMac()){
+            skittlePath = "/Applications/";
+            skittleExe = new File(skittlePath + "SkittleToo.app");
+        }
+        else{
+            //Unsupported OS
+            OS = "BAD";
+        }
+        
         installed = skittleExe.exists();
         
         String openFilePath = "";
@@ -54,7 +76,7 @@ public class Skittle {
         }
         
         /* Create and display the Main Window */
-        window = new MainWindow(installed, openFilePath, update);
+        window = new MainWindow(installed, openFilePath, update, OS);
         if(update){
             try{
                 Thread.sleep(2000);
@@ -68,5 +90,20 @@ public class Skittle {
                 window.setVisible(true);
             }
         });
+    }
+    
+    public static String getOSName(){
+        if(OS == null){
+            OS = System.getProperty("os.name");
+        }
+        return OS;
+    }
+    
+    public static boolean isWindows(){
+        return OS.startsWith("Windows");
+    }
+    
+    public static boolean isMac(){
+        return OS.startsWith("Mac");
     }
 }

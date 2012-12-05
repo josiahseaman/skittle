@@ -43,13 +43,27 @@ public class Update implements Runnable {
     private MainWindow window;
     
     /**
+     * What OS we are running on
+     */
+    private static String OS = null;
+    
+    /**
      * Constructor for the Update object
      * 
      * @param window The parent MainWindow that started the update process
      */
-    public Update(MainWindow window){
+    public Update(MainWindow window, String OS){
+        this.OS = OS;
+        
         //Set the path to the skittle install folder
-        String skittlePathString = System.getProperty("user.home") + "/AppData/Roaming/Skittle/";
+        String skittlePathString = null;
+        
+        if(isWindows()){
+            skittlePathString = System.getProperty("user.home") + "/AppData/Roaming/Skittle/";
+        }
+        else if(isMac()){
+            skittlePathString = "/Applications/SkittleToo.app";
+        }
         skittlePath = new File(skittlePathString);
         
         this.window = window;
@@ -259,5 +273,13 @@ public class Update implements Runnable {
             hex.append(Integer.toString((digest[i] & 0xFF) + 0x100, 16).substring(1));
         }
         return hex.toString();
+    }
+    
+    public static boolean isWindows(){
+        return OS.startsWith("Windows");
+    }
+    
+    public static boolean isMac(){
+        return OS.startsWith("Mac");
     }
 }

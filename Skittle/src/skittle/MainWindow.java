@@ -1,6 +1,8 @@
 package skittle;
 
 import java.awt.Color;
+import java.awt.Desktop;
+import java.io.File;
 import javax.swing.JOptionPane;
 
 /**
@@ -35,16 +37,28 @@ public class MainWindow extends javax.swing.JFrame {
     private boolean update;
     
     /**
+     * What OS we are running on
+     */
+    private static String OS = null;
+    
+    /**
      * Creates new form MainWindow
      * 
      * @param installed if we have detected if Skittle is installed in the user folder or not
      */
-    public MainWindow(boolean installed, String openFilePath, boolean update) {
+    public MainWindow(boolean installed, String openFilePath, boolean update, String OS) {
         //Setup all of the graphical components
         initComponents();
         this.installed = installed;
         this.openFilePath = openFilePath;
         this.update = update;
+        this.OS = OS;
+        
+        //Check if we are running a bad OS
+        if(OS.startsWith("BAD")){
+            JOptionPane.showMessageDialog(this, "You are running an unsupported OS and we cannot launch the SkittleToo application for you. \nExiting...");
+            System.exit(2);
+        }
 
         //Hide all buttons and update status items
         actionButton.setVisible(false);
@@ -156,28 +170,47 @@ public class MainWindow extends javax.swing.JFrame {
         //Grab the system runtime environment for launching processes
         //Runtime runtime = Runtime.getRuntime();
         //Setup the process for skittle to launch in
-        Process process = null;
+        if(isWindows()){
+            Process process = null;
             
-        try{
-            //Get the patch to the Windows exe
-            String skittlePathExe = System.getProperty("user.home") + "/AppData/Roaming/Skittle/SkittleToo.exe";
+            try{
+                //Get the patch to the Windows exe
+                String skittlePathExe = System.getProperty("user.home") + "/AppData/Roaming/Skittle/SkittleToo.exe";
                 
-            //Setup the Skittle program with it's own little process to call home
-            //process = runtime.exec(skittlePathExe);
-            if(update){
-                process = new ProcessBuilder(skittlePathExe, openFilePath, "update").start();
-            }
-            else{
-                process = new ProcessBuilder(skittlePathExe, openFilePath).start();
-            }
+                //Setup the Skittle program with it's own little process to call home
+                //process = runtime.exec(skittlePathExe);
+                if(update){
+                    process = new ProcessBuilder(skittlePathExe, openFilePath, "update").start();
+                }
+                else{
+                    process = new ProcessBuilder(skittlePathExe, openFilePath).start();
+                }
                 
-            //Exit the launcher
-            System.exit(0);
+                //Exit the launcher
+                System.exit(0);
+            }
+            catch(Exception e){
+                JOptionPane.showMessageDialog(this, "Error launching the Skittle Executable. \n" + e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+                System.exit(2);
+            }
         }
-        catch(Exception e){
-            JOptionPane.showMessageDialog(this, "Error launching the Skittle Executable. \n" + e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
-            System.exit(2);
+        else if(isMac()){
+            try{
+                Desktop.getDesktop().open(new File("/Applications/SkittleToo.app"));
+            }
+            catch(Exception e){
+                JOptionPane.showMessageDialog(this, "Error launching the Skittle App. \n" + e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+                System.exit(2);
+            }
         }
+    }
+    
+    public static boolean isWindows(){
+        return OS.startsWith("Windows");
+    }
+    
+    public static boolean isMac(){
+        return OS.startsWith("Mac");
     }
     
     /**
@@ -195,7 +228,7 @@ public class MainWindow extends javax.swing.JFrame {
         
         //Setup a new thread to run the installer.
         //The download process must be on a different thread than the event dispatcher so the UI can update
-        Update updater = new Update(this);
+        Update updater = new Update(this, OS);
         new Thread(updater).start();
         
         updater.DoUpdates();
@@ -209,7 +242,7 @@ public class MainWindow extends javax.swing.JFrame {
     private boolean checkForUpdates(){
         //Setup new update thread
         //This must be on a different thread than the event dispatcher so the UI can update
-        Update updater = new Update(this);
+        Update updater = new Update(this, OS);
         new Thread(updater).start();
         
         return updater.CheckForUpdates();
@@ -230,7 +263,7 @@ public class MainWindow extends javax.swing.JFrame {
             
         //Setup a new thread to run the installer.
         //The download process must be on a different thread than the event dispatcher so the UI can update
-        new Thread(new Install(this)).start();
+        new Thread(new Install(this, OS)).start();
     }
 
     /**
