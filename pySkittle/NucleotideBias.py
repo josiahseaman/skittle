@@ -7,12 +7,13 @@ from SkittleGraphTransforms import *
 
 max_bar_width = 40
 
-def calculateOutputPixels(state):
+def calculateBiasBarSizes(state):
     order = ['C', 'G', 'A', 'T', 'N']
     outputPixels = []
     tempWidth = state.width
     genome = state.seq[state.start : state.start + state.length]
     countsPerLine = countNucleotideGroups(genome, tempWidth )
+    barLengths = []
     for h in range( len(countsPerLine) ):#once per line
         bar_sizes = []
         remainder = 0.0
@@ -23,13 +24,22 @@ def calculateOutputPixels(state):
             barSize += remainder
             remainder = floating_sum - int(floating_sum + .5)
             bar_sizes.append(int(barSize+.5))
-        bar = []#drawJustifiedBar(bar_sizes, max_bar_width, glWidget) # vector<color>
-        oldSize = len(outputPixels) 
-        outputPixels += bar #TODO check that this does not append as a list
-        assert len(outputPixels) == oldSize + len(bar), "appending bar happened incorrectly, insert items individually"
-    return
+        barLengths.append(bar_sizes)
+    return barLengths
 
+
+
+def calculateOutputPixels(state):
+    barSizes = calculateBiasBarSizes(state)
+    outputPixels = []
+    for line in range(len(barSizes)):
+        bar = []#drawJustifiedBar(barSizes[line], max_bar_width, glWidget)
+        outputPixels += bar
+    return outputPixels
 
 if __name__ == '__main__':
     state = StatePacket()
     print calculateOutputPixels(state)
+    
+    
+    
