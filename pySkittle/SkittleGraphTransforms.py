@@ -13,9 +13,9 @@ side of the DNA strand (double helix).'''
 def reverseComplement(originalSequence):
     complement = {'A':'T', 'C':'G', 'G':'C', 'T':'A', 'N':'N'}
     size = len(originalSequence)
-    rc = str(size, 'N')
-    for x in range(size):
-        rc[x] = complement(originalSequence[size-x-1])
+    rc = '' 
+    for x in range(size-1, -1, -1):#stops at 0
+        rc += complement.get(originalSequence[x], 'N')
     return rc
 
 '''Final step for Nucleotide Display that transforms normalized counts into a list of colors'''

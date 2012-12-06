@@ -13,12 +13,19 @@ class StatePacket():
         '''Constructor used for test default values.'''
         self.genome = 'hg19'
         self.chromosome = 'chrY'
-        self.seq = 'ACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGT'
+        '''It is debatable whether or not the sequence should be stored in the state
+        variable since it is only referenced at the first level operation.  Past the first
+        step, the input sequence is more likely to be a floatList produced by the previous
+        operation.'''
+        self.seq = 'ACGTAAAACCCCGGGGTTTTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGT'
         self.colorPalette = 'Classic'
         self.width = 4
         self.scale = 2
-        self.start = 3
-        self.length = len(self.seq) - (self.start-1)
+        '''Internally, start begins at 0.  Biologists count indices starting at 1, so this number 
+        is 1 less than the number displayed on the website.  This also means that you should print
+        index+1 whenever you are writing user readable output.'''
+        self.start = 0 
+        self.length = len(self.seq) - self.start
         self.activeGraphs = {"Nucleotide Display": None, "Repeat Map": RepeatMapState()}
     
 '''This class contains all the state information specific exclusively to Repeat Map. 
@@ -34,10 +41,24 @@ class RepeatMapState():
     
     def __init__(self):
         '''Constructor used for test default values.'''
-        self.barWidth = 20
-        self.spacerWidth = 2
         self.F_width = 10
         self.F_start = 1
-        self.using3merGraph = True
+        
+class SequenceEntry():
+    def __init__(self, seq, minimumSimilarity, color):
+        self.seq = str(seq)
+        self.minimumPercentage = minimumSimilarity
+        self.color = color
+        
+class HighlighterState():
+    def __str__(self):
+        return "Search other strand: "+ str(self.searchReverseComplement) + "   Sequences: "+ str(self.targetSequenceEntries)
+    
+    def __init__(self):
+        '''targetSequenceEntries contains a series of SequenceEntries.  These could just be a (str, float, color) tuple
+        or it could be an explicit class.'''
+        self.targetSequenceEntries = [SequenceEntry('AAAA', .8, (20, 250, 20) )]
+        self.searchReverseComplement = True
+        
         
         

@@ -22,7 +22,9 @@ def calculateOutputPixels(state, repeatMapState):
     #TODO convert from floating point to grey pixels
     return scores
     
+    
 def calculate3merOutputPixels(state, repeatMapState):
+    barWidth = 20    #used for display size calculations
     scores = calculateOutputPixels(state, repeatMapState)
     threemer_scores = map(lambda line: sensitiveTestForSpecificFrequency(line, 3, 20), scores)
     return threemer_scores
