@@ -21,6 +21,10 @@ class StatePacket():
         self.length = len(self.seq) - (self.start-1)
         self.activeGraphs = {"Nucleotide Display": None, "Repeat Map": RepeatMapState()}
     
+'''This class contains all the state information specific exclusively to Repeat Map. 
+This is the link and definition of the settings tab for Repeat Map.
+I'm dubious about where to put this since GraphTransforms depends on it, but otherwise
+it would be included in RepeatMap.py'''
 class RepeatMapState():
     def height(self, state, pixels):
         assert isinstance(state, StatePacket)

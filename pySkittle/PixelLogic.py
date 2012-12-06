@@ -3,7 +3,7 @@ Created on Dec 5, 2012
 @author: Josiah
 '''
 import SkittleStatePackets
-
+import math
 
 colorPalettes = {
 "COLORBLINDSAFE" : 
@@ -66,8 +66,8 @@ def getColor(state, character):
     return b
 
 def drawBar(size, filler_size, barColor, rightJustified):
-    filler = [((.5,.5,.5),) * max(0,filler_size) ]
-    bar = [(barColor,) * size]
+    filler = [ None ] * max(0,filler_size)
+    bar = [barColor] * size
     line = []
     if rightJustified :
         line += filler
@@ -77,7 +77,7 @@ def drawBar(size, filler_size, barColor, rightJustified):
         line += filler
     return line   
 
-def drawJustifiedBar(barSizes, colorSeries, max_bar_width, ):
+def drawJustifiedBar(barSizes, colorSeries, max_bar_width ):
     assert len(barSizes) == len(colorSeries)
     line = []
     for position in range(len(barSizes)):
@@ -95,10 +95,11 @@ def drawJustifiedBar(barSizes, colorSeries, max_bar_width, ):
         elif modulo == 1:
             filler_size = max_bar_width - size 
             if position+1 < len(barSizes):
-                filler_size -= barSizes.get(position+1, 0) #overflow from the next letter
+                filler_size -= barSizes[position+1] #overflow from the next letter
             
         barColor = colorSeries[position]
         line += drawBar(size, filler_size, barColor, rightJustified)
+    assert len(line) == max_bar_width * math.ceil( len(barSizes)/2.0), "Result %i shoulld be %i." % (len(line), max_bar_width * math.ceil( len(barSizes)/2.0))
     return line
 
 

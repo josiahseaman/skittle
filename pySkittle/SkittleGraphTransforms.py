@@ -1,12 +1,11 @@
 '''
 Created on Nov 29, 2012
-
 @author: Josiah Seaman 
 '''
 #import numpy
 import math
 from SkittleStatePackets import *
-from PixelLogic import *
+from PixelLogic import colorPalettes
 
     
 '''Returns the reverse complementary sequence.  This is the sequence as it would be read on the
