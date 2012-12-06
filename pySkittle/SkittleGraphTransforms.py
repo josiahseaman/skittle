@@ -4,6 +4,7 @@ Created on Nov 29, 2012
 '''
 #import numpy
 import math
+from numbers import Number
 from SkittleStatePackets import *
 from PixelLogic import colorPalettes
 
@@ -81,6 +82,7 @@ def __pearsonCorrelation__(x, y):
     assert len(x) == len(y), (len(x) , " vs. " , len(y)) 
     n = len(x)
     assert n > 0, "Array is empty"
+    assert isinstance(x[0], Number)
     avg_x = average(x)
     avg_y = average(y)
     diffprod = 0
@@ -114,7 +116,7 @@ parts, feeds them through correlate individually, then averages the scores at th
 def correlateColors(coloredPixels, beginA, beginB, comparisonLength):
     if len(coloredPixels) == 0:
         return None
-    if hasattr(coloredPixels, "__getitem__"):#we didn't actually receive a composite list
+    if not hasattr(coloredPixels, "__getitem__"):#we didn't actually receive a composite list
         return correlate(coloredPixels, beginA, beginB, comparisonLength)
     resultSum = 0.0
     for part in range(len(coloredPixels[0])):
@@ -134,7 +136,7 @@ def correlationMap( state, repeatMapState, coloredPixels):
     assert isinstance(state, StatePacket)
     pixelsPerSample = state.width / state.scale
     freq = []
-    for h in range(repeatMapState.height(repeatMapState, state, coloredPixels)):
+    for h in range(repeatMapState.height(state, coloredPixels)):
         freq.append([None]*(repeatMapState.F_width+1))
         offset = h * pixelsPerSample
         for w in range(1, len(freq[h])):#calculate across widths 1:F_width

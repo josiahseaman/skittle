@@ -3,7 +3,7 @@ Created on Nov 29, 2012
 @author: Josiah Seaman
 '''
 import NucleotideDisplay
-from SkittleGraphTransforms import correlationMap, sensitiveTestForSpecificFrequency
+from SkittleGraphTransforms import correlationMap
 from SkittleStatePackets import RepeatMapState
 from SkittleStatePackets import StatePacket
 
@@ -22,13 +22,6 @@ def calculateOutputPixels(state, repeatMapState):
     #TODO convert from floating point to grey pixels
     return scores
     
-    
-def calculate3merOutputPixels(state, repeatMapState):
-    barWidth = 20    #used for display size calculations
-    scores = calculateOutputPixels(state, repeatMapState)
-    threemer_scores = map(lambda line: sensitiveTestForSpecificFrequency(line, 3, 20), scores)
-    return threemer_scores
-
         
 if __name__ == '__main__':
     print 'Repeat Map test case'
