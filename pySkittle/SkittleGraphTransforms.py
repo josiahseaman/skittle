@@ -6,56 +6,9 @@ Created on Nov 29, 2012
 #import numpy
 import math
 from SkittleStatePackets import *
+from PixelLogic import *
 
-colorPalettes = {
-"COLORBLINDSAFE" : 
-        {'A': (255, 102, 0),
-        'C': (153, 0, 0),
-        'G': (51, 255, 51),
-        'T': (0, 153, 204),
-        'N': ( 200, 200, 200)},#not sequenced
-
-"BETTERCBSAFE" : 
-        {'A': (0, 204, 204),
-        'C': (153, 255, 0),
-        'G': (204, 0, 102),
-        'T': (255, 102, 0),
-        'N': ( 200, 200, 200)},#not sequenced
     
-"DARK" : 
-        {'A': (152, 147, 173),
-        'C': (84, 40, 59),
-        'G': (13, 94, 58),
-        'T': (40, 75, 163),
-        'N': ( 200, 200, 200)},#not sequenced
-    
-"DRUMS" : 
-        {'A': (80, 80, 255),
-        'C': (224, 0, 0),
-        'G': (0, 192, 0),
-        'T': (230, 230, 0),
-        'N': ( 200, 200, 200)},#not sequenced
-    
-"BLUES" : 
-        {'A': (141, 0, 74),
-        'C': (82, 0, 124),
-        'G': (17, 69, 134),
-        'T': (14, 112, 118),
-        'N': ( 200, 200, 200)},#not sequenced
-"REDS" : 
-        {'A': (141, 0, 74),
-        'C': (159, 0, 0),
-        'G': (196, 90, 6),
-        'T': (218, 186, 8),
-        'N': ( 200, 200, 200)},#not sequenced
-    
-"Classic" : 
-        {'A': (0, 0, 0),
-        'C': (255, 0, 0),
-        'G': (0, 255, 0),
-        'T': (0, 0, 255),
-        'N': ( 200, 200, 200)}#not sequenced
-    }
 '''Returns the reverse complementary sequence.  This is the sequence as it would be read on the
 side of the DNA strand (double helix).'''
 def reverseComplement(originalSequence):

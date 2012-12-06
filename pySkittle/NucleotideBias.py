@@ -4,16 +4,16 @@ Created on Dec 5, 2012
 '''
 from SkittleStatePackets import StatePacket
 from SkittleGraphTransforms import *
+from PixelLogic import *
 
 max_bar_width = 40
 
 def calculateBiasBarSizes(state):
     order = ['C', 'G', 'A', 'T', 'N']
-    outputPixels = []
     tempWidth = state.width
     genome = state.seq[state.start : state.start + state.length]
     countsPerLine = countNucleotideGroups(genome, tempWidth )
-    barLengths = []
+    barLengthsPerLine = []
     for h in range( len(countsPerLine) ):#once per line
         bar_sizes = []
         remainder = 0.0
@@ -23,17 +23,20 @@ def calculateBiasBarSizes(state):
             floating_sum += barSize
             barSize += remainder
             remainder = floating_sum - int(floating_sum + .5)
-            bar_sizes.append(int(barSize+.5))
-        barLengths.append(bar_sizes)
-    return barLengths
+            tupleT = (key, int(barSize+.5))
+            bar_sizes.append( tupleT )
+        barLengthsPerLine.append(bar_sizes)
+    return barLengthsPerLine
 
 
 
 def calculateOutputPixels(state):
-    barSizes = calculateBiasBarSizes(state)
+    barSizesPerLine = calculateBiasBarSizes(state)
     outputPixels = []
-    for line in range(len(barSizes)):
-        bar = []#drawJustifiedBar(barSizes[line], max_bar_width, glWidget)
+    for line in range(len(barSizesPerLine)):
+        barSizes  = map(lambda entry : getColor(state, entry[1]), barSizesPerLine[line])
+        colorSeries = map(lambda entry : getColor(state, entry[0]), barSizesPerLine[line])
+        bar = drawJustifiedBar(barSizes, colorSeries, max_bar_width)
         outputPixels += bar
     return outputPixels
 
