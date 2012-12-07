@@ -18,7 +18,7 @@ def calculateOutputPixels(state):
     repeatMapState.F_start = 1
     repeatMapState.F_width = samples * 3
     scores = RepeatMap.calculateOutputPixels(state, repeatMapState)
-    threemer_scores = map(lambda line: sensitiveTestForSpecificFrequency(line, 3, samples), scores)
+    threemer_scores = sensitiveTestForSpecificFrequency(scores, 3, samples)
     return threemer_scores
 
         

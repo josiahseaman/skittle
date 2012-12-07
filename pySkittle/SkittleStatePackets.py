@@ -60,5 +60,3 @@ class HighlighterState():
         self.targetSequenceEntries = [SequenceEntry('AAAA', .8, (20, 250, 20) )]
         self.searchReverseComplement = True
         
-        
-        
