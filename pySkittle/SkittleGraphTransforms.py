@@ -91,6 +91,15 @@ def sequenceToColors(seq, colorPalette):
         pixels.append( colorMapping[c] )
     return pixels
 
+'''Take two sequences '''
+def calculatePerCharacterMatch(A, B):
+#    if hasDepth(Aseq) and hasDepth(Bseq):
+#        return map(lambda x: calculatePerCharacterMatch(A, B),... 
+    mask = []
+    for i, val in enumerate(zip(A,B)):
+        mask.append(val[0] == val[1])
+    return mask
+
 def average(values):
     assert len(values) > 0
     return float(sum(values)) / len(values)

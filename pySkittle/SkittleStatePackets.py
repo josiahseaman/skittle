@@ -57,6 +57,6 @@ class HighlighterState():
     def __init__(self):
         '''targetSequenceEntries contains a series of SequenceEntries.  These could just be a (str, float, color) tuple
         or it could be an explicit class.'''
-        self.targetSequenceEntries = [SequenceEntry('AAAA', .7, (20, 250, 20) ), SequenceEntry('GGGG', .7, (250, 20, 20) )]
+        self.targetSequenceEntries = [SequenceEntry('AAAA', .7, (20, 250, 20) ), SequenceEntry('GGGGG', .7, (250, 20, 20) )]
         self.searchReverseComplement = True
         
