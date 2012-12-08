@@ -27,7 +27,8 @@ def measureSequenceMatches(state, sequenceEntry):
         scores.append(float(L - mismatches) / len(seq))
     return scores
     
-def colorCombinedResults( results ):
+def colorCombinedResults(highlighterState, results ):
+    
     return 'combination'
 
 def calculateOutputPixels(state, highlighterState):
@@ -40,7 +41,7 @@ def calculateOutputPixels(state, highlighterState):
                 current = copy.deepcopy(highlighterState.targetSequenceEntries[i])
                 reverseSettings = SequenceEntry(reverseComplement(current.seq), current.minimumPercentage, current.color)
                 results.append( measureSequenceMatches(state, reverseSettings ) )
-#    synthesis = colorCombinedResults( results )
+#    synthesis = colorCombinedResults(highlighterState, results )
 #    return synthesis
     return results
 

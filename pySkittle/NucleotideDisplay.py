@@ -10,7 +10,9 @@ def calculateOutputPixels(state):
     seq = state.seq[state.start : state.start + state.length] #substrings the relevant part
     print seq 
     if state.scale > 1:
-        chunks = chunkUpList(seq, state.scale)
+        chunks = chunkUpList(seq, state.width )
+        print chunks
+        chunks = chunkUpList(chunks, state.scale)
         print chunks
         counts = countNucleotides(chunks)
         print counts
@@ -23,7 +25,6 @@ def calculateOutputPixels(state):
 if __name__ == '__main__':
     print 'Nucleotide Display test case'
     state = StatePacket()
-    state.scale = 3
     print calculateOutputPixels(state)
 
     
