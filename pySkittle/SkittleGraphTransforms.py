@@ -8,6 +8,12 @@ from numbers import Number
 from SkittleStatePackets import *
 from PixelLogic import colorPalettes
 
+
+def hasDepth(listLike):
+    try:
+        return len(listLike) > 0 and not isinstance(listLike, (str,dict)) and hasattr(listLike[0], "__getitem__")
+    except:
+        return False
     
 '''Returns the reverse complementary sequence.  This is the sequence as it would be read on the
 side of the DNA strand (double helix).'''
@@ -21,7 +27,7 @@ def reverseComplement(originalSequence):
 
 '''Final step for Nucleotide Display that transforms normalized counts into a list of colors'''
 def countListToColorSpace(countList, colorPalette):
-    if len(countList) > 0 and not isinstance(countList, dict) and hasattr(countList[0], "__iter__"):#this recurses until we're left with a single dictionary
+    if hasDepth(countList):#this recurses until we're left with a single dictionary
         return map(lambda x: countListToColorSpace(x, colorPalette), countList)
     
     colorMapping = colorPalettes[colorPalette]
@@ -32,6 +38,9 @@ def countListToColorSpace(countList, colorPalette):
     return resultingColor
 
 def normalizeDictionary(listing):
+    if hasDepth(listing):#this recurses until we're left with a single dictionary
+        return map(lambda x: normalizeDictionary(x), listing)
+    
     if len(listing) == 0: return listing
     total = reduce(lambda Sum, val: Sum+val, listing.values(), 0)
     for key, value in listing.items():
@@ -39,7 +48,7 @@ def normalizeDictionary(listing):
     return listing
 
 def countNucleotides(seq):
-    if len(seq) > 0 and hasattr(seq[0], "__iter__"):
+    if hasDepth(seq):
         return map(lambda x: countNucleotides(x), seq)
     counts = {}
     for c in seq:
@@ -48,18 +57,19 @@ def countNucleotides(seq):
 
 '''Returns a list of dictionaries that show the counts per grouping (usually scale).
     Doing this adds one layer of depth to seq'''
-def countNucleotideGroups(seq, chunkSize):
-    if len(seq) > 0 and hasattr(seq[0], "__iter__"):
-        return map(lambda x: countNucleotideGroups(x, chunkSize), seq)
+def chunkUpList(seq, chunkSize):
+    if hasDepth(seq):
+        return map(lambda x: chunkUpList(x, chunkSize), seq)
     resultVector = []
-    chunks = len(seq)/chunkSize #'''This may truncate a seq that is of uneven size'''
-    for chunk in range(chunks):
-        resultVector.append(countNucleotides( seq[chunk*chunkSize : (chunk+1)*chunkSize] ) )
+    chunk = 0
+    while chunk * chunkSize < len(seq):
+        resultVector.append(seq[chunk*chunkSize : (chunk+1)*chunkSize])
+        chunk += 1
     return resultVector
 
 '''Deprecated.  Nucleotide Display uses normalized counts now''' 
 def colorCompress(pixels, scale):
-    if len(pixels) > 0 and hasattr(pixels[0], "__iter__"):
+    if hasDepth(pixels):
         return map(lambda x: colorCompress(x, scale), pixels)
     compressed = []
     for i in range(0, len(pixels)- scale, scale):
@@ -73,7 +83,7 @@ def colorCompress(pixels, scale):
 
 '''Optimized function for Nucleotide to color mapping at scale 1'''        
 def sequenceToColors(seq, colorPalette):
-    if len(seq) > 0 and hasattr(seq[0], "__iter__"):
+    if hasDepth(seq):
         return map(lambda x: sequenceToColors(x, colorPalette), seq)
     pixels = []
     colorMapping = colorPalettes[colorPalette]
@@ -159,7 +169,7 @@ if the sum of samples at frequency are greater than the background level.  It th
 If there is no difference, this number will be 0.0.  This score is not currently normalized. This method is used
 to find the 3-periodicity bias found in most protein coding sequences.'''        
 def sensitiveTestForSpecificFrequency(floatList, frequency = 3, numberOfSamples = 20):
-    if len(floatList) > 0 and hasattr(floatList[0], "__iter__"):
+    if hasDepth(floatList):
         return map(lambda x: sensitiveTestForSpecificFrequency(x, frequency, numberOfSamples), floatList)
     assert isinstance(frequency, int), "Please use an integer offset frequency."
     reach = numberOfSamples * frequency

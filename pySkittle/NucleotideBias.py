@@ -12,7 +12,7 @@ def calculateBiasBarSizes(state):
     order = ['C', 'G', 'A', 'T', 'N']
     tempWidth = state.width
     genome = state.seq[state.start : state.start + state.length]
-    countsPerLine = countNucleotideGroups(genome, tempWidth )
+    countsPerLine = chunkUpList(genome, tempWidth )
     barLengthsPerLine = []
     for h in range( len(countsPerLine) ):#once per line
         bar_sizes = []
