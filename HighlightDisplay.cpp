@@ -227,7 +227,7 @@ void HighlightDisplay::combine(vector< vector<int> >& results)
 
         if(score < 257)
         {
-            c = color(score, score, score);
+            c = color(score, score, score);//grey pixel
         }
         else{
             if( score == 258) c = seqLines[matchSeq]->mismatchColor;

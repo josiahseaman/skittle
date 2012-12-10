@@ -171,7 +171,7 @@ int GLWidget::setHorizontalScrollbarRange()
     int fullPixelWidth = getTotalPixelWidth();
 
     int val = (int)max(0.0, ((double)(fullPixelWidth)/(double)pixelsToOpenGlGridRatio() - openGlGridWidth()) ) ;
-    qDebug() << "HorizontalBar Width: "  << val;
+//    qDebug() << "HorizontalBar Width: "  << val;
     emit totalWidthChanged(val);
     return val;
 }
@@ -280,15 +280,27 @@ void GLWidget::on_screenCaptureButton_clicked()
     }
 
     stringstream namestream;
-    namestream << chromosomeName << "_w-" << ui->getWidth() << "_st-" << ui->getStart(glWidget) << "_sc-" << ui->getScale() << ".png";
+    namestream << chromosomeName << "_width-" << ui->getWidth() << "_start-" << ui->getStart(glWidget) << "_scale-" << ui->getScale();
+    string g = string("_");
+    g.append( string((int)!nuc->hidden, 'n') );
+    g.append( string((int)!bias->hidden, 'b') );
+    g.append( string((int)!freq->hidden, 'm') );
+    g.append( string((int)!cylinder->hidden, 'c') );
+    g.append( string((int)!align->hidden, 'r') );
+    g.append( string((int)!olig->hidden, 'o') );
+    g.append( string((int)!highlight->hidden, 'h') );
+    namestream << g << ".png";
 
     QString filename = QFileDialog::getSaveFileName(this, tr("Save Image"), namestream.str().c_str(), tr("Images (*.png *.jpg)"));
 
-    image.save(filename);
+    if(!filename.isEmpty())
+    {
+        image.save(filename);
 
-    filename.prepend("Saved image: ");
-    ui->print(filename.toStdString());
-
+        filename.prepend("Saved image: ");
+        ui->print(filename.toStdString());
+        ui->print("Current settings are stored in the image filename.");
+    }
     //Set width back to what it should be
     this->resize(tempWidth, height());
     paintGL();
