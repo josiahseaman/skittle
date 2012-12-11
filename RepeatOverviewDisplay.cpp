@@ -108,19 +108,18 @@ int RepeatOverviewDisplay::width()
 
 void RepeatOverviewDisplay::displayLegend(float canvasWidth, float canvasHeight)
 {
-    /** /
+    /**/
     glPushMatrix();
-        glTranslated(0,40,0);
-    vector<color> paintIt;
-    for(int y = 0; y < 10; y++)
-    {
-    for(int i = 0; i < 250; i++)
-    {
-                paintIt.push_back(alignment_color(scale, i));//spectrum(i/255.0);//internalWidth
-    }
-    }
-    TextureCanvas paint = TextureCanvas( paintIt, 250);
-    paint.display();
+        glScaled(1,-1,1);
+        glTranslated(0,canvasHeight-10,.1);//in front, on bottom
+        glScaled(1,10,1);//to make it thicker without repeating the sequence
+        vector<color> paintIt;
+        for(int i = 0; i < 250; i++)
+        {
+            paintIt.push_back(alignment_color(internalScale, i));//spectrum(i/255.0);
+        }
+        TextureCanvas paint = TextureCanvas( paintIt, 250);
+        paint.display();
 
     glPopMatrix();
     /*/

@@ -4,6 +4,7 @@
 #include <math.h>
 #include <QtGui>
 #include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -76,6 +77,12 @@ public:
     {
         int a = max(r, g);
         return max( a, b);
+    }
+    string toString()
+    {
+        stringstream sstr;
+        sstr << "(" << r <<", "<< g <<", "<< b<<")";
+        return sstr.str();
     }
 };
 
