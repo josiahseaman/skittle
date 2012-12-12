@@ -55,8 +55,7 @@ class HighlighterState():
         return "Search other strand: "+ str(self.searchReverseComplement) + "   Sequences: "+ str(self.targetSequenceEntries)
     
     def __init__(self):
-        '''targetSequenceEntries contains a series of SequenceEntries.  These could just be a (str, float, color) tuple
-        or it could be an explicit class.'''
+        '''targetSequenceEntries contains a series of SequenceEntries.'''
         self.targetSequenceEntries = [SequenceEntry('AAAA', .7, (20, 250, 20) ), SequenceEntry('GGGGG', .7, (250, 20, 20) )]
         self.searchReverseComplement = True
         
