@@ -47,13 +47,19 @@ def normalizeDictionary(listing):
         listing[key] = value*1.0 / total
     return listing
 
-def countNucleotides(seq):
+def countNucleotides(seq, oligomerSize = 1):
     if hasDepth(seq):
         return map(lambda x: countNucleotides(x), seq)
     counts = {}
-    for c in seq:
-        counts[c] = 1 + counts.get(c,0) #defaults to 0 
+    if oligomerSize == 1:#optimized for Nucleotide Display
+        for c in seq:
+            counts[c] = 1 + counts.get(c,0) #defaults to 0
+    else: 
+        for endIndex in range(oligomerSize, len(seq)+1, 1):
+            c = seq[endIndex-oligomerSize: endIndex]
+            counts[c] = 1 + counts.get(c,0) #defaults to 0 
     return counts
+
 
 '''Returns a list of dictionaries that show the counts per grouping (usually scale).
     Doing this adds one layer of depth to seq'''
