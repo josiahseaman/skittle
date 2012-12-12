@@ -63,7 +63,7 @@ Development:
 RepeatOverviewDisplay::RepeatOverviewDisplay(UiVariables* gui, GLWidget* gl)
     :NucleotideDisplay(gui, gl)
 {
-    hidden = false;
+    hidden = true;
     charPerIndex = 4;
     internalScale = charPerIndex;
     sequence = NULL;
