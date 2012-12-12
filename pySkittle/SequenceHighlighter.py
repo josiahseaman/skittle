@@ -36,10 +36,11 @@ def ensureEqualLengths2D(results, defaultValue = 0.0):
     return results
     
 def getMatchColor(entryNumber, entries):
-    if entryNumber > 0:
-        return entries[entryNumber-1].color
+    if entryNumber > 1:
+        return entries[entryNumber-2].color
     else:
-        return (0,0,0)
+        grey = int(entryNumber*255)
+        return (grey,grey,grey)
     
 def colorCombinedResults(highlighterState, results ):
     results = ensureEqualLengths2D(results)
@@ -51,9 +52,10 @@ def colorCombinedResults(highlighterState, results ):
             sequenceEntryIndex /= 2
         searchSeq = entries[sequenceEntryIndex].seq
         for index, startScore in enumerate(searchPageResults):
+            hitCanvas[index] = max(startScore, hitCanvas[index])#sets the grey pixels
             if startScore >= entries[sequenceEntryIndex].minimumPercentage:
                 splatter = calculatePerCharacterMatch(state.seq[index:index+len(searchSeq)], searchSeq)
-                splatter = map(lambda x: x*(sequenceEntryIndex+1), splatter)#this tags each character hit with WHICH search sequence it came from, +1 because of 0*0
+                splatter = map(lambda x: x*(sequenceEntryIndex+2), splatter)#this tags each character hit with WHICH search sequence it came from, +1 because of 0*0
                 for localIndex, hit in enumerate(splatter):
                     if index + localIndex < len(hitCanvas):
                         hitCanvas[index+localIndex] = max(hit, hitCanvas[index+localIndex])
@@ -64,7 +66,7 @@ def colorCombinedResults(highlighterState, results ):
 
 def calculateOutputPixels(state, highlighterState):
     assert isinstance(highlighterState, HighlighterState)
-    results = [] #2D array containing a screen full of scores per targetSequence #vector<vector<int> > results;
+    results = [] #2D array containing a screen full of scores per targetSequence 
     for i in range(len( highlighterState.targetSequenceEntries )):
         if len( highlighterState.targetSequenceEntries[i].seq) != 0 :
             results.append( measureSequenceMatches(state, highlighterState.targetSequenceEntries[i] ) )
@@ -74,11 +76,10 @@ def calculateOutputPixels(state, highlighterState):
                 results.append( measureSequenceMatches(state, reverseSettings ) )
     synthesis = colorCombinedResults(highlighterState, results )
     return synthesis
-#    return results
 
 if __name__ == '__main__':
     state = StatePacket()
-    state.seq = 'AAAAGGGGTATATATATATAT'
+    state.seq = 'AAAAGGGGTATATATATATATGGGATAAAGCCCCC'
     highlighterState = HighlighterState()
     print calculateOutputPixels(state, highlighterState)
     
