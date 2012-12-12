@@ -135,6 +135,10 @@ protected:
     int openGlGridWidth();
     void initializeGL();
     void paintGL();
+    void paintText();
+
+    void saveGLState();
+     void restoreGLState();
     
     void resizeGL(int width, int height);
     bool event(QEvent *);

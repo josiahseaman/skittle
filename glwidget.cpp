@@ -685,8 +685,13 @@ void GLWidget::initializeGL()
 {
     qglClearColor(QColor::fromRgbF(0.5, 0.5, 0.5));//50% grey
     glShadeModel(GL_FLAT);
+    glDepthFunc(GL_LESS);
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
+
+//    glEnable(GL_MULTISAMPLE_ARB );
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     marker = 0;//glGenLists(1);
 
@@ -699,6 +704,7 @@ void GLWidget::paintGL()
     updateDisplaySize();
     setHorizontalScrollbarRange();
     makeCurrent();
+    paintText();
 
     //    qDebug() << "GlWidget Frame: " << ++frame;
     glMatrixMode(GL_MODELVIEW);
@@ -728,6 +734,43 @@ void GLWidget::paintGL()
     }
     glPopMatrix();
 }
+
+void GLWidget::paintText()
+{
+    saveGLState();
+    QPainter p(this); // used for text overlay
+    p.endNativePainting();
+    p.setPen(QColor(197, 197, 197, 157));
+    p.setBrush(QColor(197, 197, 197, 127));
+    p.drawRect(QRect(0, 0, width(), 50));
+    p.setPen(Qt::black);
+    p.setBrush(Qt::NoBrush);
+    const QString str1(tr("A simple OpenGL pbuffer example."));
+    const QString str2(tr("Use the mouse wheel to zoom, press buttons and move mouse to rotate, double-click to flip."));
+    QFontMetrics fm(p.font());
+    p.drawText(width()/2 - fm.width(str1)/2, 20, str1);
+    p.drawText(width()/2 - fm.width(str2)/2, 20 + fm.lineSpacing(), str2);
+    p.beginNativePainting();
+    restoreGLState();
+}
+
+void GLWidget::saveGLState()
+ {
+     glPushAttrib(GL_ALL_ATTRIB_BITS);
+     glMatrixMode(GL_PROJECTION);
+     glPushMatrix();
+     glMatrixMode(GL_MODELVIEW);
+     glPushMatrix();
+ }
+
+ void GLWidget::restoreGLState()
+ {
+     glMatrixMode(GL_PROJECTION);
+     glPopMatrix();
+     glMatrixMode(GL_MODELVIEW);
+     glPopMatrix();
+     glPopAttrib();
+ }
 
 void GLWidget::resizeGL(int width, int height)
 {

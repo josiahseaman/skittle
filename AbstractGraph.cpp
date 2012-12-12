@@ -5,7 +5,7 @@
 #include <math.h>
 #include <utility>  //includes std::pair
 #include "SkittleUtil.h"
-
+#include <QtOpenGL>
 
 /** *****************
   Abstract Graph is the abstract class that all of the Graphs inherit from.
@@ -86,7 +86,7 @@ int AbstractGraph::height()
 void AbstractGraph::paint_square(point position, color c)
 {	
     glPushMatrix();
-    glColor3d(c.r /255.0, c.g /255.0, c.b /255.0);
+    glColor4d(c.r /255.0, c.g /255.0, c.b /255.0, .7);
     glTranslated(position.x+1, position.y, position.z);
     glBegin(GL_QUADS);
     glVertex3d(.0, .0, 0);
@@ -94,6 +94,39 @@ void AbstractGraph::paint_square(point position, color c)
     glVertex3d(-1, -1, 0);
     glVertex3d(.0, -1, 0);
     glEnd();
+    glPopMatrix();
+}
+
+void AbstractGraph::paint_image(point position, string filePath)
+{
+    glPushMatrix();
+//    ui->print(filePath);
+    QPixmap tex(QString(filePath.c_str()));
+    GLuint textures = bindTexture(tex, GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, textures);
+    //draw
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glScaled(tex.width(), tex.height(), 1);
+//    paint_square(position, color(.8));
+    glTranslated(position.x+1, position.y, position.z);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  0.0f);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f( 0.0f, -1.0f,  0.0f);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f( 0.0f,  0.0f,  0.0f);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  0.0f,  0.0f);
+    glEnd();
+
+//    GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, myImage, 0);
+//    glTexImage2D(GL_TEXTURE_2D, 0,
+//        GL_RGBA,
+//        textureWidth,
+//        textureHeight,
+//        0,
+//        GL_RGBA,
+//        GL_UNSIGNED_BYTE,
+//        pointerToPixels);
     glPopMatrix();
 }
 

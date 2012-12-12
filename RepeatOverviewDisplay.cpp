@@ -63,7 +63,7 @@ Development:
 RepeatOverviewDisplay::RepeatOverviewDisplay(UiVariables* gui, GLWidget* gl)
     :NucleotideDisplay(gui, gl)
 {
-    hidden = true;
+    hidden = false;
     charPerIndex = 4;
     internalScale = charPerIndex;
     sequence = NULL;
@@ -112,7 +112,7 @@ void RepeatOverviewDisplay::displayLegend(float canvasWidth, float canvasHeight)
     glPushMatrix();
         glScaled(1,-1,1);
         glTranslated(0,canvasHeight-10,.1);//in front, on bottom
-        glScaled(1,10,1);//to make it thicker without repeating the sequence
+        //glScaled(1,10,1);//to make it thicker without repeating the sequence
         vector<color> paintIt;
         for(int i = 0; i < 250; i++)
         {
@@ -120,6 +120,11 @@ void RepeatOverviewDisplay::displayLegend(float canvasWidth, float canvasHeight)
         }
         TextureCanvas paint = TextureCanvas( paintIt, 250);
         paint.display();
+//        paint_image(point(0,0,0), string(":/ro-label-1.png"));
+//        paint_image(point(125,0,0), string(":/ro-label-125.png"));
+//        paint_image(point(250,0,0), string(":/ro-label-250.png"));
+
+
 
     glPopMatrix();
     /*/

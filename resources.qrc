@@ -12,5 +12,8 @@
         <file>icons/reds.png</file>
         <file>icons/colorblindsafe2.png</file>
         <file>icons/dark.png</file>
+        <file>ro-label-1.png</file>
+        <file>ro-label-125.png</file>
+        <file>ro-label-250.png</file>
     </qresource>
 </RCC>
