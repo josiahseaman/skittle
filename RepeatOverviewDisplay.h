@@ -19,6 +19,7 @@ public:
     RepeatOverviewDisplay(UiVariables*, GLWidget* gl);
     void checkVariables();
     void calculateOutputPixels();
+    void display();
     int width();
     void displayLegend(float canvasWidth, float canvasHeight);
     color alignment_color(int score, int frequency);
@@ -59,6 +60,7 @@ private:
     int* countTableChar;
     unsigned char* packSeq;
     int pSeqSize;
+    int legendWidth;
 
     GLuint display_object;
     GLWidget* glWidget;

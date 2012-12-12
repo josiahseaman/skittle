@@ -704,7 +704,7 @@ void GLWidget::paintGL()
     updateDisplaySize();
     setHorizontalScrollbarRange();
     makeCurrent();
-    paintText();
+//    paintText();
 
     //    qDebug() << "GlWidget Frame: " << ++frame;
     glMatrixMode(GL_MODELVIEW);

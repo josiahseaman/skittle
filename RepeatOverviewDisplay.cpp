@@ -71,6 +71,7 @@ RepeatOverviewDisplay::RepeatOverviewDisplay(UiVariables* gui, GLWidget* gl)
     countTableShort = NULL;
     countTableChar = NULL;
     pSeqSize = 0;
+    legendWidth = 10;
 
     calcMatchTable();
     //packSequence is called by setSequence()
@@ -96,14 +97,26 @@ void RepeatOverviewDisplay::calculateOutputPixels()
     for(int i = ui->getStart(glWidget); i < end; i += internalScale)
         alignment_colors.push_back( simpleAlignment(i) );
 
-    storeDisplay( alignment_colors, width());
+    storeDisplay( alignment_colors, width()-legendWidth);
 
     upToDate = true;
 }
 
+void RepeatOverviewDisplay::display()
+{
+    checkVariables();
+    glPushMatrix();
+    glScaled(1,-1,1);
+    if(!upToDate)
+        calculateOutputPixels();
+    glTranslated(legendWidth, 0,0);
+    textureBuffer->display();
+    glPopMatrix();
+}
+
 int RepeatOverviewDisplay::width()
 {
-    return max(1, (int)((float)ui->getWidth() / (float)internalScale + 0.5));
+    return legendWidth + max(1, (int)((float)ui->getWidth() / (float)internalScale + 0.5));
 }
 
 void RepeatOverviewDisplay::displayLegend(float canvasWidth, float canvasHeight)
@@ -111,18 +124,21 @@ void RepeatOverviewDisplay::displayLegend(float canvasWidth, float canvasHeight)
     /**/
     glPushMatrix();
         glScaled(1,-1,1);
-        glTranslated(0,canvasHeight-10,.1);//in front, on bottom
-        //glScaled(1,10,1);//to make it thicker without repeating the sequence
+        glTranslated(0,0,.1);//in front, on bottom
         vector<color> paintIt;
-        for(int i = 0; i < 250; i++)
+        for(float i = 0; i < canvasHeight; i++)
         {
-            paintIt.push_back(alignment_color(internalScale, i));//spectrum(i/255.0);
+            paintIt.push_back(alignment_color(internalScale, (i/canvasHeight)*250));//spectrum(i/255.0);
         }
-        TextureCanvas paint = TextureCanvas( paintIt, 250);
-        paint.display();
-//        paint_image(point(0,0,0), string(":/ro-label-1.png"));
-//        paint_image(point(125,0,0), string(":/ro-label-125.png"));
-//        paint_image(point(250,0,0), string(":/ro-label-250.png"));
+        TextureCanvas paint = TextureCanvas( paintIt, 1);
+        glPushMatrix();
+            glScaled(legendWidth,1,1);//to make it thicker without repeating the sequence
+            paint.display();
+        glPopMatrix();
+
+        paint_image(point(legendWidth/2,canvasHeight/250+2,.1), string(":/ro-label-1.png"));
+        paint_image(point(legendWidth/2,canvasHeight/2,.1), string(":/ro-label-125.png"));
+        paint_image(point(legendWidth/2,canvasHeight-2,.1), string(":/ro-label-250.png"));
 
 
 
@@ -408,6 +424,8 @@ int RepeatOverviewDisplay::getRelativeIndexFromMouseClick(point2D pt)
 {
     if( pt.x < width() && pt.x >= 0 && pt.y <= height() )//check if it is inside the box
     {
+        pt.x -= legendWidth;
+        if (pt.x < 0) return -1;
         int index = pt.y * width()*internalScale //the bp per line is not quite ui->getWidth() because it needs to be a multiple of 4.
                 + pt.x * internalScale;
         index = max(0, index);

@@ -101,24 +101,29 @@ void AbstractGraph::paint_image(point position, string filePath)
 {
     glPushMatrix();
 //    ui->print(filePath);
-    QPixmap tex(QString(filePath.c_str()));
-    GLuint textures = bindTexture(tex, GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, textures);
-    //draw
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
-    glScaled(tex.width(), tex.height(), 1);
+    glEnable (GL_TEXTURE_2D);
+    QPixmap tex(QString(filePath.c_str()));
+    GLuint textures = bindTexture(tex, GL_TEXTURE_2D);
+//    glGenTextures( 1, &textures );
+    glBindTexture(GL_TEXTURE_2D, textures);
+    //draw
 //    paint_square(position, color(.8));
-    glTranslated(position.x+1, position.y, position.z);
+    glTranslated(position.x- tex.width()/6, position.y+ tex.height()/6, position.z);
+    glScaled(.3333, -.33333, 1);
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  0.0f);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f( 0.0f, -1.0f,  0.0f);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f( 0.0f,  0.0f,  0.0f);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  0.0f,  0.0f);
-    glEnd();
+    glBegin (GL_QUADS);
+    glTexCoord2f (0.0f,0.0f); /* upper left corner of image */
+    glVertex3f (0.0f, 0.0f, 0.0f);
+    glTexCoord2f (1.0f, 0.0f); /* upper right corner of image */
+    glVertex3f (tex.width(), 0.0f, 0.0f);
+    glTexCoord2f (1.0f, 1.0f); /* lower right corner of image */
+    glVertex3f (tex.width(), tex.height(), 0.0f);
+    glTexCoord2f (0.0f, 1.0f); /* lower left corner of image */
+    glVertex3f (0.0f, tex.height(), 0.0f);
+    glEnd ();
 
-//    GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, myImage, 0);
 //    glTexImage2D(GL_TEXTURE_2D, 0,
 //        GL_RGBA,
 //        textureWidth,
