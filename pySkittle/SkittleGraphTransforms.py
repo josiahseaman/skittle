@@ -61,12 +61,15 @@ def countListToColorSpace(countList, colorPalette):
         resultingColor =  map(sum, zip(colorContribution, resultingColor))
     return resultingColor
 
-def normalizeDictionary(listing, referenceFunction = sum):
+'''ReferencePoint is the number that all elements are divided by.  This defaults to the sum of dictionary 
+elements if not defined.'''
+def normalizeDictionary(listing, referencePoint = 0):
     if hasDepth(listing):#this recurses until we're left with a single dictionary
-        return map(lambda x: normalizeDictionary(x, referenceFunction), listing)
+        return map(lambda x: normalizeDictionary(x, referencePoint), listing)
     
     if len(listing) == 0: return listing
-    referencePoint = referenceFunction(listing.values())
+    if referencePoint == 0:
+        referencePoint = sum(listing.values())
     for key, value in listing.items():
         listing[key] = value*1.0 / referencePoint
     return listing
