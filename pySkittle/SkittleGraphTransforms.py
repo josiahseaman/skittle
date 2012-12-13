@@ -15,6 +15,30 @@ def hasDepth(listLike):
     except:
         return False
     
+def generateExhaustiveOligomerList(oligomerSize, startingSet=[]):
+    letters = ['A','C','G','T']
+    if not startingSet:
+        startingSet = letters
+    if len(startingSet[0]) < oligomerSize:
+        newSet = []
+        for olig in startingSet:
+            for n in letters: #a new olig gets added four times for each element in the list
+                newSet.append(olig + n) 
+        return generateExhaustiveOligomerList(oligomerSize, newSet)
+    else: 
+        return startingSet
+    
+'''Used to color the oligomer Counts in grey scale.  Each dictionary represents one line'''    
+def oligCountToColorSpace(counts, orderedWords):
+    if hasDepth(counts):
+        return map(lambda x: oligCountToColorSpace(x, orderedWords), counts)
+    pixels = []
+    for word in orderedWords:
+        grey = counts.get(word, 0.0)
+        pixels.append( (grey,) )#tuple with one value, grey value need not be repeated three times for RGB
+    return pixels
+        
+    
 '''Returns the reverse complementary sequence.  This is the sequence as it would be read on the
 side of the DNA strand (double helix).'''
 def reverseComplement(originalSequence):
@@ -37,19 +61,19 @@ def countListToColorSpace(countList, colorPalette):
         resultingColor =  map(sum, zip(colorContribution, resultingColor))
     return resultingColor
 
-def normalizeDictionary(listing):
+def normalizeDictionary(listing, referenceFunction = sum):
     if hasDepth(listing):#this recurses until we're left with a single dictionary
-        return map(lambda x: normalizeDictionary(x), listing)
+        return map(lambda x: normalizeDictionary(x, referenceFunction), listing)
     
     if len(listing) == 0: return listing
-    total = reduce(lambda Sum, val: Sum+val, listing.values(), 0)
+    referencePoint = referenceFunction(listing.values())
     for key, value in listing.items():
-        listing[key] = value*1.0 / total
+        listing[key] = value*1.0 / referencePoint
     return listing
 
 def countNucleotides(seq, oligomerSize = 1):
     if hasDepth(seq):
-        return map(lambda x: countNucleotides(x), seq)
+        return map(lambda x: countNucleotides(x, oligomerSize), seq)
     counts = {}
     if oligomerSize == 1:#optimized for Nucleotide Display
         for c in seq:
@@ -63,13 +87,13 @@ def countNucleotides(seq, oligomerSize = 1):
 
 '''Returns a list of dictionaries that show the counts per grouping (usually scale).
     Doing this adds one layer of depth to seq'''
-def chunkUpList(seq, chunkSize):
+def chunkUpList(seq, chunkSize, overlap=0):
     if hasDepth(seq):
-        return map(lambda x: chunkUpList(x, chunkSize), seq)
+        return map(lambda x: chunkUpList(x, chunkSize, overlap), seq)
     resultVector = []
     chunk = 0
     while chunk * chunkSize < len(seq):
-        resultVector.append(seq[chunk*chunkSize : (chunk+1)*chunkSize])
+        resultVector.append(seq[chunk*chunkSize : (chunk+1)*chunkSize + overlap])
         chunk += 1
     return resultVector
 
@@ -204,10 +228,13 @@ def sensitiveTestForSpecificFrequency(floatList, frequency = 3, numberOfSamples 
 
 
 if __name__ == '__main__':
+    a = generateExhaustiveOligomerList(2)
+    print len(a), a
+    b = generateExhaustiveOligomerList(3)
+    print len(b), b
+    '''
     a = [ 1, 2, 3]
     b = [-1,-2,-3]
-    
-    '''
     counts = countNucleotides('AAAACGCCGTN')
     print counts
     print normalizeDictionary(counts)
