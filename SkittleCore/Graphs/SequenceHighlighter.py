@@ -6,7 +6,9 @@ Created on Dec 6, 2012
 from SkittleStatePackets import StatePacket, HighlighterState, SequenceEntry
 from SkittleGraphTransforms import reverseComplement, calculatePerCharacterMatch
 import copy
+import SkittleRequestHandler
 
+SkittleRequestHandler.registerGraph("Sequence Highlighter", __name__)
 
 def measureSequenceMatches(state, sequenceEntry):
     assert isinstance(sequenceEntry, SequenceEntry)
@@ -42,7 +44,7 @@ def getMatchColor(entryNumber, entries):
         grey = int(entryNumber*255)
         return (grey,grey,grey)
     
-def colorCombinedResults(highlighterState, results ):
+def colorCombinedResults(state, highlighterState, results ):
     results = ensureEqualLengths2D(results)
     if not results: return results
     hitCanvas = [0] * len(results[0])#create a large blank canvas to paint on
@@ -74,7 +76,7 @@ def calculateOutputPixels(state, highlighterState):
                 current = copy.deepcopy(highlighterState.targetSequenceEntries[i])
                 reverseSettings = SequenceEntry(reverseComplement(current.seq), current.minimumPercentage, current.color)
                 results.append( measureSequenceMatches(state, reverseSettings ) )
-    synthesis = colorCombinedResults(highlighterState, results )
+    synthesis = colorCombinedResults(state, highlighterState, results )
     return synthesis
 
 if __name__ == '__main__':

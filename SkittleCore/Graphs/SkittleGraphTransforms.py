@@ -15,6 +15,22 @@ def hasDepth(listLike):
     except:
         return False
     
+def mirrorDiagonalMatrix(heatMap):
+    for y in range(len(heatMap)):
+        for x in range(y+1, len(heatMap[y])):#only iterates on the upper right half
+            heatMap[x][y] = heatMap[y][x]
+
+def rowColumnCorrelation(heatMap):
+    neighborCorrelation = [ [None for x in range(len(heatMap[y]))] for y in range(len(heatMap))]
+    columnsList = zip(*heatMap)
+    for y, rowY in enumerate(heatMap):
+        for x in range(y, len(columnsList[y])):
+            columnX = columnsList[x] 
+            neighborCorrelation[y][x] = pearsonCorrelation(columnX, rowY)
+    mirrorDiagonalMatrix(neighborCorrelation)
+    return neighborCorrelation
+
+    
 def generateExhaustiveOligomerList(oligomerSize, startingSet=[]):
     letters = ['A','C','G','T']
     if not startingSet:
@@ -35,7 +51,7 @@ def oligCountToColorSpace(counts, orderedWords):
     pixels = []
     for word in orderedWords:
         grey = counts.get(word, 0.0)
-        pixels.append( (grey,) )#tuple with one value, grey value need not be repeated three times for RGB
+        pixels.append( (grey) )#tuple with one value, grey value need not be repeated three times for RGB
     return pixels
         
     
@@ -59,10 +75,11 @@ def countListToColorSpace(countList, colorPalette):
     for character, magnitude in countList.items():#per entry in dictionary
         colorContribution = map(lambda c: c * magnitude, colorMapping[character]) #scales color amount by magnitude for each channel
         resultingColor =  map(sum, zip(colorContribution, resultingColor))
-    return resultingColor
+    return tuple(resultingColor)
 
 '''ReferencePoint is the number that all elements are divided by.  This defaults to the sum of dictionary 
-elements if not defined.'''
+elements if not defined.  ReferencePoint can also be an evaluation function that returns a single number
+when given the values of 'listing' as an argument.'''
 def normalizeDictionary(listing, referencePoint = 0):
     if hasDepth(listing):#this recurses until we're left with a single dictionary
         return map(lambda x: normalizeDictionary(x, referencePoint), listing)
@@ -70,6 +87,8 @@ def normalizeDictionary(listing, referencePoint = 0):
     if len(listing) == 0: return listing
     if referencePoint == 0:
         referencePoint = sum(listing.values())
+    elif callable(referencePoint):
+        referencePoint = referencePoint(listing.values())
     for key, value in listing.items():
         listing[key] = value*1.0 / referencePoint
     return listing
@@ -139,11 +158,11 @@ def average(values):
 
 '''Pearson correlation coefficient between signals x and y.
 Thanks to http://stackoverflow.com/users/34935/dfrankow for the definition'''
-def __pearsonCorrelation__(x, y):
+def pearsonCorrelation(x, y):
     assert len(x) == len(y), (len(x) , " vs. " , len(y)) 
     n = len(x)
     assert n > 0, "Array is empty"
-    assert isinstance(x[0], Number)
+    assert isinstance(x[0], Number), x[0]
     avg_x = average(x)
     avg_y = average(y)
     diffprod = 0
@@ -168,7 +187,7 @@ def correlate(floatList, beginA, beginB, comparisonLength):
     A = floatList[beginA: beginA + comparisonLength]
     B = floatList[beginB: beginB + comparisonLength]
     if(len(A) == len(B)):
-        return __pearsonCorrelation__(A, B)
+        return pearsonCorrelation(A, B)
     else:
         return None
     

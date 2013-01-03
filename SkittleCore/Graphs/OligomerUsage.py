@@ -6,7 +6,9 @@ Created on Dec 12, 2012
 from SkittleStatePackets import StatePacket
 from SkittleGraphTransforms import chunkUpList, countNucleotides,\
     normalizeDictionary, generateExhaustiveOligomerList, oligCountToColorSpace
+import SkittleRequestHandler
 
+SkittleRequestHandler.registerGraph("Oligomer Usage", __name__)
 
 def calculateOutputPixels(state, oligomerSize):
     assert isinstance(state, StatePacket)

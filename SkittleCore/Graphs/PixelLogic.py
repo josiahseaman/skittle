@@ -2,8 +2,12 @@
 Created on Dec 5, 2012
 @author: Josiah
 '''
+from random import randint, random
 import SkittleStatePackets
 import math
+
+
+blankColor = None
 
 colorPalettes = {
 "COLORBLINDSAFE" : 
@@ -64,6 +68,13 @@ def getColor(state, character):
         return defaultColor
     b = a.get(character, defaultColor)
     return b
+
+'''Returns a color tuple with one rgb channel set to a random value'''
+def randomColor():#only changes one channel right now
+    colorT = [0,0,0]
+    randomChannel = randint(0,2)
+    colorT[randomChannel] = randint(0,255)
+    return tuple(colorT)
 
 def drawBar(size, filler_size, barColor, rightJustified):
     filler = [ None ] * max(0,filler_size)
