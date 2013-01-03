@@ -1,0 +1,193 @@
+<html>
+<head>
+	<title>Canvas Test</title>
+	<style type="text/css">
+		body {
+			background: #eee;
+            font-family: helvetica,ariel,sans-serif;
+		}
+		#c {
+			border:1px solid #bbb;
+			width:940px;
+			height: 800px;
+            background:black;
+		}
+
+	</style>
+</head>
+<body>
+
+
+
+
+<h1>HTML5 Canvas Nucleotide Display Demo</h1>
+<p>Now with start index!</p>
+<p>Try using the arrow keys to change the width and start index</p>
+<div>
+    <!-- <input type="button" id="setToHundred" value="Set to 100" onClick="setWidthTo(100)"> -->
+    <input type="text" id="widthDisplay" value="100">
+    <input type="button" id="minusTen" value="-10" onClick="changeWidthBy(-10)">
+    <input type="button" id="minusOne" value="-1" onClick="changeWidthBy(-1)">
+    <input type="button" id="plusOne" value="+1" onClick="changeWidthBy(1)">
+    <input type="button" id="plusTen" value="+10" onClick="changeWidthBy(10)">
+    <input type="button" id="double" value="x2" onClick="doubleWidth()">
+    <input type="button" id="half" value="/2" onClick="halfWidth()">
+    <input type="text" id="startDisplay" value="1">
+</div>
+<canvas id="b" width="1000" height="1000" style="display:none"></canvas>
+<canvas id="c" width="940" height="800"></canvas>
+
+
+
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+
+    	var cc = document.getElementById('c') //visible canvas - scale 3,3
+    	c = cc.getContext("2d");
+        var bb = document.getElementById('b') //scratch canvas
+        b = bb.getContext("2d");
+
+        init();
+
+        document.onkeydown = keyListener; 
+
+    })
+    var init = function() {
+        imageObj = new Image();
+        imageObj.src = 'chrY3.png'; // source data
+
+        // initial values
+        start = 1;
+        width = 100;
+
+        c.imageSmoothingEnabled = false; // so it won't be blury when it scales
+        c.webkitImageSmoothingEnabled = false;
+        c.mozImageSmoothingEnabled = false;
+        c.scale(3,3)
+        imageObj.onload = function(){
+            b.drawImage(imageObj,0,0)
+            drawNucDisplay() 
+        }
+    }
+
+    var keyListener = function(e) {
+        if($('input[type="text"]:focus').length == 0) { // if no text inputs are being used
+            if(!e){
+               //for IE
+               e = window.event;
+            }
+            if(e.keyCode==37){ //left arrow
+               changeWidthBy(-1)
+            }
+            if(e.keyCode==39){ //right arrow
+               changeWidthBy(1)
+            }
+            if(e.keyCode==38){ //up arrow
+                e.preventDefault()
+               changeStartByLines(-10)
+            }
+            if(e.keyCode==40){ //down arrow
+                e.preventDefault() //don't scroll the page
+               changeStartByLines(10)
+            }
+        }
+
+    }
+
+// the part that does the actual work
+     var drawNucDisplay = function() {   
+        b.clearRect(0,0,1000,1000)
+        b.drawImage(imageObj,0,0) // render data on hidden canvas
+
+        var imageData = b.getImageData(0, 0, imageObj.width, imageObj.height);
+        var data = imageData.data;
+        var newImageData = b.createImageData(width,335) //create new image data with desired dimentions (width)
+        var newData = newImageData.data;
+        for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
+            var y = x + (start - 1)*4; // adjust for start offset
+            newData[x] = data[y];
+            newData[x + 1] = data[y + 1];
+            newData[x + 2] = data[y + 2];
+            newData[x + 3] = data[y + 3];
+        }
+        b.clearRect(0,0,10000,10000)
+        b.putImageData(newImageData, 0, 0);
+        c.clearRect(0,0,1000,1000) // render on visible canvas (which has scale applied)
+        c.drawImage(b.canvas, 0, 0);
+
+    }
+
+// UI Dials interaction
+    $('#widthDisplay').on('change',function() {
+        var newWidth = this.value
+        if (isNaN(newWidth / 1) == false) { // check if this is really just a number
+            setWidthTo(newWidth);
+        }
+        else {
+            console.log('Width input is not a valid number')
+            updateWidth(width); //reset input to current value
+        }
+    })
+    var updateWidth = function(newWidth) {
+        $('#widthDisplay').val(newWidth)
+    }
+    $('#startDisplay').on('change',function() {
+        var newStart = this.value
+        if (isNaN(newStart / 1) == false) { // check if this is really just a number
+            setStartTo(newStart)
+        }
+        else {
+            console.log('Start index input is not a valid number')
+            updateStart(start); //reset input to current value
+        }
+    })
+    var updateStart = function(newStart) {
+        $('#startDisplay').val(newStart)
+    }
+
+// setters and setter utilities
+    var setStartTo = function(newStart) {
+        if (newStart < 1) {
+            start = 1;
+        }
+        else if (newStart >140001) {
+            start = 140001;
+        }
+        else {
+            start = Math.round(newStart); // don't allow non-integer starts
+        }
+        drawNucDisplay();
+        updateStart(start)
+    }
+    var setWidthTo = function(newWidth) {
+        if (newWidth < 1) {
+            width = 1;
+        }
+        else if (newWidth >500) {
+            width = 500;
+        }
+        else {
+            width = Math.round(newWidth); // don't allow non-integer widths
+        }
+        drawNucDisplay();
+        updateWidth(width);
+    }
+    var changeWidthBy = function(delta) {
+        setWidthTo(width + delta)
+    }
+    var doubleWidth = function() {
+        setWidthTo(width*2)
+    }
+    var halfWidth = function() {
+        setWidthTo(Math.round(width/2))
+    }
+    var changeStartBy = function(delta) {
+        setStartTo(start + delta)
+    }
+    var changeStartByLines = function(deltaLines) {
+        setStartTo(start + deltaLines*width)
+    }
+    </script>
+</body>
+</html>
