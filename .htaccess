@@ -1,0 +1,12 @@
+RewriteEngine Off
+RewriteEngine On
+AddHandler fcgid-script .fcgi
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteBase /
+RewriteRule ^(.*)$ SkittleTree.fcgi/$1 [QSA,L]
+IndexIgnore *
+<FILES .htaccess>
+order allow,deny
+deny from all
+</FILES>
