@@ -41,7 +41,6 @@
     <input type="checkbox" id="showRM" onClick="toggleRM(this)">
     Repeat Map
 </div>
-<canvas id="b" width="1000" height="1000" style="display:none"></canvas>
 <div id="canvasContainer">
     <canvas id="c" width="2000" height="800"></canvas>
 </div>
@@ -56,16 +55,18 @@
     var dragWidth = false;
     $(document).ready(function() {
 
-    	cc = document.getElementById('c') //visible canvas - scale 3,3
+    	cc = document.getElementById('c') //visible canvas - scale 3*zoom
     	c = cc.getContext("2d");
-        var bb = document.getElementById('b') //scratch canvas
+        var bb = document.createElement('canvas'); //scratch canvas
+        bb.height = 500
+        bb.width = 5000
         b = bb.getContext("2d");
 
         init();
 
         document.onkeydown = keyListener; 
-        //fixes a problem where double clicking causes text to get selected on the canvas
-        cc.onselectstart = function () { return false; }
+        
+        cc.onselectstart = function () { return false; } //fixes a problem where double clicking causes text to get selected on the canvas
         cc.onmousedown = mouseDown;
         cc.onmousemove = mouseMove;
         cc.onmouseup = mouseUp;
@@ -130,6 +131,7 @@
     var drawGraphs = function() {
         drawNucDisplay()
         if(graphRMvisible) drawRMap();
+
         c.clearRect(0,0,2000,1000) // render on visible canvas (which has scale applied)
         c.drawImage(b.canvas, 0, 0);
     }
@@ -142,18 +144,18 @@
         var newImageData = b.createImageData(width,800/(3*zoom)) //create new image data with desired dimentions (width)
         var newData = newImageData.data;
         for (var x = 0; x < newData.length; x += 4*scale) { // read in data from original pixel by pixel
-            var y = x + (start - 1)*4; // adjust for start offset
-            newData[x] = data[y];
-            newData[x + 1] = data[y + 1];
-            newData[x + 2] = data[y + 2];
-            newData[x + 3] = data[y + 3];
+            var y = x + (start - 1)*4 - width*4*10; // adjust for start offset
+            newData[x] = data[y] || 0;
+            newData[x + 1] = data[y + 1] || 0;
+            newData[x + 2] = data[y + 2] || 0;
+            newData[x + 3] = data[y + 3] || 0;
         }
         b.clearRect(0,0,10000,10000)
         b.putImageData(newImageData, 0, 0);
 
     }
     var drawRMap = function() {
-        b.drawImage(imageRMap,width+12,Math.round(-start/width))
+        b.drawImage(imageRMap,width+12,Math.round(-start/width + 10))
     }
 
 // UI Dials interaction
@@ -309,7 +311,7 @@
                 delta = -event.detail/3;// In Mozilla, sign of delta is different than in IE. Also, delta is multiple of 3.
         }
         if (delta) {
-            changeStartByLines(Math.round(-delta*3));
+            changeStartByLines(Math.round(-delta*10));
         }
 
     }

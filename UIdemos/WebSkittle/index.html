@@ -5,6 +5,7 @@
 	@import url(http://fonts.googleapis.com/css?family=Exo:100,200,300,400,500,600,700|Titillium+Web:400,200,300,600,700|Open+Sans:400,600,300,700|Share:400,700|Aldrich);
 	body {
 		font-family: 'Exo', Helvetica, sans-serif;
+		background: #000;
 	}
 	#logo {
 		position: absolute;
@@ -75,8 +76,8 @@
 		right:0;
 		padding: 8px;
 		padding-left: 170px;
-		color:#5f3;
-		background: rgba(0,0,0,0.5);
+		color:#8f5;
+		background: rgba(0,0,0,0.6);
 		text-shadow: 0 0 1px #000, 1px 1px 0 #000, 2px 2px 0 #000,-1px -1px 4px #000;
 		font-weight: 300;
 	}
@@ -178,6 +179,14 @@
 
 	}
 
+	#canvasContainer {
+	    position: absolute;
+	    left: 160px;
+	    right: 0px;
+	    top:60px;
+	    bottom:0;
+	    overflow: hidden;
+	}
 
 
 	.popover {
@@ -223,12 +232,14 @@
   		linkPopover.html('Copy this link: <br>' + currentURL);
   	})
   	$('#dials span').click(function() {
+  		var targetFunction = $(this).attr('data-fn')
   		var offset = $(this).position();
   		var inputBox = $('<input type="text">');
   		$(this).parent().append(inputBox.offset(offset).val($(this).html()));
   		inputBox.select();
   		// inputBox.val().split(' ')[0].select();
   		inputBox.blur(function() {
+  			if(targetFunction) eval(targetFunction + '("' + this.value + '")')
   			$(this).remove();
   		})
   	})
@@ -239,7 +250,10 @@
 </head>
 <body>
 	<h1 id="logo"><img src="skittle-logo3.png"><span>DNA</span>Skittle</h1>
-	<div id="canvas"></div>
+	
+	<div id="canvasContainer">
+	    <canvas id="c" width="2000" height="1000"></canvas>
+	</div>
 	<header>
 		<ul>
 			<li>Discover</li>
@@ -264,21 +278,55 @@
 	</div>
 	<div id="graph-labels">
 		<ul>
-			<li style="width:158px">Annotations</li>
+			<li style="width:159px">Annotations</li>
 			<li style="width:76px;display:none;">Alignment Cylinder</li>
-			<li style="width:230px">Nucleotide Display</li>
-			<li style="width:410px">Nucleotide Bias</li>
+			<li style="width:230px;" class="widthBased">Nucleotide Display</li>
+			<li style="width:410px;display:none">Nucleotide Bias</li>
 			<li style="width:640px">Repeat Map</li>
 		</ul>
 	</div>
 	<div id="dials">
 		<ul>
-			<li>Width: <span>76 bp</span></li>
-			<li>Scale: <span>1 bp/pixel</span></li>
-			<li>Start Index: <span>609</span></li>
-			<li>End Index: <span>23865</span></li>
+			<li>Width: <span id="widthDisplay" data-fn="UIwidthChange">100 bp</span></li>
+			<li>Scale: <span id="scaleDisplay">1 bp/pixel</span></li>
+			<li>Start Index: <span id="startDisplay" data-fn="UIstartChange">1</span></li>
+			<li>End Index: <span id="endDisplay" data-fn="UIendChange">23865</span></li>
 		</ul>
 	</div>
+
+	<script src="draw_canvas.js"></script>
+	<script type="text/javascript">
+    var cc, c, b;
+    var isDrag = false;
+    var dragWidth = false;
+    
+    // initial values
+    start = 1;
+    width = 100;
+    scale = 1;
+    zoom  = 1;
+	$(document).ready(function() {
+
+		cc = document.getElementById('c') //visible canvas - scale will be 3*zoom
+		c = cc.getContext("2d");
+	    var bb = document.createElement('canvas'); //scratch canvas
+	    bb.height = 500
+	    bb.width = 5000
+	    b = bb.getContext("2d");
+
+
+	    init();
+
+	    document.onkeydown = keyListener; 
+	    
+	    cc.onselectstart = function () { return false; } //fixes a problem where double clicking causes text to get selected on the canvas
+	    cc.onmousedown = mouseDown;
+	    cc.onmousemove = mouseMove;
+	    cc.onmouseup = mouseUp;
+	    cc.onmousewheel = mouseWheel;
+
+	})
+	</script>
 
 </body>
 </html>
