@@ -1,5 +1,5 @@
 from django.db import models
-from SkittleStatePackets import StatePacket
+from SkittleCore.models import StatePacket
 
 # Create your models here.
 
@@ -28,7 +28,7 @@ class HighlighterState():
     
     def getTargetSequenceEntries(self):
         '''targetSequenceEntries contains a series of SequenceEntries.'''
-        return SequenceEntry.objects.filter(ownerGraph = self) #TODO this list needs to be returned from a SQL query
+        return SequenceEntry.objects.filter(ownerGraph = self)
     
     def __str__(self):
         return "Search other strand: "+ str(self.searchReverseComplement) + "   Sequences: "+ str(self.targetSequenceEntries)
