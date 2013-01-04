@@ -38,6 +38,8 @@
     <input type="button" id="double" value="x2" onClick="doubleWidth()">
     <input type="button" id="half" value="/2" onClick="halfWidth()">
     <input type="text" id="startDisplay" value="1">
+    <input type="checkbox" id="showRM" onClick="toggleRM(this)">
+    Repeat Map
 </div>
 <canvas id="b" width="1000" height="1000" style="display:none"></canvas>
 <div id="canvasContainer">
@@ -73,6 +75,8 @@
     var init = function() {
         imageObj = new Image();
         imageObj.src = 'chrY3.png'; // source data
+        imageRMap = new Image();
+        imageRMap.src = 'chrY-rmap.png'; // source data
 
         // initial values
         start = 1;
@@ -80,13 +84,14 @@
         scale = 1
         zoom  = 1
 
+        graphRMvisible = false;
+
         c.imageSmoothingEnabled = false; // so it won't be blury when it scales
         c.webkitImageSmoothingEnabled = false;
         c.mozImageSmoothingEnabled = false;
         c.scale(Math.round(3*zoom),Math.round(3*zoom))
         imageObj.onload = function(){
-            b.drawImage(imageObj,0,0)
-            drawNucDisplay() 
+            drawGraphs() 
         }
 
         if (document.defaultView && document.defaultView.getComputedStyle) {
@@ -122,7 +127,13 @@
     }
 
 // the part that does the actual work
-     var drawNucDisplay = function() {   
+    var drawGraphs = function() {
+        drawNucDisplay()
+        if(graphRMvisible) drawRMap();
+        c.clearRect(0,0,2000,1000) // render on visible canvas (which has scale applied)
+        c.drawImage(b.canvas, 0, 0);
+    }
+    var drawNucDisplay = function() {   
         b.clearRect(0,0,1000,1000)
         b.drawImage(imageObj,0,0) // render data on hidden canvas
 
@@ -139,9 +150,10 @@
         }
         b.clearRect(0,0,10000,10000)
         b.putImageData(newImageData, 0, 0);
-        c.clearRect(0,0,2000,1000) // render on visible canvas (which has scale applied)
-        c.drawImage(b.canvas, 0, 0);
 
+    }
+    var drawRMap = function() {
+        b.drawImage(imageRMap,width+12,Math.round(-start/width))
     }
 
 // UI Dials interaction
@@ -183,7 +195,7 @@
         else {
             start = Math.round(newStart); // don't allow non-integer starts
         }
-        drawNucDisplay();
+        drawGraphs();
         updateStart(start)
     }
     var setWidthTo = function(newWidth) {
@@ -196,7 +208,7 @@
         else {
             width = Math.round(newWidth); // don't allow non-integer widths
         }
-        drawNucDisplay();
+        drawGraphs();
         updateWidth(width);
     }
     var changeWidthBy = function(delta) {
@@ -214,7 +226,16 @@
     var changeStartByLines = function(deltaLines) {
         setStartTo(start + deltaLines*width)
     }
-
+    var toggleRM = function(requestor) {
+        if (requestor.checked) {
+            graphRMvisible = true
+            drawGraphs();
+        }
+        else {
+            graphRMvisible = false
+            drawGraphs();
+        }
+    }
 
     // mouse stuffs
     var mx, my, edgeOffset, topOffset, startOffset; // mouse coordinates
