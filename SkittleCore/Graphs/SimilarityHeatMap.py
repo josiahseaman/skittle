@@ -5,7 +5,8 @@ Created on Dec 14, 2012
 '''
 from SkittleGraphTransforms import pearsonCorrelation, mirrorDiagonalMatrix, \
     rowColumnCorrelation
-from SkittleStatePackets import StatePacket
+from SkittleCore.models import StatePacket
+from models import SimilarityHeatMapState
 import OligomerUsage
 import SkittleRequestHandler
 
@@ -20,8 +21,8 @@ def prettyPrint(heatMap):
             else: 
                 print 'N', ', ',
 
-def calculateOutputPixels(state, oligomerSize = 3, useRowColumnCorrelation = False):
-    oligVectors = OligomerUsage.calculateOutputPixels(state, oligomerSize)
+def calculateOutputPixels(state, heatMapState):
+    oligVectors = OligomerUsage.calculateOutputPixels(state, heatMapState)
     heatMap = [[None for x in range(len(oligVectors))] for y in range(len(oligVectors))]
     
     for y in range(len(heatMap)):
@@ -32,7 +33,7 @@ def calculateOutputPixels(state, oligomerSize = 3, useRowColumnCorrelation = Fal
                 heatMap[y][x] = pearsonCorrelation(oligVectors[y], oligVectors[x])
     
     mirrorDiagonalMatrix(heatMap)#flip along diagonal symmetry
-    if useRowColumnCorrelation:
+    if heatMapState.useRowColumnCorrelation:
         prettyPrint(heatMap)
         print
         heatMap = rowColumnCorrelation(heatMap)
@@ -42,9 +43,7 @@ def calculateOutputPixels(state, oligomerSize = 3, useRowColumnCorrelation = Fal
 if __name__ == '__main__':
     state = StatePacket()
     state.width = 30
-    oligomerSize = 2
-    useRowColumnCorrelation = True
-    heatMap = calculateOutputPixels(state, oligomerSize, useRowColumnCorrelation)
+    heatMap = calculateOutputPixels(state, heatMapState = SimilarityHeatMapState())
 
     prettyPrint(heatMap)
 

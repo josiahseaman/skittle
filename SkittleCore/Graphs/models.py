@@ -22,7 +22,11 @@ class AnnotationDisplayState(ParentState):
 class OligomerUsageState(ParentState):
     oligomerSize = models.IntegerField(default=2)
     
-    
+class SimilarityHeatMapState(OligomerUsageState):
+    useRowColumnCorrelation = False
+
+class ThreeMerDetectorState(ParentState):
+    pass
 
 '''This class contains all the state information specific exclusively to Repeat Map. 
 This is the link and definition of the settings tab for Repeat Map.
