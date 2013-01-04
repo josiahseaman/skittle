@@ -5,14 +5,30 @@ from SkittleCore.models import StatePacket
 
 class ParentState(models.Model):
     session = models.ForeignKey(StatePacket)
+    visible = models.BooleanField(default=False)
+    class Meta:
+        abstract = True
+    
+
+class NucleotideDisplayState(ParentState):
+    visible = models.BooleanField(default=True)
+    
+class NucleotideBiasState(ParentState):
+    pass
+    
+class AnnotationDisplayState(ParentState):
+    annotationPath = models.URLField()
+    
+class OligomerUsageState(ParentState):
+    oligomerSize = models.IntegerField(default=2)
+    
     
 
 '''This class contains all the state information specific exclusively to Repeat Map. 
 This is the link and definition of the settings tab for Repeat Map.
 I'm dubious about where to put this since GraphTransforms depends on it, but otherwise
 it would be included in RepeatMap.py'''
-class RepeatMapState(models.Model):
-    session = models.ForeignKey(StatePacket)
+class RepeatMapState(ParentState):
     F_width = models.IntegerField(default=10)
     F_start = models.IntegerField(default=1)
     
@@ -22,8 +38,7 @@ class RepeatMapState(models.Model):
         F_height = max(0, min(400, F_height) )
         return F_height
     
-class HighlighterState():
-    session = models.ForeignKey(StatePacket)
+class HighlighterState(ParentState):
     searchReverseComplement = models.BooleanField(default=True)
     
     def getTargetSequenceEntries(self):
