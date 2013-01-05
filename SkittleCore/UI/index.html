@@ -74,7 +74,7 @@
 		bottom: 0;
 		left:0px;
 		right:0;
-		padding: 8px;
+		padding: 0px;
 		padding-left: 170px;
 		color:#8f5;
 		background: rgba(0,0,0,0.6);
@@ -162,6 +162,7 @@
 	}
 	#dials li {
 		width: 200px;
+		padding: 8px;
 	}
 	#dials span {
 		font-weight: normal;
@@ -357,10 +358,24 @@
 		display:none;
 		left:190px;
 		bottom:40px;
-		width:65px;
+		width:62px;
 		height:30px;
 	}
-	li:hover #widthBubble,li:hover #startBubble, .popover:hover {
+	#scaleBubble {
+		display:none;
+		left:365px;
+		bottom:40px;
+		width:108px;
+		height:30px;
+	}
+	#startBubble {
+		display:none;
+		left:625px;
+		bottom:40px;
+		width:77px;
+		height:30px;
+	}
+	li:hover #widthBubble,li:hover #scaleBubble,li:hover #startBubble, .popover:hover {
 		display: block;
 	}
 
@@ -373,6 +388,7 @@
   	$('#tools .radio-tools').click(function() {
   		$('#tools .radio-tools').removeClass('active');
   		$(this).addClass('active');
+  		if ($(this).attr('data-tool')) activeTool = $(this).attr('data-tool')
   	})
 
   	$('#link-here').click(function() {
@@ -402,7 +418,10 @@
   		})
   	})
   	$("#buttonGraphs").click(function(){
-  		$("#graphList").toggle()
+  		$("#graphList").toggleClass('active')
+  		setTimeout(function() {
+  		  $("#graphList").removeClass('active');
+  		}, 1500);
   	})
 
   });
@@ -425,14 +444,14 @@
 	</header>
 	<div id="tools">
 		<ul>
-			<li class="" id="buttonGraphs"><img src="{{STATIC_URL}}gfx/icons/67.png" width="20" height="20">Graphs</li>
-			<li class="radio-tools active"><img src="{{STATIC_URL}}gfx/icons/41.png" width="20" height="20">Move</li>
-			<li class="radio-tools"><img src="{{STATIC_URL}}gfx/icons/dialog.png" width="20" height="20">Select</li>
-			<li class="radio-tools"><img src="{{STATIC_URL}}gfx/icons/7.png" width="20" height="20">Find</li>
-			<li class="radio-tools"><img src="{{STATIC_URL}}gfx/icons/39.png" width="20" height="20">Annotate</li>
-			<li id="link-here"><img src="{{STATIC_URL}}gfx/icons/flag.png" width="20" height="20">Link Here</li>
-			<li><img src="{{STATIC_URL}}gfx/icons/camera.png" width="20" height="20">Screenshot</li>
-			<li class="bottom"><img src="{{STATIC_URL}}gfx/icons/cog.png" width="20" height="20">Settings</li>
+			<li class="" id="buttonGraphs"><img src="icons/67.png" width="20" height="20">Graphs</li>
+			<li class="radio-tools active" data-tool="Move"><img src="icons/41.png" width="20" height="20">Move</li>
+			<li class="radio-tools" data-tool="Select"><img src="icons/dialog.png" width="20" height="20">Select</li>
+			<li class="radio-tools" data-tool="Find"><img src="icons/7.png" width="20" height="20">Find</li>
+			<li class="radio-tools" data-tool="Annotate"><img src="icons/39.png" width="20" height="20">Annotate</li>
+			<li id="link-here"><img src="icons/flag.png" width="20" height="20">Link Here</li>
+			<li><img src="icons/camera.png" width="20" height="20">Screenshot</li>
+			<li class="bottom"><img src="icons/cog.png" width="20" height="20">Settings</li>
 		</ul>
 	</div>
 	<div id="graph-labels">
@@ -452,12 +471,18 @@
 					<div class="button" onClick="halfWidth()">/2</div>
 				</div>
 			</li>
-			<li>Scale: <span id="scaleDisplay">1 bp/pixel</span></li>
-			<li>Start Index: <span id="startDisplay" data-fn="UIstartChange">1</span></li>
-				<div id="startBubble" class="popover">
+			<li>Scale: <span id="scaleDisplay">1 bp/pixel</span>
+				<div id="scaleBubble" class="popover arrow-bottom-center">
+					<div class="button" onClick="setStartTo(1)">1:1</div>
+					<div class="button" onClick="goToEnd()">Whole File</div>
+				</div>
+			</li>
+			<li>Start Index: <span id="startDisplay" data-fn="UIstartChange">1</span>
+				<div id="startBubble" class="popover arrow-bottom-center">
 					<div class="button" onClick="setStartTo(1)">Top</div>
 					<div class="button" onClick="goToEnd()">End</div>
 				</div>
+			</li>
 			<li>End Index: <span id="endDisplay" data-fn="UIendChange">23865</span></li>
 		</ul>
 	</div>
@@ -478,6 +503,7 @@
     var cc, c, b;
     var isDrag = false;
     var dragWidth = false;
+    var activeTool = 'Move';
     
     // initial values
     start = 1;
