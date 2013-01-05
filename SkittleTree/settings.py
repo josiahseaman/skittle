@@ -4,7 +4,7 @@ import os
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-SkittleTreeLoc = os.getcwd() + "/../"
+SkittleTreeLoc = os.getcwd() + "/skittle/"
 print SkittleTreeLoc
 SkittleTreeURL = "http://skittle.newlinetechnicalinnovations.com/"
 
