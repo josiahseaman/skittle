@@ -1,12 +1,15 @@
 # Django settings for SkittleTree project.
-import os
+import os, socket
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-SkittleTreeLoc = os.getcwd() + "/skittle/"
-print SkittleTreeLoc
-SkittleTreeURL = "http://skittle.newlinetechnicalinnovations.com/"
+if socket.gethostname().startswith('nyx'):
+    SkittleTreeLoc = os.getcwd() + "/skittle/"
+    SkittleTreeURL = "http://skittle.newlinetechnicalinnovations.com/"
+else:
+    SkittleTreeLoc = os.getcwd()
+    SkittleTreeURL = "http://localhost:5000/"
 
 ADMINS = (
     ('Josiah Seaman', 'josiah@newlinetechnicalinnovations.com'),

@@ -13,9 +13,10 @@ middleware here, or combine a Django application with an application of another
 framework.
 
 """
-import os, sys
+import os, sys, socket
 
-sys.path.append('/var/www/skittle')
+if socket.gethostname().startswith('nyx'):
+    sys.path.append('/var/www/skittle')
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SkittleTree.settings")
 
