@@ -207,37 +207,42 @@ function getMouseLocation(e) {
 function mouseDown(e) {
     getMouseLocation(e);
     widthInPixels = width*zoom*3
-    if (mx > widthInPixels && mx < (widthInPixels+50) ) {
-        isDrag = dragWidth = true
-        edgeOffset = mx - widthInPixels
-        this.style.cursor = 'col-resize'
-    }
-    else {
-        topOffset = my;
-        startOffset = start;
-        isDrag = true;
-        this.style.cursor = 'move'
+    if(activeTool == "Move") {
+        if (mx > widthInPixels && mx < (widthInPixels+50) ) {
+            isDrag = dragWidth = true
+            edgeOffset = mx - widthInPixels
+            this.style.cursor = 'col-resize'
+        }
+        else {
+            topOffset = my;
+            startOffset = start;
+            isDrag = true;
+            this.style.cursor = 'move'
 
+        }
     }
+
 }
 function mouseMove(e) {
     getMouseLocation(e)
     widthInPixels = width*zoom*3
-    if (isDrag && dragWidth){
-        if (mx<1) { //lose the drag if mouse goes over the edge
-            mouseUp(e)
+    if(activeTool == "Move") {
+        if (isDrag && dragWidth){
+            if (mx<1) { //lose the drag if mouse goes over the edge
+                mouseUp(e)
+            }
+            setWidthTo( Math.round( (mx-edgeOffset)/(zoom*3) ) )
         }
-        setWidthTo( Math.round( (mx-edgeOffset)/(zoom*3) ) )
-    }
-    else if (isDrag) {
+        else if (isDrag) {
 
-        setStartTo( Math.round( (topOffset-my)/(zoom*3) ) * width + startOffset )
-    }
-    else if(mx > widthInPixels && mx < (widthInPixels+50) ) {
-        this.style.cursor = 'col-resize'
-    }
-    else {
-        this.style.cursor = 'default'
+            setStartTo( Math.round( (topOffset-my)/(zoom*3) ) * width + startOffset )
+        }
+        else if(mx > widthInPixels && mx < (widthInPixels+50) ) {
+            this.style.cursor = 'col-resize'
+        }
+        else {
+            this.style.cursor = 'default'
+        }
     }
 }
 function mouseUp(e) {
