@@ -1,9 +1,10 @@
 # Django settings for SkittleTree project.
+import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-SkittleTreeLoc = "/var/www/skittle/"
+SkittleTreeLoc = os.getcwd() + "/../"
 SkittleTreeURL = "http://skittle.newlinetechnicalinnovations.com/"
 
 ADMINS = (
@@ -34,7 +35,6 @@ TIME_ZONE = 'America/Denver'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
-import os
 os.environ['LANG'] = 'en_US.UTF-8'
 
 SITE_ID = 1
