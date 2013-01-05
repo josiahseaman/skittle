@@ -5,7 +5,8 @@ Created on Nov 29, 2012
 #import numpy
 import math
 from numbers import Number
-from SkittleStatePackets import *
+from models import *
+from SkittleCore.models import StatePacket
 from PixelLogic import colorPalettes
 
 
