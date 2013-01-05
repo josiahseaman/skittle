@@ -4,13 +4,13 @@ Created on Nov 30, 2012
 @author: Josiah
 '''
 from django.db import models
-from Graphs.models import ParentState
+import Graphs.models   #import ParentState
 
 '''
 This is the single global state packet that defines a view state in Skittle.  
 This state packet is equivalent to an URL or a request from the Skittle website.
 '''
-class StatePacket():
+class StatePacket(models.Model):
     #TODO user = models.ForeignKey(User)
     genome = models.CharField(max_length=200, default='hg19')
     chromosome = models.CharField(max_length=200, default='chrY')
@@ -36,7 +36,7 @@ class StatePacket():
     start = models.IntegerField(default=0)
 
     def getActiveGraphs(self):
-        return ParentState.objects.filter(session = self, visible = True)
+        return Graphs.models.ParentState.objects.filter(session = self, visible = True)
     
     '''Derived value height may need to be further reduced for functions that must scan ahead.'''
     def height(self):

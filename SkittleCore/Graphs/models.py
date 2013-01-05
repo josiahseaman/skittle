@@ -1,5 +1,7 @@
+
 from django.db import models
-from SkittleCore.models import StatePacket
+#import SkittleCore.models as Core #StatePacket
+from ..models import StatePacket 
 
 # Create your models here.
 
@@ -11,7 +13,7 @@ class ParentState(models.Model):
     
 
 class NucleotideDisplayState(ParentState):
-    visible = models.BooleanField(default=True)
+    visible = True
     
 class NucleotideBiasState(ParentState):
     pass

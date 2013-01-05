@@ -3,7 +3,7 @@ Created on Dec 19, 2012
 
 @author: Josiah
 '''
-from SkittleStatePackets import StatePacket
+from SkittleCore.models import StatePacket
 from PixelLogic import randomColor, blankColor
 import SkittleRequestHandler
 

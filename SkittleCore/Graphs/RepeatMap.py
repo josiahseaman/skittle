@@ -5,7 +5,7 @@ Created on Nov 29, 2012
 import NucleotideDisplay
 from SkittleGraphTransforms import correlationMap
 from models import RepeatMapState
-from models import StatePacket
+from SkittleCore.models import StatePacket
 import SkittleRequestHandler
 
 SkittleRequestHandler.registerGraph("Repeat Map", __name__)

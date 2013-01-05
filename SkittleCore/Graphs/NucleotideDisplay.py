@@ -3,7 +3,7 @@ Created on Nov 29, 2012
 @author: Josiah
 '''
 from SkittleGraphTransforms import chunkUpList, normalizeDictionary, countListToColorSpace, sequenceToColors, countNucleotides
-from SkittleStatePackets import StatePacket
+from SkittleCore.models import StatePacket
 import SkittleRequestHandler
 
 SkittleRequestHandler.registerGraph("Nucleotide Display", __name__)

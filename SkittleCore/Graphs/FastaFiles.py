@@ -3,7 +3,7 @@ Created on Dec 21, 2012
 
 @author: Josiah
 '''
-from SkittleStatePackets import StatePacket
+from SkittleCore.models import StatePacket
 
 class FastaFile(str):
     def __init__(self, sequence = ''):
