@@ -1,0 +1,515 @@
+<html>
+<head>
+	<title>WebSkittle Mockup</title>
+	<style type="text/css">
+	@import url(http://fonts.googleapis.com/css?family=Exo:100,200,300,400,500,600,700|Titillium+Web:400,200,300,600,700|Open+Sans:400,600,300,700|Share:400,700|Aldrich);
+	body {
+		font-family: 'Exo', Helvetica, sans-serif;
+		background: #000;
+	}
+	#logo {
+		position: absolute;
+		z-index: 100;
+		top:0;
+		left: 0;
+		padding: 6px;
+		margin:0;
+
+		font-weight: 500;
+		font-size: 2.4em;
+		color:#eee;
+		text-shadow:#000 0 0 8px;
+	}
+	#logo img {
+		float:left;
+		margin-right: 6px;
+		box-shadow: 0 0 4;
+		margin-top:-6px;
+		margin-left:-6px;
+		margin-right: -38px;
+	}
+	#logo span {
+		font-weight: 100;
+		text-shadow:#000 0 0 4px,#000 0 0 12px;
+	}
+	#canvas {
+		position: absolute;
+		top:30px;
+		left:30px;
+		right:0;
+		bottom: 0;
+		overflow: auto;
+
+		background: url('n-display.png') 130px 0 repeat-y, url('n-bias.png') 360px 0 repeat-y, url('r-map.png') 760px 0 repeat-y, #000;
+	}
+	header {
+		position: absolute;
+		z-index: 50;
+		top: 0;
+		left:0;
+		right:0;
+		height:60px;
+		padding:0;
+		padding-left: 280px;
+		background:url('noise_cover_b.png'), #333;
+		color:#fff;
+		box-shadow: inset 0 0 16px #000;
+		/*border-bottom: 2px solid #000;*/
+		text-shadow:#000 0 0 4px,#000 0 0 12px;
+		letter-spacing: 1px;
+	}
+	#graph-labels {
+		position: absolute;
+		overflow: hidden;
+		top:60;
+		left:0;
+		right:0;
+		color:#fff;
+		font-size: 0.8em;
+		font-weight:600;
+		text-shadow: 0 0 1px #000, 1px 1px 0 #000, 2px 2px 0 #000,-1px -1px 4px #000;
+	}
+	#dials {
+		position: absolute;
+		bottom: 0;
+		left:0px;
+		right:0;
+		padding: 8px;
+		padding-left: 170px;
+		color:#8f5;
+		background: rgba(0,0,0,0.6);
+		text-shadow: 0 0 1px #000, 1px 1px 0 #000, 2px 2px 0 #000,-1px -1px 4px #000;
+		font-weight: 300;
+	}
+	#tools {
+		position: absolute;
+		z-index: 20;
+		left:0;
+		top: 60px;
+		bottom: 0;
+		width:138px;
+		/*width:50px;*/
+		overflow: hidden;
+		background: #eee;
+		border-right: 2px solid #ccc;
+	}
+	header ul, #graph-labels ul, #dials ul, #tools ul {
+		list-style: none;
+		margin:0;
+		padding:0;
+	}
+	#graph-labels ul, #tools ul {
+		width:100000px;
+	}
+	header li, #graph-labels li, #dials li {
+		display: inline-block;
+	}
+	header li {
+		margin: 0;
+		width:180px;
+		height:60px;
+		line-height: 60px;
+		float: left;
+		box-shadow: 0 0 16px #000;
+		font-size: 1.2em;
+		font-weight: 600;
+		text-align: center;
+	}
+	header li:hover {
+		background: #222;
+		box-shadow: inset 0 0 16px #000,0 0 16px #000;
+
+	}
+	header p {
+		text-align: right;
+		margin:0;
+	}
+	header p img {
+		margin:10px;
+		vertical-align: middle;
+	}
+	#tools li {
+		margin: 8px;
+		padding:8px;
+		width: 105px;
+		border: 1px solid transparent;
+		border-radius: 4px;
+		font-size: 0.8em;
+		font-weight: 600;
+		cursor: pointer;
+	}
+	#tools img {
+		margin:0px 16px -6px 0px;
+	}
+	#tools .active, #tools li:hover {
+		border: 1px solid #ccc;
+		background: rgba(0,0,0,0.04);
+	}
+	#tools li:active {
+		border: 1px solid #bbb;
+		background: rgba(0,0,0,0.08);
+	}
+	#tools .bottom {
+		position: absolute;
+		bottom: 0;
+		margin-bottom: 2px;
+	}
+	#graph-labels li {
+		float:left;
+		padding: 4px 0;
+		background: rgba(0,0,0,0.5);
+		text-align: center;
+	}
+	#dials li {
+		width: 200px;
+	}
+	#dials span {
+		font-weight: normal;
+	}
+	#dials input {
+		position: absolute;
+		background: #000;
+		color:inherit;
+		padding:2px;
+		margin: -4px;
+		width:120px;
+		font:inherit;
+		border-radius: 8px;
+		border: 2px solid rgba(50,50,50,0.5);
+
+	}
+
+	#canvasContainer {
+	    position: absolute;
+	    left: 160px;
+	    right: 0px;
+	    top:60px;
+	    bottom:0;
+	    overflow: hidden;
+	}
+
+
+	.popover {
+		display: none;
+		position: absolute;
+		background: #333;
+		color:#dde;
+		border:2px solid #888;
+		border-radius: 8px;
+		box-shadow: 2px 2px 8px #000;
+		padding: 8px;
+		font-size: 0.8em;
+	}
+	.arrow-bottom-right::after, .arrow-bottom-right::before {
+	    content: ' ';
+	    display: block;
+	    position: absolute;
+	    bottom: -12px;
+	    right: 20px;
+	    background: #333;
+		border:2px solid #888;
+		border-top: none;
+		border-left: none;
+		border-top-left-radius: 20px;
+	    width: 20px;
+	    height: 20px;
+	    -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	    -o-transform: rotate(45deg);
+	    -webkit-transform: rotate(45deg);
+	    transform: rotate(45deg);
+	}
+	.arrow-bottom-right::after {
+	    z-index: -10;
+		box-shadow: 2px 2px 8px #000;
+	    border-color: transparent;
+	}​
+	.arrow-bottom-left::after, .arrow-bottom-left::before {
+	    content: ' ';
+	    display: block;
+	    position: absolute;
+	    bottom: -12px;
+	    left: 20px;
+	    background: #333;
+		border:2px solid #888;
+		border-top: none;
+		border-left: none;
+		border-top-left-radius: 20px;
+	    width: 20px;
+	    height: 20px;
+	    -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	    -o-transform: rotate(45deg);
+	    -webkit-transform: rotate(45deg);
+	    transform: rotate(45deg);
+	}
+	.arrow-bottom-left::after {
+	    z-index: -10;
+		box-shadow: 2px 2px 8px #000;
+	    border-color: transparent;
+	}​
+	.arrow-bottom-center::after, .arrow-bottom-center::before {
+	    content: ' ';
+	    display: block;
+	    position: absolute;
+	    bottom: -12px;
+	    left: 50%;
+	    margin-left: -10px;
+	    background: #333;
+		border:2px solid #888;
+		border-top: none;
+		border-left: none;
+		border-top-left-radius: 20px;
+	    width: 20px;
+	    height: 20px;
+	    -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	    -o-transform: rotate(45deg);
+	    -webkit-transform: rotate(45deg);
+	    transform: rotate(45deg);
+	}
+	.arrow-bottom-center::after {
+	    z-index: -10;
+		box-shadow: 2px 2px 8px #000;
+	    border-color: transparent;
+	}​
+	.arrow-left-top::after, .arrow-left-top::before {
+	    content: ' ';
+	    display: block;
+	    position: absolute;
+	    top: 20px;
+	    left: -12px;
+	    background: #333;
+		border:2px solid #888;
+		border-top: none;
+		border-right: none;
+		border-top-right-radius: 20px;
+	    width: 20px;
+	    height: 20px;
+	    -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	    -o-transform: rotate(45deg);
+	    -webkit-transform: rotate(45deg);
+	    transform: rotate(45deg);
+	}
+	.arrow-left-top::after {
+	    z-index: -10;
+		box-shadow: 2px 2px 8px #000;
+	    border-color: transparent;
+	}​
+	.arrow-left-center::after, .arrow-left-center::before {
+	    content: ' ';
+	    display: block;
+	    position: absolute;
+	    top: 50%;
+	    left: -12px;
+	    margin-top: -10px;
+	    background: #333;
+		border:2px solid #888;
+		border-top: none;
+		border-right: none;
+		border-top-right-radius: 20px;
+	    width: 20px;
+	    height: 20px;
+	    -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	    -o-transform: rotate(45deg);
+	    -webkit-transform: rotate(45deg);
+	    transform: rotate(45deg);
+	}
+	.arrow-left-center::after {
+	    z-index: -10;
+		box-shadow: 2px 2px 8px #000;
+	    border-color: transparent;
+	}​
+	something {
+
+	}
+	.button {
+		display: inline-block;
+		background:#111;
+		padding: 0.5em;
+		margin:0px;
+		border:1px solid #777;
+		border-radius: 8px;
+	}
+	.button:hover {
+		background: #222;
+		color:#eee;
+		cursor: pointer;
+	}
+	.button:active {
+		background: #555;
+		color: #fff;
+	}
+
+	#graphList {
+		left:160px;
+		top:60px;
+	}
+	#graphList ul {
+		list-style: none;
+		padding:0;
+		margin: 0;
+	}
+
+	#widthBubble {
+		display:none;
+		left:190px;
+		bottom:40px;
+		width:65px;
+		height:30px;
+	}
+	li:hover #widthBubble,li:hover #startBubble, .popover:hover {
+		display: block;
+	}
+
+	</style>
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script type="text/javascript">
+  $(document).ready(function() {
+
+  	$('#tools .radio-tools').click(function() {
+  		$('#tools .radio-tools').removeClass('active');
+  		$(this).addClass('active');
+  	})
+
+  	$('#link-here').click(function() {
+  		var offset = $(this).offset();
+  		$(this).toggleClass('active');
+  		var currentURL = "http://dnaskittle.com/genome-name/?=start=609&width=76&scale=1&zoom=1&graphs=nuc-dis,nuc-bias,r-map"
+  		if (typeof linkPopover === "undefined") {
+  			linkPopover = $('<div class="popover"></div>');
+  			$('body').append(linkPopover);
+  		}
+  		else {
+  			linkPopover.toggle();
+  		}
+  		linkPopover.offset({ top: (offset.top - 10), left: (offset.left + $(this).outerWidth() + 16) })
+  		linkPopover.html('Copy this link: <br>' + currentURL);
+  	})
+  	$('#dials span').click(function() {
+  		var targetFunction = $(this).attr('data-fn')
+  		var offset = $(this).position();
+  		var inputBox = $('<input type="text">');
+  		$(this).parent().append(inputBox.offset(offset).val($(this).html()));
+  		inputBox.select();
+  		// inputBox.val().split(' ')[0].select();
+  		inputBox.blur(function() {
+  			if(targetFunction) eval(targetFunction + '("' + this.value + '")')
+  			$(this).remove();
+  		})
+  	})
+  	$("#buttonGraphs").click(function(){
+  		$("#graphList").toggle()
+  	})
+
+  });
+
+	</script>
+</head>
+<body>
+	<h1 id="logo"><img src="{{STATIC_URL}}gfx/skittle-logo3.png"><span>DNA</span>Skittle</h1>
+	
+	<div id="canvasContainer">
+	    <canvas id="c" width="2000" height="1000"></canvas>
+	</div>
+	<header>
+		<ul>
+			<li>Discover</li>
+			<li>Share</li>
+			<li>Learn</li>
+		</ul>
+		<p><img src="{{STATIC_URL}}gfx/twitter-bird-dark-bgs.png" height="36" width="36"><img src="{{STATIC_URL}}gfx/github-white.png" height="22"></p>
+	</header>
+	<div id="tools">
+		<ul>
+			<li class="" id="buttonGraphs"><img src="{{STATIC_URL}}gfx/icons/67.png" width="20" height="20">Graphs</li>
+			<li class="radio-tools active"><img src="{{STATIC_URL}}gfx/icons/41.png" width="20" height="20">Move</li>
+			<li class="radio-tools"><img src="{{STATIC_URL}}gfx/icons/dialog.png" width="20" height="20">Select</li>
+			<li class="radio-tools"><img src="{{STATIC_URL}}gfx/icons/7.png" width="20" height="20">Find</li>
+			<li class="radio-tools"><img src="{{STATIC_URL}}gfx/icons/39.png" width="20" height="20">Annotate</li>
+			<li id="link-here"><img src="{{STATIC_URL}}gfx/icons/flag.png" width="20" height="20">Link Here</li>
+			<li><img src="{{STATIC_URL}}gfx/icons/camera.png" width="20" height="20">Screenshot</li>
+			<li class="bottom"><img src="{{STATIC_URL}}gfx/icons/cog.png" width="20" height="20">Settings</li>
+		</ul>
+	</div>
+	<div id="graph-labels">
+		<ul>
+			<li id="graphLabelA" style="width:159px">Annotations</li>
+			<li id="graphLabelAC" style="width:76px;display:none;">Alignment Cylinder</li>
+			<li id="graphLabelND" style="width:290px;" class="widthBased">Nucleotide Display</li>
+			<li id="graphLabelNB" style="width:410px;display:none">Nucleotide Bias</li>
+			<li id="graphLabelRM" style="width:640px;display:none;">Repeat Map</li>
+		</ul>
+	</div>
+	<div id="dials">
+		<ul>
+			<li>Width: <span id="widthDisplay" data-fn="UIwidthChange">100 bp</span>
+				<div id="widthBubble" class="popover arrow-bottom-center">
+					<div class="button" onClick="doubleWidth()">x2</div>
+					<div class="button" onClick="halfWidth()">/2</div>
+				</div>
+			</li>
+			<li>Scale: <span id="scaleDisplay">1 bp/pixel</span></li>
+			<li>Start Index: <span id="startDisplay" data-fn="UIstartChange">1</span></li>
+				<div id="startBubble" class="popover">
+					<div class="button" onClick="setStartTo(1)">Top</div>
+					<div class="button" onClick="goToEnd()">End</div>
+				</div>
+			<li>End Index: <span id="endDisplay" data-fn="UIendChange">23865</span></li>
+		</ul>
+	</div>
+
+
+	<div class="popover arrow-left-top" id="graphList">
+		<ul>
+			<li><input type="checkbox" id="showGraphA" name="showGraphA"><label for="showGraphA">Annotations</label></li>
+			<li><input type="checkbox" id="showGraphND" name="showGraphND"><label for="showGraphND">Nucleotide Display</label></li>
+			<li><input type="checkbox" id="showGraphNB" name="showGraphNB"><label for="showGraphA">Nucleotide Bias</label></li>
+			<li><input type="checkbox" id="showGraphRM" name="showGraphRM" onChange="toggleRM(this)"><label for="showGraphRM">Repeat Map</label></li>
+		</ul>
+	</div>
+
+
+	<script src="{{STATIC_URL}}js/draw_canvas.js"></script>
+	<script type="text/javascript">
+    var cc, c, b;
+    var isDrag = false;
+    var dragWidth = false;
+    
+    // initial values
+    start = 1;
+    width = 100;
+    scale = 1;
+    zoom  = 1;
+
+    var nd_url = '{{STATIC_URL}}chrY3.png'
+    var rm_url = '{{STATIC_URL}}chrY-rmap.png';
+
+	$(document).ready(function() {
+
+		cc = document.getElementById('c') //visible canvas - scale will be 3*zoom
+		c = cc.getContext("2d");
+	    var bb = document.createElement('canvas'); //scratch canvas
+	    bb.height = 500
+	    bb.width = 5000
+	    b = bb.getContext("2d");
+
+
+	    init();
+
+	    document.onkeydown = keyListener; 
+	    
+	    cc.onselectstart = function () { return false; } //fixes a problem where double clicking causes text to get selected on the canvas
+	    cc.onmousedown = mouseDown;
+	    cc.onmousemove = mouseMove;
+	    cc.onmouseup = mouseUp;
+	    cc.onmousewheel = mouseWheel;
+
+	})
+	</script>
+
+</body>
+</html>
