@@ -67,12 +67,11 @@ MEDIA_URL = SkittleTreeURL + 'media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = SkittleTreeLoc + 'static/'
+STATIC_ROOT = SkittleTreeLoc + 'SkittleCore/UI/assets/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = SkittleTreeURL + 'static/'
-print STATIC_URL
+STATIC_URL = SkittleTreeURL + 'UI/assets/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
