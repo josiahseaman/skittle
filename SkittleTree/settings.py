@@ -5,6 +5,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 SkittleTreeLoc = os.getcwd() + "/../"
+print SkittleTreeLoc
 SkittleTreeURL = "http://skittle.newlinetechnicalinnovations.com/"
 
 ADMINS = (
