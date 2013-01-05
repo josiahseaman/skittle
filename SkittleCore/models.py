@@ -4,6 +4,7 @@ Created on Nov 30, 2012
 @author: Josiah
 '''
 from django.db import models
+from Graphs.models import ParentState
 
 '''
 This is the single global state packet that defines a view state in Skittle.  
@@ -33,11 +34,9 @@ class StatePacket():
     is 1 less than the number displayed on the website.  This also means that you should print
     index+1 whenever you are writing user readable output.'''
     start = models.IntegerField(default=0)
-    activeGraphs = {"Nucleotide Display": None, "Repeat Map": 'RepeatMapState()', "Sequence Highlighter":'HighlighterState()'}
-
 
     def getActiveGraphs(self):
-        return 
+        return ParentState.objects.filter(session = self, visible = True)
     
     '''Derived value height may need to be further reduced for functions that must scan ahead.'''
     def height(self):
@@ -48,3 +47,4 @@ class StatePacket():
     
     def length(self):
         return len(self.seq) - self.start
+    
