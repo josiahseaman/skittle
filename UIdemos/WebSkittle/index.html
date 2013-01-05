@@ -190,8 +190,8 @@
 
 
 	.popover {
+		display: none;
 		position: absolute;
-		z-index: 90;
 		background: #333;
 		color:#dde;
 		border:2px solid #888;
@@ -200,11 +200,169 @@
 		padding: 8px;
 		font-size: 0.8em;
 	}
-	.popover::before {
-	left: -20px;
-	top: 50%;
-	border-right: 10px solid #888;
-}
+	.arrow-bottom-right::after, .arrow-bottom-right::before {
+	    content: ' ';
+	    display: block;
+	    position: absolute;
+	    bottom: -12px;
+	    right: 20px;
+	    background: #333;
+		border:2px solid #888;
+		border-top: none;
+		border-left: none;
+		border-top-left-radius: 20px;
+	    width: 20px;
+	    height: 20px;
+	    -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	    -o-transform: rotate(45deg);
+	    -webkit-transform: rotate(45deg);
+	    transform: rotate(45deg);
+	}
+	.arrow-bottom-right::after {
+	    z-index: -10;
+		box-shadow: 2px 2px 8px #000;
+	    border-color: transparent;
+	}​
+	.arrow-bottom-left::after, .arrow-bottom-left::before {
+	    content: ' ';
+	    display: block;
+	    position: absolute;
+	    bottom: -12px;
+	    left: 20px;
+	    background: #333;
+		border:2px solid #888;
+		border-top: none;
+		border-left: none;
+		border-top-left-radius: 20px;
+	    width: 20px;
+	    height: 20px;
+	    -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	    -o-transform: rotate(45deg);
+	    -webkit-transform: rotate(45deg);
+	    transform: rotate(45deg);
+	}
+	.arrow-bottom-left::after {
+	    z-index: -10;
+		box-shadow: 2px 2px 8px #000;
+	    border-color: transparent;
+	}​
+	.arrow-bottom-center::after, .arrow-bottom-center::before {
+	    content: ' ';
+	    display: block;
+	    position: absolute;
+	    bottom: -12px;
+	    left: 50%;
+	    margin-left: -10px;
+	    background: #333;
+		border:2px solid #888;
+		border-top: none;
+		border-left: none;
+		border-top-left-radius: 20px;
+	    width: 20px;
+	    height: 20px;
+	    -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	    -o-transform: rotate(45deg);
+	    -webkit-transform: rotate(45deg);
+	    transform: rotate(45deg);
+	}
+	.arrow-bottom-center::after {
+	    z-index: -10;
+		box-shadow: 2px 2px 8px #000;
+	    border-color: transparent;
+	}​
+	.arrow-left-top::after, .arrow-left-top::before {
+	    content: ' ';
+	    display: block;
+	    position: absolute;
+	    top: 20px;
+	    left: -12px;
+	    background: #333;
+		border:2px solid #888;
+		border-top: none;
+		border-right: none;
+		border-top-right-radius: 20px;
+	    width: 20px;
+	    height: 20px;
+	    -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	    -o-transform: rotate(45deg);
+	    -webkit-transform: rotate(45deg);
+	    transform: rotate(45deg);
+	}
+	.arrow-left-top::after {
+	    z-index: -10;
+		box-shadow: 2px 2px 8px #000;
+	    border-color: transparent;
+	}​
+	.arrow-left-center::after, .arrow-left-center::before {
+	    content: ' ';
+	    display: block;
+	    position: absolute;
+	    top: 50%;
+	    left: -12px;
+	    margin-top: -10px;
+	    background: #333;
+		border:2px solid #888;
+		border-top: none;
+		border-right: none;
+		border-top-right-radius: 20px;
+	    width: 20px;
+	    height: 20px;
+	    -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	    -o-transform: rotate(45deg);
+	    -webkit-transform: rotate(45deg);
+	    transform: rotate(45deg);
+	}
+	.arrow-left-center::after {
+	    z-index: -10;
+		box-shadow: 2px 2px 8px #000;
+	    border-color: transparent;
+	}​
+	something {
+
+	}
+	.button {
+		display: inline-block;
+		background:#111;
+		padding: 0.5em;
+		margin:0px;
+		border:1px solid #777;
+		border-radius: 8px;
+	}
+	.button:hover {
+		background: #222;
+		color:#eee;
+		cursor: pointer;
+	}
+	.button:active {
+		background: #555;
+		color: #fff;
+	}
+
+	#graphList {
+		left:160px;
+		top:60px;
+	}
+	#graphList ul {
+		list-style: none;
+		padding:0;
+		margin: 0;
+	}
+
+	#widthBubble {
+		display:none;
+		left:190px;
+		bottom:40px;
+		width:65px;
+		height:30px;
+	}
+	li:hover #widthBubble,li:hover #startBubble, .popover:hover {
+		display: block;
+	}
 
 	</style>
 
@@ -243,6 +401,9 @@
   			$(this).remove();
   		})
   	})
+  	$("#buttonGraphs").click(function(){
+  		$("#graphList").toggle()
+  	})
 
   });
 
@@ -264,10 +425,8 @@
 	</header>
 	<div id="tools">
 		<ul>
-			<li class=""><img src="icons/67.png" width="20" height="20">Graphs</li>
-			<li class="radio-tools"><img src="icons/41.png" width="20" height="20">Move</li>
-			<li class="radio-tools active"><img src="icons/50.png" width="20" height="20">Resize</li>
-			<li class="radio-tools"><img src="icons/eye.png" width="20" height="20">Zoom</li>
+			<li class="" id="buttonGraphs"><img src="icons/67.png" width="20" height="20">Graphs</li>
+			<li class="radio-tools active"><img src="icons/41.png" width="20" height="20">Move</li>
 			<li class="radio-tools"><img src="icons/dialog.png" width="20" height="20">Select</li>
 			<li class="radio-tools"><img src="icons/7.png" width="20" height="20">Find</li>
 			<li class="radio-tools"><img src="icons/39.png" width="20" height="20">Annotate</li>
@@ -278,21 +437,41 @@
 	</div>
 	<div id="graph-labels">
 		<ul>
-			<li style="width:159px">Annotations</li>
-			<li style="width:76px;display:none;">Alignment Cylinder</li>
-			<li style="width:230px;" class="widthBased">Nucleotide Display</li>
-			<li style="width:410px;display:none">Nucleotide Bias</li>
-			<li style="width:640px">Repeat Map</li>
+			<li id="graphLabelA" style="width:159px">Annotations</li>
+			<li id="graphLabelAC" style="width:76px;display:none;">Alignment Cylinder</li>
+			<li id="graphLabelND" style="width:290px;" class="widthBased">Nucleotide Display</li>
+			<li id="graphLabelNB" style="width:410px;display:none">Nucleotide Bias</li>
+			<li id="graphLabelRM" style="width:640px;display:none;">Repeat Map</li>
 		</ul>
 	</div>
 	<div id="dials">
 		<ul>
-			<li>Width: <span id="widthDisplay" data-fn="UIwidthChange">100 bp</span></li>
+			<li>Width: <span id="widthDisplay" data-fn="UIwidthChange">100 bp</span>
+				<div id="widthBubble" class="popover arrow-bottom-center">
+					<div class="button" onClick="doubleWidth()">x2</div>
+					<div class="button" onClick="halfWidth()">/2</div>
+				</div>
+			</li>
 			<li>Scale: <span id="scaleDisplay">1 bp/pixel</span></li>
 			<li>Start Index: <span id="startDisplay" data-fn="UIstartChange">1</span></li>
+				<div id="startBubble" class="popover">
+					<div class="button" onClick="setStartTo(1)">Top</div>
+					<div class="button" onClick="goToEnd()">End</div>
+				</div>
 			<li>End Index: <span id="endDisplay" data-fn="UIendChange">23865</span></li>
 		</ul>
 	</div>
+
+
+	<div class="popover arrow-left-top" id="graphList">
+		<ul>
+			<li><input type="checkbox" id="showGraphA" name="showGraphA"><label for="showGraphA">Annotations</label></li>
+			<li><input type="checkbox" id="showGraphND" name="showGraphND"><label for="showGraphND">Nucleotide Display</label></li>
+			<li><input type="checkbox" id="showGraphNB" name="showGraphNB"><label for="showGraphA">Nucleotide Bias</label></li>
+			<li><input type="checkbox" id="showGraphRM" name="showGraphRM" onChange="toggleRM(this)"><label for="showGraphRM">Repeat Map</label></li>
+		</ul>
+	</div>
+
 
 	<script src="draw_canvas.js"></script>
 	<script type="text/javascript">

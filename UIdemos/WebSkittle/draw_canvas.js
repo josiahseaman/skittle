@@ -164,13 +164,18 @@ var changeStartBy = function(delta) {
 var changeStartByLines = function(deltaLines) {
     setStartTo(start + deltaLines*width)
 }
+var goToEnd = function() {
+    setStartTo(100000000)
+}
 var toggleRM = function(requestor) {
     if (requestor.checked) {
         graphRMvisible = true
+        $('#graphLabelRM').show()
         drawGraphs();
     }
     else {
         graphRMvisible = false
+        $('#graphLabelRM').hide()
         drawGraphs();
     }
 }
