@@ -3,8 +3,8 @@ Created on Nov 29, 2012
 @author: Josiah Seaman
 '''
 from SkittleGraphTransforms import sensitiveTestForSpecificFrequency
-from SkittleStatePackets import RepeatMapState
-from SkittleStatePackets import StatePacket
+from models import RepeatMapState
+from SkittleCore.models import StatePacket
 import RepeatMap
 import SkittleRequestHandler
 

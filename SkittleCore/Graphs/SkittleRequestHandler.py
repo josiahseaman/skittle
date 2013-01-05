@@ -14,7 +14,7 @@ def registerGraph(name, moduleName):
     moduleReference = sys.modules[moduleName]
     availableGraphs.add((name, moduleReference))
     
-from SkittleStatePackets import StatePacket
+from SkittleCore.models import StatePacket
 import FastaFiles
 import NucleotideDisplay
 import NucleotideBias
