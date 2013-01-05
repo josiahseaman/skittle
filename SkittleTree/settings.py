@@ -8,7 +8,7 @@ if socket.gethostname().startswith('nyx'):
     SkittleTreeLoc = os.getcwd() + "/skittle/"
     SkittleTreeURL = "http://skittle.newlinetechnicalinnovations.com/"
 else:
-    SkittleTreeLoc = os.getcwd()
+    SkittleTreeLoc = os.getcwd() + "/"
     SkittleTreeURL = "http://localhost:5000/"
 
 ADMINS = (
