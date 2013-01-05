@@ -1,5 +1,0 @@
-IndexIgnore *
-<FILES .htaccess>
-order allow,deny
-deny from all
-</FILES>
