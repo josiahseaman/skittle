@@ -3,6 +3,9 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+SkittleTreeLoc = "/var/www/skittle/"
+SkittleTreeURL = "http://skittle.newlinetechnicalinnovations.com/"
+
 ADMINS = (
     ('Josiah Seaman', 'josiah@newlinetechnicalinnovations.com'),
     ('Bryan Hurst', 'bryan@newlinetechnicalinnovations.com'),
@@ -31,6 +34,8 @@ TIME_ZONE = 'America/Denver'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
+import os
+os.environ['LANG'] = 'en_US.UTF-8'
 
 SITE_ID = 1
 
@@ -47,29 +52,30 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = SkittleTreeLoc + 'media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = SkittleTreeURL + 'media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = SkittleTreeLoc + 'static/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
+STATIC_URL = SkittleTreeURL + 'static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    '/Users/marshallds/Sites/Skittle/master/SkittleCore/UI/',
+    #'/Users/marshallds/Sites/Skittle/master/SkittleCore/UI/',
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    SkittleTreeLoc + 'SkittleCore/UI/',
 )
 
 # List of finder classes that know how to find static files in
@@ -106,10 +112,11 @@ ROOT_URLCONF = 'SkittleTree.urls'
 WSGI_APPLICATION = 'SkittleTree.wsgi.application'
 
 TEMPLATE_DIRS = (
-    '/Users/marshallds/Sites/Skittle/master/SkittleCore/UI/',
+    #'/Users/marshallds/Sites/Skittle/master/SkittleCore/UI/',
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    SkittleTreeLoc + 'SkittleCore/UI/'
 )
 
 INSTALLED_APPS = (
@@ -121,7 +128,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'SkittleCore',
     'SkittleCore.Graphs',
-
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
