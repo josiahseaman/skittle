@@ -1,5 +1,4 @@
 #!/bin/bash
-.
 {
 cd /var/www/skittle
 git pull

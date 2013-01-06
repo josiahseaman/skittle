@@ -24,6 +24,7 @@ if socket.gethostname().startswith('nyx'):
         SkittleTreeLoc = os.getcwd() + "/"
     else:
         SkittleTreeLoc = os.getcwd() + "/skittle/"
+    
     SkittleTreeURL = "http://skittle.newlinetechnicalinnovations.com/"
 else:
     SkittleTreeLoc = os.getcwd() + "/"
