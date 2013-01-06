@@ -25,11 +25,11 @@ if socket.gethostname().startswith('nyx'):
     else:
         SkittleTreeLoc = os.getcwd() + "/skittle/"
     SkittleTreeURL = "http://skittle.newlinetechnicalinnovations.com/"
-    print >> sys.stderr, "IM ON NYX!!!"
+    logging.debug("IM ON NYX!!!")
 else:
     SkittleTreeLoc = os.getcwd() + "/"
     SkittleTreeURL = "http://localhost:5000/"
-    print >> sys.stderr, "IM MESSED UP!!!"
+    logging.debug("IM MESSED UP!!!")
 
 ADMINS = (
     ('Josiah Seaman', 'josiah@newlinetechnicalinnovations.com'),
