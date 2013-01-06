@@ -7,7 +7,7 @@ TEMPLATE_DEBUG = DEBUG
 if socket.gethostname().startswith('nyx'):
     caller = inspect.stack()[1][1]
 
-    if caller.find("manage.py") > 1:
+    if "importlib.py" in caller:
         SkittleTreeLoc = os.getcwd() + "/"
     else:
         SkittleTreeLoc = os.getcwd() + "/skittle/"
