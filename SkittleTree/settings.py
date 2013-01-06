@@ -7,7 +7,7 @@ TEMPLATE_DEBUG = DEBUG
 if socket.gethostname().startswith('nyx'):
     caller = inspect.stack()
 
-    if "manage.py" in caller:
+    if toplevelContains(caller, "manage.py"):
         SkittleTreeLoc = os.getcwd() + "/"
     else:
         SkittleTreeLoc = os.getcwd() + "/skittle/"
@@ -174,3 +174,16 @@ LOGGING = {
         },
     }
 }
+
+def recursiveContains(elements, target):
+    if elements == target:
+        return True
+    elif not hasattr(elements, '__iter__'):
+        return False
+    checks = map(lambda x: recursiveContains(x, target), elements)
+    return checks
+
+def toplevelContains(elements, target):
+    hits = recursiveContains(elements, target)
+    print hits
+    return any(hits)
