@@ -5,7 +5,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 if socket.gethostname().startswith('nyx'):
-    SkittleTreeLoc = os.getcwd() + "/skittle/"
+    SkittleTreeLoc = os.getcwd() + "/"
     SkittleTreeURL = "http://skittle.newlinetechnicalinnovations.com/"
 else:
     SkittleTreeLoc = os.getcwd() + "/"
