@@ -6,8 +6,7 @@ TEMPLATE_DEBUG = DEBUG
 
 if socket.gethostname().startswith('nyx'):
     caller = inspect.stack()[1][1]
-    file = open('/var/www/skittle/temp.txt')
-    file.write(caller)
+
     if caller.find("manage.py") > 1:
         SkittleTreeLoc = os.getcwd() + "/"
     else:
