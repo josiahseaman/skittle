@@ -16,8 +16,11 @@ framework.
 import os, sys, socket
 
 if socket.gethostname().startswith('nyx'):
+    logging.debug("IM ON NYX!!!")
     sys.path.append('/var/www/skittle')
-
+else:
+    logging.debug("IM MESSED UP!!!")
+    
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SkittleTree.settings")
 
 # This application object is used by any WSGI server configured to use this
