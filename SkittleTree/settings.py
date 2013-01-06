@@ -1,5 +1,5 @@
 # Django settings for SkittleTree project.
-import os, socket, inspect
+import os, socket, inspect, sys
 
 '''Recursive check for an element that matches the target'''    
 def recursiveContains(elements, target):
@@ -25,11 +25,11 @@ if socket.gethostname().startswith('nyx'):
     else:
         SkittleTreeLoc = os.getcwd() + "/skittle/"
     SkittleTreeURL = "http://skittle.newlinetechnicalinnovations.com/"
-    print "IM ON NYX!!!"
+    print >> sys.stderr, "IM ON NYX!!!"
 else:
     SkittleTreeLoc = os.getcwd() + "/"
     SkittleTreeURL = "http://localhost:5000/"
-    print "IM MESSED UP!!!"
+    print >> sys.stderr, "IM MESSED UP!!!"
 
 ADMINS = (
     ('Josiah Seaman', 'josiah@newlinetechnicalinnovations.com'),
