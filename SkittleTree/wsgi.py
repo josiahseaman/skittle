@@ -15,11 +15,7 @@ framework.
 """
 import os, sys, socket
 
-if socket.gethostname().startswith('nyx'):
-    print "IM ON NYX!!!"
-    sys.path.append('/var/www/skittle')
-else:
-    print "IM MESSED UP!!!"
+sys.path.append('/var/www/skittle')
     
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SkittleTree.settings")
 
