@@ -5,4 +5,4 @@ import inspect
 
 def currentPath():
     print os.getcwd()
-    print inspect.stack()[1][3]
+    print inspect.stack()
