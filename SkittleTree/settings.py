@@ -12,7 +12,6 @@ def recursiveContains(elements, target):
 
 def toplevelContains(elements, target):
     hits = recursiveContains(elements, target)
-    print hits
     return any(hits)
 
 DEBUG = True
@@ -26,9 +25,11 @@ if socket.gethostname().startswith('nyx'):
     else:
         SkittleTreeLoc = os.getcwd() + "/skittle/"
     SkittleTreeURL = "http://skittle.newlinetechnicalinnovations.com/"
+    print "IM ON NYX!!!"
 else:
     SkittleTreeLoc = os.getcwd() + "/"
     SkittleTreeURL = "http://localhost:5000/"
+    print "IM MESSED UP!!!"
 
 ADMINS = (
     ('Josiah Seaman', 'josiah@newlinetechnicalinnovations.com'),
