@@ -7,7 +7,7 @@ TEMPLATE_DEBUG = DEBUG
 if socket.gethostname().startswith('nyx'):
     caller = inspect.stack()[1][1]
     
-    if caller == "manage.py":
+    if "manage.py" in caller:
         SkittleTreeLoc = os.getcwd() + "/"
     else:
         SkittleTreeLoc = os.getcwd() + "/skittle/"
