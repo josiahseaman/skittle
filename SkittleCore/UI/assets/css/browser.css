@@ -58,7 +58,7 @@
 		position: absolute;
 		overflow: hidden;
 		top:0;
-		left:-10px;
+		left:24px;
 		right:0;
 		color:#fff;
 		font-size: 0.8em;
@@ -97,10 +97,13 @@
 	#graph-labels ul, #tools ul {
 		width:10000px;
 	}
+	#graph-labels li {
+		display: none;
+	}
 	#graph-labels li img {
 		margin-bottom: -4px;
 	}
-	header li, #graph-labels li, #dials li {
+	header li, #dials li {
 		display: inline-block;
 	}
 	header li {
@@ -194,7 +197,7 @@
 		padding: 0.5em;
 		margin:0px;
 		border:1px solid #777;
-		border-radius: 8px;
+		border-radius: 4px;
 	}
 	.button:hover {
 		background: #222;
@@ -224,21 +227,21 @@
 
 	#widthBubble {
 		display:none;
-		left:190px;
+		left:202px;
 		bottom:40px;
 		width:62px;
 		height:30px;
 	}
 	#scaleBubble {
 		display:none;
-		left:365px;
+		left:387px;
 		bottom:40px;
 		width:108px;
 		height:30px;
 	}
 	#startBubble {
 		display:none;
-		left:625px;
+		left:662px;
 		bottom:40px;
 		width:77px;
 		height:30px;

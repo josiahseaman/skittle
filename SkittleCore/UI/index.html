@@ -63,11 +63,11 @@
 	    <canvas id="c" width="2000" height="1000"></canvas>
 		<div id="graph-labels">
 			<ul>
-				<li id="graphLabelA" style="width:159px;display:none;">Annotations</li>
-				<li id="graphLabelAC" style="width:76px;display:none;">Alignment Cylinder</li>
-				<li id="graphLabelND" style="width:320px;" class="widthBased">Nucleotide Display</li>
-				<li id="graphLabelNB" style="width:410px;display:none">Nucleotide Bias</li>
-				<li id="graphLabelRM" style="width:640px;display:none;">Repeat Map</li>
+				<li id="graphLabel-a" style="width:159px;">Annotations <img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton"></li>
+				<li id="graphLabel-c" style="width:76px;">Alignment Cylinder <img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton"></li>
+				<li id="graphLabel-n" style="width:320px;display:block;" class="widthBased">Nucleotide Display <img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton"></li>
+				<li id="graphLabel-b" style="width:410px;">Nucleotide Bias <img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton"></li>
+				<li id="graphLabel-m" style="width:640px;">Repeat Map <img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton"></li>
 			</ul>
 		</div>
 	</div>
@@ -118,10 +118,10 @@
 
 	<div class="popover arrow-left-top" id="graphList">
 		<ul>
-			<li><input type="checkbox" id="showGraphA" name="showGraphA"><label for="showGraphA">Annotations</label></li>
-			<li><input type="checkbox" id="showGraphND" name="showGraphND"><label for="showGraphND">Nucleotide Display</label></li>
-			<li><input type="checkbox" id="showGraphNB" name="showGraphNB"><label for="showGraphA">Nucleotide Bias</label></li>
-			<li><input type="checkbox" id="showGraphRM" name="showGraphRM" onChange="toggleRM(this)"><label for="showGraphRM">Repeat Map</label></li>
+			<li><input type="checkbox" id="showGraph-a" name="showGraphA"><label for="showGraphA">Annotations</label></li>
+			<li><input type="checkbox" id="showGraph-n" name="showGraphND" checked="checked"><label for="showGraphND">Nucleotide Display</label></li>
+			<li><input type="checkbox" id="showGraph-b" name="showGraphNB"><label for="showGraphA">Nucleotide Bias</label></li>
+			<li><input type="checkbox" id="showGraph-m" name="showGraphRM"><label for="showGraphRM">Repeat Map</label></li>
 		</ul>
 	</div>
 
