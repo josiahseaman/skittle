@@ -1,6 +1,20 @@
 # Django settings for SkittleTree project.
 import os, socket, inspect
 
+'''Recursive check for an element that matches the target'''    
+def recursiveContains(elements, target):
+    if type(elements) == type('') and target in elements:
+        return True
+    elif not hasattr(elements, '__iter__'):
+        return False
+    checks = map(lambda x: recursiveContains(x, target), elements)
+    return checks
+
+def toplevelContains(elements, target):
+    hits = recursiveContains(elements, target)
+    print hits
+    return any(hits)
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -174,17 +188,3 @@ LOGGING = {
         },
     }
 }
-
-'''Recursive check for an element that matches the target'''    
-def recursiveContains(elements, target):
-    if type(elements) == type('') and target in elements:
-        return True
-    elif not hasattr(elements, '__iter__'):
-        return False
-    checks = map(lambda x: recursiveContains(x, target), elements)
-    return checks
-
-def toplevelContains(elements, target):
-    hits = recursiveContains(elements, target)
-    print hits
-    return any(hits)
