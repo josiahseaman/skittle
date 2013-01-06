@@ -5,13 +5,9 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 if socket.gethostname().startswith('nyx'):
-    caller = inspect.stack()[1][1]
-    try:
-        raise NameError(inspect.stack())
-    except NameError:
-        print 'Stop!'
-        raise
-    if "importlib.py" in caller:
+    caller = inspect.stack()
+
+    if "manage.py" in caller:
         SkittleTreeLoc = os.getcwd() + "/"
     else:
         SkittleTreeLoc = os.getcwd() + "/skittle/"
