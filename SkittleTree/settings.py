@@ -1,5 +1,5 @@
 # Django settings for SkittleTree project.
-import os, socket, inspect, sys
+import os, socket, inspect, sys, logging
 
 '''Recursive check for an element that matches the target'''    
 def recursiveContains(elements, target):
@@ -17,6 +17,8 @@ def toplevelContains(elements, target):
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+logger = logging.getLogger(__name__)
+
 if socket.gethostname().startswith('nyx'):
     caller = inspect.stack()
 
@@ -25,11 +27,11 @@ if socket.gethostname().startswith('nyx'):
     else:
         SkittleTreeLoc = os.getcwd() + "/skittle/"
     SkittleTreeURL = "http://skittle.newlinetechnicalinnovations.com/"
-    logging.debug("IM ON NYX!!!")
+    logger.debug("IM ON NYX!!!")
 else:
     SkittleTreeLoc = os.getcwd() + "/"
     SkittleTreeURL = "http://localhost:5000/"
-    logging.debug("IM MESSED UP!!!")
+    logger.debug("IM MESSED UP!!!")
 
 ADMINS = (
     ('Josiah Seaman', 'josiah@newlinetechnicalinnovations.com'),
