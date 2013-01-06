@@ -6,11 +6,7 @@ TEMPLATE_DEBUG = DEBUG
 
 if socket.gethostname().startswith('nyx'):
     caller = inspect.stack()
-    try:
-        raise NameError(type(inspect.stack()))
-    except NameError:
-        print 'Stop!'
-        raise
+
     if "manage.py" in caller:
         SkittleTreeLoc = os.getcwd() + "/"
     else:
