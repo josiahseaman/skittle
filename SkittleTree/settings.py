@@ -175,8 +175,9 @@ LOGGING = {
     }
 }
 
+'''Recursive check for an element that matches the target'''    
 def recursiveContains(elements, target):
-    if elements == target:
+    if type(elements) == type('') and target in elements:
         return True
     elif not hasattr(elements, '__iter__'):
         return False
