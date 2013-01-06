@@ -6,6 +6,8 @@ SkittleToo.pro.user
 *.fasta
 *.fa
 testFiles/
+static/*
+media/*
 
 #################
 ## Eclipse
