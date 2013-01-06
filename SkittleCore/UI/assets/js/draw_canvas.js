@@ -92,7 +92,7 @@ var UIwidthChange = function(newWidth) {
 }
 var updateWidth = function(newWidth) {
     $('#widthDisplay').text(newWidth + " bp")
-    $('.widthBased').width(width*zoom*3);
+    $('.widthBased').width(width*zoom*3 + 20);
     updateEnd();
 }
 var UIstartChange = function(newStart) {
