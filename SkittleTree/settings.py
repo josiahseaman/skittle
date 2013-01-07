@@ -17,9 +17,9 @@ def toplevelContains(elements, target):
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-if socket.gethostname().startswith('nyx'):
+#if socket.gethostname().startswith('nyx'):
+if True:
     #caller = inspect.stack()
-    raise NameError("I DIEDDDDDD!!!")
 
     SkittleTreeLoc = "/var/www/skittle/"
     
