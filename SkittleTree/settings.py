@@ -20,10 +20,7 @@ TEMPLATE_DEBUG = DEBUG
 if socket.gethostname().startswith('nyx'):
     caller = inspect.stack()
 
-    if not toplevelContains(caller, "execute_from_command_line"):
-        SkittleTreeLoc = os.getcwd() + "/"
-    else:
-        SkittleTreeLoc = os.getcwd() + "/skittle/"
+    SkittleTreeLoc = "/var/www/skittle/"
     
     SkittleTreeURL = "http://skittle.newlinetechnicalinnovations.com/"
 else:
