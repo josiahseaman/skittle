@@ -20,9 +20,8 @@ TEMPLATE_DEBUG = DEBUG
 if socket.gethostname().startswith('nyx'):
     caller = inspect.stack()
 
-    if toplevelContains(caller, "manage.py"):
+    if not toplevelContains(caller, "execute_from_command_line"):
         SkittleTreeLoc = os.getcwd() + "/"
-        raise NameError(inspect.stack())
     else:
         SkittleTreeLoc = os.getcwd() + "/skittle/"
     
