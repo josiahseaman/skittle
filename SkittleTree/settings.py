@@ -18,13 +18,13 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 if socket.gethostname().startswith('nyx'):
-    caller = inspect.stack()
+    #caller = inspect.stack()
+    raise NameError("I DIEDDDDDD!!!")
 
     SkittleTreeLoc = "/var/www/skittle/"
     
     SkittleTreeURL = "http://skittle.newlinetechnicalinnovations.com/"
 else:
-    raise NameError("I DIEDDDDDD!!!")
     SkittleTreeLoc = os.getcwd() + "/"
     SkittleTreeURL = "http://localhost:5000/"
 
