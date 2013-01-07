@@ -22,7 +22,7 @@ if socket.gethostname().startswith('nyx'):
 
     if toplevelContains(caller, "manage.py"):
         SkittleTreeLoc = os.getcwd() + "/"
-        raise NameError("Manage.py CALLED!!!")
+        raise NameError(inspect.stack())
     else:
         SkittleTreeLoc = os.getcwd() + "/skittle/"
     
