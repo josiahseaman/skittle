@@ -51,6 +51,15 @@
   		  $("#graphList").removeClass('active');
   		}, 1500);
   	})
+  	$('#graphList input').click(function() {
+  		graph = this.id.slice(-1);
+  		if ( $(this).is(':checked') ) showGraph(graph);
+  		else hideGraph(graph)
+  	})
+  	$('#graph-labels .closeGraphButton').click(function() {
+  		graph = this.parentNode.id.slice(-1);
+  		hideGraph(graph)
+  	})
 
   });
 

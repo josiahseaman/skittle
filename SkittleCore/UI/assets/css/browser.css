@@ -47,7 +47,7 @@
 		height:60px;
 		padding:0;
 		padding-left: 280px;
-		background:url('noise_cover_b.png'), #333;
+		background:url('../gfx/noise_cover_b.png'), #333;
 		color:#fff;
 		box-shadow: inset 0 0 16px #000;
 		/*border-bottom: 2px solid #000;*/
