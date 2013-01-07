@@ -1,31 +1,16 @@
 # Django settings for SkittleTree project.
-import os, socket, inspect, sys
-
-'''Recursive check for an element that matches the target'''    
-def recursiveContains(elements, target):
-    if type(elements) == type('') and target in elements:
-        return True
-    elif not hasattr(elements, '__iter__'):
-        return False
-    checks = map(lambda x: recursiveContains(x, target), elements)
-    return checks
-
-def toplevelContains(elements, target):
-    hits = recursiveContains(elements, target)
-    return any(hits)
+import os, socket, sys
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 if socket.gethostname().startswith('nyx'):
-    #caller = inspect.stack()
-
     SkittleTreeLoc = "/var/www/skittle/"
     
     SkittleTreeURL = "http://skittle.newlinetechnicalinnovations.com/"
 else:
-    SkittleTreeLoc = os.getcwd() + "/"
-    SkittleTreeURL = "http://localhost:5000/"
+    SkittleTreeLoc = os.getcwd().replace("\\", "/") + "/"
+    SkittleTreeURL = "/"
 
 ADMINS = (
     ('Josiah Seaman', 'josiah@newlinetechnicalinnovations.com'),
@@ -38,11 +23,11 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'SkittleTree',                      # Or path to database file if using sqlite3.
-        'USER': 'skittle',                      # Not used with sqlite3.
-        'PASSWORD': 'sk!77l3PandaDatabase%',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'NAME': 'SkittleTree',                # Or path to database file if using sqlite3.
+        'USER': 'skittle',                    # Not used with sqlite3.
+        'PASSWORD': 'sk!77l3PandaDatabase%',  # Not used with sqlite3.
+        'HOST': '',                           # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                           # Set to empty string for default. Not used with sqlite3.
     }
 }
 
