@@ -21,6 +21,7 @@ def readFile(state):
     collection = []
     '''Id be happy to eliminate the need for accumulating this collection of lines'''
     try:
+        state.calculateFilePath()
         rawFile = open(state.filePath, 'r')
         print 'Opened File'
         rawFile.readline()#skip first line because it is not part of the sequence

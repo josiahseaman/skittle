@@ -38,6 +38,10 @@ class StatePacket(models.Model):
     length = models.IntegerField(default=65536)
     requestedGraph = models.CharField(max_length=40, default='n')
 
+    def calculateFilePath(self):
+        self.filePath = self.genome + self.chromosome
+        return self.filePath
+        
     def getActiveGraphs(self):
         return Graphs.models.ParentState.objects.filter(session = self, visible = True)
     
