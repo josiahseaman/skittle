@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>WebSkittle Mockup</title>
+	<title>{{ fasta }} WebSkittle Mockup</title>
 
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/popover.css">
@@ -102,19 +102,19 @@
 	</div>
 	<div id="dials">
 		<ul>
-			<li>Width: <span id="widthDisplay" data-fn="UIwidthChange">100 bp</span>
+			<li>Width: <span id="widthDisplay" data-fn="UIwidthChange">{{ width }} bp</span>
 				<div id="widthBubble" class="popover arrow-bottom-center">
 					<div class="button" onClick="doubleWidth()">x2</div>
 					<div class="button" onClick="halfWidth()">/2</div>
 				</div>
 			</li>
-			<li>Scale: <span id="scaleDisplay">1 bp/pixel</span>
+			<li>Scale: <span id="scaleDisplay">{{ scale }} bp/pixel</span>
 				<div id="scaleBubble" class="popover arrow-bottom-center">
 					<div class="button" onClick="setStartTo(1)">1:1</div>
 					<div class="button" onClick="goToEnd()">Whole File</div>
 				</div>
 			</li>
-			<li>Start Index: <span id="startDisplay" data-fn="UIstartChange">1</span>
+			<li>Start Index: <span id="startDisplay" data-fn="UIstartChange">{{ start }}</span>
 				<div id="startBubble" class="popover arrow-bottom-center">
 					<div class="button" onClick="setStartTo(1)">Top</div>
 					<div class="button" onClick="goToEnd()">End</div>
@@ -142,10 +142,22 @@
     var activeTool = 'Move';
     
     // initial values
-    start = 1;
-    width = 100;
-    scale = 1;
-    zoom  = 1;
+    start = {{ start }};
+    width = {{ width }};
+    scale = {{ scale }};
+    zoom  = {{ zoom }};
+
+    var graphStatus = {
+        "a":{name:"Annotations",visible:false,fn:"drawAnnotations"},
+        "n":{name:"Nucleotide Display",visible:true,fn:"drawNucDisplay"},
+        "b":{name:"Nucleotide Bias",visible:false,fn:"drawNucBias"},
+        "m":{name:"Repeat Map",visible:false,fn:"drawRMap"}
+    }
+    var initialGraphs = "{{ graphs }}".split('')
+    for (var key in graphStatus) {
+    	if ($.inArray(key,initialGraphs)>=0) graphStatus[key].visible = true
+    	else graphStatus[key].visible = false
+    }
 
     var nd_url = '{{STATIC_URL}}chrY3.png'
     var rm_url = '{{STATIC_URL}}chrY-rmap.png';

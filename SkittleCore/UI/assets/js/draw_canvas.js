@@ -1,9 +1,4 @@
-var graphStatus = {
-    "a":{name:"Annotations",visible:false,fn:"drawAnnotations"},
-    "n":{name:"Nucleotide Display",visible:true,fn:"drawNucDisplay"},
-    "b":{name:"Nucleotide Bias",visible:false,fn:"drawNucBias"},
-    "m":{name:"Repeat Map",visible:false,fn:"drawRMap"}
-}
+
 var init = function() {
     imageObj = new Image();
     imageObj.src = nd_url; // source data

@@ -54,6 +54,9 @@
 		text-shadow:#000 0 0 4px,#000 0 0 12px;
 		letter-spacing: 1px;
 	}
+	header::selection,h1::selection,li::selection,img::selection,ul::selection,div::selection,header p::selection,h1 span::selection {
+		background: transparent;
+	}
 	#graph-labels {
 		position: absolute;
 		overflow: hidden;
@@ -184,7 +187,7 @@
 
 	#canvasContainer {
 	    position: absolute;
-	    left: 160px;
+	    left: 140px;
 	    right: 0px;
 	    top:60px;
 	    bottom:0;
