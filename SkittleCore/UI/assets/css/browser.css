@@ -202,6 +202,7 @@
 		margin:0px;
 		border:1px solid #777;
 		border-radius: 4px;
+		font-weight: 600;
 	}
 	.button:hover {
 		background: #222;

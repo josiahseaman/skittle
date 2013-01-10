@@ -4,16 +4,16 @@ from django.http import HttpResponseRedirect, HttpResponse, HttpRequest, QueryDi
 from SkittleCore.SkittleRequestHandler import handleRequest
 from SkittleCore.models import StatePacket
 
-def index(request, fasta="test"):
+def index(request, genome="",chromosome=""):
     width = request.GET.get('width',100)
     scale = request.GET.get('scale',1)
     start = request.GET.get('start',1)
     zoom = request.GET.get('zoom',1)
     graphs = request.GET.get('graphs',"n")
-    context = {'fasta':fasta,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs}
+    context = {'genome':genome,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs}
     return render(request, 'index.html',context)
 
-def graph(request,chromosome="",graph="n",start=1,width=1,scale=1):
+def graph(request,genome="",chromosome="",graph="n",start=1,width=1,scale=1):
 	state = StatePacket()
 	state.chromosome = chromosome
 	state.graph = graph

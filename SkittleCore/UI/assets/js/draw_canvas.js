@@ -1,7 +1,7 @@
 
 var init = function() {
     imageObj = new Image();
-    imageObj.src = nd_url; // source data
+    imageObj.src = nd_url; // "chrY_n_" + startChunk + "_" + width + "_" + scale + ".png"
     imageRMap = new Image();
     imageRMap.src = rm_url; // source data
 
@@ -45,6 +45,10 @@ var keyListener = function(e) {
     }
 
 }
+var graphURL(graph) {
+    var startChunk = (Math.floor(start/65536)*65536 + 1);
+    return "../../chrY_n_" + startChunk + "_" + width + "_" + scale + ".png";
+}
 
 var toSkixels = function(pixels) {
     return Math.round(pixels/(3*zoom));
@@ -77,7 +81,7 @@ var drawGraphs = function() {
     c.drawImage(b.canvas, 0, 0);
 }
 var drawAnnotations = function(offset) {
-    b.drawImage(imageAnnotations,offset,Math.round(-start/width + 10))
+    b.drawImage(imageAnnotations,offset,Math.round(-start/width + 8))
 
     return calculateOffsetWidth(imageRMap.width)
 }
@@ -89,7 +93,7 @@ var drawNucDisplay = function(offset) {
     var newImageData = b.createImageData(width,toSkixels(1000)) //create new image data with desired dimentions (width)
     var newData = newImageData.data;
     for (var x = 0; x < newData.length; x += 4*scale) { // read in data from original pixel by pixel
-        var y = x + (start - 1)*4 - width*4*10; // adjust for start offset
+        var y = x + (start - 1)*4 - width*4*8; // adjust for start offset
         newData[x] = data[y] || 0;
         newData[x + 1] = data[y + 1] || 0;
         newData[x + 2] = data[y + 2] || 0;
@@ -102,12 +106,12 @@ var drawNucDisplay = function(offset) {
 
 }
 var drawNucBias = function(offset) {
-    b.drawImage(imageNBias,offset,Math.round(-start/width + 10))
+    b.drawImage(imageNBias,offset,Math.round(-start/width + 8))
 
     return calculateOffsetWidth(imageRMap.width)
 }
 var drawRMap = function(offset) {
-    b.drawImage(imageRMap,offset,Math.round(-start/width + 10))
+    b.drawImage(imageRMap,offset,Math.round(-start/width + 8))
 
     return calculateOffsetWidth(imageRMap.width)
 }
