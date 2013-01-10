@@ -25,11 +25,6 @@ def calculateOutputPixels(state):
         pixels = sequenceToColors(chunks, state.colorPalette)
     return pixels
     
-if __name__ == '__main__':
-    print 'Nucleotide Display test case'
-    state = StatePacket()
-#    state.scale = 1
-    print calculateOutputPixels(state)
 
     
     

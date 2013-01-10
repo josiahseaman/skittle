@@ -23,7 +23,7 @@ class Annotation():
         self.stop = End
         self.color = randomColor()
 
-class AnnotationState():
+class AnnotationTrackState():
     def getSortedAnnotation(self):
         return sorted(self.annotations, key=lambda anno: anno.start)
     
@@ -64,5 +64,5 @@ def calculateOutputPixels(state, annotationState):
 if __name__ == '__main__':
     print 'Annotation Display Test case'
     state = StatePacket()
-    annotationState = AnnotationState()  
+    annotationState = AnnotationTrackState()  
     print calculateOutputPixels(state, annotationState)

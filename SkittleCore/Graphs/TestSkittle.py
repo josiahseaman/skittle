@@ -21,8 +21,29 @@ def countNucleotides(seq):
 
 def test(a='a'):
     print 'method ', a
-        
+
+'''Recursive check for an element that matches the target'''    
+def recursiveContains(elements, target):
+    if type(elements) == type('') and target in elements:
+        return True
+    elif not hasattr(elements, '__iter__'):
+        return False
+    checks = map(lambda x: recursiveContains(x, target), elements)
+    return checks
+
+def toplevelContains(elements, target):
+    hits = recursiveContains(elements, target)
+    print hits
+    return any(hits)
+
 if __name__ == '__main__':
+    a = [1,2,3]
+    b = [1, ['2he', ['hello',4,5],6],7] 
+    hits = toplevelContains(b, 'h')
+    print hits
+    
+    
+    '''
     a = [ 1, 2, 3]
     b = [-1,-2,-3]
     c = [[1,2,3],[4,5,6],[7,8,9]]
@@ -39,4 +60,4 @@ if __name__ == '__main__':
     
     seq = ['AAGTTC', 'GT', 'ATA', 'AGGA', 'CC']
     print countNucleotides(seq)
-    print reduce(max, map(lambda x: len(x), seq))
+    print reduce(max, map(lambda x: len(x), seq))'''

@@ -13,7 +13,7 @@ SkittleRequestHandler.registerGraph("Oligomer Usage", __name__)
 
 def calculateOutputPixels(state, oligState):
     assert isinstance(state, StatePacket)
-    assert isinstance(oligState, int)
+    assert isinstance(oligState, OligomerUsageState)
     print state.seq
     overlap = oligState.oligomerSize-1
     lines = chunkUpList(state.seq, state.width, overlap) #chunk sequence by display line #we can't do this simply by line because of the overhang of oligState.oligState
@@ -28,7 +28,7 @@ def calculateOutputPixels(state, oligState):
     print counts
     #per line normalization is going to screw up the math used in the similarity heat map, make sure not to use normalized data for that
     #TODO create a sparse display for the oligomer display
-    orderedWords = generateExhaustiveOligomerList(oligState)
+    orderedWords = generateExhaustiveOligomerList(oligState.oligomerSize)
     pixels = oligCountToColorSpace(counts, orderedWords)
     
     return pixels

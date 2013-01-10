@@ -27,13 +27,15 @@ class StatePacket(models.Model):
                                     ("DRUMS", "DRUMS"),
                                     ("BLUES", "BLUES"),
                                     ("REDS", "REDS"),
-                                    ('Classic','Classic')])
+                                    ('Classic','Classic')],
+                                    default='Classic')
     width = models.IntegerField(default= 4)
     scale = models.IntegerField(default=2)
     '''Internally, start begins at 0.  Biologists count indices starting at 1, so this number 
     is 1 less than the number displayed on the website.  This also means that you should print
     index+1 whenever you are writing user readable output.'''
     start = models.IntegerField(default=0)
+    length = models.IntegerField(default=1000)
 
     def getActiveGraphs(self):
         return Graphs.models.ParentState.objects.filter(session = self, visible = True)
@@ -45,6 +47,6 @@ class StatePacket(models.Model):
     def characterPerLine(self):
         return self.width * self.scale
     
-    def length(self):
-        return len(self.seq) - self.start
+#    def length(self):
+#        return len(self.seq) - self.start
     
