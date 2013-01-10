@@ -27,7 +27,7 @@ def calculateOutputPixels(state, oligState):
     counts = normalizeDictionary(counts, wholeScreenMaximum)#this is currently per line normalization.  Test to see which is more/less confusing
     print counts
     #per line normalization is going to screw up the math used in the similarity heat map, make sure not to use normalized data for that
-    #TODO create a sparse display for the oligomer display
+    #TODO: create a sparse display for the oligomer display
     orderedWords = generateExhaustiveOligomerList(oligState.oligomerSize)
     pixels = oligCountToColorSpace(counts, orderedWords)
     

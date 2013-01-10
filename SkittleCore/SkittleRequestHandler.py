@@ -29,9 +29,7 @@ print __name__, " Printing Available Graphs: "
 for graph in availableGraphs:
     print graph 
 
-
-def handleRequest(state):
-    graphCollage = []
+def calculatePixels(state):
     sequence = FastaFiles.readFile(state)
     if sequence is None:
         raise IOError('Cannot proceed without sequence')
@@ -43,12 +41,23 @@ def handleRequest(state):
         print "Executing ", name
         #get settings from state
         settings = state.activeGraphs[name]
+        results = []
         if settings is not None:
-            graphModule.calculateOutputPixels(state, settings)    
+            results = graphModule.calculateOutputPixels(state, settings)    
         else:
-            graphModule.calculateOutputPixels(state)
+            results = graphModule.calculateOutputPixels(state)
+    return len(results)
     
+
+def handleRequest(state):
+    #Check to see if PNG exists
     
+    #If it doesn't: grab pixel calculations
+    pixels = calculatePixels(state)
+    #convert to PNG
+    png = ''#lib.whatever(pixels)
+    return png
+
     
 def parseActiveGraphString(state):
     characterAliases = {
