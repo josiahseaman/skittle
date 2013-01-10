@@ -8,8 +8,8 @@ def splitAndSort(file, storageLocation):
     #Then check to make sure that we have all 6 identifiers:
     #Kingdom, Class, Genus, Species, Specimen, Chromosome
     #TODO: Convert this regex to be one line instead of two
-    fileName = re.sub('\.fasta', '', file)
-    fileName = re.sub('\.fa', '', fileName)
+    fileName = re.sub('\.fa[sta]', '', file)
+#    fileName = re.sub('\.fa', '', fileName)
     
     #Parse file name into system path
     taxonomic = fileName.split("_")
