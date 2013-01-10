@@ -35,7 +35,8 @@ class StatePacket(models.Model):
     is 1 less than the number displayed on the website.  This also means that you should print
     index+1 whenever you are writing user readable output.'''
     start = models.IntegerField(default=0)
-    length = models.IntegerField(default=1000)
+    length = models.IntegerField(default=65536)
+    requestedGraph = models.CharField(max_length=40, default='n')
 
     def getActiveGraphs(self):
         return Graphs.models.ParentState.objects.filter(session = self, visible = True)

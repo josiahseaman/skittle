@@ -22,7 +22,8 @@ import Graphs.OligomerUsage
 import Graphs.SimilarityHeatMap
 import Graphs.ThreeMerDetector
 import Graphs.SequenceHighlighter
-
+'''Finally, X = __import__('X') works like import X, with the difference that you 
+1) pass the module name as a string, and 2) explicitly assign it to a variable in your current namespace.'''
 
 
 print __name__, " Printing Available Graphs: "
@@ -34,24 +35,22 @@ def calculatePixels(state):
     if sequence is None:
         raise IOError('Cannot proceed without sequence')
     
-    activeSet = filter(lambda x: x[0] in state.activeGraphs, availableGraphs)
-    print "Active Set: ", activeSet
-    
-    for name, graphModule in activeSet:
-        print "Executing ", name
-        #get settings from state
-        settings = state.activeGraphs[name]
-        results = []
-        if settings is not None:
-            results = graphModule.calculateOutputPixels(state, settings)    
-        else:
-            results = graphModule.calculateOutputPixels(state)
-    return len(results)
-    
+    name, graphModule = parseActiveGraphString(state)
+#    activeSet = state.getActiveGraphs()
+    settings = None #activeSet[name]
+    results = []
+    if settings is not None:
+        results = graphModule.calculateOutputPixels(state, settings)    
+    else:
+        results = graphModule.calculateOutputPixels(state)
+    return results
+
+def convertStateToFileName(state):
+    return None#TODO: implement
 
 def handleRequest(state):
     #Check to see if PNG exists
-    
+    png = tryGetGraphPNG(state)
     #If it doesn't: grab pixel calculations
     pixels = calculatePixels(state)
     #convert to PNG
@@ -70,7 +69,16 @@ def parseActiveGraphString(state):
         's':("Similarity Heatmap", Graphs.SimilarityHeatMap),
         't':("Threemer Detector", Graphs.ThreeMerDetector),
         'h':("Sequence Highlighter", Graphs.SequenceHighlighter)}
-    #TODO insert State URL parser here    
+    name, graphModule = characterAliases[state.requestedGraph]
+    return name, graphModule
     
+    
+    
+def tryGetGraphPNG(state):
+    fileName = convertStateToFileName(state)
+    try:
+        return open(fileName)
+    except:
+        return None
     
     

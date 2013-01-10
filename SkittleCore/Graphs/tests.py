@@ -36,6 +36,7 @@ class AnnotationDisplayTest(TestCase):
     def test(self):
         print 'Annotation Display Test case'
         state = StatePacket()
+        state.length = 300
         annotationState = AnnotationDisplay.AnnotationTrackState()  #this is not a model state.  This is only here because gtfReader has not been implemented
         print AnnotationDisplay.calculateOutputPixels(state, annotationState)
         
