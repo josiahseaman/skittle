@@ -9,7 +9,6 @@ def splitAndSort(file, storageLocation):
     #Kingdom, Class, Genus, Species, Specimen, Chromosome
     #TODO: Convert this regex to be one line instead of two
     fileName = re.sub('\.fa[sta]', '', file)
-#    fileName = re.sub('\.fa', '', fileName)
     
     #Parse file name into system path
     taxonomic = fileName.split("_")
