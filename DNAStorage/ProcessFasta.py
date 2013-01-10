@@ -22,6 +22,9 @@ def splitAndSort(file, storageLocation):
         filePath = os.path.join(filePath, sub)   
     if not os.path.isdir(filePath):
         os.makedirs(filePath)
+        
+    #Split the file every $bp
+    
 
 #----------------------------------------------------------------------------------------
 #CD into the folder where this file is located as it should be the DNAStorage folder
