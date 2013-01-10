@@ -20,6 +20,7 @@ def prettyPrint(heatMap):
                 print round(e, 2), ', ',
             else: 
                 print 'N', ', ',
+    print #newline
 
 def calculateOutputPixels(state, heatMapState):
     oligVectors = OligomerUsage.calculateOutputPixels(state, heatMapState)

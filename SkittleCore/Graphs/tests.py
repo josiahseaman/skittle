@@ -50,6 +50,7 @@ class FastaTest(TestCase):
 import NucleotideBias        
 class NucleotideBiasTest(TestCase):
     def test(self):
+        print 'Nucleotide Bias test case'
         state = StatePacket()
         state.seq = 'ACGTACGTAAAACCCCGGGGTTTT'
         print NucleotideBias.calculateOutputPixels(state)
@@ -79,7 +80,7 @@ class RepeatMapTest(TestCase):
         print RepeatMap.calculateOutputPixels(state, repeatMapState)
         
 import SequenceHighlighter
-class SequenceHighlighterTest(TestCase):
+class SequenceHighlighterTest(TestCase):#TODO: currently blank
     def test(self):
         print 'SequenceHighlighter test case'
         state = StatePacket()
