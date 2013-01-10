@@ -15,7 +15,7 @@ def registerGraph(name, moduleName):
     availableGraphs.add((name, moduleReference))
     
 from SkittleCore.models import StatePacket
-import FastaFiles
+import SkittleCore.FastaFiles as FastaFiles
 import NucleotideDisplay
 import NucleotideBias
 import RepeatMap

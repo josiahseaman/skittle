@@ -38,14 +38,6 @@ class AnnotationDisplayTest(TestCase):
         state = StatePacket()
         annotationState = AnnotationDisplay.AnnotationTrackState()  #this is not a model state.  This is only here because gtfReader has not been implemented
         print AnnotationDisplay.calculateOutputPixels(state, annotationState)
-
-import FastaFiles
-class FastaTest(TestCase):
-    def test(self):
-        state = StatePacket()
-    #    state.filePath = 'bogus'
-        f = FastaFiles.readFile(state)
-        print f        
         
 import NucleotideBias        
 class NucleotideBiasTest(TestCase):
