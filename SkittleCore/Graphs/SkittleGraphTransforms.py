@@ -12,7 +12,7 @@ from PixelLogic import colorPalettes
 
 def hasDepth(listLike):
     try:
-        return len(listLike) > 0 and not isinstance(listLike, (str,dict, type(StatePacket.seq))) and hasattr(listLike[0], "__getitem__")
+        return len(listLike) > 0 and not isinstance(listLike, (str,dict, type(u"unicode string"))) and hasattr(listLike[0], "__getitem__")
     except:
         return False
     

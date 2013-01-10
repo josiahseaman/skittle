@@ -70,7 +70,7 @@ def colorCombinedResults(state, highlighterState, results ):
 def calculateOutputPixels(state, highlighterState):
     assert isinstance(highlighterState, HighlighterState)
     results = [] #2D array containing a screen full of scores per targetSequence 
-    for i in range(len( highlighterState.targetSequenceEntries )):
+    for i in range(len( highlighterState.getTargetSequenceEntries() )):
         if len( highlighterState.targetSequenceEntries[i].seq) != 0 :
             results.append( measureSequenceMatches(state, highlighterState.targetSequenceEntries[i] ) )
             if highlighterState.searchReverseComplement:

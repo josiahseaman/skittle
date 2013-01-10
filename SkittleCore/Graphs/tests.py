@@ -54,54 +54,54 @@ class NucleotideBiasTest(TestCase):
         state.seq = 'ACGTACGTAAAACCCCGGGGTTTT'
         print NucleotideBias.calculateOutputPixels(state)
         
-#import NucleotideDisplay        
-#class NucleotideDisplayTest(TestCase):
-#    def test(self):
-#        print 'Nucleotide Display test case'
-#        state = StatePacket()
-#    #    state.scale = 1
-#        print NucleotideDisplay.calculateOutputPixels(state)
-#        
-#import OligomerUsage
-#class OligomerUsageTest(TestCase):
-#    def test(self):
-#        print 'OligomerUsage test case'
-#        state = StatePacket()
-#        extraState = OligomerUsageState()
-#        print OligomerUsage.calculateOutputPixels(state, extraState)#
-#        
-#import RepeatMap
-#class RepeatMapTest(TestCase):
-#    def test(self):
-#        print 'RepeatMap test case'
-#        state = StatePacket()
-#        repeatMapState = RepeatMapState()
-#        print RepeatMap.calculateOutputPixels(state, repeatMapState)
-#        
-#import SequenceHighlighter
-#class SequenceHighlighterTest(TestCase):
-#    def test(self):
-#        print 'SequenceHighlighter test case'
-#        state = StatePacket()
-#        state.seq = 'AAAAGGGGTATATATATATATGGGATAAAGCCCCC'
-#        print SequenceHighlighter.calculateOutputPixels(state, HighlighterState())
-#    
-#import SimilarityHeatMap
-#class SimilarityHeatMapTest(TestCase):
-#    def test(self):
-#        print 'SimilarityHeatMap test case'
-#        state = StatePacket()
-#        state.width = 30
-#        heatMap = SimilarityHeatMap.calculateOutputPixels(state, heatMapState = SimilarityHeatMapState())
-#        SimilarityHeatMap.prettyPrint(heatMap)
-#        
-#import ThreeMerDetector
-#class ThreeMerDetectorTest(TestCase):
-#    def test(self):
-#        print 'ThreeMerDetector test case'
-#        state = StatePacket()
-#        extra = ThreeMerDetectorState()
-#        print ThreeMerDetector.calculateOutputPixels(state, extra)
+import NucleotideDisplay        
+class NucleotideDisplayTest(TestCase):
+    def test(self):
+        print 'Nucleotide Display test case'
+        state = StatePacket()
+    #    state.scale = 1
+        print NucleotideDisplay.calculateOutputPixels(state)
+        
+import OligomerUsage
+class OligomerUsageTest(TestCase):
+    def test(self):
+        print 'OligomerUsage test case'
+        state = StatePacket()
+        extraState = OligomerUsageState()
+        print OligomerUsage.calculateOutputPixels(state, extraState)#
+        
+import RepeatMap
+class RepeatMapTest(TestCase):
+    def test(self):
+        print 'RepeatMap test case'
+        state = StatePacket()
+        repeatMapState = RepeatMapState()
+        print RepeatMap.calculateOutputPixels(state, repeatMapState)
+        
+import SequenceHighlighter
+class SequenceHighlighterTest(TestCase):
+    def test(self):
+        print 'SequenceHighlighter test case'
+        state = StatePacket()
+        state.seq = 'AAAAGGGGTATATATATATATGGGATAAAGCCCCC'
+        print SequenceHighlighter.calculateOutputPixels(state, HighlighterState())
+    
+import SimilarityHeatMap
+class SimilarityHeatMapTest(TestCase):
+    def test(self):
+        print 'SimilarityHeatMap test case'
+        state = StatePacket()
+        state.width = 30
+        heatMap = SimilarityHeatMap.calculateOutputPixels(state, heatMapState = SimilarityHeatMapState())
+        SimilarityHeatMap.prettyPrint(heatMap)
+        
+import ThreeMerDetector
+class ThreeMerDetectorTest(TestCase):
+    def test(self):
+        print 'ThreeMerDetector test case'
+        state = StatePacket()
+        extra = ThreeMerDetectorState()
+        print ThreeMerDetector.calculateOutputPixels(state, extra)
         
 #import grph
 #class grphTest(TestCase):
