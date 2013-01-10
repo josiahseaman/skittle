@@ -8,9 +8,9 @@ from SkittleGraphTransforms import pearsonCorrelation, mirrorDiagonalMatrix, \
 from SkittleCore.models import StatePacket
 from models import SimilarityHeatMapState
 import OligomerUsage
-import SkittleRequestHandler
+from SkittleCore.SkittleRequestHandler import registerGraph
 
-SkittleRequestHandler.registerGraph("Similarity Heatmap", __name__)
+registerGraph("Similarity Heatmap", __name__)
 
 def prettyPrint(heatMap):
     for line in heatMap:

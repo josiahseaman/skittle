@@ -6,9 +6,9 @@ from SkittleGraphTransforms import sensitiveTestForSpecificFrequency
 from models import RepeatMapState
 from SkittleCore.models import StatePacket
 import RepeatMap
-import SkittleRequestHandler
+from SkittleCore.SkittleRequestHandler import registerGraph
 
-SkittleRequestHandler.registerGraph("Threemer Detector", __name__)
+registerGraph("Threemer Detector", __name__)
     
 def calculateOutputPixels(state, threeMerState):
     assert isinstance(state, StatePacket)

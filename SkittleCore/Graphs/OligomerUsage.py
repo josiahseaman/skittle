@@ -7,9 +7,9 @@ from SkittleCore.models import StatePacket
 from models import OligomerUsageState
 from SkittleGraphTransforms import chunkUpList, countNucleotides,\
     normalizeDictionary, generateExhaustiveOligomerList, oligCountToColorSpace
-import SkittleRequestHandler
+from SkittleCore.SkittleRequestHandler import registerGraph
 
-SkittleRequestHandler.registerGraph("Oligomer Usage", __name__)
+registerGraph("Oligomer Usage", __name__)
 
 def calculateOutputPixels(state, oligState):
     assert isinstance(state, StatePacket)

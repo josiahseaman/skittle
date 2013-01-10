@@ -7,9 +7,9 @@ from SkittleCore.models import StatePacket
 from models import HighlighterState, SequenceEntry
 from SkittleGraphTransforms import reverseComplement, calculatePerCharacterMatch
 import copy
-import SkittleRequestHandler
+from SkittleCore.SkittleRequestHandler import registerGraph
 
-SkittleRequestHandler.registerGraph("Sequence Highlighter", __name__)
+registerGraph("Sequence Highlighter", __name__)
 
 def measureSequenceMatches(state, sequenceEntry):
     assert isinstance(sequenceEntry, SequenceEntry)

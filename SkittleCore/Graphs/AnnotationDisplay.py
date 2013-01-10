@@ -5,9 +5,9 @@ Created on Dec 19, 2012
 '''
 from SkittleCore.models import StatePacket
 from PixelLogic import randomColor, blankColor
-import SkittleRequestHandler
+from SkittleCore.SkittleRequestHandler import registerGraph
 
-SkittleRequestHandler.registerGraph("Annotation Display", __name__)
+registerGraph("Annotation Display", __name__)
 
 class Annotation():
     def getStartingLine(self, state):

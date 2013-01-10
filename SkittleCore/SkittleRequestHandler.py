@@ -1,6 +1,5 @@
 '''
 Created on Dec 21, 2012
-
 @author: Josiah
 '''
 import io
@@ -16,13 +15,15 @@ def registerGraph(name, moduleName):
     
 from SkittleCore.models import StatePacket
 import SkittleCore.FastaFiles as FastaFiles
-import NucleotideDisplay
-import NucleotideBias
-import RepeatMap
-import OligomerUsage
-import SimilarityHeatMap
-import ThreeMerDetector
-import SequenceHighlighter
+import Graphs.NucleotideDisplay
+import Graphs.NucleotideBias
+import Graphs.RepeatMap
+import Graphs.OligomerUsage
+import Graphs.SimilarityHeatMap
+import Graphs.ThreeMerDetector
+import Graphs.SequenceHighlighter
+
+
 
 print __name__, " Printing Available Graphs: "
 for graph in availableGraphs:
@@ -51,15 +52,15 @@ def handleRequest(state):
     
 def parseActiveGraphString(state):
     characterAliases = {
-        'n':("Nucleotide Display", NucleotideDisplay),
-        'b':("Nucleotide Bias", NucleotideBias),
-        'm':("Repeat Map", RepeatMap),
+        'n':("Nucleotide Display", Graphs.NucleotideDisplay),
+        'b':("Nucleotide Bias", Graphs.NucleotideBias),
+        'm':("Repeat Map", Graphs.RepeatMap),
 #        'c':"Alignment Cylinder",
 #        'r':"Repeat Overview",
-        'o':("Oligomer Usage", OligomerUsage),
-        's':("Similarity Heatmap", SimilarityHeatMap),
-        't':("Threemer Detector", ThreeMerDetector),
-        'h':("Sequence Highlighter", SequenceHighlighter)}
+        'o':("Oligomer Usage", Graphs.OligomerUsage),
+        's':("Similarity Heatmap", Graphs.SimilarityHeatMap),
+        't':("Threemer Detector", Graphs.ThreeMerDetector),
+        'h':("Sequence Highlighter", Graphs.SequenceHighlighter)}
     #TODO insert State URL parser here    
     
     

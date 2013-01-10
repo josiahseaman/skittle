@@ -6,9 +6,9 @@ import NucleotideDisplay
 from SkittleGraphTransforms import correlationMap
 from models import RepeatMapState
 from SkittleCore.models import StatePacket
-import SkittleRequestHandler
+from SkittleCore.SkittleRequestHandler import registerGraph
 
-SkittleRequestHandler.registerGraph("Repeat Map", __name__)
+registerGraph("Repeat Map", __name__)
 '''
 These are the functions that are specific to the use of RepeatMap and not generally applicable.  
 These functions use RepeatMapState to emulate an object with state.
