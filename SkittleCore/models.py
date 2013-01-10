@@ -14,7 +14,7 @@ class StatePacket(models.Model):
     #TODO user = models.ForeignKey(User)
     genome = models.CharField(max_length=200, default='hg19')
     chromosome = models.CharField(max_length=200, default='chrY')
-    filePath = models.CharField(max_length=1000, default='../chrY-sample.fa')
+    filePath = models.CharField(max_length=1000, default='testFiles/chrY-sample.fa')
     '''It is debatable whether or not the sequence should be stored in the state
     variable since it is only referenced at the first level operation.  Past the first
     step, the input sequence is more likely to be a floatList produced by the previous

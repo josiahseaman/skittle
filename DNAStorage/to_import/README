@@ -1,0 +1,5 @@
+Fasta files collected by the Curator should be dropped here.
+
+They will be automatically split and processed into the system at the next import cycle.
+
+NOTE: Please name the files as such: Kingdom_Class_Genus_Species_Specimen_Chromosome.fasta
