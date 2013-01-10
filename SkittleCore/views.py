@@ -13,8 +13,9 @@ def index(request, genome="",chromosome=""):
     context = {'genome':genome,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs}
     return render(request, 'index.html',context)
 
-def graph(request,genome="",chromosome="",graph="n",start=1,width=1,scale=1):
+def graph(request,genome="Animalia_Mammalia_Homo_Sapiens_hg19",chromosome="chrY-sample",graph="n",start=1,width=1,scale=1):
 	state = StatePacket()
+	state.genome = "Animalia_Mammalia_Homo_Sapiens_" + genome
 	state.chromosome = chromosome
 	state.graph = graph
 	state.start = start
