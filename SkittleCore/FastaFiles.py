@@ -18,14 +18,14 @@ class FastaFile(str):
 def readFile(state):
     assert isinstance(state, StatePacket)
     seq = ''
-    collection = [] 
+    collection = []
     '''Id be happy to eliminate the need for accumulating this collection of lines'''
     try:
         rawFile = open(state.filePath, 'r')
         print 'Opened File'
         rawFile.readline()#skip first line because it is not part of the sequence
         for line in rawFile: # 1MB chunks at a time
-            collection.append( line .rstrip() .upper() )
+            collection.append( line )
             
         seq = ''.join(collection)
         return FastaFile(seq)
