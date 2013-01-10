@@ -1,6 +1,7 @@
 var graphStatus = {
-    "a":{name:"Annotations",visible:false},
+    "a":{name:"Annotations",visible:false,fn:"drawAnnotations"},
     "n":{name:"Nucleotide Display",visible:true,fn:"drawNucDisplay"},
+    "b":{name:"Nucleotide Bias",visible:false,fn:"drawNucBias"},
     "m":{name:"Repeat Map",visible:false,fn:"drawRMap"}
 }
 var init = function() {
@@ -80,6 +81,11 @@ var drawGraphs = function() {
     c.clearRect(0,0,2000,1000) // render on visible canvas (which has scale applied)
     c.drawImage(b.canvas, 0, 0);
 }
+var drawAnnotations = function(offset) {
+    b.drawImage(imageAnnotations,offset,Math.round(-start/width + 10))
+
+    return calculateOffsetWidth(imageRMap.width)
+}
 var drawNucDisplay = function(offset) {   
     b.drawImage(imageObj,0,0) // render data on hidden canvas
 
@@ -99,6 +105,11 @@ var drawNucDisplay = function(offset) {
 
     return calculateOffsetWidth(width)
 
+}
+var drawNucBias = function(offset) {
+    b.drawImage(imageNBias,offset,Math.round(-start/width + 10))
+
+    return calculateOffsetWidth(imageRMap.width)
 }
 var drawRMap = function(offset) {
     b.drawImage(imageRMap,offset,Math.round(-start/width + 10))
