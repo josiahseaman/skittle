@@ -15,7 +15,7 @@ def index(request, genome="",chromosome=""):
 
 def graph(request,genome="Animalia_Mammalia_Homo_Sapiens_hg19",chromosome="chrY-sample",graph="n",start=1,width=1,scale=1):
 	state = StatePacket()
-	state.genome = "Animalia_Mammalia_Homo_Sapiens_" + genome
+	state.genome = "Animalia/Mammalia/Homo/Sapiens/" + genome
 	state.chromosome = chromosome
 	state.graph = graph
 	state.start = start

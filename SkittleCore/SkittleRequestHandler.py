@@ -34,7 +34,7 @@ def calculatePixels(state):
     sequence = FastaFiles.readFile(state)
     if sequence is None:
         raise IOError('Cannot proceed without sequence')
-    
+    state.seq = sequence
     name, graphModule = parseActiveGraphString(state)
 #    activeSet = state.getActiveGraphs()
     settings = None #activeSet[name]
@@ -54,7 +54,7 @@ def handleRequest(state):
     #If it doesn't: grab pixel calculations
     pixels = calculatePixels(state)
     #convert to PNG
-    png = ''#lib.whatever(pixels)
+    png = pixels # ''#lib.whatever(pixels)
     return png
 
     

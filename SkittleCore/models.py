@@ -3,6 +3,7 @@ Created on Nov 30, 2012
 
 @author: Josiah
 '''
+from SkittleTree import settings
 from django.db import models
 import Graphs.models   #import ParentState
 
@@ -39,7 +40,8 @@ class StatePacket(models.Model):
     requestedGraph = models.CharField(max_length=40, default='n')
 
     def calculateFilePath(self):
-        self.filePath = self.genome + self.chromosome
+        end = int(self.start)+65535
+        self.filePath = settings.SkittleTreeLoc + "DNAStorage/fasta/" + self.genome + "/" + self.chromosome + "/" + str(self.start)  + "-" + str(end) + ".fasta"
         return self.filePath
         
     def getActiveGraphs(self):

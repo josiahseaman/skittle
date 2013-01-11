@@ -10,9 +10,8 @@ registerGraph("Nucleotide Display", __name__)
     
 def calculateOutputPixels(state):
     assert isinstance(state, StatePacket) 
-    seq = state.seq[state.start : state.start + state.length] #substrings the relevant part
-    print seq 
-    chunks = chunkUpList(seq, state.width )
+    print state.seq 
+    chunks = chunkUpList(state.seq, state.width )
     print chunks
     if state.scale > 1:
         chunks = chunkUpList(chunks, state.scale)
