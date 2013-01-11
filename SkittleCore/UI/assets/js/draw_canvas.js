@@ -1,7 +1,11 @@
 
 var init = function() {
-    imageObj = new Image();
-    imageObj.src = nd_url; // "chrY_n_" + startChunk + "_" + width + "_" + scale + ".png"
+    imageObj = {};
+    imageObj["n"] = []
+    imageObj["n"][0] = new Image();
+    imageObj["n"][0].src = nd_url;
+    imageND = new Image()
+    imageND.src = nd_url; //graphURL("n");
     imageRMap = new Image();
     imageRMap.src = rm_url; // source data
 
@@ -10,7 +14,7 @@ var init = function() {
     c.webkitImageSmoothingEnabled = false;
     c.mozImageSmoothingEnabled = false;
     c.scale(Math.round(3*zoom),Math.round(3*zoom))
-    imageObj.onload = function(){
+    imageND.onload = function(){
         drawGraphs() 
     }
 
@@ -20,6 +24,30 @@ var init = function() {
       styleBorderLeft  = parseInt(document.defaultView.getComputedStyle(cc, null)['borderLeftWidth'], 10)  || 0;
       styleBorderTop   = parseInt(document.defaultView.getComputedStyle(cc, null)['borderTopWidth'], 10)   || 0;
     }
+}
+
+var imageRequestor = function(graph,position) {
+    if (!imageObj[graph]) {
+        imageObj[graph] = []
+    }
+    if (imageObj[graph]) {
+        if (imageObj[graph][position] && imageObj[graph][position].src == graphURL(graph)) {
+            return imageObj[graph][position]
+        }
+        else {
+            imageObj[graph][position] = new Image()
+            imageObj[graph][position].src == graphURL(graph)
+            imageObj[graph][position].onload = function() {
+                drawGraphs() 
+            }
+            return imageND
+        }
+    }
+    return imageND
+}
+var graphURL = function(graph) {
+    var startChunk = (Math.floor(start/(65536*scale))*65536*scale + 1);
+    return "../../chrY_" + graph + "_" + startChunk + "_" + width + "_" + scale + ".png";
 }
 
 var keyListener = function(e) {
@@ -44,10 +72,6 @@ var keyListener = function(e) {
         }
     }
 
-}
-var graphURL(graph) {
-    var startChunk = (Math.floor(start/65536)*65536 + 1);
-    return "../../chrY_n_" + startChunk + "_" + width + "_" + scale + ".png";
 }
 
 var toSkixels = function(pixels) {
@@ -86,6 +110,7 @@ var drawAnnotations = function(offset) {
     return calculateOffsetWidth(imageRMap.width)
 }
 var drawNucDisplay = function(offset) {   
+    var imageObj = imageRequestor("n",0)
     b.drawImage(imageObj,0,0) // render data on hidden canvas
 
     var imageData = b.getImageData(0, 0, imageObj.width, imageObj.height);
