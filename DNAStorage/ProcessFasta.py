@@ -52,7 +52,7 @@ def splitAndSort(file, storageLocation, workingLocation):
         while True:
             character = f.read(1)
             if character:
-                if character != "\n":
+                if character != "\n" and character != "\r":
                     chunk += character
                     cCount += 1
                     if cCount == bp:
