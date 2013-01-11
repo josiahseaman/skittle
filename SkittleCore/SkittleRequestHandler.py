@@ -54,9 +54,11 @@ def convertToPng(pixels):
     w = png.Writer(255, 1, greyscale=True)
     w.write(f, [range(256)])
     f.close()
+    f = open('ramp.png', 'rb').read() #return the binary contents of the file
     return f
 
 def handleRequest(state):
+    return convertToPng('')
     #Check to see if PNG exists
     png = tryGetGraphPNG(state)
     #If it doesn't: grab pixel calculations
