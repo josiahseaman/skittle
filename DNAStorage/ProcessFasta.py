@@ -24,7 +24,7 @@ def splitAndSort(file, storageLocation, workingLocation):
     #Remove first line if needed and depending on OS
     if os.name == "posix" or os.name == "mac":
         #FAST SED COMMAND ON LINUX
-        bashCommand = "sed '1{/>/d;}'" + (workingLocation + file)
+        bashCommand = "sed -i '1{/>/d;}'" + (workingLocation + file)
         import subprocess
         process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
         print process.communicate()[0]
