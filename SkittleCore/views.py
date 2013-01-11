@@ -14,14 +14,14 @@ def index(request, genome="",chromosome=""):
     return render(request, 'index.html',context)
 
 def graph(request,genome="Animalia_Mammalia_Homo_Sapiens_hg19",chromosome="chrY-sample",graph="n",start=1,width=1,scale=1):
-	state = StatePacket()
-	state.genome = "Animalia/Mammalia/Homo/Sapiens/" + genome
-	state.chromosome = chromosome
-	state.graph = graph
-	state.start = start
-	state.width = width
-	state.scale = scale
-	state.requestedGraph = graph
-	image_data = handleRequest(state)
-	# image_data = open("/Users/marshallds/Sites/Skittle/master/SkittleCore/UI/assets/n-display.png", "rb").read()
-	return HttpResponse(image_data, mimetype="image/png")
+    state = StatePacket()
+    state.genome = "Animalia/Mammalia/Homo/Sapiens/" + genome
+    state.chromosome = chromosome
+    state.graph = graph
+    state.start = int(start)
+    state.width = int(width)
+    state.scale = int(scale)
+    state.requestedGraph = graph
+    image_data = handleRequest(state)
+    # image_data = open("/Users/marshallds/Sites/Skittle/master/SkittleCore/UI/assets/n-display.png", "rb").read()
+    return HttpResponse(image_data, mimetype="image/png")
