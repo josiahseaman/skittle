@@ -40,7 +40,6 @@ class StatePacket(models.Model):
     requestedGraph = models.CharField(max_length=40, default='n')
 
     def calculateFilePath(self):
-        end = int(self.start)+65535
         self.filePath = settings.SkittleTreeLoc + "DNAStorage/fasta/" + self.genome + "/" + self.chromosome + "/" + str(self.start)  + ".fasta"
         return self.filePath
         
