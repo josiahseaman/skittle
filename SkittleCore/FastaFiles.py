@@ -21,9 +21,9 @@ def readFile(state):
     collection = []
     '''Id be happy to eliminate the need for accumulating this collection of lines'''
     try:
-        state.calculateFilePath()
-        print "opening file " , state.filePath
-        rawFile = open(state.filePath, 'r')
+        filePath = state.getFastaFilePath()
+        print "opening file " , filePath
+        rawFile = open(filePath, 'r')
         print 'Opened File'
 
         for line in rawFile: # 1MB chunks at a time

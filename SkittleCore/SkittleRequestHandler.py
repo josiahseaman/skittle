@@ -10,9 +10,9 @@ import png
 registering with the request Handler using the 'registerGraph' function below. '''
 availableGraphs = set()
 
-def registerGraph(name, moduleName):
+def registerGraph(name, moduleName, rasterGraph = True):
     moduleReference = sys.modules[moduleName]
-    availableGraphs.add((name, moduleReference))
+    availableGraphs.add((name, moduleReference, rasterGraph))
     
 from SkittleCore.models import StatePacket
 import SkittleCore.FastaFiles as FastaFiles
@@ -35,9 +35,7 @@ def calculatePixels(state):
     sequence = FastaFiles.readFile(state)
     if sequence is None:
         raise IOError('Cannot proceed without sequence')
-    print sequence
     state.seq = sequence
-    state.start -= 1 #start index at zero instead of one
     name, graphModule = parseActiveGraphString(state)
 #    activeSet = state.getActiveGraphs()
     settings = None #activeSet[name]
@@ -49,10 +47,7 @@ def calculatePixels(state):
         results = graphModule.calculateOutputPixels(state)
     return results
 
-def convertStateToFileName(state):
-    return None#TODO: implement
-
-def convertToPng(pixels):
+def convertToPng(state, pixels):
     greyscale = False
     if greyscale:
         f = open('output.png', 'wb')      # binary mode is important
@@ -60,30 +55,30 @@ def convertToPng(pixels):
         w.write(f, [range(256)])
     else:
         p = []
-#        map(lambda x: (*x), pixels) #[ pixels[x]* for x in ]
-        
         newline = []
         for color in pixels:
             newline += color
             if len(newline) >= 1024 * 3: #assumes 3 channels
                 p.append(newline)
                 newline = []
-                  
-        f = open('output.png', 'wb')
+
+        f = open(state.getPngFilePath(), 'wb')
         w = png.Writer(1024, 64)
         w.write(f, p)
     f.close()
-    f = open('output.png', 'rb').read() #return the binary contents of the file
+    f = open(state.getPngFilePath(), 'rb').read() #return the binary contents of the file
     return f
 
+
+'''The main entry point for the whole Python logic SkittleCore module and Graphs.'''
 def handleRequest(state):
+    state.start -= 1 #FIRST THING: start index at zero instead of one
     #Check to see if PNG exists
     png = tryGetGraphPNG(state)
     #If it doesn't: grab pixel calculations
-    if not png:
+    if png is None:
         pixels = calculatePixels(state)
-        #convert to PNG
-        png = convertToPng(pixels)
+        png = convertToPng(state, pixels)
     return png
 
     
@@ -104,9 +99,12 @@ def parseActiveGraphString(state):
     
     
 def tryGetGraphPNG(state):
-    fileName = convertStateToFileName(state)
+    fileName = state.getPngFilePath()
+    print "Looking for cache: ", fileName
     try:
-        return open(fileName)
+        data = open(fileName, 'rb').read()
+        print "Found cached file: ", fileName
+        return data
     except:
         return None
     
