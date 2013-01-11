@@ -29,7 +29,7 @@ def splitAndSort(file, storageLocation, workingLocation):
         os.system(bashCommand)
     else: #SLOW WINDOWS VERSION
         skip = False;
-        with open(workingLocation + file ) as f:
+        with open(workingLocation + file) as f:
             while True:
                 character = f.read(1)
                 if character:
@@ -57,7 +57,7 @@ def splitAndSort(file, storageLocation, workingLocation):
                     cCount += 1
                     if cCount == bp:
                         writePath = os.path.join(filePath, str(fCount) + ".fasta")
-                        write = open(writePath, 'w')
+                        write = open(writePath, 'wb')
                         write.write(chunk.upper())
                         chunk = ""
                         fCount += cCount
@@ -65,7 +65,7 @@ def splitAndSort(file, storageLocation, workingLocation):
             else:
                 break;
         writePath = os.path.join(filePath, str(fCount) + ".fasta")
-        write = open(writePath, 'w')
+        write = open(writePath, 'wb')
         write.write(chunk)
 
 #----------------------------------------------------------------------------------------
