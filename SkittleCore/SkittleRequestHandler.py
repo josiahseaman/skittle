@@ -37,6 +37,7 @@ def calculatePixels(state):
         raise IOError('Cannot proceed without sequence')
     print sequence
     state.seq = sequence
+    state.start -= 1 #start index at zero instead of one
     name, graphModule = parseActiveGraphString(state)
 #    activeSet = state.getActiveGraphs()
     settings = None #activeSet[name]
@@ -65,11 +66,9 @@ def convertToPng(pixels):
             newline = []
             for color in line:
                 newline += color
-#                for channel in color:
-#                    newline.append( channel)
             p.append(newline)  
         f = open('output.png', 'wb')
-        w = png.Writer(len(p[0]), len(p))
+        w = png.Writer(1024, 64)
         w.write(f, p)
     f.close()
     f = open('output.png', 'rb').read() #return the binary contents of the file
@@ -79,9 +78,10 @@ def handleRequest(state):
     #Check to see if PNG exists
     png = tryGetGraphPNG(state)
     #If it doesn't: grab pixel calculations
-    pixels = calculatePixels(state)
-    #convert to PNG
-    png = convertToPng(pixels)
+    if not png:
+        pixels = calculatePixels(state)
+        #convert to PNG
+        png = convertToPng(pixels)
     return png
 
     
