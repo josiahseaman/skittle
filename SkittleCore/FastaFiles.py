@@ -9,9 +9,9 @@ class FastaFile(str):
     def __init__(self, sequence = ''):
         if sequence is None:
             sequence = ''
-        self.seq = sequence
+        super(FastaFile, self).__init__(sequence)
     def __str__(self, *args, **kwargs):
-        return self.seq[:1000]
+        return super.__str__(self, *args, **kwargs)[:1000]
 
 
 
@@ -25,12 +25,12 @@ def readFile(state):
         print "opening file " , state.filePath
         rawFile = open(state.filePath, 'r')
         print 'Opened File'
-        rawFile.readline()#skip first line because it is not part of the sequence
+
         for line in rawFile: # 1MB chunks at a time
             collection.append( line )
             
         seq = ''.join(collection)
-        return FastaFile(seq)
+        return seq #FastaFile(seq)
     
     except IOError:
         print "Couldn't open file.  Maybe it doesn't exist."

@@ -5,14 +5,18 @@ Created on Nov 29, 2012
 #import numpy
 import math
 from numbers import Number
-from models import *
+from models import RepeatMapState
 from SkittleCore.models import StatePacket
 from PixelLogic import colorPalettes
 
 
 def hasDepth(listLike):
     try:
-        return len(listLike) > 0 and not isinstance(listLike, (str,dict, type(u"unicode string"))) and hasattr(listLike[0], "__getitem__")
+        if len(listLike) > 0 and not isinstance(listLike, (str,dict, type(u"unicode string"))) and hasattr(listLike[0], "__getitem__"):
+            print 'recursing length: ', len(listLike)
+            return True
+        else:
+            return False 
     except:
         return False
     
@@ -115,6 +119,7 @@ def chunkUpList(seq, chunkSize, overlap=0):
         return map(lambda x: chunkUpList(x, chunkSize, overlap), seq)
     resultVector = []
     chunk = 0
+    print "Chunking list of size: ", len(seq)
     while chunk * chunkSize < len(seq):
         resultVector.append(seq[chunk*chunkSize : (chunk+1)*chunkSize + overlap])
         chunk += 1

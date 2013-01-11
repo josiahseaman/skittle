@@ -18,13 +18,22 @@ class SimpleTest(TestCase):
         self.assertEqual(1 + 1, 2)
 
 import SkittleGraphTransforms
+import SkittleCore.FastaFiles
 class TransformTest(TestCase):
     def testModelSeqDepth(self):
         state = StatePacket()
         self.assertFalse(type(state.seq) == object)
         self.assertFalse(isinstance(['ACGTACGTAAAACCCCGGGGTTTT','AAAACGCCGTN', 'AGTGGGG'], type(state.seq)), type(state.seq))
         self.assertTrue(SkittleGraphTransforms.hasDepth(['ACGTACGTAAAACCCCGGGGTTTT','AAAACGCCGTN', 'AGTGGGG']), type(state.seq))
+        self.assertFalse(SkittleGraphTransforms.hasDepth(SkittleCore.FastaFiles.FastaFile('AGCT')))
         self.assertFalse(SkittleGraphTransforms.hasDepth(state.seq), "The Graph transforms will break with the current sequence data type:" + str(type(state.seq)))
+        print len(state.seq), " ",
+        state.seq = 'ACGT'
+        self.assertTrue(0 < len(state.seq))
+        print len(state.seq)
+    def testChunks(self):
+        state = StatePacket()
+        self.assertEqual(len(state.seq[1:5]), len(str('ACGCGCTCTATCA')[1:5]))
         
     def testCountNucleotides(self):
         counts = SkittleGraphTransforms.countNucleotides(['ACGTACGTAAAACCCCGGGGTTTT','AAAACGCCGTN', 'AGTGGGG'])
