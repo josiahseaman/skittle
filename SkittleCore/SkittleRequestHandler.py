@@ -52,11 +52,27 @@ def convertStateToFileName(state):
     return None#TODO: implement
 
 def convertToPng(pixels):
-    f = open('ramp.png', 'wb')      # binary mode is important
-    w = png.Writer(255, 1, greyscale=True)
-    w.write(f, [range(256)])
+    greyscale = False
+    if greyscale:
+        f = open('output.png', 'wb')      # binary mode is important
+        w = png.Writer(255, 1, greyscale=True)
+        w.write(f, [range(256)])
+    else:
+        p = []
+#        map(lambda x: (*x), pixels) #[ pixels[x]* for x in ]
+        
+        for line in pixels:
+            newline = []
+            for color in line:
+                newline += color
+#                for channel in color:
+#                    newline.append( channel)
+            p.append(newline)  
+        f = open('output.png', 'wb')
+        w = png.Writer(len(p[0]), len(p))
+        w.write(f, p)
     f.close()
-    f = open('ramp.png', 'rb').read() #return the binary contents of the file
+    f = open('output.png', 'rb').read() #return the binary contents of the file
     return f
 
 def handleRequest(state):

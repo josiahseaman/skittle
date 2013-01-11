@@ -10,18 +10,19 @@ registerGraph("Nucleotide Display", __name__)
     
 def calculateOutputPixels(state):
     assert isinstance(state, StatePacket) 
-    print state.seq, state.width
+    print state.seq
     chunks = chunkUpList(state.seq, state.width )
-    print chunks
+#    print chunks
     if state.scale > 1:
         chunks = chunkUpList(chunks, state.scale)
-        print chunks
+#        print chunks
         counts = countNucleotides(chunks)
-        print counts
+#        print counts
         counts = normalizeDictionary(counts)
         pixels = countListToColorSpace(counts, state.colorPalette)
     else:
         pixels = sequenceToColors(chunks, state.colorPalette)
+#        print pixels
     return pixels
     
 
