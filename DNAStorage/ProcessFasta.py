@@ -25,7 +25,7 @@ def splitAndSort(file, storageLocation, workingLocation):
     #Remove first line if needed and depending on OS
     if os.name == "posix":
         #FAST SED COMMAND ON LINUX
-        bashCommand = "sed -i '' '1{/>/d;}' " + (workingLocation + file)
+        bashCommand = "sed -i -e '1{/>/d;}' " + (workingLocation + file)
         os.system(bashCommand)
     else: #SLOW WINDOWS VERSION
         skip = False;
