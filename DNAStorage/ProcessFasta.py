@@ -20,14 +20,13 @@ def splitAndSort(file, storageLocation, workingLocation):
         filePath = os.path.join(filePath, sub)   
     if not os.path.isdir(filePath):
         os.makedirs(filePath)
+        os.makedirs(filePath.replace("fasta", "png"))
     
     #Remove first line if needed and depending on OS
     if os.name == "posix" or os.name == "mac":
         #FAST SED COMMAND ON LINUX
         bashCommand = "sed -i '1{/>/d;}'" + (workingLocation + file)
-        import subprocess
-        process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-        print process.communicate()[0]
+        os.system(bashCommand)
     else: #SLOW WINDOWS VERSION
         skip = False;
         with open(workingLocation + file ) as f:
