@@ -20,35 +20,50 @@ def splitAndSort(file, storageLocation, workingLocation):
         filePath = os.path.join(filePath, sub)   
     if not os.path.isdir(filePath):
         os.makedirs(filePath)
-        
+    
+    #Remove first line if needed and depending on OS
+    if os.name == "posix" or os.name == "mac":
+        #FAST SED COMMAND ON LINUX
+        bashCommand = "sed '1{/>/d}'" + (workingLocation + file)
+        import subprocess
+        process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+        print process.communicate()[0]
+    else: #SLOW WINDOWS VERSION
+        skip = False;
+        with open(workingLocation + file ) as f:
+            while True:
+                character = f.read()
+                if character:
+                    if character == ">":
+                        skip = True
+                        break
+                    if character == "\n":
+                        break
+        if skip:
+            lines = open(workingLocation + file).readlines()
+            open(workingLocation + file, 'w').writelines(lines[1:])
+            
     #Split the file every $bp
     with open(workingLocation + file) as f:
         fCount = 1
         cCount = 0
         chunk = ""
-        skip = False
         while True:
             character = f.read(1)
             if character:
-                if character == ">":
-                    skip = True
-                if skip:
-                    if character == "\n":
-                        skip = False
-                else:
-                    if character != "\n":
-                        chunk += character
-                        cCount += 1
-                        if cCount == bp:
-                            writePath = os.path.join(filePath, str(fCount) + "-" + str((fCount + cCount - 1)) + ".fasta")
-                            write = open(writePath, 'w')
-                            write.write(chunk.upper())
-                            chunk = ""
-                            fCount += cCount
-                            cCount = 0
+                if character != "\n":
+                    chunk += character
+                    cCount += 1
+                    if cCount == bp:
+                        writePath = os.path.join(filePath, str(fCount) + ".fasta")
+                        write = open(writePath, 'w')
+                        write.write(chunk.upper())
+                        chunk = ""
+                        fCount += cCount
+                        cCount = 0
             else:
                 break;
-        writePath = os.path.join(filePath, str(fCount) + "-" + str((fCount + cCount - 1)) + ".fasta")
+        writePath = os.path.join(filePath, str(fCount) + ".fasta")
         write = open(writePath, 'w')
         write.write(chunk)
 
@@ -64,7 +79,7 @@ for file in os.listdir("./to_import/"):
     if file.endswith(".fasta") or file.endswith(".fa"):
         try:
             splitAndSort(file, workingDir + "/fasta", workingDir + "/to_import/")
-            #os.rename("to_import/" + file, "history/" + file)
+            os.rename("to_import/" + file, "history/" + file)
         except IOError as ex:
             print ex
             os.rename("to_import/" + file, "rejected/" + file)
