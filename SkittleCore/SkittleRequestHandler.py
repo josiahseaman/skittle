@@ -62,11 +62,13 @@ def convertToPng(pixels):
         p = []
 #        map(lambda x: (*x), pixels) #[ pixels[x]* for x in ]
         
-        for line in pixels:
-            newline = []
-            for color in line:
-                newline += color
-            p.append(newline)  
+        newline = []
+        for color in pixels:
+            newline += color
+            if len(newline) >= 1024 * 3: #assumes 3 channels
+                p.append(newline)
+                newline = []
+                  
         f = open('output.png', 'wb')
         w = png.Writer(1024, 64)
         w.write(f, p)
