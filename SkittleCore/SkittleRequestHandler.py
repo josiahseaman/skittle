@@ -4,6 +4,7 @@ Created on Dec 21, 2012
 '''
 import io
 import sys
+import png
 
 '''The set of availableGraphs is populated by the individual graph modules who are responsible for 
 registering with the request Handler using the 'registerGraph' function below. '''
@@ -48,13 +49,20 @@ def calculatePixels(state):
 def convertStateToFileName(state):
     return None#TODO: implement
 
+def convertToPng(pixels):
+    f = open('ramp.png', 'wb')      # binary mode is important
+    w = png.Writer(255, 1, greyscale=True)
+    w.write(f, [range(256)])
+    f.close()
+    return f
+
 def handleRequest(state):
     #Check to see if PNG exists
     png = tryGetGraphPNG(state)
     #If it doesn't: grab pixel calculations
     pixels = calculatePixels(state)
     #convert to PNG
-    png = pixels # ''#lib.whatever(pixels)
+    png = convertToPng(pixels)
     return png
 
     
