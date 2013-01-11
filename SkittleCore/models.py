@@ -41,7 +41,7 @@ class StatePacket(models.Model):
 
     def calculateFilePath(self):
         end = int(self.start)+65535
-        self.filePath = settings.SkittleTreeLoc + "DNAStorage/fasta/" + self.genome + "/" + self.chromosome + "/" + str(self.start)  + "-" + str(end) + ".fasta"
+        self.filePath = settings.SkittleTreeLoc + "DNAStorage/fasta/" + self.genome + "/" + self.chromosome + "/" + str(self.start)  + ".fasta"
         return self.filePath
         
     def getActiveGraphs(self):
