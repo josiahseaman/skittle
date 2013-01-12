@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponse, HttpRequest, QueryDi
 from django.views.decorators.cache import cache_control
 from SkittleCore.SkittleRequestHandler import handleRequest
 from SkittleCore.models import StatePacket
+import json
 
 def index(request, genome="",chromosome=""):
     width = request.GET.get('width',100)
@@ -25,4 +26,13 @@ def graph(request):
     state.requestedGraph = request.GET.get('graph','n')
     image_data = handleRequest(state)
     # image_data = open("/Users/marshallds/Sites/Skittle/master/SkittleCore/UI/assets/n-display.png", "rb").read()
-    return HttpResponse(image_data, mimetype="image/png")
+    return HttpResponse(image_data, content_type="image/png")
+
+def state(request):
+	json = '''graphStatus = {
+        "a":{name:"Annotations",visible:false,fn:"drawAnnotations",isRasterable:true},
+        "n":{name:"Nucleotide Display",visible:true,fn:"drawNucDisplay",isRasterable:true},
+        "b":{name:"Nucleotide Bias",visible:false,fn:"drawNucBias",isRasterable:false},
+        "m":{name:"Repeat Map",visible:false,fn:"drawRMap",isRasterable:false}
+    }'''
+	return HttpResponse(json,content_type="application/json")

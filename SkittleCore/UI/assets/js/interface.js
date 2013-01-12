@@ -71,6 +71,12 @@ function mouseDown(e) {
         this.style.cursor = 'move'
     //}
     }
+    else if (activeTool == "Select") {
+
+        var selectionStart = start + (toSkixels(my-25)-1)*width
+        var selectionEnd = selectionStart + width - 1;
+        console.log('selection start:' + selectionStart + " selection end:" + selectionEnd)
+    }
 
 }
 function mouseMove(e) {
@@ -100,6 +106,9 @@ function mouseMove(e) {
             setStartTo( toSkixels(topOffset-my) * width + startOffset )
         }
     }
+    else if (activeTool == "Select") {
+        this.style.cursor = 'crosshair'
+    }
 }
 function mouseUp(e) {
     isDrag = dragWidth = false;
@@ -127,11 +136,17 @@ function mouseWheel(e) {
     })
 
     $('#link-here').click(function() {
+
+
         var offset = $(this).offset();
-        $(this).toggleClass('active');
-        var currentURL = "http://dnaskittle.com/genome-name/?=start=609&width=76&scale=1&zoom=1&graphs=nuc-dis,nuc-bias,r-map"
+        // $(this).toggleClass('active');
+        var graphString = ""
+        for (var key in graphStatus) {
+            if (graphStatus[key].visible == true) graphString += key;
+        }
+        var currentURL = window.location.origin + "/browse/genome/chromosome/?graphs=" + graphString + "&start=" + start + "&scale=" + scale + "&width=" + width 
         if (typeof linkPopover === "undefined") {
-            linkPopover = $('<div class="popover"></div>');
+            linkPopover = $('<div class="popover active"></div>');
             $('body').append(linkPopover);
         }
         else {
@@ -139,6 +154,9 @@ function mouseWheel(e) {
         }
         linkPopover.offset({ top: (offset.top - 10), left: (offset.left + $(this).outerWidth() + 16) })
         linkPopover.html('Copy this link: <br>' + currentURL);
+        setTimeout(function() {
+          linkPopover.removeClass('active');
+        }, 1500);
     })
     $('#dials span').click(function() {
         var targetFunction = $(this).attr('data-fn')
@@ -183,7 +201,11 @@ var showGraph = function(graph) {
     $('#showGraph-' + graph).prop('checked',true)
     drawGraphs();
 }
-
+var updateDials = function() {
+    updateWidth();
+    updateStart();
+    updateEnd();
+}
 var UIwidthChange = function(newWidth) {
     // var newWidth = this.value
     if (isNaN(newWidth / 1) == false) { // check if this is really just a number
@@ -193,8 +215,8 @@ var UIwidthChange = function(newWidth) {
         console.log('Width input is not a valid number')
     }
 }
-var updateWidth = function(newWidth) {
-    $('#widthDisplay').text(newWidth + " bp")
+var updateWidth = function() {
+    $('#widthDisplay').text(width + " bp")
     updateEnd();
 }
 var UIstartChange = function(newStart) {
@@ -206,20 +228,20 @@ var UIstartChange = function(newStart) {
         console.log('Start index input is not a valid number')
     }
 }
-var updateStart = function(newStart) {
-    $('#startDisplay').text(newStart)
+var updateStart = function() {
+    $('#startDisplay').text(start)
     updateEnd();
 }
 var UIendChange = function(newEnd) {
     if (isNaN(newEnd / 1) == false) { // check if this is really just a number
-        setStartTo(newEnd - toSkixels($('#canvasContainer').height()*width) + toPixels(width*10))
+        setStartTo(newEnd - ( toSkixels($('#canvasContainer').height()-25-37)*width - 1 )*scale)
     }
     else {
-        console.log('Start index input is not a valid number')
+        console.log('End index input is not a valid number')
     }
 }
 var updateEnd = function() {
-    $('#endDisplay').text(Math.round(start + toSkixels($('#canvasContainer').height()*width) - toPixels(width*10) ) )
+    $('#endDisplay').text(Math.round( start + (toSkixels($('#canvasContainer').height()-25-37)*width - 1)*scale ))
 }
 
 // setters and setter utilities
@@ -235,7 +257,7 @@ var setStartTo = function(newStart) {
         start = Math.round(newStart); // don't allow non-integer starts
     }
     drawGraphs();
-    updateStart(start)
+    updateStart()
 }
 var setWidthTo = function(newWidth) {
     if (newWidth < 1) {
@@ -248,7 +270,7 @@ var setWidthTo = function(newWidth) {
         width = Math.round(newWidth); // don't allow non-integer widths
     }
     drawGraphs();
-    updateWidth(width);
+    updateWidth();
 }
 var changeWidthBy = function(delta) {
     setWidthTo(width + delta)

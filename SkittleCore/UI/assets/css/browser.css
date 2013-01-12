@@ -57,6 +57,9 @@
 	header::selection,h1::selection,li::selection,li span::selection,img::selection,ul::selection,div::selection,header p::selection,h1 span::selection {
 		background: transparent;
 	}
+	div.popover::selection {
+		background: blue;
+	}
 	#graph-labels {
 		position: absolute;
 		overflow: hidden;
@@ -226,7 +229,7 @@
 	#graphList:hover {
 		display:block;
 	}
-	#graphList.active {
+	#graphList.active, .popover.active {
 		display: block;
 	}
 

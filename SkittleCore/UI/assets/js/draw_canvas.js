@@ -24,6 +24,12 @@ var init = function() {
       styleBorderLeft  = parseInt(document.defaultView.getComputedStyle(cc, null)['borderLeftWidth'], 10)  || 0;
       styleBorderTop   = parseInt(document.defaultView.getComputedStyle(cc, null)['borderTopWidth'], 10)   || 0;
     }
+
+    updateDials();
+
+    $(window).resize(function() {
+        updateEnd();
+    });
 }
 
 var imageRequestor = function(graph,chunkOffset) {
@@ -123,10 +129,10 @@ var drawRMap = function(offset) {
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor("m",i)
         if(!imageObj.complete) imageObj = imageUnrendered;
-        b.drawImage(imageObj,offset,Math.round(-start/width + 8)) // render data on hidden canvas
+        b.drawImage(imageObj,offset,(Math.round(-start/width + 8) + i*imageObj.height)) // render data on hidden canvas
     }
 
-    return calculateOffsetWidth(imageRMap.width)
+    return calculateOffsetWidth(imageObj.width)
 }
 
 
