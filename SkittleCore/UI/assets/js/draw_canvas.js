@@ -129,7 +129,8 @@ var drawRMap = function(offset) {
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor("m",i)
         if(!imageObj.complete) imageObj = imageUnrendered;
-        var vOffset = 8 - Math.round((start%65536)/(width*scale))+ i*imageObj.height;
+        var vOffset = 8 - Math.round((start%65536)/(width*scale) - i*(65536/width));
+        console.log(vOffset)
         b.drawImage(imageObj,offset,vOffset) // render data on hidden canvas
     }
 
