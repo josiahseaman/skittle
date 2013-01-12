@@ -3,7 +3,7 @@ var init = function() {
     imageObj = {};
     imageObj["n"] = []
     imageObj["n"][0] = new Image();
-    imageObj["n"][0].src = nd_url;
+    imageObj["n"][0].src = graphURL('n',0);
     imageND = new Image()
     imageND.src = nd_url; //graphURL("n");
     imageRMap = new Image();
@@ -26,28 +26,35 @@ var init = function() {
     }
 }
 
-var imageRequestor = function(graph,position) {
+var imageRequestor = function(graph,chunkOffset) {
     if (!imageObj[graph]) {
         imageObj[graph] = []
     }
     if (imageObj[graph]) {
-        if (imageObj[graph][position] && imageObj[graph][position].src == graphURL(graph)) {
-            return imageObj[graph][position]
+        if (imageObj[graph][chunkOffset] 
+            && imageObj[graph][chunkOffset].src == (window.location.origin + graphURL(graph,chunkOffset))) {
+            return imageObj[graph][chunkOffset]
         }
         else {
-            imageObj[graph][position] = new Image()
-            imageObj[graph][position].src == graphURL(graph)
-            imageObj[graph][position].onload = function() {
-                drawGraphs() 
+            imageObj[graph][chunkOffset] = new Image();
+            imageObj[graph][chunkOffset].src = graphURL(graph,chunkOffset);
+            // imageObj[graph][chunkOffset].onload = function() {
+                // drawGraphs() 
+            // }
+            imageObj[graph][chunkOffset].onerror = function() {
+                console.log('not a valid filename')
             }
-            return imageND
+            return imageObj[graph][chunkOffset]
         }
     }
     return imageND
 }
-var graphURL = function(graph) {
-    var startChunk = (Math.floor(start/(65536*scale))*65536*scale + 1);
-    return "../../chrY_" + graph + "_" + startChunk + "_" + width + "_" + scale + ".png";
+var graphURL = function(graph,chunkOffset) {
+    var startChunk = ( ( Math.floor(start/(65536*scale) ) + chunkOffset )*65536*scale + 1 );
+    var graphPath = "/browse/hg19_chrY-sample_" + graph + "_" + startChunk + "_" + scale 
+    if (graph != "n") graphPath += "_" + width 
+    graphPath += ".png";
+    return graphPath
 }
 
 var keyListener = function(e) {
@@ -89,7 +96,7 @@ var calculateOffsetWidth = function(skixelWidthofGraph) {
 }
 
 var drawGraphs = function() {
-    b.clearRect(0,0,1000,1000)
+    b.clearRect(0,0,1024,1000)
     var offset = gutterWidth
 
     for (key in graphStatus) {
@@ -109,16 +116,21 @@ var drawAnnotations = function(offset) {
 
     return calculateOffsetWidth(imageRMap.width)
 }
-var drawNucDisplay = function(offset) {   
-    var imageObj = imageRequestor("n",0)
-    b.drawImage(imageObj,0,0) // render data on hidden canvas
+var drawNucDisplay = function(offset) {
+    var chunks = toSkixels($('#canvasContainer').height()*width)/65536 + 1
+    for (var i=0;i<chunks;i++) {
+        var imageObj = imageRequestor("n",i)
+        if(!imageObj.complete) imageObj = imageUnrendered;
+        b.drawImage(imageObj,0,64*i) // render data on hidden canvas
+    }
+    
 
-    var imageData = b.getImageData(0, 0, imageObj.width, imageObj.height);
+    var imageData = b.getImageData(0, 0, 1024, chunks*64);
     var data = imageData.data;
     var newImageData = b.createImageData(width,toSkixels(1000)) //create new image data with desired dimentions (width)
     var newData = newImageData.data;
     for (var x = 0; x < newData.length; x += 4*scale) { // read in data from original pixel by pixel
-        var y = x + (start - 1)*4 - width*4*8; // adjust for start offset
+        var y = x + (start - 1 - ( Math.floor(start/(65536*scale) ) )*65536*scale )*4 - width*4*8; // adjust for start offset
         newData[x] = data[y] || 0;
         newData[x + 1] = data[y + 1] || 0;
         newData[x + 2] = data[y + 2] || 0;
@@ -131,7 +143,8 @@ var drawNucDisplay = function(offset) {
 
 }
 var drawNucBias = function(offset) {
-    b.drawImage(imageNBias,offset,Math.round(-start/width + 8))
+    var imageObj = imageRequestor('b',0)
+    b.drawImage(imageObj,offset,Math.round(-start/width + 8))
 
     return calculateOffsetWidth(imageRMap.width)
 }
@@ -199,8 +212,8 @@ var setStartTo = function(newStart) {
     if (newStart < 1) {
         start = 1;
     }
-    else if (newStart >140001) {
-        start = 140001;
+    else if (newStart >1400001) {
+        start = 1400001;
     }
     else {
         start = Math.round(newStart); // don't allow non-integer starts
@@ -212,8 +225,8 @@ var setWidthTo = function(newWidth) {
     if (newWidth < 1) {
         width = 1;
     }
-    else if (newWidth >1000) {
-        width = 1000;
+    else if (newWidth >1024) {
+        width = 1024;
     }
     else {
         width = Math.round(newWidth); // don't allow non-integer widths

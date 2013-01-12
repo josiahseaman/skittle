@@ -160,7 +160,9 @@
     	else graphStatus[key].visible = false
     }
 
-    var nd_url = '{{STATIC_URL}}chrY3.png'
+    imageUnrendered = new Image()
+    imageUnrendered.src = "{{STATIC_URL}}gfx/checkers.png"
+    var nd_url = '/browse/hg19_chrY-sample_n_1_1.png'
     var rm_url = '{{STATIC_URL}}chrY-rmap.png';
 
 	$(document).ready(function() {
