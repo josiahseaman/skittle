@@ -140,6 +140,11 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
 )
 
+if DEBUG:
+    INSTALLED_APPS += (
+        'Utilities',
+    )
+
 INTERNAL_IPS = ('127.0.0.1')
 
 # A sample logging configuration. The only tangible logging
