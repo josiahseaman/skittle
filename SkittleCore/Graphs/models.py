@@ -35,7 +35,7 @@ class RepeatMapState(ParentState):
     def height(self, state, pixels):
         assert isinstance(state, StatePacket)
         F_height = ((len(pixels)) - (self.F_start-1)*state.scale - self.F_width*state.scale ) / state.width
-        F_height = max(0, min(400, F_height) )
+#        F_height = max(0, min(400, F_height) )
         return F_height
         
 class NucleotideDisplayState(ParentState):
