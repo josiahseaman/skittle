@@ -17,7 +17,6 @@ class FastaTest(TestCase):
     def test(self):
         state = StatePacket()
         print os.getcwd()
-        print state.filePath
-    #    state.filePath = 'bogus'
+        print state.getFastaFilePath()
         f = FastaFiles.readFile(state)
         print f        
