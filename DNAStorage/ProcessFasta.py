@@ -7,7 +7,8 @@ def splitAndSort(file, storageLocation, workingLocation):
     #Take the file name and split it at each delim.
     #Then check to make sure that we have all 6 identifiers:
     #Kingdom, Class, Genus, Species, Specimen, Chromosome
-    fileName = re.sub('\.fa?{sta}', '', file)
+    fileName = re.sub('\.fasta', '', file)
+    fileName = re.sub('\.fa', '', fileName)
     
     #Parse file name into system path
     taxonomic = fileName.split("_")
