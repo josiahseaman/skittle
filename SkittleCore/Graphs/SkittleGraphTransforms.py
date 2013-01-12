@@ -161,9 +161,16 @@ def calculatePerCharacterMatch(A, B):
         mask.append(val[0] == val[1])
     return mask
 
-def average(values):
-    assert len(values) > 0
-    return float(sum(values)) / len(values)
+def average(values, start = 0, length = -1):
+    if length == -1: 
+        length = len(values)
+        assert length > 0
+        return float(sum(values)) / length
+    assert length > 0
+    totalSum = 0
+    for index in range(start, start+length):
+        totalSum += values[index]
+    return float(totalSum) / length
 
 '''Pearson correlation coefficient between signals x and y.
 Thanks to http://stackoverflow.com/users/34935/dfrankow for the definition'''
@@ -189,15 +196,35 @@ def pearsonCorrelation(x, y):
     base = math.sqrt(xdiff2 * ydiff2)
     return diffprod / base
 
+'''Pearson correlation coefficient between signals x and y.
+Thanks to http://stackoverflow.com/users/34935/dfrankow for the definition'''
+def fastPearsonCorrelation(data, beginA, beginB, n):
+    avg_x = average(data, beginA, n)
+    avg_y = average(data, beginB, n)
+    diffprod = 0
+    xdiff2 = 0
+    ydiff2 = 0
+    for idx in range(n):
+        xdiff = data[idx + beginA] - avg_x
+        ydiff = data[idx + beginB] - avg_y
+        diffprod += xdiff * ydiff
+        xdiff2 += xdiff * xdiff
+        ydiff2 += ydiff * ydiff
+    backup = math.sqrt(1 - (1/n)) #if we have 0 instances of a color it will be / 0  div0
+    if(xdiff2 == 0): xdiff2 = backup
+    if(ydiff2 == 0): ydiff2 = backup
+    base = math.sqrt(xdiff2 * ydiff2)
+    return diffprod / base
+
 '''Calculates the Pearson Correlation Coefficient for a two spots on the same sequence "floatList".
 It ensures that both strings are of the same length and creates substrings for calculation. '''
 def correlate(floatList, beginA, beginB, comparisonLength):
     #manipulate signal strings before passing to correlation
-    A = floatList[beginA: beginA + comparisonLength]
-    B = floatList[beginB: beginB + comparisonLength]
-    if(len(A) == len(B)):
-        if len(A) != 0:
-            return pearsonCorrelation(A, B)
+    lengthA = min( comparisonLength, len(floatList) - beginA)
+    lengthB = min( comparisonLength, len(floatList) - beginB)
+    if lengthA == lengthB:
+        if lengthA != 0:
+            return fastPearsonCorrelation(floatList, beginA, beginB, comparisonLength)
         else:
             return 0
     else:
