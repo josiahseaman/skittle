@@ -49,26 +49,30 @@ def calculatePixels(state):
 
 def convertToPng(state, pixels):
     greyscale = False
+    targetWidth = 1024
     if greyscale:
         f = open('output.png', 'wb')      # binary mode is important
         w = png.Writer(255, 1, greyscale=True)
         w.write(f, [range(256)])
     else:
-        p = []
-        newline = []
-        for color in pixels:
-            newline += color
-            if len(newline) >= 1024 * 3: #assumes 3 channels
-                p.append(newline)
-                newline = []
-
+        p = flattenImage(pixels, targetWidth)
         f = open(state.getPngFilePath(), 'wb')
-        w = png.Writer(1024, 64)
+        w = png.Writer(targetWidth, 64)
         w.write(f, p)
     f.close()
     f = open(state.getPngFilePath(), 'rb').read() #return the binary contents of the file
     return f
 
+def flattenImage(pixels, targetWidth, isColored = True):
+    p = []
+    newline = []
+    #TODO: something about hasDepth
+    for color in pixels:
+        newline += color
+        if len(newline) >= targetWidth * 3: #assumes 3 channels
+            p.append(newline)
+            newline = []
+    return p    
 
 '''The main entry point for the whole Python logic SkittleCore module and Graphs.'''
 def handleRequest(state):

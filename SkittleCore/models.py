@@ -44,7 +44,8 @@ class StatePacket(models.Model):
         return filePath
         
     def getPngFilePath(self):
-        filePath = self.getFastaFilePath().replace('fasta', 'png')
+        filePath = settings.SkittleTreeLoc + "DNAStorage/png/" + self.genome + "/" + self.chromosome + "/" + self.requestedGraph + "_start=" + str(self.start+1) +  "_scale=" + str(self.scale) + ".png"
+        #TODO: add scale if rasterGraph, add width otherwise
         #parseActiveGraphString(state) #check if it's a raster graph to include the width variable
         return filePath
         
