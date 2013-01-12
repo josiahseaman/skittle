@@ -15,14 +15,14 @@ def index(request, genome="",chromosome=""):
     return render(request, 'index.html',context)
 
 @cache_control(must_revalidate=False, max_age=3600)
-def graph(request,genome="Animalia_Mammalia_Homo_Sapiens_hg19",chromosome="chrY-sample",graph="n",start=1,scale=1,width=128):
+def graph(request):
     state = StatePacket()
-    state.genome = "Animalia/Mammalia/Homo/Sapiens/" + genome
-    state.chromosome = chromosome
-    state.start = int(start)
-    state.width = int(width)
-    state.scale = int(scale)
-    state.requestedGraph = graph
+    state.genome = "Animalia/Mammalia/Homo/Sapiens/" + request.GET.get('genome','hg19')
+    state.chromosome = request.GET.get('chromosome',"chrY-sample")
+    state.start = int(request.GET.get('start',1))
+    state.width = int(request.GET.get('width',100))
+    state.scale = int(request.GET.get('scale',1))
+    state.requestedGraph = request.GET.get('graph','n')
     image_data = handleRequest(state)
     # image_data = open("/Users/marshallds/Sites/Skittle/master/SkittleCore/UI/assets/n-display.png", "rb").read()
     return HttpResponse(image_data, mimetype="image/png")

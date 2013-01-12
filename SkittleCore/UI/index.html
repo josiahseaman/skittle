@@ -9,59 +9,11 @@
 	</style>
 
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script src="{{STATIC_URL}}js/utility.js"></script>
+	<script src="{{STATIC_URL}}js/interface.js"></script>
 	<script src="{{STATIC_URL}}js/draw_canvas.js"></script>
 	<script type="text/javascript">
-  $(document).ready(function() {
 
-  	$('#tools .radio-tools').click(function() {
-  		$('#tools .radio-tools').removeClass('active');
-  		$(this).addClass('active');
-  		if ($(this).attr('data-tool')) activeTool = $(this).attr('data-tool')
-  	})
-
-  	$('#link-here').click(function() {
-  		var offset = $(this).offset();
-  		$(this).toggleClass('active');
-  		var currentURL = "http://dnaskittle.com/genome-name/?=start=609&width=76&scale=1&zoom=1&graphs=nuc-dis,nuc-bias,r-map"
-  		if (typeof linkPopover === "undefined") {
-  			linkPopover = $('<div class="popover"></div>');
-  			$('body').append(linkPopover);
-  		}
-  		else {
-  			linkPopover.toggle();
-  		}
-  		linkPopover.offset({ top: (offset.top - 10), left: (offset.left + $(this).outerWidth() + 16) })
-  		linkPopover.html('Copy this link: <br>' + currentURL);
-  	})
-  	$('#dials span').click(function() {
-  		var targetFunction = $(this).attr('data-fn')
-  		var offset = $(this).position();
-  		var inputBox = $('<input type="text">');
-  		$(this).parent().append(inputBox.offset(offset).val($(this).html()));
-  		inputBox.select();
-  		// inputBox.val().split(' ')[0].select();
-  		inputBox.blur(function() {
-  			if(targetFunction) eval(targetFunction + '("' + this.value + '")')
-  			$(this).remove();
-  		})
-  	})
-  	$("#buttonGraphs").click(function(){
-  		$("#graphList").toggleClass('active')
-  		setTimeout(function() {
-  		  $("#graphList").removeClass('active');
-  		}, 1500);
-  	})
-  	$('#graphList input').click(function() {
-  		graph = this.id.slice(-1);
-  		if ( $(this).is(':checked') ) showGraph(graph);
-  		else hideGraph(graph)
-  	})
-  	$('#graph-labels .closeGraphButton').click(function() {
-  		graph = this.parentNode.id.slice(-1);
-  		hideGraph(graph)
-  	})
-
-  });
 
 	</script>
 </head>
@@ -149,10 +101,10 @@
     zoom  = {{ zoom }};
 
     var graphStatus = {
-        "a":{name:"Annotations",visible:false,fn:"drawAnnotations"},
-        "n":{name:"Nucleotide Display",visible:true,fn:"drawNucDisplay"},
-        "b":{name:"Nucleotide Bias",visible:false,fn:"drawNucBias"},
-        "m":{name:"Repeat Map",visible:false,fn:"drawRMap"}
+        "a":{name:"Annotations",visible:false,fn:"drawAnnotations",isRasterable:true},
+        "n":{name:"Nucleotide Display",visible:true,fn:"drawNucDisplay",isRasterable:true},
+        "b":{name:"Nucleotide Bias",visible:false,fn:"drawNucBias",isRasterable:false},
+        "m":{name:"Repeat Map",visible:false,fn:"drawRMap",isRasterable:false}
     }
     var initialGraphs = "{{ graphs }}".split('')
     for (var key in graphStatus) {
@@ -162,8 +114,6 @@
 
     imageUnrendered = new Image()
     imageUnrendered.src = "{{STATIC_URL}}gfx/checkers.png"
-    var nd_url = '/browse/hg19_chrY-sample_n_1_1.png'
-    var rm_url = '{{STATIC_URL}}chrY-rmap.png';
 
 	$(document).ready(function() {
 
