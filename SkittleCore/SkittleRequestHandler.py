@@ -79,9 +79,12 @@ def flattenImage(pixels, targetWidth, isColored = True):
 
 '''The main entry point for the whole Python logic SkittleCore module and Graphs.'''
 def handleRequest(state):
+    assert isinstance(state, StatePacket)
     state.start -= 1 #FIRST THING: start index at zero instead of one
     #Check to see if PNG exists
-    png = tryGetGraphPNG(state)
+    png = None
+    if state.requestedGraph == 'n':
+        png = tryGetGraphPNG(state)
     #If it doesn't: grab pixel calculations
     if png is None:
         pixels = calculatePixels(state)
