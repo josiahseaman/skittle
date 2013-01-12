@@ -279,49 +279,50 @@ function getMouseLocation(e) {
 
 function mouseDown(e) {
     getMouseLocation(e);
-    if (graphStatus["n"].visible) {
-        var leftSideOfClickZone = toPixels(graphStatus["n"].skixelOffset + width)
-        if(activeTool == "Move") {
-            if (mx > leftSideOfClickZone && mx < (leftSideOfClickZone + toPixels(gutterWidth)) ) { //change width
-                dragWidth = true
-                edgeOffset = mx - leftSideOfClickZone
-                this.style.cursor = 'col-resize'
+    if(activeTool == "Move") {
+        if (graphStatus["n"].visible) {
+            var leftSideOfClickZone = toPixels(graphStatus["n"].skixelOffset + width)
+                if (mx > leftSideOfClickZone && mx < (leftSideOfClickZone + toPixels(gutterWidth)) ) { //change width
+                    dragWidth = true
+                    edgeOffset = mx - leftSideOfClickZone
+                    this.style.cursor = 'col-resize'
+                }
             }
-            else { // scroll
-                isDrag = true;
-                topOffset = my;
-                startOffset = start;
-                this.style.cursor = 'move'
-            }
-        }
-    }
 
+    //else { // scroll
+        isDrag = true;
+        topOffset = my;
+        startOffset = start;
+        this.style.cursor = 'move'
+    //}
+    }
 
 }
 function mouseMove(e) {
     getMouseLocation(e)
-    if (graphStatus["n"].visible) { //dragging width only applies to Nuc Display
-        var leftSideOfClickZone = toPixels(graphStatus["n"].skixelOffset + width)
+    if(activeTool == "Move") {
+        if (graphStatus["n"].visible) { //dragging width only applies to Nuc Display
+            var leftSideOfClickZone = toPixels(graphStatus["n"].skixelOffset + width)
 
-        // var widthInPixels = toPixels(width)
-        if(activeTool == "Move") {
-            if (dragWidth){
-                if (mx < 1) { //lose the drag if mouse goes over the edge
-                    mouseUp(e)
-                    return;
+            // var widthInPixels = toPixels(width)
+                if (dragWidth){
+                    if (mx < 1) { //lose the drag if mouse goes over the edge
+                        mouseUp(e)
+                        return;
+                    }
+                    setWidthTo( toSkixels(mx - edgeOffset) - graphStatus["n"].skixelOffset )
                 }
-                setWidthTo( toSkixels(mx - edgeOffset) - graphStatus["n"].skixelOffset )
+                else if(mx > leftSideOfClickZone && mx < (leftSideOfClickZone + toPixels(gutterWidth)) ) {
+                    this.style.cursor = 'col-resize'
+                }
+                else {
+                    this.style.cursor = 'default'
+                }
             }
-            else if (isDrag) {
 
-                setStartTo( toSkixels(topOffset-my) * width + startOffset )
-            }
-            else if(mx > leftSideOfClickZone && mx < (leftSideOfClickZone + toPixels(gutterWidth)) ) {
-                this.style.cursor = 'col-resize'
-            }
-            else {
-                this.style.cursor = 'default'
-            }
+        if (isDrag) {
+
+            setStartTo( toSkixels(topOffset-my) * width + startOffset )
         }
     }
 }
