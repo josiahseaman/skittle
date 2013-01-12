@@ -49,7 +49,7 @@ class StatePacket(models.Model):
         #parseActiveGraphString(state) #check if it's a raster graph to include the width variable
         return filePath
         
-    def getActiveGraphs(self):
+    def getActiveGraphSettings(self):
         return Graphs.models.ParentState.objects.filter(session = self, visible = True)
     
     '''Derived value height may need to be further reduced for functions that must scan ahead.'''

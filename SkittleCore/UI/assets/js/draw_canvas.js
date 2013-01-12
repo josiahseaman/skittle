@@ -125,11 +125,12 @@ var drawNucBias = function(offset) {
     return calculateOffsetWidth(imageRMap.width)
 }
 var drawRMap = function(offset) {
-    var chunks = toSkixels($('#canvasContainer').height()*width)/65536 + 1
+    var chunks = toSkixels($('#canvasContainer').height())/(65536/width) + 1
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor("m",i)
         if(!imageObj.complete) imageObj = imageUnrendered;
-        b.drawImage(imageObj,offset,(Math.round(-start/width + 8) + i*imageObj.height)) // render data on hidden canvas
+        var vOffset = 8 - Math.round((start%65536)/(width*scale))+ i*imageObj.height;
+        b.drawImage(imageObj,offset,vOffset) // render data on hidden canvas
     }
 
     return calculateOffsetWidth(imageObj.width)
