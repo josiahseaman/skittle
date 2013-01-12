@@ -8,7 +8,7 @@ from models import RepeatMapState
 from SkittleCore.models import StatePacket
 from SkittleCore.SkittleRequestHandler import registerGraph
 
-registerGraph("Repeat Map", __name__)
+registerGraph("Repeat Map", __name__, False)
 '''
 These are the functions that are specific to the use of RepeatMap and not generally applicable.  
 These functions use RepeatMapState to emulate an object with state.

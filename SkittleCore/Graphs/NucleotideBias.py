@@ -7,7 +7,7 @@ from SkittleGraphTransforms import *
 from PixelLogic import *
 from SkittleCore.SkittleRequestHandler import registerGraph
 
-registerGraph("Nucleotide Bias", __name__)
+registerGraph("Nucleotide Bias", __name__, False)
 max_bar_width = 4
 
 def calculateBiasBarSizes(state):

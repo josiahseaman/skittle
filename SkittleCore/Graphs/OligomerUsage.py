@@ -9,7 +9,7 @@ from SkittleGraphTransforms import chunkUpList, countNucleotides,\
     normalizeDictionary, generateExhaustiveOligomerList, oligCountToColorSpace
 from SkittleCore.SkittleRequestHandler import registerGraph
 
-registerGraph("Oligomer Usage", __name__)
+registerGraph("Oligomer Usage", __name__, False)
 
 def calculateOutputPixels(state, oligState):
     assert isinstance(state, StatePacket)
