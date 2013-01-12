@@ -15,16 +15,14 @@ These functions use RepeatMapState to emulate an object with state.
 '''
 
 
-def calculateOutputPixels(state, repeatMapState):
+def calculateOutputPixels(state, repeatMapState = RepeatMapState()):
     assert isinstance(repeatMapState, RepeatMapState)
     assert isinstance(state, StatePacket)
-    
     pixels = NucleotideDisplay.calculateOutputPixels(state)
     if countDepth(pixels) > 1:
         singleLine = []
         for x in pixels: #this can't be a list comprehension because we need the += operator instead of .append()
             singleLine += x
-        print singleLine
     else:
         singleLine = pixels
     scores = correlationMap(state, repeatMapState, singleLine) #2D array

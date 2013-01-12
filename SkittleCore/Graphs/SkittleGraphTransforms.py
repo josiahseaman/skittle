@@ -196,25 +196,12 @@ def correlate(floatList, beginA, beginB, comparisonLength):
     A = floatList[beginA: beginA + comparisonLength]
     B = floatList[beginB: beginB + comparisonLength]
     if(len(A) == len(B)):
-        return pearsonCorrelation(A, B)
+        if len(A) != 0:
+            return pearsonCorrelation(A, B)
+        else:
+            return 0
     else:
         return None
-    
-'''This method is simply a convenience proxy for the correlate(floatList) method.  It splits a color into
-parts, feeds them through correlate individually, then averages the scores at the end.'''    
-def correlateColors(coloredPixels, beginA, beginB, comparisonLength):
-    if len(coloredPixels) == 0:
-        return None
-    if not hasattr(coloredPixels, "__getitem__"):#we didn't actually receive a composite list
-        return correlate(coloredPixels, beginA, beginB, comparisonLength)
-    resultSum = 0.0
-    for part in range(len(coloredPixels[0])):
-        currentChannel = map(lambda x : x[part], coloredPixels)
-        correlation = correlate(currentChannel, beginA, beginB, comparisonLength)
-        if correlation is None:
-            return None
-        resultSum += correlation
-    return resultSum / len(coloredPixels[0])
         
 '''Creates a grey scale map of floating point correlation values.  Used by Repeat Map.
 Y axis is each display line of the sequence.  X axis is the frequency space starting at offset 0
@@ -223,15 +210,21 @@ the color compressed sequence from the Nucleotide Display.'''
 def correlationMap( state, repeatMapState, coloredPixels):
     assert isinstance(repeatMapState, RepeatMapState)
     assert isinstance(state, StatePacket)
-    pixelsPerSample = state.width / state.scale
+    pixelsPerSample = state.width * state.scale
+    rgbChannels = zip(*coloredPixels)
     freq = []
     for h in range(repeatMapState.height(state, coloredPixels)):
-        freq.append([None]*(repeatMapState.F_width+1))
+        freq.append([0.0]*(repeatMapState.F_width+1))
         offset = h * pixelsPerSample
         for w in range(1, len(freq[h])):#calculate across widths 1:F_width
-            coefficient = correlateColors(coloredPixels, offset, offset + w + repeatMapState.F_start, pixelsPerSample)
-            if coefficient != None:
-                freq[h][w] = .5 * (1.0 + coefficient)
+            
+            resultSum = 0.0
+            for currentChannel in rgbChannels:
+                correlation = correlate(currentChannel, offset, offset + w + repeatMapState.F_start, pixelsPerSample)
+                if correlation is not None:
+                    resultSum += correlation
+            resultSum /= 3
+            freq[h][w] = .5 * (1.0 + resultSum)
     return freq
           
 '''This method takes a series of floating point numbers.  It checks each multiple of "frequency" and determines

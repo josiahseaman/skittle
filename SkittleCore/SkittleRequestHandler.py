@@ -26,10 +26,9 @@ import Graphs.SequenceHighlighter
 '''Finally, X = __import__('X') works like import X, with the difference that you 
 1) pass the module name as a string, and 2) explicitly assign it to a variable in your current namespace.'''
 
-
-print __name__, " Printing Available Graphs: "
-for graph in availableGraphs:
-    print graph 
+#print __name__, " Printing Available Graphs: "
+#for graph in availableGraphs:
+#    print graph 
 
 def calculatePixels(state):
     sequence = FastaFiles.readFile(state)
@@ -47,18 +46,22 @@ def calculatePixels(state):
         results = graphModule.calculateOutputPixels(state)
     return results
 
+def checkForGreyscale(pixels):
+    return type(pixels[0][1]) == type(0.5)
+
 def convertToPng(state, pixels):
-    greyscale = False
     targetWidth = 1024
+    greyscale = checkForGreyscale(pixels)
+    print "GreyScale: ", greyscale
+    f = open(state.getPngFilePath(), 'wb')
     if greyscale:
-        f = open('output.png', 'wb')      # binary mode is important
-        w = png.Writer(255, 1, greyscale=True)
-        w.write(f, [range(256)])
+#        p = flattenImage(pixels, len(pixels[0]))
+        p = multiplyGreyscale(pixels, 255)
+        w = png.Writer(len(pixels[0]), len(p), greyscale=True)
     else:
         p = flattenImage(pixels, targetWidth)
-        f = open(state.getPngFilePath(), 'wb')
         w = png.Writer(targetWidth, 64)
-        w.write(f, p)
+    w.write(f, p)
     f.close()
     f = open(state.getPngFilePath(), 'rb').read() #return the binary contents of the file
     return f
@@ -85,6 +88,10 @@ def handleRequest(state):
         png = convertToPng(state, pixels)
     return png
 
+def multiplyGreyscale(p, greyMax = 255):
+    for index, line in enumerate(p):
+        p[index] = map(lambda x: int(x * greyMax), line)
+    return p
     
 def parseActiveGraphString(state):
     characterAliases = {
