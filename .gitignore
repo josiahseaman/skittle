@@ -8,6 +8,8 @@ SkittleToo.pro.user
 testFiles/
 static/*
 media/*
+DNAStorage/fasta/*
+DNAStorage/png/*
 
 #################
 ## Eclipse
