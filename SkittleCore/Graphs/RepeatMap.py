@@ -3,7 +3,7 @@ Created on Nov 29, 2012
 @author: Josiah Seaman
 '''
 import NucleotideDisplay
-from SkittleGraphTransforms import correlationMap
+from SkittleGraphTransforms import correlationMap, countDepth
 from models import RepeatMapState
 from SkittleCore.models import StatePacket
 from SkittleCore.SkittleRequestHandler import registerGraph
@@ -20,19 +20,16 @@ def calculateOutputPixels(state, repeatMapState):
     assert isinstance(state, StatePacket)
     
     pixels = NucleotideDisplay.calculateOutputPixels(state)
-    singleLine = []
-    for x in pixels: #this can't be a list comprehension because we need the += operator instead of .append()
-        singleLine += x
-    print singleLine
+    if countDepth(pixels) > 1:
+        singleLine = []
+        for x in pixels: #this can't be a list comprehension because we need the += operator instead of .append()
+            singleLine += x
+        print singleLine
+    else:
+        singleLine = pixels
     scores = correlationMap(state, repeatMapState, singleLine) #2D array
     #TODO convert from floating point to grey pixels
     return scores
     
-        
-if __name__ == '__main__':
-    print 'Repeat Map test case'
-    state = StatePacket()
-    repeatMapState = RepeatMapState()
-    print calculateOutputPixels(state, repeatMapState)
     
     

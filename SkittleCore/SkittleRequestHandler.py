@@ -100,7 +100,6 @@ def parseActiveGraphString(state):
     
 def tryGetGraphPNG(state):
     fileName = state.getPngFilePath()
-    print "Looking for cache: ", fileName
     try:
         data = open(fileName, 'rb').read()
         print "Found cached file: ", fileName

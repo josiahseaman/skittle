@@ -9,10 +9,17 @@ from models import RepeatMapState
 from SkittleCore.models import StatePacket
 from PixelLogic import colorPalettes
 
+def countDepth(listLike):
+    count = 0
+    element = listLike
+    while hasDepth(element):
+        count += 1
+        element = listLike[0]
+    return count
 
 def hasDepth(listLike):
     try:
-        if len(listLike) > 0 and not isinstance(listLike, (str,dict, type(u"unicode string"))) and hasattr(listLike[0], "__getitem__"):
+        if len(listLike) > 0 and not isinstance(listLike, (str,dict, tuple, type(u"unicode string"))) and hasattr(listLike[0], "__getitem__"):
 #            print 'recursing length: ', len(listLike)
             return True
         else:
