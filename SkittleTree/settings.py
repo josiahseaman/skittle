@@ -145,7 +145,8 @@ if DEBUG:
         'Utilities',
     )
     MIDDLEWARE_CLASSES += (
-        'Utilities.debug.ProfileMiddleware',
+        'Utilities.debug.HotshotProfileMiddleware',
+        'Utilities.debug.cProfileMiddleware',
     )
 
 INTERNAL_IPS = ('127.0.0.1')

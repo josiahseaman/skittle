@@ -1,9 +1,7 @@
-import sys
-import os
-import re
+import sys, os, time, re, tempfile, StringIO
 import hotshot, hotshot.stats
-import tempfile
-import StringIO
+import cProfile, pstats
+from cStringIO import StringIO as cStringIO
  
 from django.conf import settings
  
@@ -15,17 +13,17 @@ group_prefix_re = [
     re.compile( ".*" ),           # catch strange entries
 ]
  
-# Displays hotshot profiling. Add ?prof to url.
+# Displays hotshot profiling. Add ?hotshotProf to url.
 # Note: hotshot is not thread safe.
-class ProfileMiddleware(object):
+class HotshotProfileMiddleware(object):
     def process_request(self, request):
-        if (settings.DEBUG or request.user.is_superuser) and 'prof' in request.GET: 
+        if (settings.DEBUG or request.user.is_superuser) and 'hotshotProf' in request.GET: 
             self.tmpfile = tempfile.mktemp()
-            self.prof = hotshot.Profile(self.tmpfile)
+            self.hotshotProf = hotshot.Profile(self.tmpfile)
  
     def process_view(self, request, callback, callback_args, callback_kwargs):
-        if (settings.DEBUG or request.user.is_superuser) and 'prof' in request.GET:
-            return self.prof.runcall(callback, request, *callback_args, **callback_kwargs)
+        if (settings.DEBUG or request.user.is_superuser) and 'hotshotProf' in request.GET:
+            return self.hotshotProf.runcall(callback, request, *callback_args, **callback_kwargs)
  
     def get_group(self, file):
         for g in group_prefix_re:
@@ -74,8 +72,8 @@ class ProfileMiddleware(object):
                "</pre>"
  
     def process_response(self, request, response):
-        if (settings.DEBUG or request.user.is_superuser) and 'prof' in request.GET:
-            self.prof.close()
+        if (settings.DEBUG or request.user.is_superuser) and 'hotshotProf' in request.GET:
+            self.hotshotProf.close()
  
             out = StringIO.StringIO()
             old_stdout = sys.stdout
@@ -97,6 +95,23 @@ class ProfileMiddleware(object):
  
             os.unlink(self.tmpfile)
  
+        return response
+        
+class cProfileMiddleware(object):
+    def process_view(self, request, callback, callback_args, callback_kwargs):
+        if settings.DEBUG and 'prof' in request.GET:
+            self.profiler = cProfile.Profile()
+            args = (request,) + callback_args
+            return self.profiler.runcall(callback, *args, **callback_kwargs)
+
+    def process_response(self, request, response):
+        if settings.DEBUG and 'prof' in request.GET:
+            self.profiler.create_stats()
+            out = cStringIO()
+            old_stdout, sys.stdout = sys.stdout, out
+            self.profiler.print_stats(1)
+            sys.stdout = old_stdout
+            response.content = '<pre>%s</pre>' % out.getvalue()
         return response
         
 #------------------------------------------------------------------------------------------
