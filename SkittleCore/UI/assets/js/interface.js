@@ -193,13 +193,13 @@ var hideGraph = function(graph) {
     if (graphStatus[graph]) graphStatus[graph].visible = false;
     $('#showGraph-' + graph).prop('checked',false)
     $('#graphLabel-' + graph).hide();
-    drawGraphs();
+    isInvalidDisplay = true;
 }
 var showGraph = function(graph) {
     if (graphStatus[graph]) graphStatus[graph].visible = true;
     $('#graphLabel-' + graph).show();
     $('#showGraph-' + graph).prop('checked',true)
-    drawGraphs();
+    isInvalidDisplay = true;
 }
 var updateDials = function() {
     updateWidth();
@@ -256,8 +256,7 @@ var setStartTo = function(newStart) {
     else {
         start = Math.round(newStart); // don't allow non-integer starts
     }
-    drawGraphs();
-    updateStart()
+    isInvalidDisplay = true;
 }
 var setWidthTo = function(newWidth) {
     if (newWidth < 1) {
@@ -269,8 +268,7 @@ var setWidthTo = function(newWidth) {
     else {
         width = Math.round(newWidth); // don't allow non-integer widths
     }
-    drawGraphs();
-    updateWidth();
+    isInvalidDisplay = true;
 }
 var changeWidthBy = function(delta) {
     setWidthTo(width + delta)
