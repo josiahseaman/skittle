@@ -42,7 +42,7 @@ var imageRequestor = function(graph,chunkOffset) {
         imageObj[graph] = []
     }
     if (imageObj[graph]) {
-        console.log(imageObj[graph])
+        // console.log(imageObj[graph])
         if (imageObj[graph][chunkOffset] 
             && imageObj[graph][chunkOffset].src == (window.location.href.match(/^[^\#\?]+/)[0] + graphURL(graph,chunkOffset))) {
             return imageObj[graph][chunkOffset]
@@ -64,7 +64,7 @@ var imageRequestor = function(graph,chunkOffset) {
 }
 var graphURL = function(graph,chunkOffset) {
     var startChunk = ( ( Math.floor(start/(65536*scale) ) + chunkOffset )*65536*scale + 1 );
-    var graphPath = "/browse/data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + scale 
+    var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + scale 
     if (graph != "n") graphPath += "&width=" + width 
     return graphPath
 }
