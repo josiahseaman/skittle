@@ -2,7 +2,7 @@
 Created on Nov 29, 2012
 @author: Josiah Seaman 
 '''
-#import numpy
+import numpy
 import math
 from numbers import Number
 from models import RepeatMapState
@@ -199,8 +199,8 @@ def pearsonCorrelation(x, y):
 '''Pearson correlation coefficient between signals x and y.
 Thanks to http://stackoverflow.com/users/34935/dfrankow for the definition'''
 def fastPearsonCorrelation(data, beginA, beginB, n):
-    avg_x = average(data, beginA, n)
-    avg_y = average(data, beginB, n)
+    avg_x = 63#average(data, beginA, n)
+    avg_y = 63#average(data, beginB, n)
     diffprod = 0
     xdiff2 = 0
     ydiff2 = 0
@@ -210,9 +210,9 @@ def fastPearsonCorrelation(data, beginA, beginB, n):
         diffprod += xdiff * ydiff
         xdiff2 += xdiff * xdiff
         ydiff2 += ydiff * ydiff
-    backup = math.sqrt(1 - (1/n)) #if we have 0 instances of a color it will be / 0  div0
-    if(xdiff2 == 0): xdiff2 = backup
-    if(ydiff2 == 0): ydiff2 = backup
+#    backup = .000001 #if we have 0 instances of a color it will be / 0  div0
+    if(xdiff2 == 0): xdiff2 = 1
+    if(ydiff2 == 0): ydiff2 = 1
     base = math.sqrt(xdiff2 * ydiff2)
     return diffprod / base
 
@@ -229,7 +229,21 @@ def correlate(floatList, beginA, beginB, comparisonLength):
             return 0
     else:
         return None
-        
+
+'''Calculates the Pearson Correlation Coefficient for a two spots on the same sequence "floatList".
+It ensures that both strings are of the same length and creates substrings for calculation. '''
+def slowCorrelate(floatList, beginA, beginB, comparisonLength):
+    #manipulate signal strings before passing to correlation
+    A = floatList[beginA: beginA + comparisonLength]
+    B = floatList[beginB: beginB + comparisonLength]
+    if len(A) == len(B):
+        if len(A) != 0:
+            numpy.correlate(A, B, mode='same')
+#            return pearsonCorrelation(A, B)
+        else:
+            return 0
+    else:
+        return None        
 '''Creates a grey scale map of floating point correlation values.  Used by Repeat Map.
 Y axis is each display line of the sequence.  X axis is the frequency space starting at offset 0
 and proceeding to RepeatMapState.F_width.  When used in Repeat Map, ColoredPixels is 
@@ -247,7 +261,7 @@ def correlationMap( state, repeatMapState, coloredPixels):
             
             resultSum = 0.0
             for currentChannel in rgbChannels:
-                correlation = correlate(currentChannel, offset, offset + w + repeatMapState.F_start, pixelsPerSample)
+                correlation = slowCorrelate(currentChannel, offset, offset + w + repeatMapState.F_start, pixelsPerSample)
                 if correlation is not None:
                     resultSum += correlation
             resultSum /= 3
