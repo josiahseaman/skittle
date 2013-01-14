@@ -57,7 +57,7 @@ var imageRequestor = function(graph,chunkOffset) {
 }
 var graphURL = function(graph,chunkOffset) {
     var startChunk = ( ( Math.floor(start/(65536*scale) ) + chunkOffset )*65536*scale + 1 );
-    var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + scale 
+    var graphPath = "/browse/data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + scale 
     if (graph != "n") graphPath += "&width=" + width 
     return graphPath
 }
