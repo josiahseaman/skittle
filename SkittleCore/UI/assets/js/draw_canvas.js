@@ -1,3 +1,10 @@
+var mainLoop = window.setInterval(function(){
+    if(isInvalidDisplay) {
+        isInvalidDisplay = false
+        drawGraphs();
+        updateDials();
+    }
+},50)
 
 var init = function() {
     imageObj = {};
@@ -15,7 +22,7 @@ var init = function() {
     c.mozImageSmoothingEnabled = false;
     c.scale(Math.round(3*zoom),Math.round(3*zoom))
     imageObj["n"][0].onload = function(){
-        drawGraphs() 
+        isInvalidDisplay = true
     }
 
     if (document.defaultView && document.defaultView.getComputedStyle) {
@@ -24,8 +31,6 @@ var init = function() {
       styleBorderLeft  = parseInt(document.defaultView.getComputedStyle(cc, null)['borderLeftWidth'], 10)  || 0;
       styleBorderTop   = parseInt(document.defaultView.getComputedStyle(cc, null)['borderTopWidth'], 10)   || 0;
     }
-
-    updateDials();
 
     $(window).resize(function() {
         updateEnd();
@@ -37,15 +42,16 @@ var imageRequestor = function(graph,chunkOffset) {
         imageObj[graph] = []
     }
     if (imageObj[graph]) {
+        // console.log(imageObj[graph])
         if (imageObj[graph][chunkOffset] 
-            && imageObj[graph][chunkOffset].src == (window.location.origin + graphURL(graph,chunkOffset))) {
+            && imageObj[graph][chunkOffset].src == (window.location.href.match(/^[^\#\?]+/)[0] + graphURL(graph,chunkOffset))) {
             return imageObj[graph][chunkOffset]
         }
         else {
             imageObj[graph][chunkOffset] = new Image();
             imageObj[graph][chunkOffset].src = graphURL(graph,chunkOffset);
             imageObj[graph][chunkOffset].onload = function() { // causes a little bit of jitter when scrolling
-                drawGraphs() 
+                isInvalidDisplay = true
             }
             imageObj[graph][chunkOffset].onerror = function() {
                 console.log('not a valid filename')
@@ -53,11 +59,12 @@ var imageRequestor = function(graph,chunkOffset) {
             return imageObj[graph][chunkOffset]
         }
     }
+    console.log('hi')
     return imageND
 }
 var graphURL = function(graph,chunkOffset) {
     var startChunk = ( ( Math.floor(start/(65536*scale) ) + chunkOffset )*65536*scale + 1 );
-    var graphPath = "/browse/data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + scale 
+    var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + scale 
     if (graph != "n") graphPath += "&width=" + width 
     return graphPath
 }
@@ -130,11 +137,10 @@ var drawRMap = function(offset) {
         var imageObj = imageRequestor("m",i)
         if(!imageObj.complete) imageObj = imageUnrendered;
         var vOffset = 8 - Math.round((start%65536)/(width*scale) - i*(65536/width));
-        console.log(vOffset)
-        b.drawImage(imageObj,offset,vOffset) // render data on hidden canvas
+        b.drawImage(imageObj,offset,vOffset,61,(65536/width)) // render data on hidden canvas
     }
 
-    return calculateOffsetWidth(imageObj.width)
+    return calculateOffsetWidth(61)
 }
 
 
