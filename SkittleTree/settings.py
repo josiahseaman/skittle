@@ -144,6 +144,9 @@ if DEBUG:
     INSTALLED_APPS += (
         'Utilities',
     )
+    MIDDLEWARE_CLASSES += (
+        'Utilities.debug.ProfileMiddleware',
+    )
 
 INTERNAL_IPS = ('127.0.0.1')
 
