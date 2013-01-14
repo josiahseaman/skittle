@@ -17,13 +17,13 @@ def index(request, genome="",chromosome=""):
     return render(request, 'index.html',context)
 
 @cache_control(must_revalidate=False, max_age=3600)
-def graph(request):
+def graph(request, genome="hg19",chromosome="chrY-sample"):
     state = StatePacket()
-    state.chromosome = request.GET.get('chromosome',"chrY-sample")
+    state.chromosome = chromosome
     if state.chromosome == "chrY-sample":
-        state.genome = "Animalia/Mammalia/Homo/Sapiens/" + request.GET.get('genome','hg19')
+        state.genome = "Animalia/Mammalia/Homo/Sapiens/" + genome
     else:
-        state.genome = "Plantae/Angiosperms/Zea/Mays/" + request.GET.get('genome','ZmB73')
+        state.genome = "Plantae/Angiosperms/Zea/Mays/" + genome
 
     state.start = int(request.GET.get('start',1))
     state.width = int(request.GET.get('width',100))
