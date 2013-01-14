@@ -21,9 +21,9 @@ def graph(request):
     state = StatePacket()
     state.chromosome = request.GET.get('chromosome',"chrY-sample")
     if state.chromosome == "chrY-sample":
-        state.genome = "Animalia/Mammalia/Homo/Sapiens/" + request.GET.get('genome','hg19')
-    else:
-        state.genome = "Plantae/Angiosperms/Zea/Mays/" + request.GET.get('genome','ZmB73')
+	    state.genome = "Animalia/Mammalia/Homo/Sapiens/" + request.GET.get('genome','hg19')
+	else:
+	    state.genome = "Plantae/Angiosperms/Zea/Mays/" + request.GET.get('genome','ZmB73')
 
     state.start = int(request.GET.get('start',1))
     state.width = int(request.GET.get('width',100))
