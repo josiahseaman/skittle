@@ -107,11 +107,11 @@ class cProfileMiddleware(object):
     def process_response(self, request, response):
         if settings.DEBUG and 'prof' in request.GET:
             self.profiler.create_stats()
-            out = cStringIO()
-            old_stdout, sys.stdout = sys.stdout, out
-            self.profiler.print_stats(1)
-            sys.stdout = old_stdout
-            response.content = '<pre>%s</pre>' % out.getvalue()
+            io = cStringIO()
+            stats = pstats.Stats(self.profiler, stream=io)
+            stats.strip_dirs().sort_stats(request.GET.get('sort', 'time'))
+            stats.print_stats(int(request.GET.get('count', 10000)))
+            response.content = '<pre>%s</pre>' % io.getvalue()
         return response
         
 #------------------------------------------------------------------------------------------
