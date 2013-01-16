@@ -59,7 +59,8 @@ var imageRequestor = function(graph,chunkOffset) {
     return imageObj[graph][chunkOffset]
 }
 var graphURL = function(graph,chunkOffset) {
-    var startChunk = ( ( Math.floor(start/(65536*scale) ) + chunkOffset )*65536*scale + 1 );
+    var startTopOfScreen = (start-8*width) >  0 ? (start-8*width) : 1
+    var startChunk = ( ( Math.floor(startTopOfScreen/(65536*scale) ) + chunkOffset )*65536*scale + 1 );
     var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + scale 
     if (graph != "n") graphPath += "&width=" + width 
     return graphPath
@@ -109,8 +110,10 @@ var drawNucDisplay = function(offset) {
     var data = imageData.data;
     var newImageData = b.createImageData(width,toSkixels(1000)) //create new image data with desired dimentions (width)
     var newData = newImageData.data;
+
+    var startOffset = (start - 1 - width*8 - Math.max( Math.floor((start-width*8)/(65536*scale) ), 0 )*65536*scale )*4;
     for (var x = 0; x < newData.length; x += 4*scale) { // read in data from original pixel by pixel
-        var y = x + (start - 1 - ( Math.floor(start/(65536*scale) ) )*65536*scale )*4 - width*4*8; // adjust for start offset
+        var y = x + startOffset
         newData[x] = data[y] || 0;
         newData[x + 1] = data[y + 1] || 0;
         newData[x + 2] = data[y + 2] || 0;
@@ -123,10 +126,15 @@ var drawNucDisplay = function(offset) {
 
 }
 var drawNucBias = function(offset) {
-    var imageObj = imageRequestor('b',0)
-    b.drawImage(imageObj,offset,Math.round(-start/width + 8))
+    var chunks = Math.ceil(Math.min(skixelsOnScreen/65536 + 1,(fileLength-start)/65536))
+    for (var i=0;i<chunks;i++) {
+        var imageObj = imageRequestor("b",i)
+        if(!imageObj.complete) imageObj = imageUnrendered;
+        var vOffset = -Math.round(((start-8*width)%65536)/(width*scale) - i*(65536/width));
+        b.drawImage(imageObj,offset,vOffset,60,imageObj.height) // render data on hidden canvas
+    }
 
-    return calculateOffsetWidth(imageObj.width)
+    return calculateOffsetWidth(60)
 }
 var drawRMap = function(offset) {
     var fOffset = 0
