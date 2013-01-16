@@ -2,7 +2,7 @@ import sys, os, os.path, re
 from models import FastaFiles, FastaChunkFiles
 
 #Take a fasta file, split it and sort it into the correct folders
-def splitAndSort(file, storageLocation, workingLocation):
+def splitAndSort(file, storageLocation, workingLocation):       
     bp = 65536
     
     #Take the file name and split it at each delim.
@@ -95,18 +95,19 @@ def splitAndSort(file, storageLocation, workingLocation):
         fa.save()
 
 #----------------------------------------------------------------------------------------
-#CD into the folder where this file is located as it should be the DNAStorage folder
-workingDir = os.path.realpath(__file__).replace("\\", "/")
-workingDir = re.sub('/ProcessFasta\.py', '', workingDir)
-os.chdir(workingDir)
+def run():
+    #CD into the folder where this file is located as it should be the DNAStorage folder
+    workingDir = os.path.realpath(__file__).replace("\\", "/")
+    workingDir = re.sub('/ProcessFasta\.py', '', workingDir)
+    os.chdir(workingDir)
 
-#Look to see if there are any files in to_import
-#If so, then process them.
-for file in os.listdir("./to_import/"):
-    if file.endswith(".fasta") or file.endswith(".fa"):
-        try:
-            splitAndSort(file, workingDir + "/fasta", workingDir + "/to_import/")
-            os.rename("to_import/" + file, "history/" + file)
-        except IOError as ex:
-            print ex
-            os.rename("to_import/" + file, "rejected/" + file)
+    #Look to see if there are any files in to_import
+    #If so, then process them.
+    for file in os.listdir("./to_import/"):
+        if file.endswith(".fasta") or file.endswith(".fa"):
+            try:
+                splitAndSort(file, workingDir + "/fasta", workingDir + "/to_import/")
+                os.rename("to_import/" + file, "history/" + file)
+            except IOError as ex:
+                print ex
+                os.rename("to_import/" + file, "rejected/" + file)

@@ -11,7 +11,7 @@ class FastaFiles(models.Model):
     
 class FastaChunkFiles(models.Model):
     FastaFile = models.ForeignKey(FastaFiles)
-    Start = models.Integer.Field()
+    Start = models.IntegerField()
     IsInRamDisk = models.BooleanField(default=False)
 
 class ImageFiles(models.Model):
