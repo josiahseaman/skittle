@@ -19,7 +19,12 @@ class HighlighterState(ParentState):
     
     def getTargetSequenceEntries(self):
         '''targetSequenceEntries contains a series of SequenceEntries.'''
+        children = SequenceEntry.objects.filter(ownerGraph = self)
+        if not children:
+            default = SequenceEntry()
+            default.ownerGraph = self
         return SequenceEntry.objects.filter(ownerGraph = self)
+        
     
     def __str__(self):
         return "Search other strand: "+ str(self.searchReverseComplement) + "   Sequences: "+ str(self.targetSequenceEntries)

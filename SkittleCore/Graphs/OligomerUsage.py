@@ -11,13 +11,13 @@ from SkittleCore.GraphRequestHandler import registerGraph
 
 registerGraph('o', "Oligomer Usage", __name__, False)
 
-def calculateOutputPixels(state, oligState):
+def calculateOutputPixels(state, oligState = OligomerUsageState()):
     assert isinstance(state, StatePacket)
     assert isinstance(oligState, OligomerUsageState)
-    print state.seq
+#    print state.seq
     overlap = oligState.oligomerSize-1
     lines = chunkUpList(state.seq, state.width, overlap) #chunk sequence by display line #we can't do this simply by line because of the overhang of oligState.oligState
-    print lines
+#    print lines
     counts = countNucleotides(lines, oligState.oligomerSize)
     
     values = map(lambda x: x.values(), counts)
@@ -25,7 +25,7 @@ def calculateOutputPixels(state, oligState):
     wholeScreenMaximum = max(single)
     
     counts = normalizeDictionary(counts, wholeScreenMaximum)#this is currently per line normalization.  Test to see which is more/less confusing
-    print counts
+#    print counts
     #per line normalization is going to screw up the math used in the similarity heat map, make sure not to use normalized data for that
     #TODO: create a sparse display for the oligomer display
     orderedWords = generateExhaustiveOligomerList(oligState.oligomerSize)
@@ -33,10 +33,3 @@ def calculateOutputPixels(state, oligState):
     
     return pixels
 
-
-if __name__ == '__main__':
-    state = StatePacket()
-    oligState = OligomerUsageState()
-    counts = calculateOutputPixels(state, oligState)
-    print counts
-#    print max, reduce(max(x), counts), 0)

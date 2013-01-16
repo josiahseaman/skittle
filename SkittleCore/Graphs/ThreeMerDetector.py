@@ -7,10 +7,11 @@ from models import RepeatMapState
 from SkittleCore.models import StatePacket
 import RepeatMap
 from SkittleCore.GraphRequestHandler import registerGraph
+from models import ThreeMerDetectorState
 
 registerGraph('t', "Threemer Detector", __name__, False)
     
-def calculateOutputPixels(state, threeMerState):
+def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
     assert isinstance(state, StatePacket)
     state.scale = 1 #these calculations are only meaningful at scale 1
     #TODO adjust score scaling according to the width
