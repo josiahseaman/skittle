@@ -1,7 +1,29 @@
-Evolution Django Database Migration:
-    easy_install -U django_evolution
+====================APACHE COMPILE SETTINGS====================
+apt-get install apache2-mpm-worker libapache2-mod-fcgid
+./buildconf
+./configure --prefix=/etc/apache2 --enable-mods-shared=all --enable-http --enable-deflate --enable-expires --enable-slotmem-shm --enable-headers --enable-rewrite --enable-proxy --enable-proxy-balancer --enable-proxy-http --enable-proxy-fcgi --enable-mime-magic --enable-log-debug --with-mpm=worker --enable-modules=all --with-included-apr --with-expat=builtin --enable-ssl --enable-proxy-connect --enable-cache --enable-disk-cache --enable-mem-cache --enable-nonportable-atomics=yes
+make && make install
+
+====================PHP COMPILE SETTINGS====================
+./configure --enable-bcmath --enable-calendar --enable-dba --enable-exif --enable-ftp --enable-mbstring --enable-shmop --enable-sigchild --enable-soap --enable-sockets --enable-sqlite-utf8 --enable-sysvmsg --enable-wddx --enable-zip --with-apxs2=/etc/apache2/bin/apxs --with-bz2 --with-config-file-path=/etc/apache2/conf --with-curl --with-gd --with-gettext --with-mcrypt --with-mysql --with-mysqli --with-openssl --with-pdo-mysql --with-pdo-pgsql --with-pgsql --with-xmlrpc --with-zlib
+make && make test && make install
+cp ./php-5.4.x/php.ini-development /etc/apache2/conf/php.ini
+vi /etc/apache2/conf/extra/httpd-php5.conf
+Add to httpd.conf
+
+====================MOD_WSGI COMPILE SETTINGS====================
+wget http://modwsgi.googlecode.com/files/mod_wsgi-3.4.tar.gz
+tar zxvf mod_wsgi-3.4.tar.gz
+make clean
+make distclean
+./configure --with-apxs=/etc/apache2/bin/apxs
+make
+make install
+
+====================DJANGO_EVOLUTION INSTALL====================
+easy_install -U django_evolution
     
-    DROP DATABASE `SkittleTree`;
-    CREATE DATABASE SkittleTree;
-    python manage.py syncdb
-    python manage.py evolve --hint --execute
+DROP DATABASE `SkittleTree`;
+CREATE DATABASE SkittleTree;
+python manage.py syncdb
+python manage.py evolve --hint --execute
