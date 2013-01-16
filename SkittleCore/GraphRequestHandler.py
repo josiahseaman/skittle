@@ -10,7 +10,7 @@ import png
 registering with the request Handler using the 'registerGraph' function below. '''
 availableGraphs = set()
 
-def registerGraph(name, moduleName, rasterGraph = True):
+def registerGraph(name, moduleName, rasterGraph = False):
     moduleReference = sys.modules[moduleName]
     availableGraphs.add((name, moduleReference, rasterGraph))
     

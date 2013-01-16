@@ -6,7 +6,7 @@ from SkittleGraphTransforms import sensitiveTestForSpecificFrequency
 from models import RepeatMapState
 from SkittleCore.models import StatePacket
 import RepeatMap
-from SkittleCore.SkittleRequestHandler import registerGraph
+from SkittleCore.GraphRequestHandler import registerGraph
 
 registerGraph("Threemer Detector", __name__, False)
     

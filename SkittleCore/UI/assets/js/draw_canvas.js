@@ -77,12 +77,13 @@ var calculateOffsetWidth = function(skixelWidthofGraph) {
 
 var drawGraphs = function() {
     b.clearRect(0,0,1024,1000)
-    var offset = gutterWidth
+    var offset = xOffset + gutterWidth
+    var chunks = Math.ceil(Math.min(skixelsOnScreen/65536 + 1,(fileLength-start)/65536))
 
     for (key in graphStatus) {
         if (graphStatus[key].visible) {
             graphStatus[key].skixelOffset = offset;
-            var skixelWidthofGraph = graphStatus[key].skixelWidth = drawGraph(key,offset);
+            var skixelWidthofGraph = graphStatus[key].skixelWidth = drawGraph(key,offset,chunks);
             offset = offset + skixelWidthofGraph;
             $('#graphLabel-' + key).width( Math.max( (toPixels(skixelWidthofGraph)), minimumWidth ) );
         }
@@ -92,31 +93,37 @@ var drawGraphs = function() {
     c.drawImage(b.canvas, 0, 0);
 }
 
-var drawGraph = function(graph,offset) {
+var drawGraph = function(graph,offset,chunks) {
     switch (graph) {
-        case "n": return drawNucDisplay(offset);
-        case "b": return drawNucBias(offset);
-        case "m": return drawRMap(offset);
+        case "n": return drawNucDisplay(offset,chunks);
+        case "b": return drawNucBias(offset,chunks);
+        case "m": return drawRMap(offset,chunks);
         default: 
             console.log("Requested graph does not have a cooresponding javascript function")
             return 0;
     }
 }
+var drawVerticalGraph = function(graph,offset,chunks) {
+    for (var i=0;i<chunks;i++) {
+        var imageObj = imageRequestor(graph,i)
+        if(!imageObj.complete) imageObj = imageUnrendered;
+        var vOffset = -Math.round(((start-8*width)%65536)/(width*scale) - i*(65536/width));
+        b.drawImage(imageObj,offset,vOffset) // render data on hidden canvas
+    }
+}
 
-var drawAnnotations = function(offset) {
+var drawAnnotations = function(offset,chunks) {
     var imageObj = imageRequestor('a',0)
     b.drawImage(imageObj,offset,Math.round(-start/width + 8))
 
     return calculateOffsetWidth(imageObj.width)
 }
-var drawNucDisplay = function(offset) {
-    var chunks = Math.ceil(Math.min(skixelsOnScreen/65536 + 1,(fileLength-start)/65536))
+var drawNucDisplay = function(offset,chunks) {
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor("n",i)
         if(!imageObj.complete) imageObj = imageUnrendered;
         b.drawImage(imageObj,0,64*i) // render data on hidden canvas
     }
-    
 
     var imageData = b.getImageData(0, 0, 1024, chunks*64);
     var data = imageData.data;
@@ -135,29 +142,21 @@ var drawNucDisplay = function(offset) {
     b.putImageData(newImageData, offset, 0);
 
     return calculateOffsetWidth(width)
-
 }
-var drawNucBias = function(offset) {
-    var chunks = Math.ceil(Math.min(skixelsOnScreen/65536 + 1,(fileLength-start)/65536))
-    for (var i=0;i<chunks;i++) {
-        var imageObj = imageRequestor("b",i)
-        if(!imageObj.complete) imageObj = imageUnrendered;
-        var vOffset = -Math.round(((start-8*width)%65536)/(width*scale) - i*(65536/width));
-        b.drawImage(imageObj,offset,vOffset,60,imageObj.height) // render data on hidden canvas
-    }
-
+var drawNucBias = function(offset,chunks) {
+    drawVerticalGraph("b",offset,chunks)
     return calculateOffsetWidth(60)
 }
-var drawRMap = function(offset) {
+var drawRMap = function(offset,chunks) {
     var fOffset = 0
     var fWidth = 61
-    var chunks = Math.ceil(Math.min(skixelsOnScreen/65536 + 1,(fileLength-start)/65536))
-    for (var i=0;i<chunks;i++) {
-        var imageObj = imageRequestor("m",i)
-        if(!imageObj.complete) imageObj = imageUnrendered;
-        var vOffset = 8 - Math.round((start%65536)/(width*scale) - i*(65536/width));
-        b.drawImage(imageObj,offset,vOffset,fWidth,(65536/width)) // render data on hidden canvas
-    }
+    drawVerticalGraph("m",offset,chunks)
+    // for (var i=0;i<chunks;i++) {
+    //     var imageObj = imageRequestor("m",i)
+    //     if(!imageObj.complete) imageObj = imageUnrendered;
+    //     var vOffset = 8 - Math.round((start%65536)/(width*scale) - i*(65536/width));
+    //     b.drawImage(imageObj,offset,vOffset,fWidth,(65536/width)) // render data on hidden canvas
+    // }
     
     if (width<(fWidth-fOffset)) { //draw the red lines
         var widthPosition = offset+width-fOffset;
@@ -172,4 +171,6 @@ var drawRMap = function(offset) {
     return calculateOffsetWidth(fWidth)
 }
 
+var generatePlaceholderImage = function() {
 
+}

@@ -6,7 +6,7 @@ import NucleotideDisplay
 from SkittleGraphTransforms import correlationMap, countDepth
 from models import RepeatMapState
 from SkittleCore.models import StatePacket
-from SkittleCore.SkittleRequestHandler import registerGraph
+from SkittleCore.GraphRequestHandler import registerGraph
 
 registerGraph("Repeat Map", __name__, False)
 '''

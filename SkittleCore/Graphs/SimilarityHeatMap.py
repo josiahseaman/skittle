@@ -8,7 +8,7 @@ from SkittleGraphTransforms import pearsonCorrelation, mirrorDiagonalMatrix, \
 from SkittleCore.models import StatePacket
 from models import SimilarityHeatMapState
 import OligomerUsage
-from SkittleCore.SkittleRequestHandler import registerGraph
+from SkittleCore.GraphRequestHandler import registerGraph
 
 registerGraph("Similarity Heatmap", __name__, False)
 
