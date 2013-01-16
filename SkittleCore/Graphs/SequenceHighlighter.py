@@ -16,12 +16,10 @@ def measureSequenceMatches(state, sequenceEntry):
     scores = []
     findSize = len(sequenceEntry.seq)
     searchSeq = sequenceEntry.seq
-    start = state.start
     maxMismatches = int(findSize - float(findSize) * sequenceEntry.minimumPercentage + .999)
     #at 50%   1 = 0,  2 = 1, 3 = 1
-    for  i in range(min( state.length, len(state.seq) - state.start - (findSize-1))) :
+    for start_i in range(min( state.length, len(state.seq)  - (findSize-1))) :
         mismatches = 0
-        start_i = start + i
         L = 0
         while mismatches <= maxMismatches and L < findSize:
             if state.seq[start_i + L] != searchSeq[L]:#this is the innermost loop.  This line takes the most time
