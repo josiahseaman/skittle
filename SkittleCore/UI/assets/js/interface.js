@@ -121,7 +121,7 @@ function mouseWheel(e) {
     } else if (event.detail) { /** Mozilla case. */
             delta = -event.detail/3;// In Mozilla, sign of delta is different than in IE. Also, delta is multiple of 3.
     }
-    if (delta) {
+    if (delta > 0.05 || delta < -0.05) {
         changeStartByLines(Math.round(-delta*10));
     }
 
