@@ -10,7 +10,7 @@ from models import SimilarityHeatMapState
 import OligomerUsage
 from SkittleCore.GraphRequestHandler import registerGraph
 
-registerGraph("Similarity Heatmap", __name__, False)
+registerGraph('s', "Similarity Heatmap", __name__, False)
 
 def prettyPrint(heatMap):
     for line in heatMap:
