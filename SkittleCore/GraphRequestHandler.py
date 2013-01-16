@@ -10,12 +10,13 @@ import png
 registering with the request Handler using the 'registerGraph' function below. '''
 availableGraphs = set()
 
-def registerGraph(name, moduleName, rasterGraph = True):
+def registerGraph(symbol, name, moduleName, rasterGraph = False):
     moduleReference = sys.modules[moduleName]
-    availableGraphs.add((name, moduleReference, rasterGraph))
+    availableGraphs.add((symbol, name, moduleReference, rasterGraph))
     
 from SkittleCore.models import StatePacket
 import SkittleCore.FastaFiles as FastaFiles
+import Graphs.AnnotationDisplay
 import Graphs.NucleotideDisplay
 import Graphs.NucleotideBias
 import Graphs.RepeatMap
@@ -35,7 +36,8 @@ def calculatePixels(state):
     if sequence is None:
         raise IOError('Cannot proceed without sequence')
     state.seq = sequence
-    name, graphModule = parseActiveGraphString(state)
+    graphData = parseActiveGraphString(state)
+    name, graphModule = graphData[1], graphData[2]
 #    activeSet = state.getActiveGraphs()
     settings = None #activeSet[name]
     results = []
@@ -106,20 +108,11 @@ def multiplyGreyscale(p, greyMax = 255):
     return p
     
 def parseActiveGraphString(state):
-    characterAliases = {
-        'n':("Nucleotide Display", Graphs.NucleotideDisplay),
-        'b':("Nucleotide Bias", Graphs.NucleotideBias),
-        'm':("Repeat Map", Graphs.RepeatMap),
-#        'c':"Alignment Cylinder",
-#        'r':"Repeat Overview",
-        'o':("Oligomer Usage", Graphs.OligomerUsage),
-        's':("Similarity Heatmap", Graphs.SimilarityHeatMap),
-        't':("Threemer Detector", Graphs.ThreeMerDetector),
-        'h':("Sequence Highlighter", Graphs.SequenceHighlighter)}
-    name, graphModule = characterAliases[state.requestedGraph]
-    return name, graphModule
-    
-    
+    targetGraphTuple = filter(lambda x: state.requestedGraph == x[0], availableGraphs)
+    if targetGraphTuple:
+        return targetGraphTuple[0] #return the first match
+    else:
+        return filter(lambda x: 'n' == x[0], availableGraphs)[0]
     
 def tryGetGraphPNG(state):
     fileName = state.getPngFilePath()

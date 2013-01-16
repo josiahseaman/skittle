@@ -68,6 +68,8 @@ function mouseDown(e) {
         isDrag = true;
         topOffset = my;
         startOffset = start;
+        leftOffset = mx;
+        sideOffset = xOffset
         this.style.cursor = 'move'
     //}
     }
@@ -104,6 +106,9 @@ function mouseMove(e) {
         if (isDrag) {
 
             setStartTo( toSkixels(topOffset-my) * width + startOffset )
+            if(!dragWidth) {
+                xOffset = Math.min(sideOffset - toSkixels((leftOffset-mx)),0)
+            }
         }
     }
     else if (activeTool == "Select") {

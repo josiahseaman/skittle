@@ -43,9 +43,9 @@ def graph(request, genome="hg19",chromosome="chrY-sample"):
 
 def state(request):
 	json = '''graphStatus = {
-        "a":{name:"Annotations",visible:false,fn:"drawAnnotations",isRasterable:true},
-        "n":{name:"Nucleotide Display",visible:true,fn:"drawNucDisplay",isRasterable:true},
-        "b":{name:"Nucleotide Bias",visible:false,fn:"drawNucBias",isRasterable:false},
-        "m":{name:"Repeat Map",visible:false,fn:"drawRMap",isRasterable:false}
+        "a":{name:"Annotations",visible:false,isRasterable:true},
+        "n":{name:"Nucleotide Display",visible:true,isRasterable:true},
+        "b":{name:"Nucleotide Bias",visible:false,isRasterable:false},
+        "m":{name:"Repeat Map",visible:false,isRasterable:false}
     }'''
 	return HttpResponse(json,content_type="application/json")

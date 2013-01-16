@@ -1,7 +1,6 @@
 from django.conf.urls import patterns, url
 
 from SkittleCore import views
-import SkittleRequestHandler
 
 urlpatterns = patterns('',
     url(r'^(?P<genome>\w+)/(?P<chromosome>[a-zA-Z0-9\-]+)/$', views.index, name='index'),

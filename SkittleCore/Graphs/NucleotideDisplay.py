@@ -6,7 +6,7 @@ from SkittleGraphTransforms import chunkUpList, normalizeDictionary, countListTo
 from SkittleCore.models import StatePacket
 from SkittleCore.GraphRequestHandler import registerGraph
 
-registerGraph("Nucleotide Display", __name__)
+registerGraph('n',"Nucleotide Display", __name__, True)
     
 def calculateOutputPixels(state):
     assert isinstance(state, StatePacket) 
