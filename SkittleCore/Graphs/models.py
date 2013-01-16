@@ -24,10 +24,10 @@ class HighlighterState(ParentState):
             default = SequenceEntry()
             default.ownerGraph = self
         return SequenceEntry.objects.filter(ownerGraph = self)
-        
     
     def __str__(self):
         return "Search other strand: "+ str(self.searchReverseComplement) + "   Sequences: "+ str(self.targetSequenceEntries)
+    
     
 '''This class contains all the state information specific exclusively to Repeat Map. 
 This is the link and definition of the settings tab for Repeat Map.
@@ -63,6 +63,6 @@ class SequenceEntry(models.Model):
     ownerGraph = models.ForeignKey(HighlighterState)
     seq = models.CharField(max_length=1000, default='AAAAAAAA')
     minimumPercentage = models.FloatField(default = .8) 
-    color = models.CommaSeparatedIntegerField(max_length=3)
+    color = models.CommaSeparatedIntegerField(max_length=3, default=(0,255,0))
     
             

@@ -47,7 +47,7 @@ def colorCombinedResults(state, highlighterState, results ):
     results = ensureEqualLengths2D(results)
     if not results: return results
     hitCanvas = [0] * len(results[0])#create a large blank canvas to paint on
-    entries = highlighterState.targetSequenceEntries
+    entries = highlighterState.getTargetSequenceEntries()
     for sequenceEntryIndex, searchPageResults in enumerate(results):
         if highlighterState.searchReverseComplement:
             sequenceEntryIndex /= 2
@@ -70,10 +70,10 @@ def calculateOutputPixels(state, highlighterState = HighlighterState()):
     results = [] #2D array containing a screen full of scores per targetSequence 
     for i in range(len( highlighterState.getTargetSequenceEntries() )):
         if len( highlighterState.targetSequenceEntries[i].seq) != 0 :
-            results.append( measureSequenceMatches(state, highlighterState.targetSequenceEntries[i] ) )
+            results.append( measureSequenceMatches(state, highlighterState.getTargetSequenceEntries()[i] ) )
             if highlighterState.searchReverseComplement:
-                current = copy.deepcopy(highlighterState.targetSequenceEntries[i])
-                reverseSettings = SequenceEntry(reverseComplement(current.seq), current.minimumPercentage, current.color)
+                current = copy.deepcopy(highlighterState.getTargetSequenceEntries()[i]) #TODO: this will need work with the new django architecture
+                reverseSettings = SequenceEntry(seq=reverseComplement(current.seq), minimumPercentage=current.minimumPercentage, color=current.color)
                 results.append( measureSequenceMatches(state, reverseSettings ) )
     synthesis = colorCombinedResults(state, highlighterState, results )
     return synthesis
