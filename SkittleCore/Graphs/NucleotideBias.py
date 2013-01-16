@@ -8,7 +8,7 @@ from PixelLogic import *
 from SkittleCore.SkittleRequestHandler import registerGraph
 
 registerGraph("Nucleotide Bias", __name__, False)
-max_bar_width = 4
+max_bar_width = 20
 
 def calculateBiasBarSizes(state):
     order = ['C', 'G', 'A', 'T', 'N']
@@ -41,8 +41,8 @@ def calculateOutputPixels(state):
 #        print barSizes
         colorSeries = map(lambda entry : getColor(state, entry[0]), barSizesPerLine[line])
         bar = drawJustifiedBar(barSizes, colorSeries, max_bar_width)
-        print bar
-        outputPixels += bar
+#        print bar
+        outputPixels.append( bar )
     return outputPixels
 
 if __name__ == '__main__':

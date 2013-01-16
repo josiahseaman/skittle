@@ -46,18 +46,21 @@ def calculatePixels(state):
         results = graphModule.calculateOutputPixels(state)
     return results
 
-def checkForGreyscale(pixels):
-    return type(pixels[0][1]) == type(0.5)
+def checkForGreyscale(state):
+    grayGraph = ['m', 'o']
+    return state.requestedGraph in grayGraph  
 
 def convertToPng(state, pixels):
     targetWidth = 1024
-    greyscale = checkForGreyscale(pixels)
+    greyscale = checkForGreyscale(state)
     print "GreyScale: ", greyscale
     f = open(state.getPngFilePath(), 'wb')
     if greyscale:
-#        p = flattenImage(pixels, len(pixels[0]))
         p = multiplyGreyscale(pixels, 255)
-        w = png.Writer(len(pixels[0]), len(p), greyscale=True)
+        w = png.Writer(len(p[0]), len(p), greyscale=True)
+    elif state.requestedGraph == 'b':   #Nucleotide Bias
+        p = flattenImage(pixels, len(pixels[0]), True, 4)
+        w = png.Writer(len(p[0])/4, len(p), greyscale=False, alpha=True)
     else:
         p = flattenImage(pixels, targetWidth)
         w = png.Writer(targetWidth, 64)
@@ -66,13 +69,19 @@ def convertToPng(state, pixels):
     f = open(state.getPngFilePath(), 'rb').read() #return the binary contents of the file
     return f
 
-def flattenImage(pixels, targetWidth, isColored = True):
+def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3):
+    if isinstance(pixels[0], list):#TODO: something about hasDepth
+        return reduce(lambda x,y: x + flattenImage(y, targetWidth, isColored, nChannels), pixels, [])
     p = []
     newline = []
-    #TODO: something about hasDepth
     for color in pixels:
-        newline += color
-        if len(newline) >= targetWidth * 3: #assumes 3 channels
+        if color is None:
+            newline += (0,) * nChannels
+        elif nChannels == 4:
+            newline += color + (255,) #alpha
+        else: 
+            newline += color
+        if len(newline) >= targetWidth * nChannels: 
             p.append(newline)
             newline = []
     return p    
