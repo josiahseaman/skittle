@@ -33,6 +33,7 @@ var init = function() {
     }
 
     $(window).resize(function() {
+        calcSkixelsOnScreen();
         updateEnd();
     });
 }
@@ -42,25 +43,20 @@ var imageRequestor = function(graph,chunkOffset) {
         imageObj[graph] = []
     }
     if (imageObj[graph]) {
-        // console.log(imageObj[graph])
-        if (imageObj[graph][chunkOffset] 
-            && imageObj[graph][chunkOffset].src == (window.location.href.match(/^[^\#\?]+/)[0] + graphURL(graph,chunkOffset))) {
-            return imageObj[graph][chunkOffset]
-        }
-        else {
+        var graphPath = graphURL(graph,chunkOffset)
+        if (!imageObj[graph][chunkOffset] || imageObj[graph][chunkOffset].source != graphPath) {
             imageObj[graph][chunkOffset] = new Image();
-            imageObj[graph][chunkOffset].src = graphURL(graph,chunkOffset);
+            imageObj[graph][chunkOffset].source = graphPath;
+            imageObj[graph][chunkOffset].src = graphPath;
             imageObj[graph][chunkOffset].onload = function() { // causes a little bit of jitter when scrolling
                 isInvalidDisplay = true
             }
             imageObj[graph][chunkOffset].onerror = function() {
                 console.log('not a valid filename')
             }
-            return imageObj[graph][chunkOffset]
         }
     }
-    console.log('hi')
-    return imageND
+    return imageObj[graph][chunkOffset]
 }
 var graphURL = function(graph,chunkOffset) {
     var startChunk = ( ( Math.floor(start/(65536*scale) ) + chunkOffset )*65536*scale + 1 );
@@ -95,12 +91,13 @@ var drawGraphs = function() {
     c.drawImage(b.canvas, 0, 0);
 }
 var drawAnnotations = function(offset) {
-    b.drawImage(imageAnnotations,offset,Math.round(-start/width + 8))
+    var imageObj = imageRequestor('a',0)
+    b.drawImage(imageObj,offset,Math.round(-start/width + 8))
 
-    return calculateOffsetWidth(imageRMap.width)
+    return calculateOffsetWidth(imageObj.width)
 }
 var drawNucDisplay = function(offset) {
-    var chunks = toSkixels($('#canvasContainer').height()*width)/65536 + 1
+    var chunks = Math.ceil(Math.min(skixelsOnScreen/65536 + 1,(fileLength-start)/65536))
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor("n",i)
         if(!imageObj.complete) imageObj = imageUnrendered;
@@ -129,18 +126,30 @@ var drawNucBias = function(offset) {
     var imageObj = imageRequestor('b',0)
     b.drawImage(imageObj,offset,Math.round(-start/width + 8))
 
-    return calculateOffsetWidth(imageRMap.width)
+    return calculateOffsetWidth(imageObj.width)
 }
 var drawRMap = function(offset) {
-    var chunks = toSkixels($('#canvasContainer').height())/(65536/width) + 1
+    var fOffset = 0
+    var fWidth = 61
+    var chunks = Math.ceil(Math.min(skixelsOnScreen/65536 + 1,(fileLength-start)/65536))
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor("m",i)
         if(!imageObj.complete) imageObj = imageUnrendered;
         var vOffset = 8 - Math.round((start%65536)/(width*scale) - i*(65536/width));
-        b.drawImage(imageObj,offset,vOffset,61,(65536/width)) // render data on hidden canvas
+        b.drawImage(imageObj,offset,vOffset,fWidth,(65536/width)) // render data on hidden canvas
     }
-
-    return calculateOffsetWidth(61)
+    
+    if (width<(fWidth-fOffset)) { //draw the red lines
+        var widthPosition = offset+width-fOffset;
+        b.beginPath();
+        b.moveTo(widthPosition-1.5,0)
+        b.lineTo(widthPosition-1.5,500)
+        b.moveTo(widthPosition+0.5,0)
+        b.lineTo(widthPosition+0.5,500)
+        b.strokeStyle = "#f00"
+        b.stroke();
+    }
+    return calculateOffsetWidth(fWidth)
 }
 
 

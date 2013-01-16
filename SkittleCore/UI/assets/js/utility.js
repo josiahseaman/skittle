@@ -7,3 +7,6 @@ var toSkixels = function(pixels) {
 var toPixels = function(skixels) {
     return Math.round(skixels*3*zoom);
 }
+var calcSkixelsOnScreen = function() {
+    skixelsOnScreen = toSkixels($('#canvasContainer').height())*width;
+}

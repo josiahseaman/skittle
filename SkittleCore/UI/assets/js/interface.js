@@ -234,14 +234,14 @@ var updateStart = function() {
 }
 var UIendChange = function(newEnd) {
     if (isNaN(newEnd / 1) == false) { // check if this is really just a number
-        setStartTo(newEnd - ( toSkixels($('#canvasContainer').height()-25-37)*width - 1 )*scale)
+        setStartTo(newEnd - ( skixelsOnScreen - (25+37)*width - 1 )*scale)
     }
     else {
         console.log('End index input is not a valid number')
     }
 }
 var updateEnd = function() {
-    $('#endDisplay').text(Math.round( start + (toSkixels($('#canvasContainer').height()-25-37)*width - 1)*scale ))
+    $('#endDisplay').text(Math.round( start + (skixelsOnScreen - (25+37)*width - 1)*scale ))
 }
 
 // setters and setter utilities
@@ -250,8 +250,8 @@ var setStartTo = function(newStart) {
     if (newStart < 1) {
         start = 1;
     }
-    else if (newStart >1400001) {
-        start = 1400001;
+    else if (newStart > fileLength/2 && newStart > (fileLength - (skixelsOnScreen - (25+37)*width)*scale/2)) {
+        start = fileLength - (skixelsOnScreen - (25+37)*width)*scale/2;
     }
     else {
         start = Math.round(newStart); // don't allow non-integer starts
@@ -268,6 +268,7 @@ var setWidthTo = function(newWidth) {
     else {
         width = Math.round(newWidth); // don't allow non-integer widths
     }
+    calcSkixelsOnScreen();
     isInvalidDisplay = true;
 }
 var changeWidthBy = function(delta) {
@@ -286,5 +287,5 @@ var changeStartByLines = function(deltaLines) {
     setStartTo(start + deltaLines*width)
 }
 var goToEnd = function() {
-    setStartTo(100000000)
+    setStartTo(fileLength)
 }

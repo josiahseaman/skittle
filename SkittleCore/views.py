@@ -13,7 +13,8 @@ def index(request, genome="",chromosome=""):
     start = request.GET.get('start',1)
     zoom = request.GET.get('zoom',1)
     graphs = request.GET.get('graphs',"n")
-    context = {'genome':genome,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs}
+    fileLength = 721000
+    context = {'genome':genome,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength}
     return render(request, 'index.html',context)
 
 @cache_control(must_revalidate=False, max_age=3600)

@@ -7,7 +7,9 @@
 	<style type="text/css">
 
 	</style>
-
+<!--[if lt IE 9]>
+    <script src="{{STATIC_URL}}js/excanvas.js"></script>
+<![endif]-->
 	<script src="/browse/state.json"></script>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 	<script src="{{STATIC_URL}}js/utility.js"></script>
@@ -102,19 +104,14 @@
     width = {{ width }};
     scale = {{ scale }};
     zoom  = {{ zoom }};
-
-    // var graphStatus = {
-    //     "a":{name:"Annotations",visible:false,fn:"drawAnnotations",isRasterable:true},
-    //     "n":{name:"Nucleotide Display",visible:true,fn:"drawNucDisplay",isRasterable:true},
-    //     "b":{name:"Nucleotide Bias",visible:false,fn:"drawNucBias",isRasterable:false},
-    //     "m":{name:"Repeat Map",visible:false,fn:"drawRMap",isRasterable:false}
-    // }
+    fileLength = {{ fileLength }};
+    skixelsOnScreen = toSkixels($('#canvasContainer').height())*width;
 
     // if graphs are specified in the url set their visibility
     var initialGraphs = "{{ graphs }}".split('')
     for (var key in graphStatus) {
-    	if ($.inArray(key,initialGraphs)>=0) graphStatus[key].visible = true
-    	else graphStatus[key].visible = false
+    	if ($.inArray(key,initialGraphs)>=0) showGraph(key)
+    	else hideGraph(key)
     }
 
     imageUnrendered = new Image()
