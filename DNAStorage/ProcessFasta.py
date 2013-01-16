@@ -1,4 +1,5 @@
 import sys, os, os.path, re
+from models import FastaFiles, FastaChunkFiles
 
 #Take a fasta file, split it and sort it into the correct folders
 def splitAndSort(file, storageLocation, workingLocation):
@@ -22,6 +23,18 @@ def splitAndSort(file, storageLocation, workingLocation):
     if not os.path.isdir(filePath):
         os.makedirs(filePath)
         os.makedirs(filePath.replace("fasta", "png"))
+        
+    #Begin setting up the FastaFile object for the database
+    fastaFile = FastaFiles()
+    fastaFile.Specimen = taxonomic[4]
+    fastaFile.Chromosome = taxonomic[5]
+    fastaFile.Species = taxonomic[3]
+    fastaFile.Genus = taxonomic[2]
+    fastaFile.Class = taxonomic[1]
+    fastaFile.Kingdom = taxonomic[0]
+    
+    #Array of fasta chunks
+    fastaChunks = list()
     
     #Remove first line if needed and depending on OS
     if os.name == "posix":
@@ -60,6 +73,10 @@ def splitAndSort(file, storageLocation, workingLocation):
                         writePath = os.path.join(filePath, str(fCount) + ".fasta")
                         write = open(writePath, 'wb')
                         write.write(chunk.upper())
+                        #Add this chunk to the list of chunks
+                        newChunk = FastaChunkFiles()
+                        newChunk.start = fCount
+                        fastaChunks.append(newChunk)
                         chunk = ""
                         fCount += cCount
                         cCount = 0
@@ -68,6 +85,14 @@ def splitAndSort(file, storageLocation, workingLocation):
         writePath = os.path.join(filePath, str(fCount) + ".fasta")
         write = open(writePath, 'wb')
         write.write(chunk)
+        fastaFile.Length = fCount + cCount - 1
+        
+    #Save fasta file to database then populate chunks with foreign keys and save
+    fastaFile.save()
+    
+    for fa in fastaChunks:
+        fa.FastaFile = fastaFile
+        fa.save()
 
 #----------------------------------------------------------------------------------------
 #CD into the folder where this file is located as it should be the DNAStorage folder
