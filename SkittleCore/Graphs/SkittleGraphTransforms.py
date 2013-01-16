@@ -2,7 +2,7 @@
 Created on Nov 29, 2012
 @author: Josiah Seaman 
 '''
-import numpy
+#import numpy
 import math
 from numbers import Number
 from models import RepeatMapState
@@ -181,32 +181,32 @@ def pearsonCorrelation(x, y):
     assert isinstance(x[0], Number), x[0]
     avg_x = average(x)
     avg_y = average(y)
-    diffprod = 0
-    xdiff2 = 0
-    ydiff2 = 0
+    diffprod = 0.0
+    xdiff2 = 0.0
+    ydiff2 = 0.0
     for idx in range(n):
-        xdiff = x[idx] - avg_x
-        ydiff = y[idx] - avg_y
+        xdiff = float(x[idx]) - avg_x
+        ydiff = float(y[idx]) - avg_y
         diffprod += xdiff * ydiff
         xdiff2 += xdiff * xdiff
         ydiff2 += ydiff * ydiff
     backup = math.sqrt(1 - (1/n)) #if we have 0 instances of a color it will be / 0  div0
-    if(xdiff2 == 0): xdiff2 = backup
-    if(ydiff2 == 0): ydiff2 = backup
+    if(xdiff2 == 0.0): xdiff2 = backup
+    if(ydiff2 == 0.0): ydiff2 = backup
     base = math.sqrt(xdiff2 * ydiff2)
     return diffprod / base
 
 '''Pearson correlation coefficient between signals x and y.
 Thanks to http://stackoverflow.com/users/34935/dfrankow for the definition'''
 def fastPearsonCorrelation(data, beginA, beginB, n):
-    avg_x = 63#average(data, beginA, n)
-    avg_y = 63#average(data, beginB, n)
-    diffprod = 0
-    xdiff2 = 0
-    ydiff2 = 0
+    avg_x = 63.0#average(data, beginA, n)
+    avg_y = 63.0#average(data, beginB, n)
+    diffprod = 0.0
+    xdiff2 = 0.0
+    ydiff2 = 0.0
     for idx in range(n):
-        xdiff = data[idx + beginA] - avg_x
-        ydiff = data[idx + beginB] - avg_y
+        xdiff = float(data[idx + beginA]) - avg_x
+        ydiff = float(data[idx + beginB]) - avg_y
         diffprod += xdiff * ydiff
         xdiff2 += xdiff * xdiff
         ydiff2 += ydiff * ydiff
@@ -238,8 +238,8 @@ def slowCorrelate(floatList, beginA, beginB, comparisonLength):
     B = floatList[beginB: beginB + comparisonLength]
     if len(A) == len(B):
         if len(A) != 0:
-            numpy.correlate(A, B, mode='same')
-#            return pearsonCorrelation(A, B)
+#            numpy.correlate(A, B, mode='same')
+            return pearsonCorrelation(A, B)
         else:
             return 0
     else:
@@ -261,7 +261,7 @@ def correlationMap( state, repeatMapState, coloredPixels):
             
             resultSum = 0.0
             for currentChannel in rgbChannels:
-                correlation = slowCorrelate(currentChannel, offset, offset + w + repeatMapState.F_start, pixelsPerSample)
+                correlation = correlate(currentChannel, offset, offset + w + repeatMapState.F_start, pixelsPerSample)
                 if correlation is not None:
                     resultSum += correlation
             resultSum /= 3
