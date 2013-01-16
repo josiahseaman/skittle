@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response,render
 from django.conf import settings 
 from django.http import HttpResponseRedirect, HttpResponse, HttpRequest, QueryDict
 from django.views.decorators.cache import cache_control
-from SkittleCore.SkittleRequestHandler import handleRequest
+from SkittleCore.GraphRequestHandler import handleRequest
 from SkittleCore.models import StatePacket
 from SkittleCore.Graphs.models import *
 import json
