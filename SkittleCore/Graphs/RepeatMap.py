@@ -14,10 +14,30 @@ These are the functions that are specific to the use of RepeatMap and not genera
 These functions use RepeatMapState to emulate an object with state.
 '''
 
+def countMatches(sequence, beginA, beginB, lineSize):
+    matches = 0
+    for index in range(lineSize):
+        if sequence[beginA + index] == sequence[beginB + index]:
+            matches += 1
+    return float(matches) / lineSize
+
+def oldRepeatMap(state, repeatMapState):
+    freq = []
+    lineSize = state.width * state.scale
+    for h in range(repeatMapState.height(state, state.seq)):
+        freq.append([0.0]*(repeatMapState.F_width+1))
+        offset = h * lineSize
+        for w in range(1, len(freq[h])):#calculate across widths 1:F_width
+            freq[h][w] = countMatches(state.seq, offset, offset + w + repeatMapState.F_start, lineSize)
+    return freq
+
 
 def calculateOutputPixels(state, repeatMapState = RepeatMapState()):
     assert isinstance(repeatMapState, RepeatMapState)
     assert isinstance(state, StatePacket)
+    scores = oldRepeatMap(state, repeatMapState)
+    return scores
+    
     pixels = NucleotideDisplay.calculateOutputPixels(state)
     if countDepth(pixels) > 1:
         singleLine = []
@@ -26,7 +46,6 @@ def calculateOutputPixels(state, repeatMapState = RepeatMapState()):
     else:
         singleLine = pixels
     scores = correlationMap(state, repeatMapState, singleLine) #2D array
-    #TODO convert from floating point to grey pixels
     return scores
     
     
