@@ -7,7 +7,7 @@ from SkittleCore.models import StatePacket
 from models import HighlighterState, SequenceEntry
 from SkittleGraphTransforms import reverseComplement, calculatePerCharacterMatch
 import copy
-from SkittleCore.SkittleRequestHandler import registerGraph
+from SkittleCore.GraphRequestHandler import registerGraph
 
 registerGraph("Sequence Highlighter", __name__)
 

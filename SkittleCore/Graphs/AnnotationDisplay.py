@@ -5,7 +5,7 @@ Created on Dec 19, 2012
 '''
 from SkittleCore.models import StatePacket
 from PixelLogic import randomColor, blankColor
-from SkittleCore.SkittleRequestHandler import registerGraph
+from SkittleCore.GraphRequestHandler import registerGraph
 
 registerGraph("Annotation Display", __name__)
 

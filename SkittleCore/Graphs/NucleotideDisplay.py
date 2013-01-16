@@ -4,7 +4,7 @@ Created on Nov 29, 2012
 '''
 from SkittleGraphTransforms import chunkUpList, normalizeDictionary, countListToColorSpace, sequenceToColors, countNucleotides
 from SkittleCore.models import StatePacket
-from SkittleCore.SkittleRequestHandler import registerGraph
+from SkittleCore.GraphRequestHandler import registerGraph
 
 registerGraph("Nucleotide Display", __name__)
     

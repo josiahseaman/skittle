@@ -7,7 +7,7 @@ from SkittleCore.models import StatePacket
 from models import OligomerUsageState
 from SkittleGraphTransforms import chunkUpList, countNucleotides,\
     normalizeDictionary, generateExhaustiveOligomerList, oligCountToColorSpace
-from SkittleCore.SkittleRequestHandler import registerGraph
+from SkittleCore.GraphRequestHandler import registerGraph
 
 registerGraph("Oligomer Usage", __name__, False)
 
