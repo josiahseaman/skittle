@@ -1,2 +1,7 @@
-South Django Database Migration:
-    easy_install South
+Evolution Django Database Migration:
+    easy_install -U django_evolution
+    
+    DROP DATABASE `SkittleTree`;
+    CREATE DATABASE SkittleTree;
+    python manage.py syncdb
+    python manage.py evolve --hint --execute

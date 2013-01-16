@@ -10,9 +10,6 @@ static/*
 media/*
 DNAStorage/fasta/*
 DNAStorage/png/*
-DNAStorage/migrations/
-SkittleCore/migrations/
-SkittleCore/Graphs/migrations/
 
 #################
 ## Eclipse
