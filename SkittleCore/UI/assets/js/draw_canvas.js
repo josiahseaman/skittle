@@ -82,7 +82,7 @@ var drawGraphs = function() {
     for (key in graphStatus) {
         if (graphStatus[key].visible) {
             graphStatus[key].skixelOffset = offset;
-            var skixelWidthofGraph = graphStatus[key].skixelWidth = eval( graphStatus[key].fn + "(" + offset + ")" );
+            var skixelWidthofGraph = graphStatus[key].skixelWidth = drawGraph(key,offset);
             offset = offset + skixelWidthofGraph;
             $('#graphLabel-' + key).width( Math.max( (toPixels(skixelWidthofGraph)), minimumWidth ) );
         }
@@ -91,6 +91,18 @@ var drawGraphs = function() {
     c.clearRect(0,0,2000,1000) // render on visible canvas (which has scale applied)
     c.drawImage(b.canvas, 0, 0);
 }
+
+var drawGraph = function(graph,offset) {
+    switch (graph) {
+        case "n": return drawNucDisplay(offset);
+        case "b": return drawNucBias(offset);
+        case "m": return drawRMap(offset);
+        default: 
+            console.log("Requested graph does not have a cooresponding javascript function")
+            return 0;
+    }
+}
+
 var drawAnnotations = function(offset) {
     var imageObj = imageRequestor('a',0)
     b.drawImage(imageObj,offset,Math.round(-start/width + 8))
