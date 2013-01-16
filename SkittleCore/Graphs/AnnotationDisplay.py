@@ -6,6 +6,7 @@ Created on Dec 19, 2012
 from SkittleCore.models import StatePacket
 from PixelLogic import randomColor, blankColor
 from SkittleCore.GraphRequestHandler import registerGraph
+from models import AnnotationDisplayState
 
 registerGraph('a',"Annotation Display", __name__, False)
 
@@ -53,7 +54,7 @@ def layoutParallelTracks(state, annotations):
         
     return pixels
 
-def calculateOutputPixels(state, annotationState):
+def calculateOutputPixels(state, annotationState = AnnotationTrackState()):
     #get annotations from state
     annotations = annotationState.getSortedAnnotation()    #annotations should already be sorted
     #layout annotations considering overlap

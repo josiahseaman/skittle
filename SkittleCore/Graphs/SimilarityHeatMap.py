@@ -22,7 +22,7 @@ def prettyPrint(heatMap):
                 print 'N', ', ',
     print #newline
 
-def calculateOutputPixels(state, heatMapState):
+def calculateOutputPixels(state, heatMapState = SimilarityHeatMapState()):
     oligVectors = OligomerUsage.calculateOutputPixels(state, heatMapState)
     heatMap = [[None for x in range(len(oligVectors))] for y in range(len(oligVectors))]
     

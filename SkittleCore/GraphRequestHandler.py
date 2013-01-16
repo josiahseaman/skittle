@@ -21,9 +21,9 @@ import Graphs.NucleotideDisplay
 import Graphs.NucleotideBias
 import Graphs.RepeatMap
 import Graphs.OligomerUsage
+import Graphs.SequenceHighlighter
 import Graphs.SimilarityHeatMap
 import Graphs.ThreeMerDetector
-import Graphs.SequenceHighlighter
 '''Finally, X = __import__('X') works like import X, with the difference that you 
 1) pass the module name as a string, and 2) explicitly assign it to a variable in your current namespace.'''
 
@@ -60,10 +60,10 @@ def convertToPng(state, pixels):
     if greyscale:
         p = multiplyGreyscale(pixels, 255)
         w = png.Writer(len(p[0]), len(p), greyscale=True)
-    elif state.requestedGraph == 'b':   #Nucleotide Bias
+    elif not isRasterGraph(state):   #Nucleotide Bias
         p = flattenImage(pixels, len(pixels[0]), True, 4)
         w = png.Writer(len(p[0])/4, len(p), greyscale=False, alpha=True)
-    else:
+    else: #raster, color graphs
         p = flattenImage(pixels, targetWidth)
         w = png.Writer(targetWidth, 64)
     w.write(f, p)
@@ -101,6 +101,10 @@ def handleRequest(state):
         pixels = calculatePixels(state)
         png = convertToPng(state, pixels)
     return png
+
+def isRasterGraph(state):
+    graphDescription = parseActiveGraphString(state)
+    return graphDescription[3]
 
 def multiplyGreyscale(p, greyMax = 255):
     for index, line in enumerate(p):

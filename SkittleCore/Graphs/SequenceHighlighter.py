@@ -65,7 +65,7 @@ def colorCombinedResults(state, highlighterState, results ):
                     
     return hitColors
 
-def calculateOutputPixels(state, highlighterState):
+def calculateOutputPixels(state, highlighterState = HighlighterState()):
     assert isinstance(highlighterState, HighlighterState)
     results = [] #2D array containing a screen full of scores per targetSequence 
     for i in range(len( highlighterState.getTargetSequenceEntries() )):
@@ -78,9 +78,4 @@ def calculateOutputPixels(state, highlighterState):
     synthesis = colorCombinedResults(state, highlighterState, results )
     return synthesis
 
-if __name__ == '__main__':
-    state = StatePacket()
-    state.seq = 'AAAAGGGGTATATATATATATGGGATAAAGCCCCC'
-    highlighterState = HighlighterState()
-    print calculateOutputPixels(state, highlighterState)
     
