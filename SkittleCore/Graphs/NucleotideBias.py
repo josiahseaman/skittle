@@ -13,8 +13,7 @@ max_bar_width = 20
 def calculateBiasBarSizes(state):
     order = ['C', 'G', 'A', 'T', 'N']
     tempWidth = state.width
-    genome = state.seq[state.start : state.start + state.length]
-    lines = chunkUpList(genome, tempWidth )
+    lines = chunkUpList(state.seq, tempWidth )
     countsPerLine = countNucleotides(lines, 1)
     barLengthsPerLine = []
     for h in range( len(countsPerLine) ):#once per line
@@ -44,11 +43,6 @@ def calculateOutputPixels(state):
 #        print bar
         outputPixels.append( bar )
     return outputPixels
-
-if __name__ == '__main__':
-    state = StatePacket()
-    state.seq = 'ACGTACGTAAAACCCCGGGGTTTT'
-    print calculateOutputPixels(state)
     
     
     
