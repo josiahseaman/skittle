@@ -23,6 +23,8 @@ def readFile(state):
     try:
         filePath = StorageRequestHandler.GetFastaFilePath(state.specimen, state.chromosome, state.start)
         print "opening file " , filePath
+        if not filePath:
+            return None
         rawFile = open(filePath, 'r')
         print 'Opened File'
 
