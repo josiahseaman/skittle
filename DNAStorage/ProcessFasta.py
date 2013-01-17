@@ -1,5 +1,6 @@
 import sys, os, os.path, re
 from models import FastaFiles, FastaChunkFiles
+from StorageRequestHandler import HasFastaFile
 
 #Take a fasta file, split it and sort it into the correct folders
 def splitAndSort(file, storageLocation, workingLocation):       
@@ -16,6 +17,12 @@ def splitAndSort(file, storageLocation, workingLocation):
     
     if len(taxonomic) != 6:
         raise IOError("Error! File " + fileName + " in to_import is not validly named!")
+        
+    #Check to see if this specific file has already been split up and is stored in the system
+    if HasFastaFile(taxonomic[4], taxonomic[5]):
+        print "This sample is already stored in the system!"
+        return False
+    print "Entering this sample into the system..."
     
     filePath = os.path.join(storageLocation)
     for sub in taxonomic:
@@ -75,7 +82,7 @@ def splitAndSort(file, storageLocation, workingLocation):
                         write.write(chunk.upper())
                         #Add this chunk to the list of chunks
                         newChunk = FastaChunkFiles()
-                        newChunk.start = fCount
+                        newChunk.Start = fCount
                         fastaChunks.append(newChunk)
                         chunk = ""
                         fCount += cCount
@@ -85,6 +92,9 @@ def splitAndSort(file, storageLocation, workingLocation):
         writePath = os.path.join(filePath, str(fCount) + ".fasta")
         write = open(writePath, 'wb')
         write.write(chunk)
+        newChunk = FastaChunkFiles()
+        newChunk.Start = fCount
+        fastaChunks.append(newChunk)
         fastaFile.Length = fCount + cCount - 1
         
     #Save fasta file to database then populate chunks with foreign keys and save
@@ -93,11 +103,14 @@ def splitAndSort(file, storageLocation, workingLocation):
     for fa in fastaChunks:
         fa.FastaFile = fastaFile
         fa.save()
+        
+    return True
 
 #----------------------------------------------------------------------------------------
 def run():
     #CD into the folder where this file is located as it should be the DNAStorage folder
     workingDir = os.path.realpath(__file__).replace("\\", "/")
+    workingDir = re.sub('/ProcessFasta\.pyc', '', workingDir)
     workingDir = re.sub('/ProcessFasta\.py', '', workingDir)
     os.chdir(workingDir)
 

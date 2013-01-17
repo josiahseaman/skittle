@@ -1,3 +1,5 @@
+To import all .fa and .fasta files in the "DNAStorage/to_import" folder, run "manage.py ImportFasta"
+
 ====================APACHE COMPILE SETTINGS====================
 apt-get install apache2-mpm-worker libapache2-mod-fcgid
 ./buildconf
