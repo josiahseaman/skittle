@@ -8,6 +8,7 @@ from SkittleCore.models import StatePacket
 import RepeatMap
 from SkittleCore.GraphRequestHandler import registerGraph
 from models import ThreeMerDetectorState
+from PixelLogic import drawBar
 
 registerGraph('t', "Threemer Detector", __name__, False)
     
@@ -20,6 +21,18 @@ def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
     repeatMapState.F_width = threeMerState.samples * 3
     scores = RepeatMap.calculateOutputPixels(state, repeatMapState)
     threemer_scores = sensitiveTestForSpecificFrequency(scores, 3, threeMerState.samples)
+    
+    outputPixels = []
+    for size in threemer_scores:
+        barSize = int(size * threeMerState.barWidth)
+        barColor = (255, 0, 255)
+        if size > 0.5:
+            barColor = (0,255,0)
+        bar = drawBar(barSize, int(threeMerState.barWidth- barSize), barColor, False)
+        outputPixels.append( bar )
+    return outputPixels
+    
+    
     
     return threemer_scores
 

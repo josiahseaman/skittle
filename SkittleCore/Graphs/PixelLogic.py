@@ -113,7 +113,20 @@ def drawJustifiedBar(barSizes, colorSeries, max_bar_width ):
     assert len(line) == max_bar_width * math.ceil( len(barSizes)/2.0), "Result %i shoulld be %i." % (len(line), max_bar_width * math.ceil( len(barSizes)/2.0))
     return line
 
+def hasDepth(listLike):
+    try:
+        return len(listLike) > 0 and not isinstance(listLike, (str,dict, tuple, type(u"unicode string"))) and hasattr(listLike[0], "__getitem__") 
+    except:
+        return False
 
-
-if __name__ == '__main__':
-    pass
+def twoSidedSpectrumColoring(floatList):
+    if hasDepth(floatList):
+        return map(lambda x: twoSidedSpectrumColoring(x), floatList)
+    pixels = []
+    for score in floatList:
+        if score > 0.0:
+            pixels.append((int(255*score),0,0))
+        else:
+            pixels.append((0,0, int(255*abs(score))))
+        
+    return pixels
