@@ -24,6 +24,7 @@ import Graphs.OligomerUsage
 import Graphs.SequenceHighlighter
 import Graphs.SimilarityHeatMap
 import Graphs.ThreeMerDetector
+from Graphs.SkittleGraphTransforms import hasDepth
 '''Finally, X = __import__('X') works like import X, with the difference that you 
 1) pass the module name as a string, and 2) explicitly assign it to a variable in your current namespace.'''
 
@@ -49,8 +50,8 @@ def calculatePixels(state):
     return results
 
 def checkForGreyscale(state):
-    grayGraph = ['m', 'o']
-    return state.requestedGraph in grayGraph  
+    grayGraph = ['m', 'o', 's', 't']
+    return state.requestedGraph in grayGraph
 
 def convertToPng(state, pixels):
     targetWidth = 1024
@@ -68,28 +69,43 @@ def convertToPng(state, pixels):
         w = png.Writer(targetWidth, 64)
     w.write(f, p)
     f.close()
-    f = open(state.getPngFilePath(), 'rb').read() #return the binary contents of the file
-    return f
+    data = open(state.getPngFilePath(), 'rb').read() #return the binary contents of the file
+    return data
 
-def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3):
-    if hasattr(pixels, '__getitem__') and len(pixels) != 0: 
-        if isinstance(pixels[:1], list):#TODO: something about hasDepth
-            return reduce(lambda x,y: x + flattenImage(y, targetWidth, isColored, nChannels), pixels, [])
-    else:
-        return pixels
+def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3, depth = 0):
+#    if isinstance(pixels, list) and len(pixels) != 0:
+##        return map(lambda x: flattenImage(x, targetWidth, isColored, nChannels, depth+1), pixels) 
+#        if isinstance(pixels[:1], list):#TODO: something about hasDepth
+#            return reduce(lambda x,y: x + flattenImage(y, targetWidth, isColored, nChannels), pixels, [])
+#        else:
+#            return pixels
+#    else:
+#        return pixels
+    pixels = squishImage(pixels)
+    
     p = []
     newline = []
     for color in pixels:
         if color is None:
             newline += (0,) * nChannels
         elif nChannels == 4:
-            newline += color + (255,) #alpha
+            newline += color 
+            newline += (255,) #alpha
         else: 
             newline += color
         if len(newline) >= targetWidth * nChannels: 
             p.append(newline)
             newline = []
-    return p    
+    return p
+
+def squishImage(pixels):
+    if isinstance(pixels, list):
+        if isinstance(pixels[0], list):
+            return reduce(lambda x,y: x + squishImage(y), pixels, [])
+        else:
+            return pixels
+    else:
+        return pixels
 
 '''The main entry point for the whole Python logic SkittleCore module and Graphs.'''
 def handleRequest(state):
@@ -97,12 +113,12 @@ def handleRequest(state):
     state.start -= 1 #FIRST THING: start index at zero instead of one
     #Check to see if PNG exists
     png = None
-    if state.requestedGraph == 'n':
-        png = tryGetGraphPNG(state)
+#    if state.requestedGraph == 'n':
+#        png = tryGetGraphPNG(state)
     #If it doesn't: grab pixel calculations
     if png is None:
         pixels = calculatePixels(state)
-        print pixels
+        print pixels[:10]
         png = convertToPng(state, pixels)
     return png
 
@@ -112,7 +128,7 @@ def isRasterGraph(state):
 
 def multiplyGreyscale(p, greyMax = 255):
     for index, line in enumerate(p):
-        p[index] = map(lambda x: int(x * greyMax), line)
+        p[index] = map(lambda x: int(max(x,0.0) * greyMax), line)
     return p
     
 def getGraphDescription(state):

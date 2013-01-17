@@ -272,7 +272,7 @@ def correlationMap( state, repeatMapState, coloredPixels):
 if the sum of samples at frequency are greater than the background level.  It then returns the frequency score.
 If there is no difference, this number will be 0.0.  This score is not currently normalized. This method is used
 to find the 3-periodicity bias found in most protein coding sequences.'''        
-def sensitiveTestForSpecificFrequency(floatList, frequency = 3, numberOfSamples = 20):
+def sensitiveTestForSpecificFrequency(floatList, frequency = 3, numberOfSamples = 20.0):
     if hasDepth(floatList):
         return map(lambda x: sensitiveTestForSpecificFrequency(x, frequency, numberOfSamples), floatList)
     assert isinstance(frequency, int), "Please use an integer offset frequency."
@@ -287,7 +287,7 @@ def sensitiveTestForSpecificFrequency(floatList, frequency = 3, numberOfSamples 
     score = 0.0
     for x in range( min( len(mask), len(floatList))):
         if floatList[x] is not None:
-            score += mask[x] * floatList[x]
+            score += (mask[x] * floatList[x]) / float(numberOfSamples)
         #score += min((float)0.5, mask[x] * freq[y][x])//the amount that any position can affect is capped because of tandem repeats with 100% similarity
     return score
 
