@@ -14,7 +14,7 @@ def convertToPng(state, pixels, isRaster = False):
     targetWidth = 1024
     greyscale = checkForGreyscale(state)
     print "GreyScale: ", greyscale
-    filepath = GetPngFilePath(state)
+    filepath = 'temp.png'#GetPngFilePath(state)
     f = open(filepath, 'wb')
     if greyscale:
         p = multiplyGreyscale(pixels, 255)
