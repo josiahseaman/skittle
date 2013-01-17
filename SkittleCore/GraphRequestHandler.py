@@ -96,7 +96,7 @@ class ServerSideGraphDescription():
 def generateGraphListForServer():
     graphs = {}
     for description in availableGraphs:
-        graphs[description[0]] = ServerSideGraphDescription(description[1], description[3])
+        graphs[description[0]] = ServerSideGraphDescription(description[1], description[3]).__dict__
     return graphs
         
         
