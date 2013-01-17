@@ -91,7 +91,7 @@ def splitAndSort(file, storageLocation, workingLocation):
                 break;
         writePath = os.path.join(filePath, str(fCount) + ".fasta")
         write = open(writePath, 'wb')
-        write.write(chunk)
+        write.write(chunk.upper())
         newChunk = FastaChunkFiles()
         newChunk.Start = fCount
         fastaChunks.append(newChunk)
