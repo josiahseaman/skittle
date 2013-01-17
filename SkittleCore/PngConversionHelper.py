@@ -22,7 +22,7 @@ def convertToPng(state, pixels, isRaster = False):
         w = png.Writer(len(p[0])/4, len(p), greyscale=False, alpha=True)
     else: #raster, color graphs
         p = flattenImage(pixels, targetWidth)
-        w = png.Writer(targetWidth, 64)
+        w = png.Writer(targetWidth, len(p))
     w.write(f, p)
     f.close()
     data = open(state.getPngFilePath(), 'rb').read() #return the binary contents of the file
