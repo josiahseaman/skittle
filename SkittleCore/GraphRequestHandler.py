@@ -52,7 +52,7 @@ def calculatePixels(state):
     return results
 
 def checkForGreyscale(state):
-    grayGraph = ['m', 'o', 's', 't']
+    grayGraph = ['m', 'o', 's']
     return state.requestedGraph in grayGraph
 
 def convertToPng(state, pixels):
