@@ -151,7 +151,7 @@ def tryGetGraphPNG(state):
     
 def generateGraphListForServer():
     graphs = {}
-    ServerDescription = namedtuple('GraphDescription', ['name', 'rasterGraph'])
+    ServerDescription = namedtuple('ServerGraphDescription', ['name', 'rasterGraph'])
     for description in availableGraphs:
         graphs[description[0]] = ServerDescription(description[1], description[3])
     return graphs
