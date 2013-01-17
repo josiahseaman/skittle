@@ -33,7 +33,8 @@ def GetChromosomeLength(specimen, chromosome):
 def GetPngFilePath(state):
     assert isinstance(state, StatePacket)
     specimen, chromosome, graph, start = state.specimen, state.chromosome, state.requestedGraph, state.start 
-    scale = None, charsPerLine = None
+    scale = None
+    charsPerLine = None
     #TODO: determine what other attributes are necessary based on graph
     
     pngFile = ImageFiles.objects.filter(FastaFile__Specimen = specimen, FastaFile__Chromosome = chromosome, Start = start, Scale = scale, CharactersPerLine = charsPerLine)[:1]
