@@ -2,29 +2,33 @@ from django.shortcuts import render_to_response,render
 from django.conf import settings 
 from django.http import HttpResponseRedirect, HttpResponse, HttpRequest, QueryDict
 from django.views.decorators.cache import cache_control
+from django.utils import simplejson
+from SkittleCore import GraphRequestHandler
 from SkittleCore.GraphRequestHandler import handleRequest
 from SkittleCore.models import StatePacket
 from SkittleCore.Graphs.models import *
-import json
+from DNAStorage.StorageRequestHandler import GetChromosomeLength
+# import json
 
-def index(request, genome="",chromosome=""):
+def index(request, specimen="",chromosome=""):
     width = request.GET.get('width',100)
     scale = request.GET.get('scale',1)
     start = request.GET.get('start',1)
     zoom = request.GET.get('zoom',1)
     graphs = request.GET.get('graphs',"n")
-    fileLength = 721000
-    context = {'genome':genome,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength}
+
+    fileLength = GetChromosomeLength(specimen,chromosome) 
+    context = {'availableGraphs':GraphRequestHandler.availableGraphs,'specimen':specimen,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength}
     return render(request, 'index.html',context)
 
 @cache_control(must_revalidate=False, max_age=3600)
-def graph(request, genome="hg19",chromosome="chrY-sample"):
+def graph(request, specimen="hg19",chromosome="chrY-sample"):
     state = StatePacket()
     state.chromosome = chromosome
     if state.chromosome == "chrY-sample":
-        state.genome = "Animalia/Mammalia/Homo/Sapiens/" + genome
+        state.specimen = "Animalia/Mammalia/Homo/Sapiens/" + specimen
     else:
-        state.genome = "Plantae/Angiosperms/Zea/Mays/" + genome
+        state.specimen = "Plantae/Angiosperms/Zea/Mays/" + specimen
 
     state.start = int(request.GET.get('start',1))
     state.width = int(request.GET.get('width',100))
@@ -42,10 +46,13 @@ def graph(request, genome="hg19",chromosome="chrY-sample"):
     return HttpResponse(image_data, content_type="image/png")
 
 def state(request):
-	json = '''graphStatus = {
+    json = '''graphStatus = {
         "a":{name:"Annotations",visible:false,isRasterable:true},
         "n":{name:"Nucleotide Display",visible:true,isRasterable:true},
         "b":{name:"Nucleotide Bias",visible:false,isRasterable:false},
         "m":{name:"Repeat Map",visible:false,isRasterable:false}
-    }'''
-	return HttpResponse(json,content_type="application/json")
+    }''' 
+    json = "graphStatus = " + simplejson.dumps(GraphRequestHandler.generateGraphListForServer())
+    json += ";graphOrder = ['a','n','b','t','m','s','h','o'];"
+    return HttpResponse(json,content_type="application/json")
+

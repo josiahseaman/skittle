@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>{{ genome }} WebSkittle Mockup</title>
+	<title>{{ specimen }} WebSkittle Mockup</title>
 
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/popover.css">
@@ -27,11 +27,9 @@
 	    <canvas id="c" width="2000" height="1000"></canvas>
 		<div id="graph-labels">
 			<ul>
-				<li id="graphLabel-a" style="width:159px;">Annotations <img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton"></li>
-				<li id="graphLabel-c" style="width:76px;">Alignment Cylinder <img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton"></li>
-				<li id="graphLabel-n" style="width:320px;display:block;" class="widthBased">Nucleotide Display <img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton"></li>
-				<li id="graphLabel-b" style="width:410px;">Nucleotide Bias <img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton"></li>
-				<li id="graphLabel-m" style="width:640px;">Repeat Map <img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton"></li>
+			{% for graph in availableGraphs %}
+				<li id="graphLabel-{{ graph.symbol }}" style="width:159px;">{{ graph.name }} <img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton"></li>
+			{% endfor %}
 			</ul>
 		</div>
 	</div>
@@ -83,16 +81,15 @@
 
 	<div class="popover arrow-left-top" id="graphList">
 		<ul>
-			<li><input type="checkbox" id="showGraph-a" name="showGraphA"><label for="showGraphA">Annotations</label></li>
-			<li><input type="checkbox" id="showGraph-n" name="showGraphND" checked="checked"><label for="showGraphND">Nucleotide Display</label></li>
-			<li><input type="checkbox" id="showGraph-b" name="showGraphNB"><label for="showGraphA">Nucleotide Bias</label></li>
-			<li><input type="checkbox" id="showGraph-m" name="showGraphRM"><label for="showGraphRM">Repeat Map</label></li>
+			{% for graph in availableGraphs %}
+			<li><input type="checkbox" id="showGraph-{{ graph.symbol }}" name="showGraph{{ graph.symbol }}"><label for="showGraph{{ graph.symbol }}">{{ graph.name }}</label></li>
+			{% endfor %}
 		</ul>
 	</div>
 
 
 	<script type="text/javascript">
-    var cc, c, b;
+    var cc, c, b, a;
     var isDrag = false;
     var dragWidth = false;
     var activeTool = 'Move';
@@ -114,6 +111,7 @@
     	if ($.inArray(key,initialGraphs)>=0) showGraph(key)
     	else hideGraph(key)
     }
+	
 
     imageUnrendered = new Image()
     imageUnrendered.src = "{{STATIC_URL}}gfx/checkers.png"
@@ -126,6 +124,10 @@
 	    bb.height = 1000
 	    bb.width = 5000
 	    b = bb.getContext("2d");
+	    var aa = document.createElement('canvas');
+	    aa.height = 300
+	    aa.width = 1050
+	    a = aa.getContext("2d");
 
 
 	    init();

@@ -36,6 +36,9 @@ var init = function() {
         calcSkixelsOnScreen();
         updateEnd();
     });
+    for (var i=0;i<graphOrder.length;i++) {
+        $("#graphLabel-" + graphOrder[i]).appendTo("#graph-labels ul")
+    }
 }
 
 var imageRequestor = function(graph,chunkOffset) {
@@ -61,8 +64,8 @@ var imageRequestor = function(graph,chunkOffset) {
 var graphURL = function(graph,chunkOffset) {
     var startTopOfScreen = (start-8*width) >  0 ? (start-8*width) : 1
     var startChunk = ( ( Math.floor(startTopOfScreen/(65536*scale) ) + chunkOffset )*65536*scale + 1 );
-    var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + scale 
-    if (graph != "n") graphPath += "&width=" + width 
+    var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + scale;
+    if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + width 
     return graphPath
 }
 
@@ -80,12 +83,15 @@ var drawGraphs = function() {
     var offset = xOffset + gutterWidth
     var chunks = Math.ceil(Math.min(skixelsOnScreen/65536 + 1,(fileLength-start)/65536))
 
-    for (key in graphStatus) {
+    // for (key in graphStatus) {
+    for (var i=0;i<graphOrder.length;i++) {
+        var key = graphOrder[i];
         if (graphStatus[key].visible) {
             graphStatus[key].skixelOffset = offset;
             var skixelWidthofGraph = graphStatus[key].skixelWidth = drawGraph(key,offset,chunks);
+            skixelWidthofGraph = Math.max(skixelWidthofGraph,toSkixels(minimumWidth))
             offset = offset + skixelWidthofGraph;
-            $('#graphLabel-' + key).width( Math.max( (toPixels(skixelWidthofGraph)), minimumWidth ) );
+            $('#graphLabel-' + key).width(toPixels(skixelWidthofGraph));
         }
     }
 
@@ -99,19 +105,25 @@ var drawGraph = function(graph,offset,chunks) {
         case "b": return drawNucBias(offset,chunks);
         case "m": return drawRMap(offset,chunks);
         default: 
-            console.log("Requested graph does not have a cooresponding javascript function")
-            return 0;
+            console.log("Requested graph does not have a cooresponding javascript function, trying generic")
+            return drawVerticalGraph(graph,offset,chunks);
     }
 }
 var drawVerticalGraph = function(graph,offset,chunks) {
+    var graphWidth = 0
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor(graph,i)
         if(!imageObj.complete) imageObj = imageUnrendered;
+        else var graphWidth = imageObj.width
         var vOffset = -Math.round(((start-8*width)%65536)/(width*scale) - i*(65536/width));
         b.drawImage(imageObj,offset,vOffset) // render data on hidden canvas
     }
+    return calculateOffsetWidth(graphWidth)
 }
-
+var drawGenericGraph = function(graph,offset,chunks) {
+    graphWidth = drawVerticalGraph(graph,offset,chunks)
+    return 0
+}
 var drawAnnotations = function(offset,chunks) {
     var imageObj = imageRequestor('a',0)
     b.drawImage(imageObj,offset,Math.round(-start/width + 8))
@@ -122,10 +134,10 @@ var drawNucDisplay = function(offset,chunks) {
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor("n",i)
         if(!imageObj.complete) imageObj = imageUnrendered;
-        b.drawImage(imageObj,0,64*i) // render data on hidden canvas
+        a.drawImage(imageObj,0,64*i) // render data on hidden canvas
     }
 
-    var imageData = b.getImageData(0, 0, 1024, chunks*64);
+    var imageData = a.getImageData(0, 0, 1024, chunks*64);
     var data = imageData.data;
     var newImageData = b.createImageData(width,toSkixels(1000)) //create new image data with desired dimentions (width)
     var newData = newImageData.data;
