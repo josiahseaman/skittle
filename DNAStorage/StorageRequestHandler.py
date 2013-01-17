@@ -14,7 +14,7 @@ def GetFastaFilePath(specimen, chromosome, start):
         if fastaFile[0].IsInRamDisk:
             fastaFilePath = None
         else:
-            fastaFilePath = settings.SkittleTreeLoc + "fasta/" + fastaFile[0].FastaFile.Kingdom + "/" + fastaFile[0].FastaFile.Class + "/" + fastaFile[0].FastaFile.Genus + "/" + fastaFile[0].FastaFile.Species + "/" + fastaFile[0].FastaFile.Specimen + "/" + fastaFile[0].FastaFile.Chromosome + "/" + str(fastaFile[0].Start) + ".fasta"
+            fastaFilePath = settings.SkittleTreeLoc + "DNAStorage/fasta/" + fastaFile[0].FastaFile.Kingdom + "/" + fastaFile[0].FastaFile.Class + "/" + fastaFile[0].FastaFile.Genus + "/" + fastaFile[0].FastaFile.Species + "/" + fastaFile[0].FastaFile.Specimen + "/" + fastaFile[0].FastaFile.Chromosome + "/" + str(fastaFile[0].Start) + ".fasta"
             
         return fastaFilePath
     else: return None
@@ -46,7 +46,7 @@ def GetPngFilePath(specimen, chromosome, graph, start, scale = None, charsPerLin
                 thisCharsPerLine = "_charactersperline=" + str(charsPerLine)
             else:
                 thisCharsPerLine = ""
-            pngFilePath = settings.SkittleTreeLoc + "png/" + pngFile[0].FastaFile.Kingdom + "/" + pngFile[0].FastaFile.Class + "/" + pngFile[0].FastaFile.Genus + "/" + pngFile[0].FastaFile.Species + "/" + pngFile[0].FastaFile.Specimen + "/" + pngFile[0].FastaFile.Chromosome + "/" + graph + thisStart + thisScale + thisCharsPerLine + ".png"
+            pngFilePath = settings.SkittleTreeLoc + "DNAStorage/png/" + pngFile[0].FastaFile.Kingdom + "/" + pngFile[0].FastaFile.Class + "/" + pngFile[0].FastaFile.Genus + "/" + pngFile[0].FastaFile.Species + "/" + pngFile[0].FastaFile.Specimen + "/" + pngFile[0].FastaFile.Chromosome + "/" + graph + thisStart + thisScale + thisCharsPerLine + ".png"
         print pngFilePath
     else: return None
     
