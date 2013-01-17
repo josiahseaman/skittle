@@ -3,7 +3,7 @@ from SkittleTree import settings
 
 #Returns if the system contains the requested fasta file. This does NOT return full data associated with it for speed purposes.
 def HasFastaFile(specimen, chromosome):
-    has = FastaFiles.objects.filter(Specimen = specimen, Chromosome = chromosome)
+    has = FastaFiles.objects.filter(Specimen = specimen, Chromosome = chromosome)[:1]
     return has
     
 #Searches to see if the given fasta file is stored in the system. If so, it returns the system path to the requested chunk
@@ -19,6 +19,15 @@ def GetFastaFilePath(specimen, chromosome, start):
             
         return fastaFilePath
     else: return None
+
+#Return the number of characters logged for a specific chromosome    
+def GetChromosomeLength(specimen, chromosome):
+    chr = FastaFiles.objects.filter(Specimen = specimen, Chromosome = chromosome)[:1]
+    
+    if chr:
+        return chr[0].Length
+    else:
+        return 0
     
 #Searches to see if the given image file is stored in the system. If so, it returns the system path to the requested chunk
 def GetPngFilePath(specimen, chromosome, graph, start, scale = None, charsPerLine = None):
@@ -44,5 +53,5 @@ def GetPngFilePath(specimen, chromosome, graph, start, scale = None, charsPerLin
     
 #Take params and write a png to the disk and create a reference to it in the DB
 def StorePng(specimen, chromosome, graph, start, scale = None, charsPerLine = None):
-    
+    print "NONE!"
     
