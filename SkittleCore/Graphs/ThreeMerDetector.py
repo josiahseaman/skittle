@@ -20,6 +20,7 @@ def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
     repeatMapState.F_width = threeMerState.samples * 3
     scores = RepeatMap.calculateOutputPixels(state, repeatMapState)
     threemer_scores = sensitiveTestForSpecificFrequency(scores, 3, threeMerState.samples)
+    
     return threemer_scores
 
     

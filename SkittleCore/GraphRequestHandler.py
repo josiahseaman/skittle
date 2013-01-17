@@ -5,14 +5,16 @@ Created on Dec 21, 2012
 import io
 import sys
 import png
+from collections import namedtuple
 
 '''The set of availableGraphs is populated by the individual graph modules who are responsible for 
 registering with the request Handler using the 'registerGraph' function below. '''
 availableGraphs = set()
+GraphDescription = namedtuple('GraphDescription', ['symbol', 'name', 'moduleReference', 'rasterGraph'])
 
 def registerGraph(symbol, name, moduleName, rasterGraph = False):
     moduleReference = sys.modules[moduleName]
-    availableGraphs.add((symbol, name, moduleReference, rasterGraph))
+    availableGraphs.add(GraphDescription(symbol, name, moduleReference, rasterGraph))
     
 from SkittleCore.models import StatePacket
 import SkittleCore.FastaFiles as FastaFiles
@@ -118,7 +120,7 @@ def handleRequest(state):
     #If it doesn't: grab pixel calculations
     if png is None:
         pixels = calculatePixels(state)
-        print pixels[:10]
+#        print pixels[:10]
         png = convertToPng(state, pixels)
     return png
 

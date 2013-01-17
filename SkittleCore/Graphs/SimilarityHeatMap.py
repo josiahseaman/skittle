@@ -35,16 +35,8 @@ def calculateOutputPixels(state, heatMapState = SimilarityHeatMapState()):
     
     mirrorDiagonalMatrix(heatMap)#flip along diagonal symmetry
     if heatMapState.useRowColumnCorrelation:
-        prettyPrint(heatMap)
-        print
+#        prettyPrint(heatMap)
+#        print
         heatMap = rowColumnCorrelation(heatMap)
     return heatMap
-
-
-if __name__ == '__main__':
-    state = StatePacket()
-    state.width = 30
-    heatMap = calculateOutputPixels(state, heatMapState = SimilarityHeatMapState())
-
-    prettyPrint(heatMap)
 
