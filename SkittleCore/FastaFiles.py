@@ -1,9 +1,9 @@
 '''
 Created on Dec 21, 2012
-
 @author: Josiah
 '''
 from SkittleCore.models import StatePacket
+import DNAStorage.StorageRequestHandler as StorageRequestHandler
 
 class FastaFile(str):
     def __init__(self, sequence = ''):
@@ -21,7 +21,7 @@ def readFile(state):
     collection = []
     '''Id be happy to eliminate the need for accumulating this collection of lines'''
     try:
-        filePath = state.getFastaFilePath()
+        filePath = StorageRequestHandler.GetFastaFilePath(state.specimen, state.chromosome, state.start)
         print "opening file " , filePath
         rawFile = open(filePath, 'r')
         print 'Opened File'

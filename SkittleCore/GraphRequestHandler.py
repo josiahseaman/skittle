@@ -28,6 +28,7 @@ import Graphs.SimilarityHeatMap
 import Graphs.ThreeMerDetector
 from Graphs.SkittleGraphTransforms import hasDepth
 from PngConversionHelper import convertToPng
+import DNAStorage.StorageRequestHandler as StorageRequestHandler
 '''Finally, X = __import__('X') works like import X, with the difference that you 
 1) pass the module name as a string, and 2) explicitly assign it to a variable in your current namespace.'''
 
@@ -55,7 +56,6 @@ def calculatePixels(state):
 '''The main entry point for the whole Python logic SkittleCore module and Graphs.'''
 def handleRequest(state):
     assert isinstance(state, StatePacket)
-    state.start -= 1 #FIRST THING: start index at zero instead of one
     #Check to see if PNG exists
     png = None
 #    if state.requestedGraph == 'n':
@@ -80,7 +80,7 @@ def getGraphDescription(state):
         return filter(lambda x: 'n' == x[0], availableGraphs)[0]
     
 def tryGetGraphPNG(state):
-    fileName = state.getPngFilePath()
+    fileName = StorageRequestHandler.GetPngFilePath(state)
     try:
         data = open(fileName, 'rb').read()
         print "Found cached file: ", fileName

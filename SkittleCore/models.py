@@ -13,7 +13,7 @@ This state packet is equivalent to an URL or a request from the Skittle website.
 '''
 class StatePacket(models.Model):
     #TODO: user = models.ForeignKey(User)
-    genome = models.CharField(max_length=200, default='hg19')
+    specimen = models.CharField(max_length=200, default='hg19')
     chromosome = models.CharField(max_length=200, default='chrY-sample')
     '''It is debatable whether or not the sequence should be stored in the state
     variable since it is only referenced at the first level operation.  Past the first
@@ -38,17 +38,6 @@ class StatePacket(models.Model):
     length = models.IntegerField(default=65536)
     requestedGraph = models.CharField(max_length=40, default='n')
 
-    def getFastaFilePath(self):
-        filePath = settings.SkittleTreeLoc + "DNAStorage/fasta/" + self.genome + "/" + self.chromosome + "/" + str(self.start+1)  + ".fasta"
-        #start is plus one to conform with external representation of files
-        return filePath
-        
-    def getPngFilePath(self):
-        filePath = settings.SkittleTreeLoc + "DNAStorage/png/" + self.genome + "/" + self.chromosome + "/" + self.requestedGraph + "_start=" + str(self.start+1) +  "_scale=" + str(self.scale) + ".png"
-        #TODO: add scale if rasterGraph, add width otherwise
-        #parseActiveGraphString(state) #check if it's a raster graph to include the width variable
-        return filePath
-        
     def getActiveGraphSettings(self):
         return Graphs.models.ParentState.objects.filter(session = self, visible = True)
     
