@@ -25,10 +25,7 @@ def index(request, specimen="",chromosome=""):
 def graph(request, specimen="hg19",chromosome="chrY-sample"):
     state = StatePacket()
     state.chromosome = chromosome
-    if state.chromosome == "chrY-sample":
-        state.specimen = "Animalia/Mammalia/Homo/Sapiens/" + specimen
-    else:
-        state.specimen = "Plantae/Angiosperms/Zea/Mays/" + specimen
+    state.specimen = specimen
 
     state.start = int(request.GET.get('start',1))
     state.width = int(request.GET.get('width',100))
