@@ -4,6 +4,7 @@ Created on Jan 17, 2013
 @author: Josiah
 '''
 import png
+from DNAStorage.StorageRequestHandler import GetPngFilePath
 
 def checkForGreyscale(state):
     grayGraph = ['m', 'o']
@@ -13,7 +14,8 @@ def convertToPng(state, pixels, isRaster = False):
     targetWidth = 1024
     greyscale = checkForGreyscale(state)
     print "GreyScale: ", greyscale
-    f = open(state.getPngFilePath(), 'wb')
+    filepath = GetPngFilePath(state)
+    f = open(filepath, 'wb')
     if greyscale:
         p = multiplyGreyscale(pixels, 255)
         w = png.Writer(len(p[0]), len(p), greyscale=True)
@@ -25,7 +27,7 @@ def convertToPng(state, pixels, isRaster = False):
         w = png.Writer(targetWidth, len(p))
     w.write(f, p)
     f.close()
-    data = open(state.getPngFilePath(), 'rb').read() #return the binary contents of the file
+    data = open(filepath, 'rb').read() #return the binary contents of the file
     return data
 
 def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3, depth = 0):
