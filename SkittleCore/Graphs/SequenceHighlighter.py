@@ -62,7 +62,7 @@ def colorCombinedResults(state, highlighterState, results ):
                         hitCanvas[index+localIndex] = max(hit, hitCanvas[index+localIndex])
                     
     hitColors = map(lambda entryNumber: getMatchColor(entryNumber, entries), hitCanvas)
-                    
+    
     return hitColors
 
 def calculateOutputPixels(state, highlighterState = HighlighterState()):

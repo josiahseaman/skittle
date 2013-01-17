@@ -36,7 +36,7 @@ def calculatePixels(state):
     if sequence is None:
         raise IOError('Cannot proceed without sequence')
     state.seq = sequence
-    graphData = parseActiveGraphString(state)
+    graphData = getGraphDescription(state)
     name, graphModule = graphData[1], graphData[2]
 #    activeSet = state.getActiveGraphs()
     settings = None #activeSet[name]
@@ -72,8 +72,11 @@ def convertToPng(state, pixels):
     return f
 
 def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3):
-    if isinstance(pixels[0], list):#TODO: something about hasDepth
-        return reduce(lambda x,y: x + flattenImage(y, targetWidth, isColored, nChannels), pixels, [])
+    if hasattr(pixels, '__getitem__') and len(pixels) != 0: 
+        if isinstance(pixels[:1], list):#TODO: something about hasDepth
+            return reduce(lambda x,y: x + flattenImage(y, targetWidth, isColored, nChannels), pixels, [])
+    else:
+        return pixels
     p = []
     newline = []
     for color in pixels:
@@ -99,11 +102,12 @@ def handleRequest(state):
     #If it doesn't: grab pixel calculations
     if png is None:
         pixels = calculatePixels(state)
+        print pixels
         png = convertToPng(state, pixels)
     return png
 
 def isRasterGraph(state):
-    graphDescription = parseActiveGraphString(state)
+    graphDescription = getGraphDescription(state)
     return graphDescription[3]
 
 def multiplyGreyscale(p, greyMax = 255):
@@ -111,7 +115,7 @@ def multiplyGreyscale(p, greyMax = 255):
         p[index] = map(lambda x: int(x * greyMax), line)
     return p
     
-def parseActiveGraphString(state):
+def getGraphDescription(state):
     targetGraphTuple = filter(lambda x: state.requestedGraph == x[0], availableGraphs)
     if targetGraphTuple:
         return targetGraphTuple[0] #return the first match
