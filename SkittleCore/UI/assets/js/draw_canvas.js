@@ -156,6 +156,11 @@ var drawNucDisplay = function(offset,chunks) {
     return calculateOffsetWidth(width)
 }
 var drawNucBias = function(offset,chunks) {
+    b.beginPath()
+    b.rect(offset+20,0,20,500)
+    b.fillStyle="#333";
+    b.fill()
+
     drawVerticalGraph("b",offset,chunks)
     return calculateOffsetWidth(60)
 }
