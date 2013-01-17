@@ -6,7 +6,7 @@ Created on Jan 17, 2013
 import png
 
 def checkForGreyscale(state):
-    grayGraph = ['m', 'o', 's']
+    grayGraph = ['m', 'o']
     return state.requestedGraph in grayGraph
 
 def convertToPng(state, pixels, isRaster = False):

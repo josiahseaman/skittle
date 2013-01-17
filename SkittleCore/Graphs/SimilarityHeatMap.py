@@ -9,6 +9,7 @@ from SkittleCore.models import StatePacket
 from models import SimilarityHeatMapState
 import OligomerUsage
 from SkittleCore.GraphRequestHandler import registerGraph
+from PixelLogic import twoSidedSpectrumColoring
 
 registerGraph('s', "Similarity Heatmap", __name__, False)
 
@@ -38,5 +39,7 @@ def calculateOutputPixels(state, heatMapState = SimilarityHeatMapState()):
 #        prettyPrint(heatMap)
 #        print
         heatMap = rowColumnCorrelation(heatMap)
-    return heatMap
+        
+    pixels = twoSidedSpectrumColoring(heatMap)
+    return pixels
 
