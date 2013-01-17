@@ -2,7 +2,7 @@
 Created on Dec 5, 2012
 @author: Josiah
 '''
-from random import randint, random
+from random import randint
 import SkittleCore.models as SkittleStatePackets
 import math
 
