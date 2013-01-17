@@ -3,8 +3,8 @@ Functions related to PNG moved from GraphRequestHandler
 Created on Jan 17, 2013
 @author: Josiah
 '''
-import png
-from DNAStorage.StorageRequestHandler import GetPngFilePath
+import png, tempfile
+from DNAStorage.StorageRequestHandler import GetPngFilePath, StorePng
 
 def checkForGreyscale(state):
     grayGraph = ['m', 'o']
@@ -14,8 +14,9 @@ def convertToPng(state, pixels, isRaster = False):
     targetWidth = 1024
     greyscale = checkForGreyscale(state)
     print "GreyScale: ", greyscale
-    filepath = 'temp.png'#GetPngFilePath(state)
-    f = open(filepath, 'wb')
+    f = tempfile.mktemp()
+    #open up tempFile
+    f = open(f, 'wb')
     if greyscale:
         p = multiplyGreyscale(pixels, 255)
         w = png.Writer(len(p[0]), len(p), greyscale=True)
@@ -27,8 +28,9 @@ def convertToPng(state, pixels, isRaster = False):
         w = png.Writer(targetWidth, len(p))
     w.write(f, p)
     f.close()
-    data = open(filepath, 'rb').read() #return the binary contents of the file
-    return data
+    f = open(f.name, 'rb') #return the binary contents of the file
+    StorePng(state, f)
+    return f.read()
 
 def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3, depth = 0):
     pixels = squishImage(pixels)

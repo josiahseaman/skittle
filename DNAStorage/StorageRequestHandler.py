@@ -55,9 +55,16 @@ def GetPngFilePath(state):
                 thisCharsPerLine = ""
             pngFilePath = settings.SkittleTreeLoc + "DNAStorage/png/" + pngFile[0].FastaFile.Kingdom + "/" + pngFile[0].FastaFile.Class + "/" + pngFile[0].FastaFile.Genus + "/" + pngFile[0].FastaFile.Species + "/" + pngFile[0].FastaFile.Specimen + "/" + pngFile[0].FastaFile.Chromosome + "/" + graph + thisStart + thisScale + thisCharsPerLine + ".png"
         print pngFilePath
-    else: return None
+    else: 
+        return None
     
 #Take params and write a png to the disk and create a reference to it in the DB
-def StorePng(specimen, chromosome, graph, start, scale = None, charsPerLine = None):
+def StorePng(state, fileObject):
+    assert isinstance(state, StatePacket)
+    specimen, chromosome, graph, start = state.specimen, state.chromosome, state.requestedGraph, state.start 
+    scale = None
+    charsPerLine = None
+    
+    
     print "NONE!"
     
