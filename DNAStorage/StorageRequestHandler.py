@@ -10,7 +10,6 @@ def HasFastaFile(specimen, chromosome):
 #Searches to see if the given fasta file is stored in the system. If so, it returns the system path to the requested chunk
 def GetFastaFilePath(specimen, chromosome, start):
     fastaFile = FastaChunkFiles.objects.filter(FastaFile__Specimen = specimen, FastaFile__Chromosome = chromosome, Start = start)[:1]
-    
     if fastaFile:
         #Check if fasta file is stored in ram disk
         if fastaFile[0].IsInRamDisk:
