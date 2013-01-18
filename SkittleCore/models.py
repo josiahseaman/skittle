@@ -21,7 +21,7 @@ class RequestPacket(models.Model):
     variable since it is only referenced at the first level operation.  Past the first
     step, the input sequence is more likely to be a floatList produced by the previous
     operation.'''
-    seq = models.TextField(default=None, Null=True)
+    seq = models.TextField(default=None, null=True)
     colorPalette = models.CharField(max_length=50, 
                                     choices=[("COLORBLINDSAFE", "Spring"),
                                     ("BETTERCBSAFE", "Summer"),
@@ -31,14 +31,14 @@ class RequestPacket(models.Model):
                                     ("REDS", "REDS"),
                                     ('Classic','Classic')],
                                     default='Classic')
-    width = models.IntegerField(default=None, Null=True)
-    scale = models.IntegerField(default=None, Null=True)
+    width = models.IntegerField(default=None, null=True)
+    scale = models.IntegerField(default=None, null=True)
     '''Internally, start begins at 0.  Biologists count indices starting at 1, so this number 
     is 1 less than the number displayed on the website.  This also means that you should print
     index+1 whenever you are writing user readable output.'''
-    start = models.IntegerField(default=None, Null=True)
+    start = models.IntegerField(default=None, null=True)
     length = models.IntegerField(default=65536)
-    requestedGraph = models.CharField(max_length=40, default=None, Null=True)
+    requestedGraph = models.CharField(max_length=40, default=None, null=True)
 
     def getActiveGraphSettings(self):
         return Graphs.models.ParentState.objects.filter(session = self, visible = True)
@@ -52,11 +52,11 @@ class RequestPacket(models.Model):
    
 class StatePacket(RequestPacket): 
     #TODO: should I restate the models.Charfield(max_length... or just set specimen = 'hg19'?
-    specimen = models.CharField(max_length=200, default='hg19')
-    chromosome = models.CharField(max_length=200, default='chrY-sample')
-    width = models.IntegerField(default= 200)
-    scale = models.IntegerField(default=1)
-    start = models.IntegerField(default=1)
-    length = models.IntegerField(default=65536)
-    requestedGraph = models.CharField(max_length=40, default='n')
+    specimen = 'hg19'
+    chromosome = 'chrY-sample'
+    width =  200
+    scale = 1
+    start = 1
+#    length = models.IntegerField(default=65536)
+    requestedGraph = 'n'
     
