@@ -38,7 +38,7 @@ class RequestPacket(models.Model):
     index+1 whenever you are writing user readable output.'''
     start = models.IntegerField(default=None, null=True)
     length = models.IntegerField(default=65536)
-    requestedGraph = models.CharField(max_length=40, default=None, null=True)
+    requestedGraph = models.CharField(max_length=1, default=None, null=True)
 
     def getActiveGraphSettings(self):
         return Graphs.models.ParentState.objects.filter(session = self, visible = True)
