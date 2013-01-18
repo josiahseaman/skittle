@@ -1,6 +1,5 @@
 from models import FastaFiles, FastaChunkFiles, ImageFiles
 from SkittleTree import settings
-from SkittleCore.models import RequestPacket
 
 #Returns if the system contains the requested fasta file. This does NOT return full data associated with it for speed purposes.
 def HasFastaFile(specimen, chromosome):
@@ -28,14 +27,25 @@ def GetChromosomeLength(specimen, chromosome):
         return chr[0].Length
     else:
         return 0
+        
+#Take params of request and generate what the filename of a png should be (no path included)
+def generatePngName(graph, start, scale, charsPerLine):
+    thisStart = "_start=" + str(start)
+    if scale:
+        thisScale = "_scale=" + str(scale)
+    else:
+        thisScale = ""
+    if charsPerLine:
+        thisCharsPerLine = "_charactersperline=" + str(charsPerLine)
+    else:
+        thisCharsPerLine = ""
+        
+    return graph + thisStart + thisScale + thisCharsPerLine + ".png"
     
 #Searches to see if the given image file is stored in the system. If so, it returns the system path to the requested chunk
-def GetPngFilePath(state):
-    assert isinstance(state, RequestPacket)
-    specimen, chromosome, graph, start = state.specimen, state.chromosome, state.requestedGraph, state.start 
-    scale = None
-    charsPerLine = None
-    #TODO: determine what other attributes are necessary based on graph
+def GetPngFilePath(request):
+    #assert isinstance(request, RequestPacket)
+    specimen, chromosome, graph, start, scale, charsPerLine = request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.width 
     
     pngFile = ImageFiles.objects.filter(FastaFile__Specimen = specimen, FastaFile__Chromosome = chromosome, Start = start, Scale = scale, CharactersPerLine = charsPerLine)[:1]
     
@@ -44,27 +54,38 @@ def GetPngFilePath(state):
         if pngFile[0].IsInRamDisk:
             pngFilePath = None
         else:
-            thisStart = "_start=" + str(start)
-            if scale:
-                thisScale = "_scale=" + str(scale)
-            else:
-                thisScale = ""
-            if charsPerLine:
-                thisCharsPerLine = "_charactersperline=" + str(charsPerLine)
-            else:
-                thisCharsPerLine = ""
-            pngFilePath = settings.SkittleTreeLoc + "DNAStorage/png/" + pngFile[0].FastaFile.Kingdom + "/" + pngFile[0].FastaFile.Class + "/" + pngFile[0].FastaFile.Genus + "/" + pngFile[0].FastaFile.Species + "/" + pngFile[0].FastaFile.Specimen + "/" + pngFile[0].FastaFile.Chromosome + "/" + graph + thisStart + thisScale + thisCharsPerLine + ".png"
+            pngFilePath = settings.SkittleTreeLoc + "DNAStorage/png/" + pngFile[0].FastaFile.Kingdom + "/" + pngFile[0].FastaFile.Class + "/" + pngFile[0].FastaFile.Genus + "/" + pngFile[0].FastaFile.Species + "/" + pngFile[0].FastaFile.Specimen + "/" + pngFile[0].FastaFile.Chromosome + "/" + generatePngName(graph, start, scale, charsPerLine)
         print pngFilePath
     else: 
         return None
     
 #Take params and write a png to the disk and create a reference to it in the DB
-def StorePng(state, fileObject):
-    assert isinstance(state, RequestPacket)
-    specimen, chromosome, graph, start = state.specimen, state.chromosome, state.requestedGraph, state.start 
-    scale = None
-    charsPerLine = None
+def StorePng(request, fileObject):
+    #assert isinstance(request, RequestPacket)
+    specimen, chromosome, graph, start, scale, charsPerLine = request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.charsPerLine
     
+    #Get the Related FastaFile
+    fastaFile = FastaFiles.objects.filter(Specimen = specimen, Chromosome = chromosome)[:1]
     
-    print "NONE!"
+    if fastaFile:
+        fastaFile = fastaFile[0]
+    else:
+        raise "No associated FastaFile for this PNG!"
+        return None
+    
+    #Move temp file from temp storage into cache storage
+    pngFilePath = settings.SkittleTreeLoc + "DNAStorage/png/" + pngFile[0].FastaFile.Kingdom + "/" + pngFile[0].FastaFile.Class + "/" + pngFile[0].FastaFile.Genus + "/" + pngFile[0].FastaFile.Species + "/" + pngFile[0].FastaFile.Specimen + "/" + pngFile[0].FastaFile.Chromosome + "/" + generatePngName(graph, start, scale, charsPerLine)
+    os.rename(fileObject.name, pngFilePath)
+    
+    #Log this file in the database
+    imageFile = ImageFiles()
+    imageFile.FastaFile = fastaFile
+    imageFile.GraphType = graph
+    imageFile.Start = start
+    imageFile.Scale = scale
+    imageFile.CharactersPerLine = charsPerLine
+    
+    imageFile.save()
+    
+    return imageFile
     
