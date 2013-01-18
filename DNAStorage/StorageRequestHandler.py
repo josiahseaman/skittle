@@ -1,5 +1,6 @@
 from models import FastaFiles, FastaChunkFiles, ImageFiles
 from SkittleTree import settings
+import shutil
 
 #Returns if the system contains the requested fasta file. This does NOT return full data associated with it for speed purposes.
 def HasFastaFile(specimen, chromosome):
@@ -62,7 +63,7 @@ def GetPngFilePath(request):
 #Take params and write a png to the disk and create a reference to it in the DB
 def StorePng(request, fileObject):
     #assert isinstance(request, RequestPacket)
-    specimen, chromosome, graph, start, scale, charsPerLine = request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.charsPerLine
+    specimen, chromosome, graph, start, scale, charsPerLine = request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.width
     
     #Get the Related FastaFile
     fastaFile = FastaFiles.objects.filter(Specimen = specimen, Chromosome = chromosome)[:1]
@@ -74,8 +75,8 @@ def StorePng(request, fileObject):
         return None
     
     #Move temp file from temp storage into cache storage
-    pngFilePath = settings.SkittleTreeLoc + "DNAStorage/png/" + pngFile[0].FastaFile.Kingdom + "/" + pngFile[0].FastaFile.Class + "/" + pngFile[0].FastaFile.Genus + "/" + pngFile[0].FastaFile.Species + "/" + pngFile[0].FastaFile.Specimen + "/" + pngFile[0].FastaFile.Chromosome + "/" + generatePngName(graph, start, scale, charsPerLine)
-    os.rename(fileObject.name, pngFilePath)
+    pngFilePath = settings.SkittleTreeLoc + "DNAStorage/png/" + fastaFile.Kingdom + "/" + fastaFile.Class + "/" + fastaFile.Genus + "/" + fastaFile.Species + "/" + fastaFile.Specimen + "/" + fastaFile.Chromosome + "/" + generatePngName(graph, start, scale, charsPerLine)
+    shutil.copyfile(fileObject.name, pngFilePath)
     
     #Log this file in the database
     imageFile = ImageFiles()
