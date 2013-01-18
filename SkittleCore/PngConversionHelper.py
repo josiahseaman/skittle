@@ -32,7 +32,7 @@ def convertToPng(state, pixels, isRaster = False):
     StorePng(state, f)
     return f.read()
 
-def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3, depth = 0):
+def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3):
     pixels = squishImage(pixels)
     
     p = []

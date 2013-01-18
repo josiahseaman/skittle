@@ -30,12 +30,11 @@ def calculateOutputPixels(state, heatMapState = SimilarityHeatMapState()):
     for y in range(len(heatMap)):
         for x in range(y, len(heatMap[y])):
             if x == y:
-                heatMap[y][x] = 1.0 #don't bother calculating self:self
+                heatMap[y][x-y] = 1.0 #don't bother calculating self:self
             else:
-                heatMap[y][x] = pearsonCorrelation(oligVectors[y], oligVectors[x])
-    
-    mirrorDiagonalMatrix(heatMap)#flip along diagonal symmetry
+                heatMap[y][x-y] = pearsonCorrelation(oligVectors[y], oligVectors[x])
     if heatMapState.useRowColumnCorrelation:
+        mirrorDiagonalMatrix(heatMap)#flip along diagonal symmetry
 #        prettyPrint(heatMap)
 #        print
         heatMap = rowColumnCorrelation(heatMap)

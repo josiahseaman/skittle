@@ -124,7 +124,9 @@ def twoSidedSpectrumColoring(floatList):
         return map(lambda x: twoSidedSpectrumColoring(x), floatList)
     pixels = []
     for score in floatList:
-        if score > 0.0:
+        if score is None:
+            pixels.append((0,0,0))
+        elif score > 0.0:
             pixels.append((int(255*score),0,0))
         else:
             pixels.append((0,0, int(255*abs(score))))
