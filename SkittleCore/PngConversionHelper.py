@@ -29,8 +29,9 @@ def convertToPng(state, pixels, isRaster = False):
     w.write(f, p)
     f.close()
     f = open(f.name, 'rb') #return the binary contents of the file
+    data = f.read()
     StorePng(state, f)
-    return f.read()
+    return data
 
 def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3):
     pixels = squishImage(pixels)
