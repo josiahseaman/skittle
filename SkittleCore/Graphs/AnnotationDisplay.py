@@ -3,7 +3,7 @@ Created on Dec 19, 2012
 
 @author: Josiah
 '''
-from SkittleCore.models import StatePacket
+from SkittleCore.models import RequestPacket
 from PixelLogic import randomColor, blankColor
 from SkittleCore.GraphRequestHandler import registerGraph
 from models import AnnotationDisplayState
@@ -12,7 +12,7 @@ registerGraph('a',"Annotation Display", __name__, False)
 
 class Annotation():
     def getStartingLine(self, state):
-        assert isinstance(state, StatePacket)
+        assert isinstance(state, RequestPacket)
         return self.start / state.width
 
     def lengthIndices(self, state):
@@ -64,6 +64,6 @@ def calculateOutputPixels(state, annotationState = AnnotationTrackState()):
 
 if __name__ == '__main__':
     print 'Annotation Display Test case'
-    state = StatePacket()
+    state = RequestPacket()
     annotationState = AnnotationTrackState()  
     print calculateOutputPixels(state, annotationState)

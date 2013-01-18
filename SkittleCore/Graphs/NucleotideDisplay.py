@@ -3,13 +3,13 @@ Created on Nov 29, 2012
 @author: Josiah
 '''
 from SkittleGraphTransforms import chunkUpList, normalizeDictionary, countListToColorSpace, sequenceToColors, countNucleotides
-from SkittleCore.models import StatePacket
+from SkittleCore.models import RequestPacket
 from SkittleCore.GraphRequestHandler import registerGraph
 
 registerGraph('n',"Nucleotide Display", __name__, True)
     
 def calculateOutputPixels(state):
-    assert isinstance(state, StatePacket) 
+    assert isinstance(state, RequestPacket) 
 #    print state.seq
 #    chunks = chunkUpList(state.seq, state.width )
 #    print chunks

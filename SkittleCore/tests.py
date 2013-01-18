@@ -1,6 +1,6 @@
 from django.test import TestCase
 import FastaFiles
-from models import StatePacket
+from models import RequestPacket
 
 class TestServerLaunch(TestCase):
     def test_index(self):
@@ -15,7 +15,7 @@ class TestServerLaunch(TestCase):
 import os
 class FastaTest(TestCase):
     def test(self):
-        state = StatePacket()
+        state = RequestPacket()
         print os.getcwd()
         print state.getFastaFilePath()
         f = FastaFiles.readFile(state)

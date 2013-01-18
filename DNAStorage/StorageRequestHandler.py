@@ -1,6 +1,6 @@
 from models import FastaFiles, FastaChunkFiles, ImageFiles
 from SkittleTree import settings
-from SkittleCore.models import StatePacket
+from SkittleCore.models import RequestPacket
 
 #Returns if the system contains the requested fasta file. This does NOT return full data associated with it for speed purposes.
 def HasFastaFile(specimen, chromosome):
@@ -31,7 +31,7 @@ def GetChromosomeLength(specimen, chromosome):
     
 #Searches to see if the given image file is stored in the system. If so, it returns the system path to the requested chunk
 def GetPngFilePath(state):
-    assert isinstance(state, StatePacket)
+    assert isinstance(state, RequestPacket)
     specimen, chromosome, graph, start = state.specimen, state.chromosome, state.requestedGraph, state.start 
     scale = None
     charsPerLine = None
@@ -60,7 +60,7 @@ def GetPngFilePath(state):
     
 #Take params and write a png to the disk and create a reference to it in the DB
 def StorePng(state, fileObject):
-    assert isinstance(state, StatePacket)
+    assert isinstance(state, RequestPacket)
     specimen, chromosome, graph, start = state.specimen, state.chromosome, state.requestedGraph, state.start 
     scale = None
     charsPerLine = None

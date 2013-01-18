@@ -2,7 +2,7 @@
 Created on Dec 5, 2012
 @author: Josiah
 '''
-from SkittleCore.models import StatePacket
+from SkittleCore.models import RequestPacket
 from SkittleGraphTransforms import *
 from PixelLogic import *
 from SkittleCore.GraphRequestHandler import registerGraph

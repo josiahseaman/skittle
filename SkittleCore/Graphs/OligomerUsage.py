@@ -3,7 +3,7 @@ Created on Dec 12, 2012
 
 @author: Josiah
 '''
-from SkittleCore.models import StatePacket
+from SkittleCore.models import RequestPacket
 from models import OligomerUsageState
 from SkittleGraphTransforms import chunkUpList, countNucleotides,\
     normalizeDictionary, generateExhaustiveOligomerList, oligCountToColorSpace
@@ -12,7 +12,7 @@ from SkittleCore.GraphRequestHandler import registerGraph
 registerGraph('o', "Oligomer Usage", __name__, False)
 
 def calculateOutputPixels(state, oligState = OligomerUsageState()):
-    assert isinstance(state, StatePacket)
+    assert isinstance(state, RequestPacket)
     assert isinstance(oligState, OligomerUsageState)
 #    print state.seq
     overlap = oligState.oligomerSize-1

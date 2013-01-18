@@ -5,7 +5,7 @@ Created on Dec 14, 2012
 '''
 from SkittleGraphTransforms import pearsonCorrelation, mirrorDiagonalMatrix, \
     rowColumnCorrelation
-from SkittleCore.models import StatePacket
+from SkittleCore.models import RequestPacket
 from models import SimilarityHeatMapState
 import OligomerUsage
 from SkittleCore.GraphRequestHandler import registerGraph
@@ -26,7 +26,7 @@ def prettyPrint(heatMap):
     print #newline
 
 def readAndAppendNextChunk(state):
-    assert isinstance(state, StatePacket)
+    assert isinstance(state, RequestPacket)
     newState = copy.copy(state) #shallow copy
     newState.start = state.start + state.length #chunk size 
     sequence = readFile(newState) #FastaFiles.

@@ -6,7 +6,7 @@ Created on Nov 29, 2012
 import math
 from numbers import Number
 from models import RepeatMapState
-from SkittleCore.models import StatePacket
+from SkittleCore.models import RequestPacket
 from PixelLogic import colorPalettes
 
 def countDepth(listLike):
@@ -250,7 +250,7 @@ and proceeding to RepeatMapState.F_width.  When used in Repeat Map, ColoredPixel
 the color compressed sequence from the Nucleotide Display.'''
 def correlationMap( state, repeatMapState, coloredPixels):
     assert isinstance(repeatMapState, RepeatMapState)
-    assert isinstance(state, StatePacket)
+    assert isinstance(state, RequestPacket)
     pixelsPerSample = state.width * state.scale
     rgbChannels = zip(*coloredPixels)
     freq = []

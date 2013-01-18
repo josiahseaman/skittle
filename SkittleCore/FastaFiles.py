@@ -2,7 +2,7 @@
 Created on Dec 21, 2012
 @author: Josiah
 '''
-from SkittleCore.models import StatePacket
+from SkittleCore.models import RequestPacket
 import DNAStorage.StorageRequestHandler as StorageRequestHandler
 
 class FastaFile(str):
@@ -16,7 +16,7 @@ class FastaFile(str):
 
 
 def readFile(state):
-    assert isinstance(state, StatePacket)
+    assert isinstance(state, RequestPacket)
     seq = ''
     collection = []
     '''Id be happy to eliminate the need for accumulating this collection of lines'''
@@ -40,7 +40,7 @@ def readFile(state):
  
 
 if __name__ == '__main__':
-    state = StatePacket()
+    state = RequestPacket()
 #    state.filePath = 'bogus'
     f = readFile(state)
     print f

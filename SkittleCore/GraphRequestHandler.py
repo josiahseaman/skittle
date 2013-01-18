@@ -16,7 +16,7 @@ def registerGraph(symbol, name, moduleName, rasterGraph = False):
     moduleReference = sys.modules[moduleName]
     availableGraphs.add(GraphDescription(symbol, name, moduleReference, rasterGraph))
     
-from SkittleCore.models import StatePacket
+from SkittleCore.models import RequestPacket
 import SkittleCore.FastaFiles as FastaFiles
 import Graphs.AnnotationDisplay
 import Graphs.NucleotideDisplay
@@ -55,7 +55,7 @@ def calculatePixels(state):
 
 '''The main entry point for the whole Python logic SkittleCore module and Graphs.'''
 def handleRequest(state):
-    assert isinstance(state, StatePacket)
+    assert isinstance(state, RequestPacket)
     #Check to see if PNG exists
     png = None
 #    if state.requestedGraph == 'n':

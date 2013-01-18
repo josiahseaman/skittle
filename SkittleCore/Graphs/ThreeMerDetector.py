@@ -4,7 +4,7 @@ Created on Nov 29, 2012
 '''
 from SkittleGraphTransforms import sensitiveTestForSpecificFrequency
 from models import RepeatMapState
-from SkittleCore.models import StatePacket
+from SkittleCore.models import RequestPacket
 import RepeatMap
 from SkittleCore.GraphRequestHandler import registerGraph
 from models import ThreeMerDetectorState
@@ -13,7 +13,7 @@ from PixelLogic import drawBar
 registerGraph('t', "Threemer Detector", __name__, False)
     
 def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
-    assert isinstance(state, StatePacket)
+    assert isinstance(state, RequestPacket)
     state.scale = 1 #these calculations are only meaningful at scale 1
     #TODO adjust score scaling according to the width
     repeatMapState = RepeatMapState()

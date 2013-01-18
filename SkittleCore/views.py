@@ -5,7 +5,7 @@ from django.views.decorators.cache import cache_control
 from django.utils import simplejson
 from SkittleCore import GraphRequestHandler
 from SkittleCore.GraphRequestHandler import handleRequest
-from SkittleCore.models import StatePacket
+from SkittleCore.models import RequestPacket
 from SkittleCore.Graphs.models import *
 from DNAStorage.StorageRequestHandler import GetChromosomeLength
 # import json
@@ -23,7 +23,7 @@ def index(request, specimen="",chromosome=""):
 
 @cache_control(must_revalidate=False, max_age=3600)
 def graph(request, specimen="hg19",chromosome="chrY-sample"):
-    state = StatePacket()
+    state = RequestPacket()
     state.chromosome = chromosome
     state.specimen = specimen
 

@@ -3,7 +3,7 @@ Created on Dec 5, 2012
 @author: Josiah
 '''
 from random import randint
-import SkittleCore.models as SkittleStatePackets
+import SkittleCore.models as SkittleRequestPackets
 import math
 
 
@@ -60,7 +60,7 @@ colorPalettes = {
     }
 '''Safe accessor for nucleotide colors'''
 def getColor(state, character):
-    assert isinstance(state, SkittleStatePackets.StatePacket)
+    assert isinstance(state, SkittleRequestPackets.RequestPacket)
     defaultColor = (0,0,0)
     a = colorPalettes.get(state.colorPalette, None)
     if a is None: 

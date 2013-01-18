@@ -6,7 +6,7 @@ Replace this with more appropriate tests for your application.
 """
 
 from django.test import TestCase
-from SkittleCore.models import StatePacket
+from SkittleCore.models import RequestPacket
 from models import *
 
 
@@ -18,7 +18,7 @@ class SimpleTest(TestCase):
         self.assertEqual(1 + 1, 2)
 
 def TestPacket():
-    state = StatePacket()
+    state = RequestPacket()
     
     state.specimen = 'hg19'
     state.chromosome = models.CharField(max_length=200, default='chrY-sample')

@@ -3,7 +3,7 @@ Created on Dec 6, 2012
 
 @author: Josiah
 '''
-from SkittleCore.models import StatePacket 
+from SkittleCore.models import RequestPacket 
 from models import HighlighterState, SequenceEntry
 from SkittleGraphTransforms import reverseComplement, calculatePerCharacterMatch
 import copy

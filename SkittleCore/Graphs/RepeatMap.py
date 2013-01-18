@@ -5,7 +5,7 @@ Created on Nov 29, 2012
 import NucleotideDisplay
 from SkittleGraphTransforms import correlationMap, countDepth
 from models import RepeatMapState
-from SkittleCore.models import StatePacket
+from SkittleCore.models import RequestPacket
 from SkittleCore.GraphRequestHandler import registerGraph
 
 registerGraph('m', "Repeat Map", __name__, False)
@@ -34,7 +34,7 @@ def oldRepeatMap(state, repeatMapState):
 
 def calculateOutputPixels(state, repeatMapState = RepeatMapState()):
     assert isinstance(repeatMapState, RepeatMapState)
-    assert isinstance(state, StatePacket)
+    assert isinstance(state, RequestPacket)
     scores = oldRepeatMap(state, repeatMapState)
     return scores
     
