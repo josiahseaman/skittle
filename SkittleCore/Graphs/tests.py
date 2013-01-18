@@ -17,11 +17,24 @@ class SimpleTest(TestCase):
         """
         self.assertEqual(1 + 1, 2)
 
+def TestPacket():
+    state = StatePacket()
+    
+    state.specimen = 'hg19'
+    state.chromosome = models.CharField(max_length=200, default='chrY-sample')
+    state.seq = models.TextField(default='ACGTAAAACCCCGGGGTTTTACGTACGTACGTACGTACGTACGTACGTACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTACGTACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
+    state.colorPalette = 'Classic'
+    state.width = 4
+    state.scale =2
+    state.start = 0
+#    state.requestedGraph = 'n'
+    return state
+
 import SkittleGraphTransforms
 import SkittleCore.FastaFiles
 class TransformTest(TestCase):
     def testModelSeqDepth(self):
-        state = StatePacket()
+        state = TestPacket()
         self.assertFalse(type(state.seq) == object)
         self.assertFalse(isinstance(['ACGTACGTAAAACCCCGGGGTTTT','AAAACGCCGTN', 'AGTGGGG'], type(state.seq)), type(state.seq))
         self.assertTrue(SkittleGraphTransforms.hasDepth(['ACGTACGTAAAACCCCGGGGTTTT','AAAACGCCGTN', 'AGTGGGG']), type(state.seq))
@@ -32,7 +45,7 @@ class TransformTest(TestCase):
         self.assertTrue(0 < len(state.seq))
         print len(state.seq)
     def testChunks(self):
-        state = StatePacket()
+        state = TestPacket()
         self.assertEqual(len(state.seq[1:5]), len(str('ACGCGCTCTATCA')[1:5]))
         
     def testCountNucleotides(self):
@@ -44,7 +57,7 @@ import AnnotationDisplay
 class AnnotationDisplayTest(TestCase):
     def test(self):
         print 'Annotation Display Test case'
-        state = StatePacket()
+        state = TestPacket()
         state.length = 300
         annotationState = AnnotationDisplay.AnnotationTrackState()  #this is not a model state.  This is only here because gtfReader has not been implemented
         print AnnotationDisplay.calculateOutputPixels(state, annotationState)
@@ -53,7 +66,7 @@ import NucleotideBias
 class NucleotideBiasTest(TestCase):
     def test(self):
         print 'Nucleotide Bias test case'
-        state = StatePacket()
+        state = TestPacket()
         state.seq = 'ACGTACGTAAAACCCCGGGGTTTT'
         print NucleotideBias.calculateOutputPixels(state)
         
@@ -61,7 +74,7 @@ import NucleotideDisplay
 class NucleotideDisplayTest(TestCase):
     def test(self):
         print 'Nucleotide Display test case'
-        state = StatePacket()
+        state = TestPacket()
     #    state.scale = 1
         print NucleotideDisplay.calculateOutputPixels(state)
         
@@ -69,7 +82,7 @@ import OligomerUsage
 class OligomerUsageTest(TestCase):
     def test(self):
         print 'OligomerUsage test case'
-        state = StatePacket()
+        state = TestPacket()
         extraState = OligomerUsageState()
         print OligomerUsage.calculateOutputPixels(state, extraState)#
         
@@ -77,7 +90,7 @@ import RepeatMap
 class RepeatMapTest(TestCase):
     def test(self):
         print 'RepeatMap test case'
-        state = StatePacket()
+        state = TestPacket()
         repeatMapState = RepeatMapState()
         print RepeatMap.calculateOutputPixels(state, repeatMapState)
         
@@ -85,7 +98,7 @@ import SequenceHighlighter
 class SequenceHighlighterTest(TestCase):#TODO: currently blank
     def test(self):
         print 'SequenceHighlighter test case'
-        state = StatePacket()
+        state = TestPacket()
         state.seq = 'AAAAGGGGTATATATATATATGGGATAAAGCCCCC'
         print SequenceHighlighter.calculateOutputPixels(state, HighlighterState())
     
@@ -93,7 +106,7 @@ import SimilarityHeatMap
 class SimilarityHeatMapTest(TestCase):
     def test(self):
         print 'SimilarityHeatMap test case'
-        state = StatePacket()
+        state = TestPacket()
         state.width = 30
         heatMap = SimilarityHeatMap.calculateOutputPixels(state, heatMapState = SimilarityHeatMapState())
         SimilarityHeatMap.prettyPrint(heatMap)
@@ -102,7 +115,7 @@ import ThreeMerDetector
 class ThreeMerDetectorTest(TestCase):
     def test(self):
         print 'ThreeMerDetector test case'
-        state = StatePacket()
+        state = TestPacket()
         extra = ThreeMerDetectorState()
         print ThreeMerDetector.calculateOutputPixels(state, extra)
         
@@ -110,6 +123,6 @@ class ThreeMerDetectorTest(TestCase):
 #class grphTest(TestCase):
 #    def test(self):
 #        print 'grph test case'
-#        state = StatePacket()
+#        state = TestPacket()
 #        #
 #        print grph.calculateOutputPixels(state)#
