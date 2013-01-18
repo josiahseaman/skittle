@@ -7,6 +7,7 @@ from SkittleTree import settings
 from django.db import models
 import Graphs.models   #import ParentState
 
+
 '''
 This is the single global state packet that defines a view state in Skittle.  
 This state packet is equivalent to an URL or a request from the Skittle website.

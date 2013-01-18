@@ -10,6 +10,8 @@ from models import SimilarityHeatMapState
 import OligomerUsage
 from SkittleCore.GraphRequestHandler import registerGraph
 from PixelLogic import twoSidedSpectrumColoring
+from ..FastaFiles import readFile
+import copy
 
 registerGraph('s', "Similarity Heatmap", __name__, False)
 
@@ -23,16 +25,30 @@ def prettyPrint(heatMap):
                 print 'N', ', ',
     print #newline
 
+def readAndAppendNextChunk(state):
+    assert isinstance(state, StatePacket)
+    newState = copy.copy(state) #shallow copy
+    newState.start = state.start + state.length #chunk size 
+    sequence = readFile(newState) #FastaFiles.
+    if sequence is not None:
+        newState.seq = state.seq + sequence #append two sequences together
+    return newState
+
 def calculateOutputPixels(state, heatMapState = SimilarityHeatMapState()):
+    height = state.height()
+    width = min(height, 300)
+    state = readAndAppendNextChunk(state)
+    
     oligVectors = OligomerUsage.calculateOutputPixels(state, heatMapState)
-    heatMap = [[None for x in range(len(oligVectors))] for y in range(len(oligVectors))]
+    heatMap = [[None for x in range(width)] for y in range(height)]
     
     for y in range(len(heatMap)):
-        for x in range(y, len(heatMap[y])):
-            if x == y:
-                heatMap[y][x-y] = 1.0 #don't bother calculating self:self
-            else:
-                heatMap[y][x-y] = pearsonCorrelation(oligVectors[y], oligVectors[x])
+        for x in range(0, len(heatMap[y])):
+            if x == 0:
+                heatMap[y][x] = 1.0 #don't bother calculating self:self
+            elif x+y < len(oligVectors):#account for second to last chunk
+                heatMap[y][x] = pearsonCorrelation(oligVectors[y], oligVectors[ y+x ] )
+                
     if heatMapState.useRowColumnCorrelation:
         mirrorDiagonalMatrix(heatMap)#flip along diagonal symmetry
 #        prettyPrint(heatMap)
