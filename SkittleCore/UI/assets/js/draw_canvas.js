@@ -81,8 +81,7 @@ var calculateOffsetWidth = function(skixelWidthofGraph) {
 var drawGraphs = function() {
     b.clearRect(0,0,1024,1000)
     var offset = xOffset + gutterWidth
-    var chunks = Math.ceil(Math.min(skixelsOnScreen/65536 + 1,(fileLength-start)/65536))
-
+    var chunks = Math.min( Math.ceil(skixelsOnScreen/65536 + 1),(Math.ceil(fileLength/65536)-Math.floor((start)/65536)) )
     // for (key in graphStatus) {
     for (var i=0;i<graphOrder.length;i++) {
         var key = graphOrder[i];
@@ -104,6 +103,7 @@ var drawGraph = function(graph,offset,chunks) {
         case "n": return drawNucDisplay(offset,chunks);
         case "b": return drawNucBias(offset,chunks);
         case "m": return drawRMap(offset,chunks);
+        case "s": return drawSimHeat(offset,chunks);
         default: 
             console.log("Requested graph does not have a cooresponding javascript function, trying generic")
             return drawVerticalGraph(graph,offset,chunks);
@@ -120,10 +120,6 @@ var drawVerticalGraph = function(graph,offset,chunks) {
     }
     return calculateOffsetWidth(graphWidth)
 }
-var drawGenericGraph = function(graph,offset,chunks) {
-    graphWidth = drawVerticalGraph(graph,offset,chunks)
-    return 0
-}
 var drawAnnotations = function(offset,chunks) {
     var imageObj = imageRequestor('a',0)
     b.drawImage(imageObj,offset,Math.round(-start/width + 8))
@@ -131,6 +127,7 @@ var drawAnnotations = function(offset,chunks) {
     return calculateOffsetWidth(imageObj.width)
 }
 var drawNucDisplay = function(offset,chunks) {
+    a.clearRect(0,0,1024,500)
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor("n",i)
         if(!imageObj.complete) imageObj = imageUnrendered;
@@ -187,7 +184,44 @@ var drawRMap = function(offset,chunks) {
     }
     return calculateOffsetWidth(fWidth)
 }
+var drawSimHeat = function(offset,chunks) {
+    a.clearRect(0,0,300,1000)
+    var displayWidth = 300
+    var lineHeight = Math.round(65536/width);
+    for (var i=0;i<chunks;i++) {
+        var imageObj = imageRequestor("s",i)
+        if(!imageObj.complete) imageObj = imageUnrendered;
+        a.drawImage(imageObj,0,lineHeight*i) // render data on hidden canvas
+    }
+    var imageData = a.getImageData(0, 0, 300, chunks*lineHeight);
+    var data = imageData.data;
+    var newImageData = b.createImageData(displayWidth,displayWidth) //create new image data with desired dimentions (width)
+    var newData = newImageData.data;
 
+    // var startOffset = (start - 1 - width*8 - Math.max( Math.floor((start-width*8)/(65536*scale) ), 0 )*65536*scale )*4;
+
+    var lineLength = displayWidth*4;
+    var startOffset = (Math.round(start/width) - 8 - Math.max( Math.floor((start-width*8)/65536), 0 )*lineHeight)*lineLength
+    var l = 0, i = startOffset
+    for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
+        var y = (x - l*lineLength)
+        if (y >= lineLength) {
+            l += 1
+            x += 4*l
+            i = startOffset + lineLength*l
+        }
+        var mirror = (y/4)*lineLength + l*4
+        newData[x] = newData[mirror] = data[i] || 0;
+        newData[x + 1] = newData[mirror + 1] = data[i + 1] || 0;
+        newData[x + 2] = newData[mirror + 2] = data[i + 2] || 0;
+        newData[x + 3] = newData[mirror + 3] = data[i + 3] || 0;
+        i +=4
+    }
+
+    b.putImageData(newImageData, offset, 0);
+    return calculateOffsetWidth(1024)
+    
+}
 var generatePlaceholderImage = function() {
 
 }

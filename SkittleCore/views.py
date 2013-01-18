@@ -18,7 +18,7 @@ def index(request, specimen="",chromosome=""):
     graphs = request.GET.get('graphs',"n")
 
     fileLength = GetChromosomeLength(specimen,chromosome) 
-    context = {'availableGraphs':GraphRequestHandler.availableGraphs,'specimen':specimen,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength}
+    context = {'availableGraphs':GraphRequestHandler.availableGraphs,'specimen':specimen,'chromosome':chromosome,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength}
     return render(request, 'index.html',context)
 
 @cache_control(must_revalidate=False, max_age=3600)

@@ -149,7 +149,7 @@ function mouseWheel(e) {
         for (var key in graphStatus) {
             if (graphStatus[key].visible == true) graphString += key;
         }
-        var currentURL = window.location.origin + "/browse/genome/chromosome/?graphs=" + graphString + "&start=" + start + "&scale=" + scale + "&width=" + width 
+        var currentURL = window.location.origin + "/browse/" + specimen + "/" + genome + "/?graphs=" + graphString + "&start=" + start + "&scale=" + scale + "&width=" + width 
         if (typeof linkPopover === "undefined") {
             linkPopover = $('<div class="popover active"></div>');
             $('body').append(linkPopover);
@@ -246,13 +246,16 @@ var UIendChange = function(newEnd) {
     }
 }
 var updateEnd = function() {
-    $('#endDisplay').text(Math.round( start + (skixelsOnScreen - (25+37)*width - 1)*scale ))
+    newEnd = Math.round( start + (skixelsOnScreen - (25+37)*width - 1)*scale )
+    if (newEnd > fileLength) $('#endDisplay').text(fileLength);
+    else $('#endDisplay').text(newEnd)
 }
 
 // setters and setter utilities
 
 var setStartTo = function(newStart) {
     if (newStart < 1) {
+        if (start ==1) return;
         start = 1;
     }
     else if (newStart > fileLength/2 && newStart > (fileLength - (skixelsOnScreen - (25+37)*width)*scale/2)) {
