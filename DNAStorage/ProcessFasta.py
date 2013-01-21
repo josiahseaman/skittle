@@ -25,10 +25,13 @@ def splitAndSort(file, storageLocation, workingLocation):
     print "Entering this sample into the system..."
     
     filePath = os.path.join(storageLocation)
+    pngFilePath = os.path.join(storageLocation).replace("fasta", "png")
     for sub in taxonomic:
-        filePath = os.path.join(filePath, sub)   
+        filePath = os.path.join(filePath, sub) 
+        pngFilePath = os.path.join(pngFilePath, sub)
     if not os.path.isdir(filePath):
         os.makedirs(filePath)
+    if not os.path.isdir(pngFilePath):
         os.makedirs(filePath.replace("fasta", "png"))
         
     #Begin setting up the FastaFile object for the database
