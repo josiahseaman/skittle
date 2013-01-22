@@ -1,6 +1,7 @@
 import sys, os, os.path, re, shutil
 from models import FastaFiles, FastaChunkFiles
 from StorageRequestHandler import HasFastaFile
+from SkittleTree import settings
 
 #Take a fasta file, split it and sort it into the correct folders
 def splitAndSort(file, storageLocation, workingLocation):       
@@ -113,9 +114,7 @@ def splitAndSort(file, storageLocation, workingLocation):
 #----------------------------------------------------------------------------------------
 def run():
     #CD into the folder where this file is located as it should be the DNAStorage folder
-    workingDir = os.path.realpath(__file__).replace("\\", "/")
-    workingDir = re.sub('/ProcessFasta\.pyc', '', workingDir)
-    workingDir = re.sub('/ProcessFasta\.py', '', workingDir)
+    workingDir = settings.SkittleTreeLoc + "DNAStorage"
     os.chdir(workingDir)
 
     #Look to see if there are any files in to_import
