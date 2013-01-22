@@ -1,4 +1,4 @@
-import sys, os, os.path, re
+import sys, os, os.path, re, shutil
 from models import FastaFiles, FastaChunkFiles
 from StorageRequestHandler import HasFastaFile
 
@@ -32,7 +32,7 @@ def splitAndSort(file, storageLocation, workingLocation):
     if not os.path.isdir(filePath):
         os.makedirs(filePath)
     if not os.path.isdir(pngFilePath):
-        os.makedirs(filePath.replace("fasta", "png"))
+        os.makedirs(pngFilePath)
         
     #Begin setting up the FastaFile object for the database
     fastaFile = FastaFiles()
@@ -107,6 +107,7 @@ def splitAndSort(file, storageLocation, workingLocation):
         fa.FastaFile = fastaFile
         fa.save()
         
+    print "Done enterting " + taxonomic[4] + " " + taxonomic[5] + " into the system!"
     return True
 
 #----------------------------------------------------------------------------------------
@@ -123,7 +124,7 @@ def run():
         if file.endswith(".fasta") or file.endswith(".fa"):
             try:
                 splitAndSort(file, workingDir + "/fasta", workingDir + "/to_import/")
-                os.rename("to_import/" + file, "history/" + file)
+                shutil.move("to_import/" + file, "history/" + file)
             except IOError as ex:
                 print ex
-                os.rename("to_import/" + file, "rejected/" + file)
+                shutil.move("to_import/" + file, "rejected/" + file)
