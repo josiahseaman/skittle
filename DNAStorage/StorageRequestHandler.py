@@ -97,9 +97,7 @@ def DeleteCache(graph):
     
     #Now remove PNG files
     #CD into the folder where this file is located as it should be the DNAStorage folder
-    workingDir = os.path.realpath(__file__).replace("\\", "/")
-    workingDir = re.sub('/StorageRequestHandler\.pyc', '', workingDir)
-    workingDir = re.sub('/StorageRequestHandler\.py', '', workingDir)
+    workingDir = settings.SkittleTreeLoc + "DNAStorage/png/"
     
     graphString = graph + "_"
     
