@@ -10,7 +10,7 @@ from SkittleCore.Graphs.models import *
 from DNAStorage.StorageRequestHandler import GetChromosomeLength
 # import json
 
-def index(request, specimen="",chromosome=""):
+def index(request, specimen="hg19",chromosome="chrY-sample"):
     width = request.GET.get('width',100)
     scale = request.GET.get('scale',1)
     start = request.GET.get('start',1)
