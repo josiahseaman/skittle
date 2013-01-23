@@ -36,12 +36,12 @@ class RepeatMapState(ParentState):
     F_start = models.IntegerField(default=1)
     
     def height(self, state, pixels):
-        assert isinstance(state, SkittleCore.RequestPacket)
+#        assert isinstance(state, SkittleCore.RequestPacket)
         F_height = ((len(pixels)) -  (state.width + self.F_width*16)) / state.width
         return F_height
     
     def oldHeight(self, state, pixels):
-        assert isinstance(state, SkittleCore.RequestPacket)
+#        assert isinstance(state, SkittleCore.RequestPacket)
         F_height = ((len(pixels)) - (self.F_start-1)*state.scale - self.F_width*state.scale ) / state.width
 #        F_height = max(0, min(400, F_height) )
         return F_height

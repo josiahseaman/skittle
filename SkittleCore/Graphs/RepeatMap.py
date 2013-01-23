@@ -8,7 +8,7 @@ from models import RepeatMapState
 from SkittleCore.models import RequestPacket
 from SkittleCore.GraphRequestHandler import registerGraph
 import math
-from random import choice
+from random import choice, randrange
 
 registerGraph('m', "Repeat Map", __name__, False)
 '''
@@ -16,10 +16,11 @@ These are the functions that are specific to the use of RepeatMap and not genera
 These functions use RepeatMapState to emulate an object with state.
 '''
 
-def generateRepeatDebugSequence(maxFrequency, bpPerFrequency):
+def generateRepeatDebugSequence(maxFrequency, bpPerFrequency, startFrequency = 1):
     seq = []
     alphabet = ['A','C','G','T']
-    for tandemLength in range(1,maxFrequency+1):
+    for tandemLength in range(startFrequency, maxFrequency+1):
+        tandemLength = int(tandemLength ** 1.2) 
         monomer = ''
         for bp in range(tandemLength):
             monomer += choice(alphabet)
@@ -32,26 +33,30 @@ def generateRepeatDebugSequence(maxFrequency, bpPerFrequency):
     seq = ''.join(seq)
     return seq
 
-def createScaledColorSequence(state, start, scale):
-    chunks = chunkUpList(state.seq[start: start+scale*10], state.scale)
+def createScaledColorSequence(seq, start, scale, end = -1):
+    if end == -1: end = start+scale*10
+    chunks = chunkUpList(seq[start: end], scale)
     counts = countNucleotides(chunks)
     counts = normalizeDictionary(counts)
-    pixels = countListToColorSpace(counts, state.colorPalette)
+    pixels = countListToColorSpace(counts, 'Classic')
     return pixels
 
 def logRepeatMap(state, repeatMapState):
     freq = []
     start = 0
+    skixelOffset = 5
     for h in range(repeatMapState.height(state, state.seq)): # per line
         freq.append( [] )
         scale = 1
         while scale < repeatMapState.F_width:
+            end = start + scale*15
+            scaledSequence = createScaledColorSequence(state.seq, start, scale, end)
+            assert len(scaledSequence) == 16, scaledSequence
             #get two scaled sequences
-            original = createScaledColorSequence(state, start, scale)
-            offsetSequence = createScaledColorSequence(state, start+scale*2, scale) 
-            #correlation at offset +1
-            
+            original = scaledSequence[0:10]
             rgbChannels = zip(*original)
+            
+            offsetSequence = scaledSequence[4:14]
             targetChannels = zip(*offsetSequence)
             resultSum = 0.0
             for index, currentChannel in enumerate(rgbChannels):
@@ -59,8 +64,10 @@ def logRepeatMap(state, repeatMapState):
                 if correlation is not None:
                     resultSum += correlation
             resultSum /= 3
+            if resultSum > 0.9:
+                print (scale, scale * skixelOffset)
             freq[h].append( .5 * (1.0 + resultSum) )
-            scale = int(math.ceil(scale * 1.05))
+            scale = scale+1  #int(math.ceil(scale * 1.05))
         start += state.width
     return freq
 
@@ -87,7 +94,7 @@ def oldRepeatMap(state, repeatMapState):
 def calculateOutputPixels(state, repeatMapState = RepeatMapState()):
     assert isinstance(repeatMapState, RepeatMapState)
     assert isinstance(state, RequestPacket)
-    state.seq = generateRepeatDebugSequence(70, 400)
+#    state.seq = generateRepeatDebugSequence(53, 400, 1)
     
     scores = logRepeatMap(state, repeatMapState)
     return scores

@@ -58,7 +58,8 @@ def handleRequest(state):
     assert isinstance(state, RequestPacket)
     #Check to see if PNG exists
     png = None
-    png = tryGetGraphPNG(state)
+    if state.requestedGraph != 'm':
+        png = tryGetGraphPNG(state)
     #If it doesn't: grab pixel calculations
     if png is None:
         pixels = calculatePixels(state)
