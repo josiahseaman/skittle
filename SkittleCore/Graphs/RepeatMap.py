@@ -33,8 +33,7 @@ def generateRepeatDebugSequence(maxFrequency, bpPerFrequency, startFrequency = 1
     seq = ''.join(seq)
     return seq
 
-def createScaledColorSequence(seq, start, scale, end = -1):
-    if end == -1: end = start+scale*10
+def createScaledColorSequence(seq, start, scale, end ):
     chunks = chunkUpList(seq[start: end], scale)
     counts = countNucleotides(chunks)
     counts = normalizeDictionary(counts)
@@ -44,20 +43,24 @@ def createScaledColorSequence(seq, start, scale, end = -1):
 def logRepeatMap(state, repeatMapState):
     freq = []
     start = 0
+    skixelsPerSample = 24
+    growthPower = 2
     for h in range(repeatMapState.height(state, state.seq)): # per line
         freq.append( [] )
         
-        for powerOfTwo in range(repeatMapState.F_width):
-            scale = int(math.ceil(3 ** powerOfTwo))
-            end = start + scale*24
+        for powerOfThree in range(repeatMapState.F_width):
+            scale = int(math.ceil(growthPower ** powerOfThree))
+            if scale >= 700:
+                break
+            end = start + scale*(skixelsPerSample*2)
             scaledSequence = createScaledColorSequence(state.seq, start, scale, end)
 #            assert len(scaledSequence) == 20, scaledSequence
             #get two scaled sequences
-            original = scaledSequence[0:12]
+            original = scaledSequence[0:skixelsPerSample]
             rgbChannels = zip(*original)
             
-            for offset in range(4,12): #range 5 - 12 but indexing starts at 0
-                offsetSequence = scaledSequence[offset : offset+12]
+            for offset in range(skixelsPerSample/growthPower, skixelsPerSample): #range 5 - 12 but indexing starts at 0
+                offsetSequence = scaledSequence[offset : offset + skixelsPerSample]
                 if len(offsetSequence) == len(original):
                     targetChannels = zip(*offsetSequence)
                     resultSum = 0.0
