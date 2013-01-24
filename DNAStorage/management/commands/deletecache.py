@@ -7,7 +7,12 @@ class Command(BaseCommand):
     help = 'Wipes cache associated with the given graph type.'
     
     def handle(self, *args, **options):
-        for graph in args:
+        if "all" in args:
+            all = ['a', 'b', 'h', 'm', 'o', 'n', 's', 't']
+        else:
+            all = args
+            
+        for graph in all:
             try:
                 if graph in generateGraphListForServer():
                     self.stdout.write("Wiping all PNGs and image database entries to do with graph type " + graph + "\n")

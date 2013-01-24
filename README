@@ -1,3 +1,5 @@
+When starting the dev server, you can pass in the argument "clean" (./startDevServer.sh clean) to clear the cache for ALL graphs.
+
 To import all .fa and .fasta files in the "DNAStorage/to_import" folder, run "manage.py ImportFasta"
 
 ====================GRAPH TYPES====================
