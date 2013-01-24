@@ -1,4 +1,16 @@
+When starting the dev server, you can pass in the argument "clean" (./startDevServer.sh clean) to clear the cache for ALL graphs.
+
 To import all .fa and .fasta files in the "DNAStorage/to_import" folder, run "manage.py ImportFasta"
+
+====================GRAPH TYPES====================
+a : Annotation Display
+b : Nucleotide Bias
+h : Sequence Highlighter (Raster)
+m : Repeat Map
+o : Oligomer Usage
+n : Nucleotide Display (Raster)
+s : Similarity Heatmap
+t : Threemer Detector
 
 ====================APACHE COMPILE SETTINGS====================
 apt-get install apache2-mpm-worker libapache2-mod-fcgid
