@@ -10,15 +10,16 @@ from SkittleCore.Graphs.models import *
 from DNAStorage.StorageRequestHandler import GetChromosomeLength
 # import json
 
-def index(request, specimen="",chromosome=""):
+def index(request, specimen="hg19",chromosome="chrY-sample"):
     width = request.GET.get('width',100)
     scale = request.GET.get('scale',1)
     start = request.GET.get('start',1)
     zoom = request.GET.get('zoom',1)
     graphs = request.GET.get('graphs',"n")
+    colorPalette = request.GET.get('colorPalette','Classic')
 
     fileLength = GetChromosomeLength(specimen,chromosome) 
-    context = {'availableGraphs':GraphRequestHandler.availableGraphs,'specimen':specimen,'chromosome':chromosome,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength}
+    context = {'availableGraphs':GraphRequestHandler.availableGraphs,'specimen':specimen,'chromosome':chromosome,'colorPalette':colorPalette,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength}
     return render(request, 'index.html',context)
 
 @cache_control(must_revalidate=False, max_age=3600)
@@ -31,6 +32,7 @@ def graph(request, specimen="hg19",chromosome="chrY-sample"):
     state.width = int(request.GET.get('width',100))
     state.scale = int(request.GET.get('scale',1))
     state.requestedGraph = request.GET.get('graph','n')
+    state.colorPalette = request.GET.get('colorPalette','Classic')
     # if state.requestedGraph == 'm':
     # 	repeatMapState = RepeatMapState()
     # 	repeatMapState.F_width = int(request.GET.get('F_width',40))

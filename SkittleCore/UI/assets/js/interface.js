@@ -94,6 +94,7 @@ function mouseMove(e) {
                         return;
                     }
                     setWidthTo( toSkixels(mx - edgeOffset) - graphStatus["n"].skixelOffset )
+                    this.style.cursor = 'col-resize'
                 }
                 else if(mx > leftSideOfClickZone && mx < (leftSideOfClickZone + toPixels(gutterWidth)) ) {
                     this.style.cursor = 'col-resize'
@@ -107,7 +108,8 @@ function mouseMove(e) {
 
             setStartTo( toSkixels(topOffset-my) * width + startOffset )
             if(!dragWidth) {
-                xOffset = Math.min(sideOffset - toSkixels((leftOffset-mx)),0)
+                setXoffsetTo(sideOffset - toSkixels(leftOffset-mx))
+                this.style.cursor = 'move'
             }
         }
     }
@@ -149,7 +151,7 @@ function mouseWheel(e) {
         for (var key in graphStatus) {
             if (graphStatus[key].visible == true) graphString += key;
         }
-        var currentURL = window.location.origin + "/browse/" + specimen + "/" + genome + "/?graphs=" + graphString + "&start=" + start + "&scale=" + scale + "&width=" + width 
+        var currentURL = window.location.origin + "/browse/" + specimen + "/" + chromosome + "/?graphs=" + graphString + "&start=" + start + "&scale=" + scale + "&width=" + width 
         if (typeof linkPopover === "undefined") {
             linkPopover = $('<div class="popover active"></div>');
             $('body').append(linkPopover);
@@ -252,6 +254,15 @@ var updateEnd = function() {
 }
 
 // setters and setter utilities
+var setXoffsetTo = function(newX) {
+    newX = Math.round(newX)
+    if (newX > 0) {
+        newX = 0
+    }
+    xOffset = newX
+    isInvalidDisplay = true;
+    $('#graph-labels').css('margin-left', toPixels(newX) + "px")
+}
 
 var setStartTo = function(newStart) {
     if (newStart < 1) {

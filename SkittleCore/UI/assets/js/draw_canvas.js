@@ -38,6 +38,7 @@ var init = function() {
     });
     for (var i=0;i<graphOrder.length;i++) {
         $("#graphLabel-" + graphOrder[i]).appendTo("#graph-labels ul")
+        $("#showGraph-" + graphOrder[i]).parent().appendTo("#graphList ul")
     }
 }
 
@@ -66,6 +67,7 @@ var graphURL = function(graph,chunkOffset) {
     var startChunk = ( ( Math.floor(startTopOfScreen/(65536*scale) ) + chunkOffset )*65536*scale + 1 );
     var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + scale;
     if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + width 
+    graphPath += "&colorPalette="+colorPalette
     return graphPath
 }
 
@@ -81,7 +83,7 @@ var calculateOffsetWidth = function(skixelWidthofGraph) {
 var drawGraphs = function() {
     b.clearRect(0,0,1024,1000)
     var offset = xOffset + gutterWidth
-    var chunks = Math.min( Math.ceil(skixelsOnScreen/65536 + 1),(Math.ceil(fileLength/65536)-Math.floor((start)/65536)) )
+    var chunks = Math.min( Math.ceil(skixelsOnScreen/65536 + 1),(Math.ceil(fileLength/65536)-Math.floor((start-8*width)/65536)) )
     // for (key in graphStatus) {
     for (var i=0;i<graphOrder.length;i++) {
         var key = graphOrder[i];
@@ -219,7 +221,7 @@ var drawSimHeat = function(offset,chunks) {
     }
 
     b.putImageData(newImageData, offset, 0);
-    return calculateOffsetWidth(1024)
+    return calculateOffsetWidth(300)
     
 }
 var generatePlaceholderImage = function() {
