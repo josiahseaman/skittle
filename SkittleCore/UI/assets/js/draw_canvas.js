@@ -70,7 +70,7 @@ var graphURL = function(graph,chunkOffset) {
     var startTopOfScreen = (start-8*width) >  0 ? (start-8*width) : 1
     var startChunk = ( ( Math.floor(startTopOfScreen/(65536*scale) ) + chunkOffset )*65536*scale + 1 );
     var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + scale;
-    if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + width 
+    if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + Math.round(width/10)*10 
     graphPath += "&colorPalette="+colorPalette
     return graphPath
 }
@@ -122,7 +122,7 @@ var drawVerticalGraph = function(graph,offset,chunks) {
         if(!imageObj.complete) imageObj = imageUnrendered;
         else var graphWidth = imageObj.width
         var vOffset = -Math.round(((start-8*width)%65536)/(width*scale) - i*(65536/width));
-        b.drawImage(imageObj,offset,vOffset) // render data on hidden canvas
+        b.drawImage(imageObj,offset,vOffset,graphWidth,Math.ceil(65536/width)) // render data on hidden canvas
     }
     return calculateOffsetWidth(graphWidth)
 }
@@ -197,7 +197,7 @@ var drawSimHeat = function(offset,chunks) {
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor("s",i)
         if(!imageObj.complete) imageObj = imageUnrendered;
-        a.drawImage(imageObj,0,lineHeight*i) // render data on hidden canvas
+        a.drawImage(imageObj,0,lineHeight*i,((Math.round(width/10)*10)/width*displayWidth),lineHeight) // render data on hidden canvas
     }
     var imageData = a.getImageData(0, 0, 300, chunks*lineHeight);
     var data = imageData.data;
