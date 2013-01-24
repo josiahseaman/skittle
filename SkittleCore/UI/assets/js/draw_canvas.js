@@ -48,11 +48,15 @@ var imageRequestor = function(graph,chunkOffset) {
     }
     if (imageObj[graph]) {
         var graphPath = graphURL(graph,chunkOffset)
-        if (!imageObj[graph][chunkOffset] || imageObj[graph][chunkOffset].source != graphPath) {
+        if (!imageObj[graph][chunkOffset] 
+            || ( imageObj[graph][chunkOffset].complete 
+                && imageObj[graph][chunkOffset].source != graphPath ) ) {
             imageObj[graph][chunkOffset] = new Image();
             imageObj[graph][chunkOffset].source = graphPath;
             imageObj[graph][chunkOffset].src = graphPath;
+            console.log("request " + graphPath)
             imageObj[graph][chunkOffset].onload = function() { // causes a little bit of jitter when scrolling
+                console.log("onload "+imageObj[graph][chunkOffset].src)
                 isInvalidDisplay = true
             }
             imageObj[graph][chunkOffset].onerror = function() {
