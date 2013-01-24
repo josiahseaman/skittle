@@ -44,30 +44,34 @@ def createScaledColorSequence(seq, start, scale, end = -1):
 def logRepeatMap(state, repeatMapState):
     freq = []
     start = 0
-    skixelOffset = 5
     for h in range(repeatMapState.height(state, state.seq)): # per line
         freq.append( [] )
-        scale = 1
-        while scale < repeatMapState.F_width:
-            end = start + scale*15
+        
+        for powerOfTwo in range(repeatMapState.F_width):
+            scale = int(math.ceil(3 ** powerOfTwo))
+            end = start + scale*24
             scaledSequence = createScaledColorSequence(state.seq, start, scale, end)
-            assert len(scaledSequence) == 16, scaledSequence
+#            assert len(scaledSequence) == 20, scaledSequence
             #get two scaled sequences
-            original = scaledSequence[0:10]
+            original = scaledSequence[0:12]
             rgbChannels = zip(*original)
             
-            offsetSequence = scaledSequence[4:14]
-            targetChannels = zip(*offsetSequence)
-            resultSum = 0.0
-            for index, currentChannel in enumerate(rgbChannels):
-                correlation = pearsonCorrelation(currentChannel, targetChannels[index])
-                if correlation is not None:
-                    resultSum += correlation
-            resultSum /= 3
-            if resultSum > 0.9:
-                print (scale, scale * skixelOffset)
-            freq[h].append( .5 * (1.0 + resultSum) )
-            scale = scale+1  #int(math.ceil(scale * 1.05))
+            for offset in range(4,12): #range 5 - 12 but indexing starts at 0
+                offsetSequence = scaledSequence[offset : offset+12]
+                if len(offsetSequence) == len(original):
+                    targetChannels = zip(*offsetSequence)
+                    resultSum = 0.0
+                    for index, currentChannel in enumerate(rgbChannels):
+                        correlation = pearsonCorrelation(currentChannel, targetChannels[index])
+                        if correlation is not None:
+                            resultSum += correlation
+                    resultSum /= 3
+#                    if resultSum > 0.9:
+#                        print (scale, scale * offset)
+                else:
+                    resultSum = -1.0
+                freq[h].append( .66666 * max(0.0, (.5 + resultSum)) )
+
         start += state.width
     return freq
 

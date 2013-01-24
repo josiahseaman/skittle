@@ -32,12 +32,12 @@ This is the link and definition of the settings tab for Repeat Map.
 I'm dubious about where to put this since GraphTransforms depends on it, but otherwise
 it would be included in RepeatMap.py'''
 class RepeatMapState(ParentState):
-    F_width = models.IntegerField(default=60)
+    F_width = models.IntegerField(default=6)
     F_start = models.IntegerField(default=1)
     
     def height(self, state, pixels):
 #        assert isinstance(state, SkittleCore.RequestPacket)
-        F_height = ((len(pixels)) -  (state.width + self.F_width*16)) / state.width
+        F_height = ((len(pixels)) -  (state.width + 0)) / state.width # self.F_width*20
         return F_height
     
     def oldHeight(self, state, pixels):
