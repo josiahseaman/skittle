@@ -222,7 +222,7 @@ var drawRMap = function(offset,chunks) {
     return calculateOffsetWidth(fWidth)
 }
 var drawSimHeat = function(offset,chunks) {
-    a.clearRect(0,0,350,1000)
+    a.clearRect(0,0,350,10000)
     var displayWidth = 300
     var lineHeight = Math.round(65536/width) //Math.round((Math.round(width/10)*10)/width*Math.ceil(65536/width));
     displayWidth = Math.round((Math.round(width/10)*10)/width*displayWidth)
