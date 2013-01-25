@@ -34,6 +34,8 @@ def generateRepeatDebugSequence(maxFrequency, bpPerFrequency, startFrequency = 1
     return seq
 
 def sequenceCount(seq, start, scale, end ):
+    if len(seq[start: end]) == 0:
+        return []
     chunks = chunkUpList(seq[start: end], scale)
     counts = countNucleotides(chunks)
     return counts

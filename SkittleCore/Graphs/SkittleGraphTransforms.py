@@ -125,7 +125,9 @@ def countNucleotides(seq, oligomerSize = 1):
 def chunkUpList(seq, chunkSize, overlap=0):
     if hasDepth(seq):
         return map(lambda x: chunkUpList(x, chunkSize, overlap), seq)
-    resultVector = [ seq[chunk*chunkSize : (chunk+1)*chunkSize + overlap] for chunk in range(0,(len(seq)/chunkSize)+1) ]
+    height = int(math.ceil(len(seq) / float(chunkSize)))
+    if height == 0: return []
+    resultVector = [ seq[chunk*chunkSize : (chunk+1)*chunkSize + overlap] for chunk in range(0,height) ]
     return resultVector
 
 '''Deprecated.  Nucleotide Display uses normalized counts now''' 
