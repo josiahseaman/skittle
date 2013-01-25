@@ -83,6 +83,7 @@ var calculateOffsetWidth = function(skixelWidthofGraph) {
 }
 
 var drawGraphs = function() {
+    drawPixelStuff = [];
     b.clearRect(0,0,1024,1000)
     var offset = xOffset + gutterWidth
     var chunks = Math.min( Math.ceil(skixelsOnScreen/65536 + 1),(Math.ceil(fileLength/65536)-Math.floor((start-8*width)/65536)) )
@@ -104,6 +105,10 @@ var drawGraphs = function() {
     c.clearRect(0,0,2000,1000) // render on visible canvas (which has scale applied)
     c.drawImage(b.canvas, 0, 0);
 
+    for (var i=0;i<drawPixelStuff.length;i++) {
+        drawPixelStuff[i];
+    }
+
 }
 
 var drawGraph = function(graph,offset,chunks) {
@@ -119,13 +124,19 @@ var drawGraph = function(graph,offset,chunks) {
     }
 }
 var drawVerticalGraph = function(graph,offset,chunks) {
-    var graphWidth = 0
+    var graphWidth = 0, graphHeight = 0;
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor(graph,i)
         if(!imageObj.complete) imageObj = imageUnrendered;
         else var graphWidth = imageObj.width
         var vOffset = -Math.round(((start-8*width)%65536)/(width*scale) - i*(65536/width));
-        b.drawImage(imageObj,offset,vOffset,graphWidth,Math.ceil(65536/width)) // render data on hidden canvas
+        i == chunks - 1 ? graphHeight = imageObj.height : graphHeight = Math.ceil(65536/width)
+        b.drawImage(imageObj,offset,vOffset,graphWidth,graphHeight) // render data on hidden canvas
+        // b.beginPath();
+        // b.moveTo(offset,vOffset-0.5)
+        // b.lineTo(offset + graphWidth,vOffset-0.5)
+        // b.strokeStyle = "#f0f"
+        // b.stroke();
     }
     return calculateOffsetWidth(graphWidth)
 }
@@ -204,18 +215,26 @@ var drawRMap = function(offset,chunks) {
         b.strokeStyle = "#f00"
         b.stroke();
     }
+
+    drawPixelStuff.push(function() { console.log('drawPixelStuff') })
     return calculateOffsetWidth(fWidth)
 }
 var drawSimHeat = function(offset,chunks) {
-    a.clearRect(0,0,300,1000)
+    a.clearRect(0,0,350,1000)
     var displayWidth = 300
-    var lineHeight = Math.round(65536/width);
+    var lineHeight = Math.round(65536/width) //Math.round((Math.round(width/10)*10)/width*Math.ceil(65536/width));
+    displayWidth = Math.round((Math.round(width/10)*10)/width*displayWidth)
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor("s",i)
         if(!imageObj.complete) imageObj = imageUnrendered;
-        a.drawImage(imageObj,0,lineHeight*i,((Math.round(width/10)*10)/width*displayWidth),lineHeight) // render data on hidden canvas
+        a.drawImage(imageObj,0,lineHeight*i,displayWidth,lineHeight) // render data on hidden canvas
+        // a.beginPath();
+        // a.moveTo(0,lineHeight*i+0.5)
+        // a.lineTo(300,lineHeight*i+0.5)
+        // a.strokeStyle = "#0f0"
+        // a.stroke();
     }
-    var imageData = a.getImageData(0, 0, 300, chunks*lineHeight);
+    var imageData = a.getImageData(0, 0, displayWidth, chunks*lineHeight);
     var data = imageData.data;
     var newImageData = b.createImageData(displayWidth,displayWidth) //create new image data with desired dimentions (width)
     var newData = newImageData.data;
@@ -223,7 +242,7 @@ var drawSimHeat = function(offset,chunks) {
     // var startOffset = (start - 1 - width*8 - Math.max( Math.floor((start-width*8)/(65536*scale) ), 0 )*65536*scale )*4;
 
     var lineLength = displayWidth*4;
-    var startOffset = (Math.round(start/width) - 8 - Math.max( Math.floor((start-width*8)/65536), 0 )*lineHeight)*lineLength
+    var startOffset = (Math.ceil(start/width) - 8 - Math.max( Math.floor((start-width*8)/65536), 0 )*lineHeight)*lineLength
     var l = 0, i = startOffset
     for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
         var y = (x - l*lineLength)
@@ -241,7 +260,9 @@ var drawSimHeat = function(offset,chunks) {
     }
 
     b.putImageData(newImageData, offset, 0);
-    return calculateOffsetWidth(300)
+        // var vOffset = -Math.round(((start-8*width)%65536)/(width*scale));
+        // b.putImageData(imageData, offset+320, vOffset);
+    return calculateOffsetWidth(displayWidth)
     
 }
 var generatePlaceholderImage = function() {

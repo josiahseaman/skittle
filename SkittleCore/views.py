@@ -60,6 +60,6 @@ def state(request):
         "m":{name:"Repeat Map",visible:false,isRasterable:false}
     }''' 
     json = "graphStatus = " + simplejson.dumps(GraphRequestHandler.generateGraphListForServer())
-    json += ";graphOrder = ['a','n','b','t','m','s','h','o'];"
+    json += ";graphOrder = ['a','n','h','b','t','o','m','s'];"
     return HttpResponse(json,content_type="application/json")
 

@@ -6,19 +6,37 @@ var keyListener = function(e) {
            e = window.event;
         }
         if(e.keyCode==37){ //left arrow
-           changeWidthBy(-1)
+            changeWidthBy(-1)
         }
         if(e.keyCode==39){ //right arrow
-           changeWidthBy(1)
+            changeWidthBy(1)
         }
         if(e.keyCode==38){ //up arrow
             e.preventDefault()
-           changeStartByLines(-10)
+            changeStartByLines(-10)
         }
         if(e.keyCode==40){ //down arrow
             e.preventDefault() //don't scroll the page
-           changeStartByLines(10)
+            changeStartByLines(10)
         }
+        if(e.keyCode==191){ // /(slash)
+            e.preventDefault() /
+            halfWidth()
+        }
+        if(e.keyCode==88){ // x
+            e.preventDefault() 
+            doubleWidth()
+        }
+        if(e.keyCode==219){ // [
+            e.preventDefault() 
+            setStartTo(1);
+        }
+
+        if(e.keyCode==221){ // ]
+            e.preventDefault() 
+            goToEnd()
+        }
+
     }
     else {
         if(e.keyCode==13) { //enter
