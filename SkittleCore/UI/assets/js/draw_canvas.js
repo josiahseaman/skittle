@@ -54,9 +54,7 @@ var imageRequestor = function(graph,chunkOffset) {
             imageObj[graph][chunkOffset] = new Image();
             imageObj[graph][chunkOffset].source = graphPath;
             imageObj[graph][chunkOffset].src = graphPath;
-            console.log("request " + graphPath)
             imageObj[graph][chunkOffset].onload = function() { // causes a little bit of jitter when scrolling
-                console.log("onload "+imageObj[graph][chunkOffset].src)
                 isInvalidDisplay = true
             }
             imageObj[graph][chunkOffset].onerror = function() {
@@ -99,19 +97,24 @@ var drawGraphs = function() {
             $('#graphLabel-' + key).width(toPixels(skixelWidthofGraph));
         }
     }
+    // var imageObj = imageRequestor("m",0)
+        // b.drawImage(imageObj,200,20,imageObj.width,imageObj.height*0.55) // render data on hidden canvas
+
 
     c.clearRect(0,0,2000,1000) // render on visible canvas (which has scale applied)
     c.drawImage(b.canvas, 0, 0);
+
 }
 
 var drawGraph = function(graph,offset,chunks) {
     switch (graph) {
+        case "a": return drawAnnotations(offset,chunks)
         case "n": return drawNucDisplay(offset,chunks);
         case "b": return drawNucBias(offset,chunks);
         case "m": return drawRMap(offset,chunks);
         case "s": return drawSimHeat(offset,chunks);
         default: 
-            console.log("Requested graph does not have a cooresponding javascript function, trying generic")
+            console.log(graphStatus[graph].name +" does not have a cooresponding javascript function, trying generic")
             return drawVerticalGraph(graph,offset,chunks);
     }
 }
@@ -127,10 +130,24 @@ var drawVerticalGraph = function(graph,offset,chunks) {
     return calculateOffsetWidth(graphWidth)
 }
 var drawAnnotations = function(offset,chunks) {
-    var imageObj = imageRequestor('a',0)
-    b.drawImage(imageObj,offset,Math.round(-start/width + 8))
+    var annotationWidth = 2
 
-    return calculateOffsetWidth(imageObj.width)
+    b.beginPath()
+    b.rect(offset,1,annotationWidth,500)
+    b.fillStyle="#333";
+    b.fill()
+
+    for(var i=0;i<annotation.length;i++) {
+        if (   (annotation[i].from > (start - 8*width) && annotation[i].from < ( start + (skixelsOnScreen + 37*width - 1)*scale ) )
+            || (annotation[i].to > (start - 8*width) && annotation[i].to < ( start + (skixelsOnScreen + 37*width - 1)*scale ) ) ) {
+            b.beginPath()
+            b.rect(offset,(annotation[i].from-start)/width+8,annotationWidth,(annotation[i].to-annotation[i].from)/width+8)
+            b.fillStyle=annotation[i].color
+            b.fill()
+        }
+    }
+
+    return calculateOffsetWidth(annotationWidth)
 }
 var drawNucDisplay = function(offset,chunks) {
     a.clearRect(0,0,1024,500)
@@ -153,7 +170,6 @@ var drawNucDisplay = function(offset,chunks) {
         newData[x + 2] = data[y + 2] || 0;
         newData[x + 3] = data[y + 3] || 0;
     }
-    b.clearRect(0,0,10000,10000)
     b.putImageData(newImageData, offset, 0);
 
     return calculateOffsetWidth(width)

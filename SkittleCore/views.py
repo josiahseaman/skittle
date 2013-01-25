@@ -44,6 +44,14 @@ def graph(request, specimen="hg19",chromosome="chrY-sample"):
     # image_data = open("/Users/marshallds/Sites/Skittle/master/SkittleCore/UI/assets/n-display.png", "rb").read()
     return HttpResponse(image_data, content_type="image/png")
 
+def annotation(request, specimen="hg19",chromosome="chrY-sample"):
+    json = '''annotation = [
+        {from:209,to:220,name:"annotation one",color:"#0ba5ba"},
+        {from:1209,to:1520,name:"annotation two",color:"#9c312a"},
+        {from:2039,to:2800,name:"annotation three",color:"#28b31f"},
+        {from:12039,to:12800,name:"annotation four",color:"#a67ebc"},
+    ]''' 
+    return HttpResponse(json,content_type="application/json")
 def state(request):
     json = '''graphStatus = {
         "a":{name:"Annotations",visible:false,isRasterable:true},
