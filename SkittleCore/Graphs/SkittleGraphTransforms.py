@@ -83,10 +83,10 @@ def countListToColorSpace(countList, colorPalette):
         return map(lambda x: countListToColorSpace(x, colorPalette), countList)
     
     colorMapping = colorPalettes[colorPalette]
-    resultingColor = [0, 0, 0]
+    colorContributions = []
     for character, magnitude in countList.items():#per entry in dictionary
-        colorContribution = map(lambda c: c * magnitude, colorMapping[character]) #scales color amount by magnitude for each channel
-        resultingColor =  map(sum, zip(colorContribution, resultingColor))
+        colorContributions.append(map(lambda c: c * magnitude, colorMapping[character])) #scales color amount by magnitude for each channel
+    resultingColor =  map(sum, zip(*colorContributions))
     return tuple(resultingColor)
 
 '''ReferencePoint is the number that all elements are divided by.  This defaults to the sum of dictionary 
