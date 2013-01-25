@@ -43,14 +43,14 @@ def createScaledColorSequence(seq, start, scale, end ):
 def logRepeatMap(state, repeatMapState):
     freq = []
     start = 0
-    skixelsPerSample = 24
+    skixelsPerSample = 128
     growthPower = 2
     for h in range(repeatMapState.height(state, state.seq)): # per line
         freq.append( [] )
         
         for powerOfThree in range(repeatMapState.F_width):
             scale = int(math.ceil(growthPower ** powerOfThree))
-            if scale * skixelsPerSample >= 24000 :#the maximum reach
+            if scale * skixelsPerSample >= 64000 :#the maximum reach
                 break
             end = start + scale*(skixelsPerSample*2)
             scaledSequence = createScaledColorSequence(state.seq, start, scale, end)
