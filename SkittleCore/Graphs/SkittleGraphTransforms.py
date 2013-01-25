@@ -122,7 +122,6 @@ def countNucleotides(seq, oligomerSize = 1):
 
 '''Returns a list of dictionaries that show the counts per grouping (usually scale).
     Doing this adds one layer of depth to seq'''
-import sys
 def chunkUpList(seq, chunkSize, overlap=0):
     if hasDepth(seq):
         return map(lambda x: chunkUpList(x, chunkSize, overlap), seq)
