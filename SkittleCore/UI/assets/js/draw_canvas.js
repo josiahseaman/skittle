@@ -105,8 +105,9 @@ var drawGraphs = function() {
     c.clearRect(0,0,2000,1000) // render on visible canvas (which has scale applied)
     c.drawImage(b.canvas, 0, 0);
 
-    for (var i=0;i<drawPixelStuff.length;i++) {
-        drawPixelStuff[i];
+    while (drawPixelStuff.length) { // draw any pixel grid stuff
+        var fn = drawPixelStuff.shift();
+        fn();
     }
 
 }
@@ -205,18 +206,19 @@ var drawRMap = function(offset,chunks) {
     //     b.drawImage(imageObj,offset,vOffset,fWidth,(65536/width)) // render data on hidden canvas
     // }
     
-    if (width<(fWidth-fOffset)) { //draw the red lines
-        var widthPosition = offset+width-fOffset;
-        b.beginPath();
-        b.moveTo(widthPosition-1.5,0)
-        b.lineTo(widthPosition-1.5,500)
-        b.moveTo(widthPosition+0.5,0)
-        b.lineTo(widthPosition+0.5,500)
-        b.strokeStyle = "#f00"
-        b.stroke();
-    }
-
-    drawPixelStuff.push(function() { console.log('drawPixelStuff') })
+    drawPixelStuff.push(function() { 
+        if ( width <= (fWidth-fOffset) ) { //draw the red lines
+            var widthPosition = offset+width-fOffset;
+            c.beginPath();
+            c.moveTo(widthPosition-1.18181818,0)
+            c.lineTo(widthPosition-1.18181818,500)
+            c.moveTo(widthPosition+0.18181818,0)
+            c.lineTo(widthPosition+0.18181818,500)
+            c.strokeStyle = "#f00"
+            c.lineWidth = 0.333333333
+            c.stroke();
+        }
+    })
     return calculateOffsetWidth(fWidth)
 }
 var drawSimHeat = function(offset,chunks) {
