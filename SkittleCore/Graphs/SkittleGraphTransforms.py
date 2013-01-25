@@ -101,17 +101,18 @@ def normalizeDictionary(listing, referencePoint = 0):
         referencePoint = sum(listing.values())
     elif callable(referencePoint):
         referencePoint = referencePoint(listing.values())
-    for key, value in listing.items():
-        listing[key] = value*1.0 / referencePoint
+    if referencePoint != 0:
+        for key, value in listing.items():
+            listing[key] = value*1.0 / referencePoint
     return listing
 
 def countNucleotides(seq, oligomerSize = 1):
     if hasDepth(seq):
         return map(lambda x: countNucleotides(x, oligomerSize), seq)
-    counts = {}
+    counts = {'A':0, 'C':0, 'G':0, 'T':0, 'N':0}
     if oligomerSize == 1:#optimized for Nucleotide Display
         for c in seq:
-            counts[c] = 1 + counts.get(c,0) #defaults to 0
+            counts[c] = 1 + counts[c] #counts.get(c,0) #defaults to 0
     else: 
         for endIndex in range(oligomerSize, len(seq)+1, 1):
             c = seq[endIndex-oligomerSize: endIndex]

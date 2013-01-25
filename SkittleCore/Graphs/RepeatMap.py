@@ -33,29 +33,50 @@ def generateRepeatDebugSequence(maxFrequency, bpPerFrequency, startFrequency = 1
     seq = ''.join(seq)
     return seq
 
-def createScaledColorSequence(seq, start, scale, end ):
+def sequenceCount(seq, start, scale, end ):
     chunks = chunkUpList(seq[start: end], scale)
     counts = countNucleotides(chunks)
+    return counts
+
+def colorizeSequence(counts):
     counts = normalizeDictionary(counts)
     pixels = countListToColorSpace(counts, 'Classic')
     return pixels
 
+def addDictionaries(jim, larry):
+    assert isinstance(jim, dict) and isinstance(larry, dict)
+    newDict = jim #so that keys that are in jim but not larry are still copied
+    for key in larry.keys():
+        newDict[key] = jim.get(key, 0) + larry[key]
+    return newDict
+
 def logRepeatMap(state, repeatMapState):
     freq = []
     start = 0
-    skixelsPerSample = 128
+    skixelsPerSample = 24
     growthPower = 2
-    for h in range(repeatMapState.height(state, state.seq)): # per line
+    height = repeatMapState.height(state, state.seq)
+    state = state.readAndAppendNextChunk()
+    print "Done reading additional chunk.  Computing..."
+    for h in range(height): # per line
         freq.append( [] )
+        oldScaledSequence = []
         
-        for powerOfThree in range(repeatMapState.F_width):
-            scale = int(math.ceil(growthPower ** powerOfThree))
+        for powerOfX in range(repeatMapState.F_width):
+            scale = int(math.ceil(growthPower ** powerOfX))
             if scale * skixelsPerSample >= 64000 :#the maximum reach
                 break
             end = start + scale*(skixelsPerSample*2)
-            scaledSequence = createScaledColorSequence(state.seq, start, scale, end)
-#            assert len(scaledSequence) == 20, scaledSequence
-            #get two scaled sequences
+            
+            starterSequence = []
+            if scale > 1:
+                for step in range(0, len(oldScaledSequence), growthPower):
+                    starterSequence.append(reduce(lambda x,y: addDictionaries(x,y), oldScaledSequence[step:step+growthPower], {}))
+            necessaryStart = start + len(starterSequence) * scale
+            scaledSequence = starterSequence + sequenceCount(state.seq, necessaryStart, scale, end)
+            oldScaledSequence = scaledSequence
+            scaledSequence = colorizeSequence(scaledSequence)
+
             original = scaledSequence[0:skixelsPerSample]
             rgbChannels = zip(*original)
             
@@ -75,7 +96,7 @@ def logRepeatMap(state, repeatMapState):
                     resultSum = -1.0
                 freq[h].append( .66666 * max(0.0, (.5 + resultSum)) )
 
-        start += state.width
+        start += state.charactersPerLine()
     return freq
 
 
@@ -102,7 +123,6 @@ def calculateOutputPixels(state, repeatMapState = RepeatMapState()):
     assert isinstance(repeatMapState, RepeatMapState)
     assert isinstance(state, RequestPacket)
 #    state.seq = generateRepeatDebugSequence(53, 400, 1)
-    
     scores = logRepeatMap(state, repeatMapState)
     return scores
     
