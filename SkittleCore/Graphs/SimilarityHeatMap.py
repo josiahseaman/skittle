@@ -10,7 +10,6 @@ from models import SimilarityHeatMapState
 import OligomerUsage
 from SkittleCore.GraphRequestHandler import registerGraph
 from PixelLogic import twoSidedSpectrumColoring
-from ..FastaFiles import readFile
 import copy
 
 registerGraph('s', "Similarity Heatmap", __name__, False)
@@ -25,20 +24,9 @@ def prettyPrint(heatMap):
                 print 'N', ', ',
     print #newline
 
-def readAndAppendNextChunk(state):
-    assert isinstance(state, RequestPacket)
-    newState = copy.copy(state) #shallow copy
-    newState.start = state.start + state.length #chunk size 
-    sequence = readFile(newState) #FastaFiles.
-    if sequence is not None:
-        newState.seq = state.seq + sequence #append two sequences together
-    else:
-        newState.seq = state.seq + ('N' * 65536)
-    return newState
-
 def calculateOutputPixels(state, heatMapState = SimilarityHeatMapState()):
     while len(state.seq) < 65536 + 300 * state.width:
-        state = readAndAppendNextChunk(state)
+        state = state.readAndAppendNextChunk(state, true)
     width = 300
     height = state.height() #TODO: this is inefficient 
     

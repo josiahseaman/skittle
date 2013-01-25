@@ -6,7 +6,8 @@ Created on Nov 30, 2012
 from SkittleTree import settings
 from django.db import models
 import Graphs.models   #import ParentState
-
+import copy
+from FastaFiles import readFile
 
 '''
 This is the single global state packet that defines a view state in Skittle.  
@@ -47,8 +48,17 @@ class RequestPacket(models.Model):
     def height(self):
         return self.length / self.width
     
-    def characterPerLine(self):
+    def charactersPerLine(self):
         return self.width * self.scale
+    
+    def readAndAppendNextChunk(self):
+        newState = copy.copy(self) #shallow copy
+        newState.start = self.start + self.length #chunk size 
+        sequence = readFile(newState)# FastaFiles.
+        if sequence is not None:
+            newState.seq = self.seq + sequence #append two sequences together
+        return newState
+
    
 class StatePacket(RequestPacket): 
     #TODO: should I restate the models.Charfield(max_length... or just set specimen = 'hg19'?

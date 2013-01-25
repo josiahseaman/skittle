@@ -83,10 +83,10 @@ def countListToColorSpace(countList, colorPalette):
         return map(lambda x: countListToColorSpace(x, colorPalette), countList)
     
     colorMapping = colorPalettes[colorPalette]
-    resultingColor = [0, 0, 0]
+    colorContributions = []
     for character, magnitude in countList.items():#per entry in dictionary
-        colorContribution = map(lambda c: c * magnitude, colorMapping[character]) #scales color amount by magnitude for each channel
-        resultingColor =  map(sum, zip(colorContribution, resultingColor))
+        colorContributions.append(map(lambda c: c * magnitude, colorMapping[character])) #scales color amount by magnitude for each channel
+    resultingColor =  map(sum, zip(*colorContributions))
     return tuple(resultingColor)
 
 '''ReferencePoint is the number that all elements are divided by.  This defaults to the sum of dictionary 
@@ -101,17 +101,18 @@ def normalizeDictionary(listing, referencePoint = 0):
         referencePoint = sum(listing.values())
     elif callable(referencePoint):
         referencePoint = referencePoint(listing.values())
-    for key, value in listing.items():
-        listing[key] = value*1.0 / referencePoint
+    if referencePoint != 0:
+        for key, value in listing.items():
+            listing[key] = value*1.0 / referencePoint
     return listing
 
 def countNucleotides(seq, oligomerSize = 1):
     if hasDepth(seq):
         return map(lambda x: countNucleotides(x, oligomerSize), seq)
-    counts = {}
+    counts = {'A':0, 'C':0, 'G':0, 'T':0, 'N':0}
     if oligomerSize == 1:#optimized for Nucleotide Display
         for c in seq:
-            counts[c] = 1 + counts.get(c,0) #defaults to 0
+            counts[c] = 1 + counts[c] #counts.get(c,0) #defaults to 0
     else: 
         for endIndex in range(oligomerSize, len(seq)+1, 1):
             c = seq[endIndex-oligomerSize: endIndex]
@@ -121,11 +122,12 @@ def countNucleotides(seq, oligomerSize = 1):
 
 '''Returns a list of dictionaries that show the counts per grouping (usually scale).
     Doing this adds one layer of depth to seq'''
-import sys
 def chunkUpList(seq, chunkSize, overlap=0):
     if hasDepth(seq):
         return map(lambda x: chunkUpList(x, chunkSize, overlap), seq)
-    resultVector = [ seq[chunk*chunkSize : (chunk+1)*chunkSize + overlap] for chunk in range(0,(len(seq)/chunkSize)+1) ]
+    height = int(math.ceil(len(seq) / float(chunkSize)))
+    if height == 0: return []
+    resultVector = [ seq[chunk*chunkSize : (chunk+1)*chunkSize + overlap] for chunk in range(0,height) ]
     return resultVector
 
 '''Deprecated.  Nucleotide Display uses normalized counts now''' 
