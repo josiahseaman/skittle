@@ -51,12 +51,15 @@ class RequestPacket(models.Model):
     def charactersPerLine(self):
         return self.width * self.scale
     
-    def readAndAppendNextChunk(self):
+    def readAndAppendNextChunk(self, addPadding = False):
         newState = copy.copy(self) #shallow copy
         newState.start = self.start + self.length #chunk size 
         sequence = readFile(newState)# FastaFiles.
         if sequence is not None:
             newState.seq = self.seq + sequence #append two sequences together
+	elif addPadding:
+	    newState.seq = state.seq + ('N' * 65536)
+	    
         return newState
 
    
