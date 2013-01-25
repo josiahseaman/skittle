@@ -32,12 +32,15 @@ def readAndAppendNextChunk(state):
     sequence = readFile(newState) #FastaFiles.
     if sequence is not None:
         newState.seq = state.seq + sequence #append two sequences together
+    else:
+        newState.seq = state.seq + ('N' * 65536)
     return newState
 
 def calculateOutputPixels(state, heatMapState = SimilarityHeatMapState()):
-    height = state.height()
-    width = min(height, 300)
-    state = readAndAppendNextChunk(state)
+    while len(state.seq) < 65536 + 300 * state.width:
+        state = readAndAppendNextChunk(state)
+    width = 300
+    height = state.height() #TODO: this is inefficient 
     
     oligVectors = OligomerUsage.calculateOutputPixels(state, heatMapState)
     heatMap = [[None for x in range(width)] for y in range(height)]
