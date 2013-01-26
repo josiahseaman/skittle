@@ -26,7 +26,7 @@ def prettyPrint(heatMap):
 
 def calculateOutputPixels(state, heatMapState = SimilarityHeatMapState()):
     while len(state.seq) < 65536 + 300 * state.width:
-        state = state.readAndAppendNextChunk(state, true)
+        state = state.readAndAppendNextChunk(state, True)
     width = 300
     height = state.height() #TODO: this is inefficient 
     
