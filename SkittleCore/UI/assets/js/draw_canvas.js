@@ -196,9 +196,7 @@ var drawNucBias = function(offset,chunks) {
     return calculateOffsetWidth(60)
 }
 var drawRMap = function(offset,chunks) {
-    var fOffset = 0
-    var fWidth = 61
-    drawVerticalGraph("m",offset,chunks)
+    var graphWidth = drawVerticalGraph("m",offset,chunks)
     // for (var i=0;i<chunks;i++) {
     //     var imageObj = imageRequestor("m",i)
     //     if(!imageObj.complete) imageObj = imageUnrendered;
@@ -207,8 +205,17 @@ var drawRMap = function(offset,chunks) {
     // }
     
     drawPixelStuff.push(function() { 
-        if ( width <= (fWidth-fOffset) ) { //draw the red lines
-            var widthPosition = offset+width-fOffset;
+        if ( width > 12) { //draw the red lines
+            // var remainingWidth = 0, megaColumn=0, subColumn=0;
+            // while (remainingWidth<(width-12)) {
+            //     remainingWidth += 2^megaColumn
+            //     subColumn++
+            //     if(subColumn>=12) {
+            //         subColumn=0
+            //         megaColumn++
+            //     } 
+            // }
+            var widthPosition = offset + 17.3*Math.log(width) - 43.7;
             c.beginPath();
             c.moveTo(widthPosition-1.18181818,0)
             c.lineTo(widthPosition-1.18181818,500)
@@ -219,7 +226,7 @@ var drawRMap = function(offset,chunks) {
             c.stroke();
         }
     })
-    return calculateOffsetWidth(fWidth)
+    return calculateOffsetWidth(graphWidth)
 }
 var drawSimHeat = function(offset,chunks) {
     a.clearRect(0,0,350,10000)
