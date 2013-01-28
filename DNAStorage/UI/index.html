@@ -1,0 +1,210 @@
+<html>
+<head>
+	<title>Skittle|Select a Genome</title>
+
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/popover.css">
+	<style type="text/css">
+		#previewPane {
+			position: absolute;
+			top:80px;
+			right:0;
+			bottom: 20px;
+			left:660px;
+			border-left: 1px solid #aaa;
+			padding: 20px;
+			color:#ccc;
+		}
+		#listPane {
+			position: absolute;
+			left:20px;
+			top:60px;
+			bottom: 0;
+			width:620px;
+			color:#ccc;
+
+		}
+
+		p {
+			font-family: 'helvetica neue',helvetica, ariel, sans-serif
+		}
+		h2 {
+			font-size: 2.3em;
+			font-weight: 300;
+			margin-bottom: 0.2em
+		}
+		.breadcrumbs a {
+			color:#fda;
+		}
+		#searchbox {
+			padding: 0.2em 0.8em;
+			font-size: 1em;
+			width:350px;
+			background: #222;
+			color: #eee;
+			border-radius: 20px;
+			border-color: #888;
+			border-style: solid;
+		}
+		#previewPane>img {
+			border-radius: 12px;
+			clear:both;
+			margin-bottom: 12px;
+		}
+
+		#genomes {
+			position: absolute;
+			top:160px;
+			bottom: 0;
+			width:620px;
+			overflow: auto;
+			
+		}
+
+		#genomes section {
+			margin:1em;
+			padding:0.5em;
+			border:2px solid #864;
+			border-radius: 6px;
+			background:#000;
+		}
+		#genomes section:hover {
+			background: #111;
+			border:2px solid #db8;
+		}
+		.breadcrumbs {
+			margin: 1em;
+		}
+		section h2 {
+			font-size: 1.5em;
+			margin:0;
+			padding:0;
+			color:#fda;
+		}
+		section p {
+			margin:0;
+		}
+		.seqNum {
+			font-style: italic;
+			color:#bbb;
+		}
+		.source {
+			color:#bbb;
+			float: right;
+		}
+		.source span {
+			font-style: italic;
+			color:#bbb;
+		}
+
+	</style>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script type="text/javascript">
+
+
+	</script>
+</head>
+<body>
+	<h1 id="logo"><img src="{{STATIC_URL}}gfx/skittle-logo3.png"><span>DNA</span>Skittle</h1>
+	
+	<header>
+		<ul>
+			<li>Discover</li>
+			<li>Share</li>
+			<li>Learn</li>
+		</ul>
+		<p><a href="https://twitter.com/genome_skittle"><img src="{{STATIC_URL}}gfx/twitter-bird-dark-bgs.png" height="36" width="36"></a>
+			<a href="https://github.com/josiahseaman/skittle"><img src="{{STATIC_URL}}gfx/github-white.png" height="22"></a></p>
+	</header>
+
+	<div id="previewPane">
+		<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="150" height="150"><br>
+		<h3 class="button">Browse hg19>chrY-sample</h3>
+
+		<p>Source: blah blah</p>
+		<p>Length: 20349589 bp</p>
+		<p>Description: Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+		tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+		quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+		consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+		cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+		proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+		<h3>Available Annotations:</h3>
+	</div>
+	<div id="listPane">
+		<h2>Genome Library</h2>
+		<input type="text" placeholder="search" id="searchbox">
+<!-- 		<ul>
+			<li>Animalia</li>
+			<li>Planta</li>
+		</ul> -->
+<nav class="breadcrumbs"><a href=#>Animals</a> > <a href=#>Vertibrates</a> > <a href=#>Mammals</a></nav>
+		<div id="genomes">
+		
+		<section>
+			<p class="source"><span>Source:</span>UCSC</p>
+			<h2>Human Genome</h2>
+			<p class="source">more...</p>
+			<p class="info"><span class="seqNum">Feb. 2009 (hg19, GRCh37)</span> Length:109kbp</p>
+		</section>
+		<section>
+			<h2>Human Genome</h2>
+			<p class="source"><span>Source:</span>UCSC</p>
+			<p class="seqNum">Mar. 2006 (hg18)</p>
+		</section>
+		<section>
+			<h2>Cat Genome</h2>
+			<p class="source"><span>Source:</span>UCSC</p>
+			<p class="seqNum">Dec. 2008 (felCat4)</p>
+		</section>
+		<section>
+			<h2>Cat Genome</h2>
+			<p class="source"><span>Source:</span>UCSC</p>
+			<p class="seqNum">Mar. 2006 (felCat3)</p>
+		</section>
+		<section>
+			<h2>Chicken Genome</h2>
+			<p class="source"><span>Source:</span>UCSC</p>
+			<p class="seqNum">Nov. 2011 (galGal4)</p>
+		</section>
+		<section>
+			<h2>Chimpanzee Genome</h2>
+			<p class="source"><span>Source:</span>UCSC</p>
+			<p class="seqNum">Oct. 2010 (panTro3)</p>
+		</section>
+		<section>
+			<h2>Chimpanzee Genome</h2>
+			<p class="source"><span>Source:</span>UCSC</p>
+			<p class="seqNum">Mar. 2006 (panTro2)</p>
+		</section>
+		<section>
+			<h2>Chimpanzee Genome</h2>
+			<p class="source"><span>Source:</span>UCSC</p>
+			<p class="seqNum">Nov. 2003 (panTro1)</p>
+		</section>
+		<section>
+			<h2>Cat Genome</h2>
+			<p class="source"><span>Source:</span>UCSC</p>
+			<p class="seqNum">Oct. 2011 (bosTau7)</p>
+		</section>
+		<section>
+			<h2>Cow Genome</h2>
+			<p class="source"><span>Source:</span>UCSC</p>
+			<p class="seqNum">Nov. 2009 (bosTau6)</p>
+		</section>
+	</div>
+	</div>
+
+
+	<script type="text/javascript">
+
+
+	$(document).ready(function() {
+
+
+
+	})
+	</script>
+
+</body>
+</html>

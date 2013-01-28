@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'SkittleTree.views.home', name='home'),
     url(r'^browse/', include('SkittleCore.urls')),
+    url(r'^discover/', include('DNAStorage.urls')),
     (r'^$', redirect_to, {'url': '/browse/'}),
     # url(r'^$', include('SkittleCore.urls')),
 

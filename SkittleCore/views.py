@@ -10,7 +10,7 @@ from SkittleCore.Graphs.models import *
 from DNAStorage.StorageRequestHandler import GetChromosomeLength
 # import json
 
-def index(request, specimen="hg19",chromosome="chrY-sample"):
+def browse(request, specimen="hg19",chromosome="chrY-sample"):
     width = request.GET.get('width',100)
     scale = request.GET.get('scale',1)
     start = request.GET.get('start',1)
@@ -20,7 +20,7 @@ def index(request, specimen="hg19",chromosome="chrY-sample"):
 
     fileLength = GetChromosomeLength(specimen,chromosome) 
     context = {'availableGraphs':GraphRequestHandler.availableGraphs,'specimen':specimen,'chromosome':chromosome,'colorPalette':colorPalette,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength}
-    return render(request, 'index.html',context)
+    return render(request, 'browse.html',context)
 
 @cache_control(must_revalidate=False, max_age=3600)
 def graph(request, specimen="hg19",chromosome="chrY-sample"):
@@ -33,10 +33,9 @@ def graph(request, specimen="hg19",chromosome="chrY-sample"):
     state.scale = int(request.GET.get('scale',1))
     state.requestedGraph = request.GET.get('graph','n')
     state.colorPalette = request.GET.get('colorPalette','Classic')
-    # if state.requestedGraph == 'm':
-    # 	repeatMapState = RepeatMapState()
-    # 	repeatMapState.F_width = int(request.GET.get('F_width',40))
-    # 	repeatMapState.F_start = int(request.GET.get('F_start',1))
+    if state.requestedGraph == 'h':
+    	state.searchStart = int(request.GET.get('searchStart',1))
+    	state.searchStop = int(request.GET.get('searchStop',1))
     	# allGraphSettings = state.getActiveGraphSettings()
     	# allGraphSettings.filter()
 

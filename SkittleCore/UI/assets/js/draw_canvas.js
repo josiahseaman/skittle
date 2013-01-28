@@ -43,23 +43,21 @@ var init = function() {
 }
 
 var imageRequestor = function(graph,chunkOffset) {
-    if (!imageObj[graph]) {
-        imageObj[graph] = []
-    }
-    if (imageObj[graph]) {
-        var graphPath = graphURL(graph,chunkOffset)
-        if (!imageObj[graph][chunkOffset] 
-            || ( imageObj[graph][chunkOffset].complete 
-                && imageObj[graph][chunkOffset].source != graphPath ) ) {
-            imageObj[graph][chunkOffset] = new Image();
-            imageObj[graph][chunkOffset].source = graphPath;
-            imageObj[graph][chunkOffset].src = graphPath;
-            imageObj[graph][chunkOffset].onload = function() { // causes a little bit of jitter when scrolling
-                isInvalidDisplay = true
-            }
-            imageObj[graph][chunkOffset].onerror = function() {
-                console.log('not a valid filename')
-            }
+    imageObj[graph] = imageObj[graph] || []
+
+    var graphPath = graphURL(graph,chunkOffset)
+
+    if (!imageObj[graph][chunkOffset] 
+        || ( imageObj[graph][chunkOffset].complete 
+            && imageObj[graph][chunkOffset].source != graphPath ) ) {
+        imageObj[graph][chunkOffset] = new Image();
+        imageObj[graph][chunkOffset].source = graphPath;
+        imageObj[graph][chunkOffset].src = graphPath;
+        imageObj[graph][chunkOffset].onload = function() { // causes a little bit of jitter when scrolling
+            isInvalidDisplay = true
+        }
+        imageObj[graph][chunkOffset].onerror = function() {
+            console.log('not a valid filename')
         }
     }
     return imageObj[graph][chunkOffset]
@@ -128,7 +126,7 @@ var drawVerticalGraph = function(graph,offset,chunks) {
     var graphWidth = 0, graphHeight = 0;
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor(graph,i)
-        if(!imageObj.complete) imageObj = imageUnrendered;
+        if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
         else var graphWidth = imageObj.width
         var vOffset = -Math.round(((start-8*width)%65536)/(width*scale) - i*(65536/width));
         i == chunks - 1 ? graphHeight = imageObj.height : graphHeight = Math.ceil(65536/width)
@@ -165,7 +163,7 @@ var drawNucDisplay = function(offset,chunks) {
     a.clearRect(0,0,1024,500)
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor("n",i)
-        if(!imageObj.complete) imageObj = imageUnrendered;
+        if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
         a.drawImage(imageObj,0,64*i) // render data on hidden canvas
     }
 
@@ -196,7 +194,7 @@ var drawNucBias = function(offset,chunks) {
     return calculateOffsetWidth(60)
 }
 var drawRMap = function(offset,chunks) {
-    var graphWidth = drawVerticalGraph("m",offset,chunks)
+    var offsetWidth = drawVerticalGraph("m",offset,chunks)
     // for (var i=0;i<chunks;i++) {
     //     var imageObj = imageRequestor("m",i)
     //     if(!imageObj.complete) imageObj = imageUnrendered;
@@ -226,7 +224,7 @@ var drawRMap = function(offset,chunks) {
             c.stroke();
         }
     })
-    return calculateOffsetWidth(graphWidth)
+    return offsetWidth
 }
 var drawSimHeat = function(offset,chunks) {
     a.clearRect(0,0,350,10000)
@@ -235,7 +233,7 @@ var drawSimHeat = function(offset,chunks) {
     displayWidth = Math.round((Math.round(width/10)*10)/width*displayWidth)
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor("s",i)
-        if(!imageObj.complete) imageObj = imageUnrendered;
+        if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
         a.drawImage(imageObj,0,lineHeight*i,displayWidth,lineHeight) // render data on hidden canvas
         // a.beginPath();
         // a.moveTo(0,lineHeight*i+0.5)
