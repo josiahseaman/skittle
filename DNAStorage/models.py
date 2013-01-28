@@ -8,6 +8,9 @@ class FastaFiles(models.Model):
     Class = models.CharField(max_length=50)
     Kingdom = models.CharField(max_length=50)
     Length = models.IntegerField()
+    Source = models.CharField(255)
+    ExtendedName = models.CharField(255)
+    Description = models.TextField()
     
 class FastaChunkFiles(models.Model):
     FastaFile = models.ForeignKey(FastaFiles)
