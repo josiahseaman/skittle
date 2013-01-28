@@ -1,6 +1,7 @@
 from django.db import models
 
 class Specimen(models.Model):
+    Name = models.CharField(max_length=50)
     Species = models.CharField(max_length=50)
     Genus = models.CharField(max_length=50)
     Class = models.CharField(max_length=50)
