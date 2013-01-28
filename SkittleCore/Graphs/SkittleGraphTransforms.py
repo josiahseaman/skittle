@@ -80,8 +80,9 @@ def reverseComplement(originalSequence):
 '''Final step for Nucleotide Display that transforms normalized counts into a list of colors'''
 def countListToColorSpace(countList, colorPalette):
     if hasDepth(countList):#this recurses until we're left with a single dictionary
-        return map(lambda x: countListToColorSpace(x, colorPalette), countList)
-    
+        return [countListToColorSpace(x, colorPalette) for x in countList if x != []]
+    if not isinstance( countList, dict):
+        return []
     colorMapping = colorPalettes[colorPalette]
     colorContributions = []
     for character, magnitude in countList.items():#per entry in dictionary
@@ -126,8 +127,8 @@ def chunkUpList(seq, chunkSize, overlap=0):
     if hasDepth(seq):
         return map(lambda x: chunkUpList(x, chunkSize, overlap), seq)
     height = int(math.ceil(len(seq) / float(chunkSize)))
-    if height == 0: return []
-    resultVector = [ seq[chunk*chunkSize : (chunk+1)*chunkSize + overlap] for chunk in range(0,height) ]
+#    if height == 0: return []
+    resultVector = [ seq[chunk*chunkSize : (chunk+1)*chunkSize + overlap] for chunk in range(0,height) if chunk ]
     return resultVector
 
 '''Deprecated.  Nucleotide Display uses normalized counts now''' 

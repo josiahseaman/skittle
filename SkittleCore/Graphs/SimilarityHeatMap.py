@@ -18,15 +18,15 @@ def prettyPrint(heatMap):
     for line in heatMap:
         print
         for e in line:
-            if e:
+            if isinstance(e, float):
                 print round(e, 2), ', ',
             else: 
-                print 'N', ', ',
+                print e, ', ',
     print #newline
 
 def calculateOutputPixels(state, heatMapState = SimilarityHeatMapState()):
     while len(state.seq) < 65536 + 300 * state.width:
-        state = state.readAndAppendNextChunk(state, True)
+        state = state.readAndAppendNextChunk(True)
     width = 300
     height = state.height() #TODO: this is inefficient 
     

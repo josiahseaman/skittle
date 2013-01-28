@@ -75,7 +75,10 @@ def logRepeatMap(state, repeatMapState):
                 for step in range(0, len(oldScaledSequence), growthPower):
                     starterSequence.append(reduce(lambda x,y: addDictionaries(x,y), oldScaledSequence[step:step+growthPower], {}))
             necessaryStart = start + len(starterSequence) * scale
-            scaledSequence = starterSequence + sequenceCount(state.seq, necessaryStart, scale, end)
+            try:
+                scaledSequence = starterSequence + sequenceCount(state.seq, necessaryStart, scale, end)
+            except:
+                scaledSequence = starterSequence + [sequenceCount(state.seq, necessaryStart, scale, end)]
             oldScaledSequence = scaledSequence
             scaledSequence = colorizeSequence(scaledSequence)
 

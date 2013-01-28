@@ -21,8 +21,8 @@ def TestPacket():
     state = RequestPacket()
     
     state.specimen = 'hg19'
-    state.chromosome = models.CharField(max_length=200, default='chrY-sample')
-    state.seq = models.TextField(default='ACGTAAAACCCCGGGGTTTTACGTACGTACGTACGTACGTACGTACGTACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTACGTACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
+    state.chromosome = 'chrY-sample'
+    state.seq = 'ACGTAAAACCCCGGGGTTTTACGTACGTACGTACGTACGTACGTACGTACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTACGTACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
     state.colorPalette = 'Classic'
     state.width = 4
     state.scale =2
@@ -109,7 +109,7 @@ class SimilarityHeatMapTest(TestCase):
         state = TestPacket()
         state.width = 30
         heatMap = SimilarityHeatMap.calculateOutputPixels(state, heatMapState = SimilarityHeatMapState())
-        SimilarityHeatMap.prettyPrint(heatMap)
+        SimilarityHeatMap.prettyPrint(heatMap[:5])
         
 import ThreeMerDetector
 class ThreeMerDetectorTest(TestCase):
