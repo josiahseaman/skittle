@@ -69,17 +69,22 @@ def colorCombinedResults(state, highlighterState, results, entries = None ):
 
 def getSearchSequenceFromRequestPacket(state):
     assert isinstance(state, RequestPacket)
+    state.searchStop = min( state.searchStop, state.searchStart + 30)
     chunkStart = int((state.searchStart-1) / chunkSize) * chunkSize + 1 #this rounds down to the nearest chunk boundary
-    chunkStop  = int(((state.searchStop -1) / chunkSize)+1) * chunkSize + 1
+    chunkStop  = int((state.searchStop -1) / chunkSize) * chunkSize + 1
+    print chunkStart, " : ", chunkStop, 
     newState = state
     if chunkStart != state.start:
         newState = copy.copy(state)
         newState.start = chunkStart
         newState.seq = FastaFiles.readFile(newState)
-    if chunkStop != newState.start + newState.length:
+        print "Length of new chunk: ", len(newState.seq)
+    if chunkStop != newState.start + (newState.length - chunkSize):
         newState.readAndAppendNextChunk()
+        print "Length of new chunk: ", len(newState.seq)
+        
     
-    searchSeq = newState.seq[ state.searchStart : state.searchStop]
+    searchSeq = newState.seq[ state.searchStart - newState.start : state.searchStop - newState.start]
     entry = SequenceEntry()
     entry.seq = searchSeq
     return [entry]

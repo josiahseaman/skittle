@@ -63,6 +63,7 @@ class RequestPacket(models.Model):
             newState.seq = self.seq + sequence #append two sequences together
         elif addPadding:
             newState.seq = newState.seq + ('N' * 65536)
+        newState.length = len(newState.seq)
         return newState
 
    
