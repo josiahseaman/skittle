@@ -15,7 +15,7 @@ def GetFastaFilePath(specimen, chromosome, start):
         if fastaFile[0].IsInRamDisk:
             fastaFilePath = None
         else:
-            fastaFilePath = settings.SkittleTreeLoc + "DNAStorage/fasta/" + fastaFile[0].FastaFile.Kingdom + "/" + fastaFile[0].FastaFile.Class + "/" + fastaFile[0].FastaFile.Genus + "/" + fastaFile[0].FastaFile.Species + "/" + fastaFile[0].FastaFile.Specimen + "/" + fastaFile[0].FastaFile.Chromosome + "/" + str(fastaFile[0].Start) + ".fasta"
+            fastaFilePath = settings.SkittleTreeLoc + "DNAStorage/fasta/" + fastaFile[0].FastaFile.Specimen.Kingdom + "/" + fastaFile[0].FastaFile.Specimen.Class + "/" + fastaFile[0].FastaFile.Specimen.Genus + "/" + fastaFile[0].FastaFile.Specimen.Species + "/" + fastaFile[0].FastaFile.Specimen.Name + "/" + fastaFile[0].FastaFile.Chromosome + "/" + str(fastaFile[0].Start) + ".fasta"
             
         return fastaFilePath
     else: return None
@@ -55,7 +55,7 @@ def GetPngFilePath(request):
         if pngFile[0].IsInRamDisk:
             pngFilePath = None
         else:
-            pngFilePath = settings.SkittleTreeLoc + "DNAStorage/png/" + pngFile[0].FastaFile.Kingdom + "/" + pngFile[0].FastaFile.Class + "/" + pngFile[0].FastaFile.Genus + "/" + pngFile[0].FastaFile.Species + "/" + pngFile[0].FastaFile.Specimen + "/" + pngFile[0].FastaFile.Chromosome + "/" + generatePngName(graph, start, scale, charsPerLine)
+            pngFilePath = settings.SkittleTreeLoc + "DNAStorage/png/" + pngFile[0].FastaFile.Specimen.Kingdom + "/" + pngFile[0].FastaFile.Specimen.Class + "/" + pngFile[0].FastaFile.Specimen.Genus + "/" + pngFile[0].FastaFile.Specimen.Species + "/" + pngFile[0].FastaFile.Specimen.Name + "/" + pngFile[0].FastaFile.Chromosome + "/" + generatePngName(graph, start, scale, charsPerLine)
         return pngFilePath
     else: 
         return None
@@ -75,7 +75,7 @@ def StorePng(request, fileObject):
         return None
     
     #Move temp file from temp storage into cache storage
-    pngFilePath = settings.SkittleTreeLoc + "DNAStorage/png/" + fastaFile.Kingdom + "/" + fastaFile.Class + "/" + fastaFile.Genus + "/" + fastaFile.Species + "/" + fastaFile.Specimen + "/" + fastaFile.Chromosome + "/" + generatePngName(graph, start, scale, charsPerLine)
+    pngFilePath = settings.SkittleTreeLoc + "DNAStorage/png/" + fastaFile.Specimen.Kingdom + "/" + fastaFile.Specimen.Class + "/" + fastaFile.Specimen.Genus + "/" + fastaFile.Specimen.Species + "/" + fastaFile.Specimen.Name + "/" + fastaFile.Chromosome + "/" + generatePngName(graph, start, scale, charsPerLine)
     shutil.copyfile(fileObject.name, pngFilePath)
     
     #Log this file in the database
