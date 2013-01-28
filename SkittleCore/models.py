@@ -24,12 +24,12 @@ class RequestPacket(models.Model):
     operation.'''
     seq = models.TextField(default=None, null=True)
     colorPalette = models.CharField(max_length=50, 
-                                    choices=[("COLORBLINDSAFE", "Spring"),
-                                    ("BETTERCBSAFE", "Summer"),
-                                    ("DARK", "DARK"),
+                                    choices=[("Spring", "Spring"),
+                                    ("Summer", "Summer"),
+                                    ("Dark", "Dark"),
                                     ("DRUMS", "DRUMS"),
-                                    ("BLUES", "BLUES"),
-                                    ("REDS", "REDS"),
+                                    ("Blues", "Blues"),
+                                    ("Reds", "Reds"),
                                     ('Classic','Classic')],
                                     default='Classic')
     width = models.IntegerField(default=None, null=True)

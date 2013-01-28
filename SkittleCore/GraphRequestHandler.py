@@ -12,9 +12,9 @@ registering with the request Handler using the 'registerGraph' function below. '
 availableGraphs = set()
 GraphDescription = namedtuple('GraphDescription', ['symbol', 'name', 'moduleReference', 'rasterGraph'])
 
-def registerGraph(symbol, name, moduleName, rasterGraph = False):
+def registerGraph(symbol, name, moduleName, rasterGraph = False, colorPalletteDependant = False):
     moduleReference = sys.modules[moduleName]
-    availableGraphs.add(GraphDescription(symbol, name, moduleReference, rasterGraph))
+    availableGraphs.add(GraphDescription(symbol, name, moduleReference, rasterGraph, colorPalletteDependant))
     
 from SkittleCore.models import RequestPacket
 import SkittleCore.FastaFiles as FastaFiles
@@ -88,14 +88,15 @@ def tryGetGraphPNG(state):
         return None
     
 class ServerSideGraphDescription():
-    def __init__(self, Name, IsRaster):
+    def __init__(self, Name, IsRaster, colorSensitive):
         self.name = Name
-        self.rasterGraph = IsRaster    
+        self.rasterGraph = IsRaster
+        self.colorPaletteSensitive = colorSensitive    
     
 def generateGraphListForServer():
     graphs = {}
     for description in availableGraphs:
-        graphs[description[0]] = ServerSideGraphDescription(description[1], description[3]).__dict__
+        graphs[description[0]] = ServerSideGraphDescription(description[1], description[3], description[4]).__dict__
     return graphs
         
         
