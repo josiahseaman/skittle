@@ -38,7 +38,7 @@ def ensureEqualLengths2D(results, defaultValue = 0.0):
     
 def getMatchColor(entryNumber, entries):
     if entryNumber > 1:
-        return entries[entryNumber-2].color
+        return entries[entryNumber-2].color or (0,255,0)
     else:
         grey = int(entryNumber*255)
         return (grey,grey,grey)

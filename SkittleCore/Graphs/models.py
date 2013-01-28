@@ -67,6 +67,6 @@ class SequenceEntry(models.Model):
     ownerGraph = models.ForeignKey(HighlighterState)
     seq = models.CharField(max_length=1000, default='AAAAAAAA')
     minimumPercentage = models.FloatField(default = .8) 
-    color = models.CommaSeparatedIntegerField(max_length=3, default=(0,255,0))
+    color = models.CommaSeparatedIntegerField(max_length=3, default=None, null=True)
     
             
