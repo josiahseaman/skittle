@@ -24,12 +24,12 @@ class RequestPacket(models.Model):
     operation.'''
     seq = models.TextField(default=None, null=True)
     colorPalette = models.CharField(max_length=50, 
-                                    choices=[("COLORBLINDSAFE", "Spring"),
-                                    ("BETTERCBSAFE", "Summer"),
-                                    ("DARK", "DARK"),
+                                    choices=[("Spring", "Spring"),
+                                    ("Summer", "Summer"),
+                                    ("Dark", "Dark"),
                                     ("DRUMS", "DRUMS"),
-                                    ("BLUES", "BLUES"),
-                                    ("REDS", "REDS"),
+                                    ("Blues", "Blues"),
+                                    ("Reds", "Reds"),
                                     ('Classic','Classic')],
                                     default='Classic')
     width = models.IntegerField(default=None, null=True)
@@ -40,6 +40,9 @@ class RequestPacket(models.Model):
     start = models.IntegerField(default=None, null=True)
     length = models.IntegerField(default=65536)
     requestedGraph = models.CharField(max_length=1, default=None, null=True)
+    
+    searchStart = models.IntegerField(default=0)
+    searchStop  = models.IntegerField(default=0)
 
     def getActiveGraphSettings(self):
         return Graphs.models.ParentState.objects.filter(session = self, visible = True)
