@@ -86,12 +86,12 @@ def tryGetGraphPNG(state):
         return data
     except:
         return None
-    
+
 class ServerSideGraphDescription():
     def __init__(self, Name, IsRaster, colorSensitive):
         self.name = Name
         self.rasterGraph = IsRaster
-        self.colorPaletteSensitive = colorSensitive    
+        self.colorPaletteSensitive = colorSensitive
     
 def generateGraphListForServer():
     graphs = {}
