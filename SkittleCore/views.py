@@ -36,8 +36,6 @@ def graph(request, specimen="hg19",chromosome="chrY-sample"):
     if state.requestedGraph == 'h':
     	state.searchStart = int(request.GET.get('searchStart',1))
     	state.searchStop = int(request.GET.get('searchStop',1))
-    	# allGraphSettings = state.getActiveGraphSettings()
-    	# allGraphSettings.filter()
 
     image_data = handleRequest(state)
     # image_data = open("/Users/marshallds/Sites/Skittle/master/SkittleCore/UI/assets/n-display.png", "rb").read()

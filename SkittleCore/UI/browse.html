@@ -108,6 +108,7 @@
     zoom  = {{ zoom }};
     fileLength = {{ fileLength }};
     skixelsOnScreen = toSkixels($('#canvasContainer').height())*width;
+    selectionStart = selectionEnd = 1
 
     // if graphs are specified in the url set their visibility
     var initialGraphs = "{{ graphs }}".split('')
