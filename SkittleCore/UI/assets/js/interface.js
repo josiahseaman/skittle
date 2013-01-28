@@ -92,10 +92,10 @@ function mouseDown(e) {
     //}
     }
     else if (activeTool == "Select") {
-
-        var selectionStart = start + (toSkixels(my-25)-1)*width
-        var selectionEnd = selectionStart + width - 1;
+        selectionStart = start + (toSkixels(my-25)-1)*width
+        selectionEnd = selectionStart + width - 1;
         console.log('selection start:' + selectionStart + " selection end:" + selectionEnd)
+        if (graphStatus['h'].visible) isInvalidDisplay = true
     }
 
 }

@@ -10,7 +10,7 @@ from collections import namedtuple
 '''The set of availableGraphs is populated by the individual graph modules who are responsible for 
 registering with the request Handler using the 'registerGraph' function below. '''
 availableGraphs = set()
-GraphDescription = namedtuple('GraphDescription', ['symbol', 'name', 'moduleReference', 'rasterGraph'])
+GraphDescription = namedtuple('GraphDescription', ['symbol', 'name', 'moduleReference', 'rasterGraph','colorPalletteDependant'])
 
 def registerGraph(symbol, name, moduleName, rasterGraph = False, colorPalletteDependant = False):
     moduleReference = sys.modules[moduleName]

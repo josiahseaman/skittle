@@ -67,7 +67,8 @@ var graphURL = function(graph,chunkOffset) {
     var startChunk = ( ( Math.floor(startTopOfScreen/(65536*scale) ) + chunkOffset )*65536*scale + 1 );
     var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + scale;
     if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + Math.round(width/10)*10 
-    graphPath += "&colorPalette="+colorPalette
+    if (graph == 'h') graphPath += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd
+    if (graphStatus[graph].colorPaletteSensitive) graphPath += "&colorPalette="+colorPalette
     return graphPath
 }
 
