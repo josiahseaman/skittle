@@ -26,7 +26,7 @@ import Graphs.OligomerUsage
 import Graphs.SequenceHighlighter
 import Graphs.SimilarityHeatMap
 import Graphs.ThreeMerDetector
-from Graphs.SkittleGraphTransforms import hasDepth
+from Graphs.SkittleGraphTransforms import countDepth
 from PngConversionHelper import convertToPng
 import DNAStorage.StorageRequestHandler as StorageRequestHandler
 '''Finally, X = __import__('X') works like import X, with the difference that you 
@@ -58,7 +58,8 @@ def handleRequest(state):
     assert isinstance(state, RequestPacket)
     #Check to see if PNG exists
     png = None
-    png = tryGetGraphPNG(state)
+    if state.requestedGraph != 'h':
+        png = tryGetGraphPNG(state)
     #If it doesn't: grab pixel calculations
     if png is None:
         pixels = calculatePixels(state)
@@ -86,12 +87,12 @@ def tryGetGraphPNG(state):
         return data
     except:
         return None
-    
+
 class ServerSideGraphDescription():
     def __init__(self, Name, IsRaster, colorSensitive):
         self.name = Name
         self.rasterGraph = IsRaster
-        self.colorPaletteSensitive = colorSensitive    
+        self.colorPaletteSensitive = colorSensitive
     
 def generateGraphListForServer():
     graphs = {}

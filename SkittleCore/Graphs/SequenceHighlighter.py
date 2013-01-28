@@ -3,9 +3,10 @@ Created on Dec 6, 2012
 
 @author: Josiah
 '''
-from SkittleCore.models import RequestPacket 
+from SkittleCore.models import RequestPacket, chunkSize
 from models import HighlighterState, SequenceEntry
 from SkittleGraphTransforms import reverseComplement, calculatePerCharacterMatch
+import SkittleCore.FastaFiles as FastaFiles 
 import copy
 from SkittleCore.GraphRequestHandler import registerGraph
 
@@ -38,7 +39,7 @@ def ensureEqualLengths2D(results, defaultValue = 0.0):
     
 def getMatchColor(entryNumber, entries):
     if entryNumber > 1:
-        return entries[entryNumber-2].color
+        return entries[entryNumber-2].color or (0,255,0)
     else:
         grey = int(entryNumber*255)
         return (grey,grey,grey)
@@ -68,8 +69,22 @@ def colorCombinedResults(state, highlighterState, results, entries = None ):
 
 def getSearchSequenceFromRequestPacket(state):
     assert isinstance(state, RequestPacket)
+    state.searchStop = min( state.searchStop, state.searchStart + 30)
+    chunkStart = int((state.searchStart-1) / chunkSize) * chunkSize + 1 #this rounds down to the nearest chunk boundary
+    chunkStop  = int((state.searchStop -1) / chunkSize) * chunkSize + 1
+    print chunkStart, " : ", chunkStop, 
+    newState = state
+    if chunkStart != state.start:
+        newState = copy.copy(state)
+        newState.start = chunkStart
+        newState.seq = FastaFiles.readFile(newState)
+        print "Length of new chunk: ", len(newState.seq)
+    if chunkStop != newState.start + (newState.length - chunkSize):
+        newState.readAndAppendNextChunk()
+        print "Length of new chunk: ", len(newState.seq)
+        
     
-    searchSeq = state.seq[ state.searchStart : state.searchStop]
+    searchSeq = newState.seq[ state.searchStart - newState.start : state.searchStop - newState.start]
     entry = SequenceEntry()
     entry.seq = searchSeq
     return [entry]
