@@ -85,6 +85,7 @@ def getSearchSequenceFromRequestPacket(state):
         
     
     searchSeq = newState.seq[ state.searchStart - newState.start : state.searchStop - newState.start]
+    if not searchSeq: searchSeq = 'AAAAAAAA'
     entry = SequenceEntry()
     entry.seq = searchSeq
     return [entry]
