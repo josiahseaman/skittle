@@ -10,18 +10,18 @@ class Specimen(models.Model):
     ExtendedName = models.CharField(max_length=255, null=True)
     Description = models.TextField(null=True)
 
-class Chromosome(models.Model):
+class FastaFiles(models.Model):
     Specimen = models.ForeignKey(Specimen)
     Chromosome = models.CharField(max_length=50)
     Length = models.IntegerField()
     
-class ChromosomeChunkFiles(models.Model):
-    Chromosome = models.ForeignKey(Chromosome)
+class FastaChunkFiles(models.Model):
+    FastaFile = models.ForeignKey(FastaFiles)
     Start = models.IntegerField()
     IsInRamDisk = models.BooleanField(default=False)
 
 class ImageFiles(models.Model):
-    Chromosome = models.ForeignKey(Chromosome)
+    FastaFile = models.ForeignKey(FastaFiles)
     GraphType = models.CharField(max_length=1)
     Start = models.IntegerField()
     Scale = models.IntegerField(null=True)
