@@ -66,7 +66,8 @@ var graphURL = function(graph,chunkOffset) {
     var startTopOfScreen = (start-8*width) >  0 ? (start-8*width) : 1
     var startChunk = ( ( Math.floor(startTopOfScreen/(65536*scale) ) + chunkOffset )*65536*scale + 1 );
     var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + scale;
-    if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + Math.round(width/10)*10 
+    if (graph=='m') graphPath += "&width=" + Math.round(width/30)*30 
+    else if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + Math.round(width/10)*10 
     if (graph == 'h') graphPath += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd
     if (graphStatus[graph].colorPaletteSensitive) graphPath += "&colorPalette="+colorPalette
     return graphPath
@@ -120,7 +121,6 @@ var drawGraph = function(graph,offset,chunks) {
         case "m": return drawRMap(offset,chunks);
         case "s": return drawSimHeat(offset,chunks);
         default: 
-            console.log(graphStatus[graph].name +" does not have a cooresponding javascript function, trying generic")
             return drawVerticalGraph(graph,offset,chunks);
     }
 }
@@ -251,7 +251,7 @@ var drawRMap = function(offset,chunks) {
             c.stroke();
         }
     })
-    return offsetWidth
+    return Math.max(offsetWidth,100)
 }
 var drawSimHeat = function(offset,chunks) {
     a.clearRect(0,0,350,10000)
@@ -276,7 +276,7 @@ var drawSimHeat = function(offset,chunks) {
     // var startOffset = (start - 1 - width*8 - Math.max( Math.floor((start-width*8)/(65536*scale) ), 0 )*65536*scale )*4;
 
     var lineLength = displayWidth*4;
-    var startOffset = (Math.ceil(start/width) - 8 - Math.max( Math.floor((start-width*8)/65536), 0 )*lineHeight)*lineLength
+    var startOffset = (Math.ceil(start/width) - 8 -1 - Math.max( Math.floor((start-width*8)/65536), 0 )*lineHeight)*lineLength
     var l = 0, i = startOffset
     for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
         var y = (x - l*lineLength)
