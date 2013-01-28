@@ -43,11 +43,12 @@ def getMatchColor(entryNumber, entries):
         grey = int(entryNumber*255)
         return (grey,grey,grey)
     
-def colorCombinedResults(state, highlighterState, results ):
+def colorCombinedResults(state, highlighterState, results, entries = None ):
     results = ensureEqualLengths2D(results)
     if not results: return results
     hitCanvas = [0] * len(results[0])#create a large blank canvas to paint on
-    entries = highlighterState.getTargetSequenceEntries()
+    if entries is None:
+        entries = highlighterState.getTargetSequenceEntries()
     for sequenceEntryIndex, searchPageResults in enumerate(results):
         if highlighterState.searchReverseComplement:
             sequenceEntryIndex /= 2
@@ -65,17 +66,29 @@ def colorCombinedResults(state, highlighterState, results ):
     
     return hitColors
 
+def getSearchSequenceFromRequestPacket(state):
+    assert isinstance(state, RequestPacket)
+    
+    searchSeq = state.seq[ state.searchStart : state.searchStop]
+    entry = SequenceEntry()
+    entry.seq = searchSeq
+    return [entry]
+    
+
 def calculateOutputPixels(state, highlighterState = HighlighterState()):
     assert isinstance(highlighterState, HighlighterState)
-    results = [] #2D array containing a screen full of scores per targetSequence 
-    for i in range(len( highlighterState.getTargetSequenceEntries() )):
-        if len( highlighterState.targetSequenceEntries[i].seq) != 0 :
-            results.append( measureSequenceMatches(state, highlighterState.getTargetSequenceEntries()[i] ) )
+    results = [] #2D array containing a screen full of scores per targetSequence
+     
+    #TODO: temporary workaround of settings  #targetSequenceEntries = highlighterState.getTargetSequenceEntries()
+    targetSequenceEntries = getSearchSequenceFromRequestPacket(state)
+    for i in range(len( targetSequenceEntries )):
+        if len( targetSequenceEntries[i].seq) != 0 :
+            results.append( measureSequenceMatches(state, targetSequenceEntries[i] ) )
             if highlighterState.searchReverseComplement:
-                current = copy.deepcopy(highlighterState.getTargetSequenceEntries()[i]) #TODO: this will need work with the new django architecture
+                current = copy.deepcopy(targetSequenceEntries[i]) #TODO: this will need work with the new django architecture
                 reverseSettings = SequenceEntry(seq=reverseComplement(current.seq), minimumPercentage=current.minimumPercentage, color=current.color)
                 results.append( measureSequenceMatches(state, reverseSettings ) )
-    synthesis = colorCombinedResults(state, highlighterState, results )
+    synthesis = colorCombinedResults(state, highlighterState, results, targetSequenceEntries )
     return synthesis
 
     
