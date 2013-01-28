@@ -1,16 +1,20 @@
 from django.db import models
 
-class FastaFiles(models.Model):
-    Specimen = models.CharField(max_length=50)
-    Chromosome = models.CharField(max_length=50)
+class Specimen(models.Model):
+    Name = models.CharField(max_length=50)
     Species = models.CharField(max_length=50)
     Genus = models.CharField(max_length=50)
     Class = models.CharField(max_length=50)
     Kingdom = models.CharField(max_length=50)
-    Length = models.IntegerField()
+    GenomeLength = models.IntegerField(null=True)
     Source = models.CharField(max_length=255, null=True)
     ExtendedName = models.CharField(max_length=255, null=True)
     Description = models.TextField(null=True)
+
+class FastaFiles(models.Model):
+    Specimen = models.ForeignKey(Specimen)
+    Chromosome = models.CharField(max_length=50)
+    Length = models.IntegerField()
     
 class FastaChunkFiles(models.Model):
     FastaFile = models.ForeignKey(FastaFiles)
