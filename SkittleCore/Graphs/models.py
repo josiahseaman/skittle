@@ -36,11 +36,10 @@ class RepeatMapState(ParentState):
     F_start = models.IntegerField(default=1)
     
     def height(self, state, pixels):
-        F_height = ((len(pixels)) -  (state.width + 0)) / state.width # self.F_width*20
-        return F_height
-    
-    def oldHeight(self, state, pixels):
-        F_height = ((len(pixels)) -  (state.width + 0)) / state.width # self.F_width*20
+        try:
+            F_height = ((len(pixels)) -  (state.width + 0)) / state.width # self.F_width*20
+        except:
+            F_height = ((len(state.seq)) -  (state.width + 0)) / state.width # self.F_width*20
         return F_height
     
     def oldHeight(self, state, pixels):

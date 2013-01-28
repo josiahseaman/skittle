@@ -159,7 +159,7 @@ def calculatePerCharacterMatch(A, B):
 #    if hasDepth(Aseq) and hasDepth(Bseq):
 #        return map(lambda x: calculatePerCharacterMatch(A, B),... 
     mask = []
-    for i, val in enumerate(zip(A,B)):
+    for val in zip(A,B):
         mask.append(val[0] == val[1])
     return mask
 

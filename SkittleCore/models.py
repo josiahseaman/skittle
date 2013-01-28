@@ -57,19 +57,17 @@ class RequestPacket(models.Model):
         sequence = readFile(newState)# FastaFiles.
         if sequence is not None:
             newState.seq = self.seq + sequence #append two sequences together
-	elif addPadding:
-	    newState.seq = state.seq + ('N' * 65536)
-	    
+        elif addPadding:
+            newState.seq = newState.seq + ('N' * 65536)
         return newState
 
    
 class StatePacket(RequestPacket): 
-    #TODO: should I restate the models.Charfield(max_length... or just set specimen = 'hg19'?
     specimen = 'hg19'
     chromosome = 'chrY-sample'
     width =  200
     scale = 1
     start = 1
-#    length = models.IntegerField(default=65536)
+#    length = 65536
     requestedGraph = 'n'
     
