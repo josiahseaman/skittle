@@ -1,5 +1,5 @@
 import sys, os, os.path, re, shutil
-from models import FastaFiles, FastaChunkFiles
+from models import FastaFiles, FastaChunkFiles, Specimen
 from StorageRequestHandler import HasFastaFile
 from SkittleTree import settings
 
@@ -34,15 +34,21 @@ def splitAndSort(file, storageLocation, workingLocation):
         os.makedirs(filePath)
     if not os.path.isdir(pngFilePath):
         os.makedirs(pngFilePath)
-        
+    
+    #Begin setting up the Specimen object for the database
+    specimen, created = Specimen.objects.get_or_create(Name = taxonomic[4])
+    if created:
+        specimen.Species = taxonomic[3]
+        specimen.Genus = taxonomic[2]
+        specimen.Class = taxonomic[1]
+        specimen.Kingdom = taxonomic[0]
+        specimen.GenomeLength = 0
+        specimen.save()
+    
     #Begin setting up the FastaFile object for the database
     fastaFile = FastaFiles()
-    fastaFile.Specimen = taxonomic[4]
+    fastaFile.Specimen = specimen
     fastaFile.Chromosome = taxonomic[5]
-    fastaFile.Species = taxonomic[3]
-    fastaFile.Genus = taxonomic[2]
-    fastaFile.Class = taxonomic[1]
-    fastaFile.Kingdom = taxonomic[0]
     
     #Array of fasta chunks
     fastaChunks = list()
@@ -103,6 +109,8 @@ def splitAndSort(file, storageLocation, workingLocation):
         
     #Save fasta file to database then populate chunks with foreign keys and save
     fastaFile.save()
+    specimen.GenomeLength = specimen.GenomeLength + fastaFile.Length
+    specimen.save()
     
     for fa in fastaChunks:
         fa.FastaFile = fastaFile
