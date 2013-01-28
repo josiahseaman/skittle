@@ -3,9 +3,10 @@ Created on Dec 6, 2012
 
 @author: Josiah
 '''
-from SkittleCore.models import RequestPacket 
+from SkittleCore.models import RequestPacket, chunkSize
 from models import HighlighterState, SequenceEntry
 from SkittleGraphTransforms import reverseComplement, calculatePerCharacterMatch
+import SkittleCore.FastaFiles as FastaFiles 
 import copy
 from SkittleCore.GraphRequestHandler import registerGraph
 
@@ -68,8 +69,17 @@ def colorCombinedResults(state, highlighterState, results, entries = None ):
 
 def getSearchSequenceFromRequestPacket(state):
     assert isinstance(state, RequestPacket)
+    chunkStart = int((state.searchStart-1) / chunkSize) * chunkSize + 1 #this rounds down to the nearest chunk boundary
+    chunkStop  = int(((state.searchStop -1) / chunkSize)+1) * chunkSize + 1
+    newState = state
+    if chunkStart != state.start:
+        newState = copy.copy(state)
+        newState.start = chunkStart
+        newState.seq = FastaFiles.readFile(newState)
+    if chunkStop != newState.start + newState.length:
+        newState.readAndAppendNextChunk()
     
-    searchSeq = state.seq[ state.searchStart : state.searchStop]
+    searchSeq = newState.seq[ state.searchStart : state.searchStop]
     entry = SequenceEntry()
     entry.seq = searchSeq
     return [entry]

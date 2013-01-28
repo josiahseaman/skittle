@@ -9,6 +9,7 @@ import Graphs.models   #import ParentState
 import copy
 from FastaFiles import readFile
 
+chunkSize = 65536
 '''
 This is the single global state packet that defines a view state in Skittle.  
 This state packet is equivalent to an URL or a request from the Skittle website.
@@ -38,7 +39,7 @@ class RequestPacket(models.Model):
     is 1 less than the number displayed on the website.  This also means that you should print
     index+1 whenever you are writing user readable output.'''
     start = models.IntegerField(default=None, null=True)
-    length = models.IntegerField(default=65536)
+    length = models.IntegerField(default=chunkSize)
     requestedGraph = models.CharField(max_length=1, default=None, null=True)
     
     searchStart = models.IntegerField(default=10)
