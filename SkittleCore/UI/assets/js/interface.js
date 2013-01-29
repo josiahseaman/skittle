@@ -95,6 +95,7 @@ function mouseDown(e) {
         selectionStart = start + (toSkixels(my-25)-1)*width
         selectionEnd = selectionStart + width - 1;
         console.log('selection start:' + selectionStart + " selection end:" + selectionEnd)
+        showGraph('h');
         if (graphStatus['h'].visible) isInvalidDisplay = true
     }
 

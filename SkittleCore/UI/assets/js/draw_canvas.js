@@ -66,7 +66,7 @@ var graphURL = function(graph,chunkOffset) {
     var startTopOfScreen = (start-8*width) >  0 ? (start-8*width) : 1
     var startChunk = ( ( Math.floor(startTopOfScreen/(65536*scale) ) + chunkOffset )*65536*scale + 1 );
     var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + scale;
-    if (graph=='m') graphPath += "&width=" + Math.round(width/30)*30 
+    if (graph =='m' || graph == 's') graphPath += "&width=" + Math.round(width/30)*30 
     else if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + Math.round(width/10)*10 
     if (graph == 'h') graphPath += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd
     if (graphStatus[graph].colorPaletteSensitive) graphPath += "&colorPalette="+colorPalette
@@ -294,7 +294,7 @@ var drawSimHeat = function(offset,chunks) {
     }
 
     b.putImageData(newImageData, offset, 0);
-        // var vOffset = -Math.round(((start-8*width)%65536)/(width*scale));
+        var vOffset = -Math.round(((start-8*width)%65536)/(width*scale));
         // b.putImageData(imageData, offset+320, vOffset);
     return calculateOffsetWidth(displayWidth)
     
