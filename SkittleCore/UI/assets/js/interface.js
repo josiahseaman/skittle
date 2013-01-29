@@ -243,7 +243,7 @@ var UIwidthChange = function(newWidth) {
     }
 }
 var updateWidth = function() {
-    $('#widthDisplay').text(width + " bp")
+    $('#widthDisplay').text(width + " skixels")
     updateEnd();
 }
 var UIstartChange = function(newStart) {
