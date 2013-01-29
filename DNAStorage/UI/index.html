@@ -1,3 +1,4 @@
+{% load humanize %}
 <html>
 <head>
 	<title>Skittle|Select a Genome</title>
@@ -82,6 +83,7 @@
 			border:2px solid #864;
 			border-radius: 6px;
 			background:#000;
+			cursor: pointer;
 		}
 		#genomes section:hover {
 			background: #111;
@@ -145,9 +147,7 @@
 	
 	<header>
 		<ul>
-			<li>Discover</li>
-			<li>Share</li>
-			<li>Learn</li>
+			<li><a href="#">Discover</a></li><li><a>Share</a></li><li><a>Learn</a></li>
 		</ul>
 		<p><a href="https://twitter.com/genome_skittle"><img src="{{STATIC_URL}}gfx/twitter-bird-dark-bgs.png" height="36" width="36"></a>
 			<a href="https://github.com/josiahseaman/skittle"><img src="{{STATIC_URL}}gfx/github-white.png" height="22"></a></p>
@@ -165,7 +165,7 @@
 				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
 				<h2>{% firstof specimen.ExtendedName " Genome" %}</h2>
 				<p class="source"><span>Source:</span>{{ specimen.Source }}</p>
-				<p class="info"><span class="seqNum">Feb. 2009 ({{ specimen.Name }})</span> Length: {{ specimen.GenomeLength }} bp</p>
+				<p class="info"><span class="seqNum">Feb. 2009 ({{ specimen.Name }})</span> Length: {{ specimen.GenomeLength|intcomma }} bp</p>
 			</section>
 			{% endfor %}
 <!-- 			<section>
@@ -265,7 +265,7 @@
 			<h3>{% firstof specimen.ExtendedName " Genome" %} ({{specimen.Name}})</h3>
 
 			<p>Source: {{ specimen.Source }}</p>
-			<p>Length: {{ specimen.GenomeLength }} bp</p>
+			<p>Length: {{ specimen.GenomeLength|intcomma }} bp</p>
 			<p>Description: {{ specimen.Description }}</p>
 			<h4>Chromosomes:</h4>
 			<ul class="chromosomeList">

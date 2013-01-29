@@ -309,6 +309,17 @@ var setWidthTo = function(newWidth) {
     calcSkixelsOnScreen();
     isInvalidDisplay = true;
 }
+var setScaleTo = function(newScale) {
+    if(newScale <1) {
+        if (scale==1) return;
+        scale = 1;
+    }
+    else if (newScale > 100) scale = 100;
+    else newScale = Math.round(newScale)
+        
+    calcSkixelsOnScreen();
+    isInvalidDisplay = true;
+}
 var changeWidthBy = function(delta) {
     setWidthTo(width + delta)
 }
