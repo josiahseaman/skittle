@@ -58,7 +58,7 @@ def logRepeatMap(state, repeatMapState):
     skixelsPerSample = 24
     growthPower = 2
     height = repeatMapState.height(state, state.seq)
-    state = state.readAndAppendNextChunk()
+    state.readAndAppendNextChunk()
     print "Done reading additional chunk.  Computing..."
     for h in range(height): # per line
         freq.append( [] )

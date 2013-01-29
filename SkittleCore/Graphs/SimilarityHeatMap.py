@@ -27,11 +27,11 @@ def prettyPrint(heatMap):
 
 def calculateOutputPixels(state, heatMapState = SimilarityHeatMapState()):
     while len(state.seq) < 65536 + 300 * state.width:
-        state = state.readAndAppendNextChunk(True)
+        state.readAndAppendNextChunk(True)
     width = 300
     height = int(math.ceil(chunkSize / float(state.width))) 
     
-    oligVectors = OligomerUsage.calculateOutputPixels(state, heatMapState)
+    oligVectors = OligomerUsage.calculateOutputPixels(state, heatMapState)#TODO: performance: cap at 300 lines past the chunk boundary
     heatMap = [[None for x in range(width)] for y in range(height)]
     
     for y in range(len(heatMap)):
