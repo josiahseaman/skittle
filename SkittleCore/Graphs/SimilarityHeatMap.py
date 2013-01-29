@@ -5,12 +5,13 @@ Created on Dec 14, 2012
 '''
 from SkittleGraphTransforms import pearsonCorrelation, mirrorDiagonalMatrix, \
     rowColumnCorrelation
-from SkittleCore.models import RequestPacket
+from SkittleCore.models import RequestPacket, chunkSize
 from models import SimilarityHeatMapState
 import OligomerUsage
 from SkittleCore.GraphRequestHandler import registerGraph
 from PixelLogic import twoSidedSpectrumColoring
 import copy
+import math
 
 registerGraph('s', "Similarity Heatmap", __name__, False)
 
@@ -28,7 +29,7 @@ def calculateOutputPixels(state, heatMapState = SimilarityHeatMapState()):
     while len(state.seq) < 65536 + 300 * state.width:
         state = state.readAndAppendNextChunk(True)
     width = 300
-    height = state.height() #TODO: this is inefficient 
+    height = int(math.ceil(chunkSize / float(state.width))) 
     
     oligVectors = OligomerUsage.calculateOutputPixels(state, heatMapState)
     heatMap = [[None for x in range(width)] for y in range(height)]
