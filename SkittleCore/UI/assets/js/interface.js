@@ -351,3 +351,7 @@ var changeStartByLines = function(deltaLines) {
 var goToEnd = function() {
     setStartTo(fileLength)
 }
+var scaleToFile = function() {
+    setStartTo(1)
+    setScaleTo(fileLength/skixelsOnScreen)
+}

@@ -200,7 +200,7 @@ var drawSeqHighlight = function(offset,chunks) {
     var newData = newImageData.data;
 
     var startOffset = (start - 1 - width*8 - Math.max( Math.floor((start-width*8)/(65536*scale) ), 0 )*65536*scale )*4;
-    for (var x = 0; x < newData.length; x += 4*scale) { // read in data from original pixel by pixel
+    for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
         var y = x + startOffset
         newData[x] = data[y] || 0;
         newData[x + 1] = data[y + 1] || 0;
