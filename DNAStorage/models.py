@@ -10,6 +10,8 @@ class Specimen(models.Model):
     Source = models.CharField(max_length=255, null=True)
     ExtendedName = models.CharField(max_length=255, null=True)
     Description = models.TextField(null=True)
+    DatePublished = models.CharField(max_length=50, null=True)
+    Thumbnail = models.CharField(max_length=255, null=True)
 
 class FastaFiles(models.Model):
     Specimen = models.ForeignKey(Specimen)

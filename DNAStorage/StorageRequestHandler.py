@@ -106,3 +106,12 @@ def DeleteCache(graph):
             fullpath = os.path.join(root, f)
             if graphString in f:
                 os.remove(fullpath)
+
+#Get a python object containing a unique tree that travels to the specimens and contains the chromosome files of each specimen
+def GetTreeList():
+    specimens = Specimen.objects.all()
+    
+    tree = dict()
+    
+    for entry in specimens:
+        tree = ()
