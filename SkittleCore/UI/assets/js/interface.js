@@ -231,6 +231,7 @@ var updateDials = function() {
     updateWidth();
     updateStart();
     updateEnd();
+    updateScale();
 }
 var UIwidthChange = function(newWidth) {
     // var newWidth = this.value
@@ -270,6 +271,18 @@ var updateEnd = function() {
     newEnd = Math.round( start + (skixelsOnScreen - (25+37)*width - 1)*scale )
     if (newEnd > fileLength) $('#endDisplay').text(fileLength);
     else $('#endDisplay').text(newEnd)
+}
+var UIscaleChange = function(newScale) {
+    if (isNaN(newScale / 1) == false) { // check if this is really just a number
+        setScaleTo(newScale)
+    }
+    else {
+        console.log('Scale input is not a valid number')
+    }
+}
+var updateScale = function() {
+    $('#scaleDisplay').text(scale + " bp/pixel")
+    updateEnd();
 }
 
 // setters and setter utilities
@@ -315,7 +328,7 @@ var setScaleTo = function(newScale) {
         scale = 1;
     }
     else if (newScale > 100) scale = 100;
-    else newScale = Math.round(newScale)
+    else scale = Math.round(newScale)
         
     calcSkixelsOnScreen();
     isInvalidDisplay = true;
