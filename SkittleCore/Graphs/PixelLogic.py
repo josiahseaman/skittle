@@ -119,16 +119,19 @@ def hasDepth(listLike):
     except:
         return False
 
-def twoSidedSpectrumColoring(floatList):
+def twoSidedSpectrumColoring(floatList, midpoint = 0.0):
     if hasDepth(floatList):
-        return map(lambda x: twoSidedSpectrumColoring(x), floatList)
+        return map(lambda x: twoSidedSpectrumColoring(x, midpoint), floatList)
     pixels = []
     for score in floatList:
         if score is None:
             pixels.append((0,0,0))
-        elif score > 0.0:
-            pixels.append((int(255*score),0,0))
+        elif score > midpoint:
+            distance = (score-midpoint) / (1.0 - midpoint)
+            pixels.append((int(255*distance),0,0))
         else:
-            pixels.append((0,0, int(255*abs(score))))
+#            score -0.8; midpoint = 0.5
+            distance = (score - midpoint) / (-1.0 - midpoint)
+            pixels.append((0,0, int(255*abs(distance))))
         
     return pixels

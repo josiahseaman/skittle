@@ -25,13 +25,21 @@ def prettyPrint(heatMap):
                 print e, ', ',
     print #newline
 
+def medianFromAllLines(heatMap):
+    normalizationList = []
+    for line in heatMap:
+        normalizationList += line
+    normalizationList.sort()
+    return normalizationList[ len(normalizationList)/2]
+    
+
 def calculateOutputPixels(state, heatMapState = SimilarityHeatMapState()):
     width = 300
     while len(state.seq) < (chunkSize*state.scale) + width * state.nucleotidesPerLine(): #all starting positions plus the maximum reach from the last line
         state.readAndAppendNextChunk(True)
     height = int(math.ceil((chunkSize*state.scale) / float(state.nucleotidesPerLine()))) 
     
-    oligVectors = OligomerUsage.calculateOutputPixels(state, heatMapState)#TODO: performance: cap at 300 lines past the chunk boundary
+    oligVectors = OligomerUsage.calculateOutputPixels(state, heatMapState)#TODO: performance: cap at 300 lines past the last chunk boundary
     heatMap = [[None for x in range(width)] for y in range(height)]
     
     for y in range(len(heatMap)):
@@ -41,12 +49,14 @@ def calculateOutputPixels(state, heatMapState = SimilarityHeatMapState()):
             elif x+y < len(oligVectors):#account for second to last chunk
                 heatMap[y][x] = pearsonCorrelation(oligVectors[y], oligVectors[ y+x ] )
                 
-    if heatMapState.useRowColumnCorrelation:
-        mirrorDiagonalMatrix(heatMap)#flip along diagonal symmetry
-#        prettyPrint(heatMap)
-#        print
-        heatMap = rowColumnCorrelation(heatMap)
-        
-    pixels = twoSidedSpectrumColoring(heatMap)
+#TODO: the mirroring probably needs changing given the new heatmap png layout
+#    if heatMapState.useRowColumnCorrelation: 
+#        mirrorDiagonalMatrix(heatMap)#flip along diagonal symmetry
+##        prettyPrint(heatMap)
+##        print
+#        heatMap = rowColumnCorrelation(heatMap)
+    median = medianFromAllLines(heatMap)
+
+    pixels = twoSidedSpectrumColoring(heatMap, median)
     return pixels
 
