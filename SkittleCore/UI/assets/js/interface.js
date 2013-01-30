@@ -141,16 +141,23 @@ function mouseUp(e) {
 }
 function mouseWheel(e) {
     e.preventDefault();
-    var delta = 0;
-    if (event.wheelDelta) { /* IE/Opera. */
-            delta = event.wheelDelta/120;
-    } else if (event.detail) { /** Mozilla case. */
-            delta = -event.detail/3;// In Mozilla, sign of delta is different than in IE. Also, delta is multiple of 3.
-    }
+    var delta = calcDeltaFromScrollEvent(event)
+
     if (delta > 0.05 || delta < -0.05) {
         changeStartByLines(Math.round(-delta*10));
     }
+}
+function mouseWheelDials(e) {
+    e.preventDefault();
+    var delta = calcDeltaFromScrollEvent(event)
 
+    if (delta > 0.05 || delta < -0.05) {
+        switch($(this).children('span').attr('id')) {
+            case "widthDisplay": changeWidthBy(Math.round(-delta*10)); return;
+            case "scaleDisplay": changeScaleBy(Math.round(-delta*5)); return;
+            default: changeStartBy(Math.round(-delta*10)*scale); return;
+        }
+    }
 }
 // html widgets
   $(document).ready(function() {
@@ -341,6 +348,9 @@ var doubleWidth = function() {
 }
 var halfWidth = function() {
     setWidthTo(Math.round(width/2))
+}
+var changeScaleBy = function(delta) {
+    setScaleTo(scale + delta)
 }
 var changeStartBy = function(delta) {
     setStartTo(start + delta)
