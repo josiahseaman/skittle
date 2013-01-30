@@ -34,10 +34,10 @@ make distclean
 make
 make install
 
-====================DJANGO_EVOLUTION INSTALL====================
-easy_install -U django_evolution
-    
+====================DATABASE EVOLUTIONS====================   
 DROP DATABASE `SkittleTree`;
 CREATE DATABASE SkittleTree;
+
 python manage.py syncdb;
-python manage.py evolve --hint --execute
+
+ANY changes to a model file must be passed to Bryan for a custom evolution script to be created.
