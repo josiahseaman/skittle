@@ -145,7 +145,7 @@ var drawAnnotations = function(offset,chunks) {
     var annotationWidth = 2
 
     b.beginPath()
-    b.rect(offset,1,annotationWidth,500)
+    b.rect(offset,0.5,annotationWidth,500)
     b.fillStyle="#333";
     b.fill()
 
@@ -153,7 +153,7 @@ var drawAnnotations = function(offset,chunks) {
         if (   (annotation[i].from > (start - 8*width*scale) && annotation[i].from < ( start + (skixelsOnScreen + 37*width - 1)*scale ) )
             || (annotation[i].to   > (start - 8*width*scale) && annotation[i].to   < ( start + (skixelsOnScreen + 37*width - 1)*scale ) ) ) {
             b.beginPath()
-            b.rect(offset,(annotation[i].from-start)/(width*scale)+8,annotationWidth,(annotation[i].to-annotation[i].from)/(width*scale)+8)
+            b.rect(offset,(annotation[i].from-start)/(width*scale)+8,annotationWidth,(annotation[i].to-annotation[i].from)/(width*scale))
             b.fillStyle=annotation[i].color
             b.fill()
         }

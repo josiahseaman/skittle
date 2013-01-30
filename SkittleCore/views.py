@@ -43,7 +43,7 @@ def graph(request, specimen="hg18",chromosome="chrY-sample"):
 
 def annotation(request, specimen="hg18",chromosome="chrY-sample"):
     json = '''annotation = [
-        {from:209,to:220,name:"annotation one",color:"#0ba5ba"},
+        {from:1,to:220,name:"annotation one",color:"#0ba5ba"},
         {from:1209,to:1520,name:"annotation two",color:"#9c312a"},
         {from:2039,to:2800,name:"annotation three",color:"#28b31f"},
         {from:12039,to:12800,name:"annotation four",color:"#a67ebc"},
