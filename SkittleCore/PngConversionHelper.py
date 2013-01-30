@@ -49,7 +49,8 @@ def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3):
         if len(newline) >= targetWidth * nChannels: 
             p.append(newline)
             newline = []
-    if newline: p.append(newline) #append a partial line if there is one
+    if newline and newline[0] != []: 
+        p.append(newline) #append a partial line if there is one
     return p
 
 def multiplyGreyscale(p, greyMax = 255):
