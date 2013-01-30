@@ -136,7 +136,6 @@ INSTALLED_APPS = (
     'SkittleCore.Graphs',
     'SkittleCore',
     'DNAStorage',
-    'django_evolution',
 
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',

@@ -11,6 +11,5 @@ then
     fi
 fi
 
-python ./manage.py evolve --hint --execute --noinput
 python ./manage.py runserver 5000
 }
