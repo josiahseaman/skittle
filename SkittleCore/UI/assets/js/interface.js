@@ -302,7 +302,7 @@ var setStartTo = function(newStart) {
         start = 1;
     }
     else if (newStart > fileLength/2 && newStart > (fileLength - (skixelsOnScreen - (25+37)*width)*scale/2)) {
-        start = fileLength - (skixelsOnScreen - (25+37)*width)*scale/2;
+        start = fileLength - (skixelsOnScreen - (25+37)*width)*scale/2 + 1;
     }
     else {
         start = Math.round(newStart); // don't allow non-integer starts

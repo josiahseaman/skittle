@@ -130,7 +130,7 @@ var drawVerticalGraph = function(graph,offset,chunks) {
         var imageObj = imageRequestor(graph,i)
         if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
         else var graphWidth = imageObj.width
-        var vOffset = -Math.round(((Math.round(start/scale)-8*width)%(65536*scale))/(width) - i*(65536/width));
+        var vOffset = -Math.round(((Math.round(start/scale)-8*width)%(65536))/(width) - i*(65536/width));
         i == chunks - 1 ? graphHeight = imageObj.height : graphHeight = Math.ceil(65536/width)
         b.drawImage(imageObj,offset,vOffset,graphWidth,graphHeight) // render data on hidden canvas
         // b.beginPath();
@@ -174,7 +174,7 @@ var drawNucDisplay = function(offset,chunks) {
     var newImageData = b.createImageData(width,toSkixels(1000)) //create new image data with desired dimentions (width)
     var newData = newImageData.data;
 
-    var startOffset = (Math.round(start/scale) - 1 - width*8 - Math.max( Math.floor((start-width*8)/(65536*scale) ), 0 )*65536 )*4;
+    var startOffset = (Math.round(start/scale) - 1 - width*8 - Math.max( Math.floor((start/scale-width*8)/(65536) ), 0 )*65536 )*4;
     for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
         var y = x + startOffset
         newData[x] = data[y] || 0;
@@ -199,7 +199,7 @@ var drawSeqHighlight = function(offset,chunks) {
     var newImageData = b.createImageData(width,toSkixels(1000)) //create new image data with desired dimentions (width)
     var newData = newImageData.data;
 
-    var startOffset = (start - 1 - width*8 - Math.max( Math.floor((start-width*8)/(65536*scale) ), 0 )*65536*scale )*4;
+    var startOffset = (Math.round(start/scale) - 1 - width*8 - Math.max( Math.floor((start/scale-width*8)/(65536) ), 0 )*65536 )*4;
     for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
         var y = x + startOffset
         newData[x] = data[y] || 0;
@@ -240,7 +240,7 @@ var drawRMap = function(offset,chunks) {
             //         megaColumn++
             //     } 
             // }
-            var widthPosition = offset + 17.3*Math.log(width) - 43.7;
+            var widthPosition = offset + 17.3*Math.log(width*scale) - 43.7;
             c.beginPath();
             c.moveTo(widthPosition-1.18181818,0)
             c.lineTo(widthPosition-1.18181818,500)
