@@ -65,6 +65,7 @@ def handleRequest(state):
         pixels = calculatePixels(state)
 #        print pixels[:10]
         png = convertToPng(state, pixels, isRasterGraph(state))
+    print 'Done'
     return png
 
 def isRasterGraph(state):
