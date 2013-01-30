@@ -113,5 +113,7 @@ def GetTreeList():
     
     tree = dict()
     
+    tree = {"Kingdom": {"Class": {"Genus": {"Species": {"Specimen": {"ExtendedName", "Source", "Description", "DatePublished", "Thumbnail", {"ChromosomeListing",}}}}}}}
+    
     for entry in specimens:
-        tree = ()
+        tree = {entry.Specimen.Kingdom: {entry.Specimen.Class: {entry.Specimen.Genus: {entry.Specimen.Species: {entry.Name: ()}}}}}
