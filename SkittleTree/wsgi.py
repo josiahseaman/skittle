@@ -16,7 +16,7 @@ framework.
 import os, sys, socket
 
 if socket.gethostname().startswith('nyx'):
-    sys.path.append('/var/www/skittle')
+    sys.path.append('/var/www/skittle-development')
     
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SkittleTree.settings")
 
