@@ -36,12 +36,12 @@ class RepeatMapState(ParentState):
     F_start = models.IntegerField(default=1)
     
     def height(self, state, pixels):
-        F_height = len(pixels) / state.width # self.F_width*20
+        F_height = len(pixels) / state.nucleotidesPerLine() # self.F_width*20
         return F_height
     
     def oldHeight(self, state, pixels):
 #        assert isinstance(state, SkittleCore.RequestPacket)
-        F_height = ((len(pixels)) - (self.F_start-1)*state.scale - self.F_width*state.scale ) / state.width
+        F_height = ((len(pixels)) - (self.F_start-1)*state.scale - self.F_width*state.scale ) / state.nucleotidesPerLine()
 #        F_height = max(0, min(400, F_height) )
         return F_height
 class NucleotideDisplayState(ParentState):

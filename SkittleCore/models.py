@@ -39,7 +39,7 @@ class RequestPacket(models.Model):
     is 1 less than the number displayed on the website.  This also means that you should print
     index+1 whenever you are writing user readable output.'''
     start = models.IntegerField(default=None, null=True)
-    length = models.IntegerField(default=chunkSize)
+    length = models.IntegerField(default=0)
     requestedGraph = models.CharField(max_length=1, default=None, null=True)
     
     searchStart = models.IntegerField(default=10)
@@ -50,9 +50,9 @@ class RequestPacket(models.Model):
     
     '''Derived value height may need to be further reduced for functions that must scan ahead.'''
     def height(self):
-        return self.length / self.width
+        return self.length / self.nucleotidesPerLine()
     
-    def charactersPerLine(self):
+    def nucleotidesPerLine(self):
         return self.width * self.scale
     
     '''This is a multifunctional 'make the file bigger' read logic for sequential chunks'''

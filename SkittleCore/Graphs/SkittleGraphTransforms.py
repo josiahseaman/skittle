@@ -254,17 +254,16 @@ the color compressed sequence from the Nucleotide Display.'''
 def correlationMap( state, repeatMapState, coloredPixels):
     assert isinstance(repeatMapState, RepeatMapState)
     assert isinstance(state, RequestPacket)
-    pixelsPerSample = state.width * state.scale
     rgbChannels = zip(*coloredPixels)
     freq = []
     for h in range(repeatMapState.height(state, coloredPixels)):
         freq.append([0.0]*(repeatMapState.F_width+1))
-        offset = h * pixelsPerSample
+        offset = h * state.nucleotidesPerLine()
         for w in range(1, len(freq[h])):#calculate across widths 1:F_width
             
             resultSum = 0.0
             for currentChannel in rgbChannels:
-                correlation = correlate(currentChannel, offset, offset + w + repeatMapState.F_start, pixelsPerSample)
+                correlation = correlate(currentChannel, offset, offset + w + repeatMapState.F_start, state.nucleotidesPerLine())
                 if correlation is not None:
                     resultSum += correlation
             resultSum /= 3

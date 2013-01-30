@@ -101,7 +101,7 @@ def logRepeatMap(state, repeatMapState):
                     resultSum = -1.0
                 freq[h].append( .66666 * max(0.0, (.5 + resultSum)) )
 
-        start += state.charactersPerLine()
+        start += state.nucleotidesPerLine()
     return freq
 
 
@@ -115,7 +115,7 @@ def countMatches(sequence, beginA, beginB, lineSize):
 
 def oldRepeatMap(state, repeatMapState):
     freq = []
-    lineSize = state.width * state.scale
+    lineSize = state.nucleotidesPerLine()
     for h in range(repeatMapState.height(state, state.seq)):
         freq.append([0.0]*(repeatMapState.F_width+1))
         offset = h * lineSize
