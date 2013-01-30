@@ -92,8 +92,8 @@ function mouseDown(e) {
     //}
     }
     else if (activeTool == "Select") {
-        selectionStart = start + (toSkixels(my-25)-1)*width
-        selectionEnd = selectionStart + width - 1;
+        selectionStart = start + (toSkixels(my-25))*width*scale
+        selectionEnd = selectionStart + width*scale - 1;
         console.log('selection start:' + selectionStart + " selection end:" + selectionEnd)
         showGraph('h');
         if (graphStatus['h'].visible) isInvalidDisplay = true
@@ -125,7 +125,7 @@ function mouseMove(e) {
 
         if (isDrag) {
 
-            setStartTo( toSkixels(topOffset-my) * width + startOffset )
+            setStartTo( toSkixels(topOffset-my) * width*scale + startOffset )
             if(!dragWidth) {
                 setXoffsetTo(sideOffset - toSkixels(leftOffset-mx))
                 this.style.cursor = 'move'
@@ -184,18 +184,6 @@ function mouseWheel(e) {
           linkPopover.removeClass('active');
         }, 1500);
     })
-    $('#dials span').click(function() {
-        var targetFunction = $(this).attr('data-fn')
-        var offset = $(this).position();
-        var inputBox = $('<input type="text">');
-        $(this).parent().append(inputBox.offset(offset).val($(this).html()));
-        inputBox.select();
-        // inputBox.val().split(' ')[0].select();
-        inputBox.blur(function() {
-            if(targetFunction) eval(targetFunction + '("' + this.value + '")')
-            $(this).remove();
-        })
-    })
     $("#buttonGraphs").click(function(){
         $("#graphList").toggleClass('active')
         setTimeout(function() {
@@ -210,6 +198,18 @@ function mouseWheel(e) {
     $('#graph-labels .closeGraphButton').click(function() {
         graph = this.parentNode.id.slice(-1);
         hideGraph(graph)
+    })
+    $('#dials span').click(function() {
+        var targetFunction = $(this).attr('data-fn')
+        var offset = $(this).position();
+        var inputBox = $('<input type="text">');
+        $(this).parent().append(inputBox.offset(offset).val($(this).html()));
+        inputBox.select();
+        // inputBox.val().split(' ')[0].select();
+        inputBox.blur(function() {
+            if(targetFunction) eval(targetFunction + '("' + this.value + '")')
+            $(this).remove();
+        })
     })
 
   });
@@ -346,12 +346,12 @@ var changeStartBy = function(delta) {
     setStartTo(start + delta)
 }
 var changeStartByLines = function(deltaLines) {
-    setStartTo(start + deltaLines*width)
+    setStartTo(start + deltaLines*width*scale)
 }
 var goToEnd = function() {
     setStartTo(fileLength)
 }
 var scaleToFile = function() {
     setStartTo(1)
-    setScaleTo(fileLength/skixelsOnScreen)
+    setScaleTo(fileLength/(skixelsOnScreen-20*width))
 }
