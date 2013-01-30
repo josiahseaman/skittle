@@ -130,7 +130,7 @@ def chunkUpList(seq, chunkSize, overlap=0):
         return map(lambda x: chunkUpList(x, chunkSize, overlap), seq)
     height = int(math.ceil(len(seq) / float(chunkSize)))
 #    if height == 0: return []
-    resultVector = [ seq[chunk*chunkSize : (chunk+1)*chunkSize + overlap] for chunk in range(0,height) if chunk ]
+    resultVector = [ seq[chunk*chunkSize : (chunk+1)*chunkSize + overlap] for chunk in range(height) ]
     return resultVector
 
 '''Deprecated.  Nucleotide Display uses normalized counts now''' 
