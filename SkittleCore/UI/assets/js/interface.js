@@ -206,6 +206,12 @@ function mouseWheelDials(e) {
         graph = this.parentNode.id.slice(-1);
         hideGraph(graph)
     })
+    $("#dials li").on('mouseleave touchstart',function(){
+        var target = $(this).children('div').addClass('active')
+        setTimeout(function() {
+          target.removeClass('active');
+        }, 200);
+    })
     $('#dials span').click(function() {
         var targetFunction = $(this).attr('data-fn')
         var offset = $(this).position();

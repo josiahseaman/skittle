@@ -236,21 +236,18 @@
 	}
 
 	#widthBubble {
-		display:none;
 		left:202px;
 		bottom:40px;
 		width:62px;
 		height:30px;
 	}
 	#scaleBubble {
-		display:none;
 		left:387px;
 		bottom:40px;
 		width:108px;
 		height:30px;
 	}
 	#startBubble {
-		display:none;
 		left:662px;
 		bottom:40px;
 		width:77px;

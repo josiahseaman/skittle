@@ -257,7 +257,7 @@ var drawSimHeat = function(offset,chunks) {
     a.clearRect(0,0,350,10000)
     var displayWidth = 300
     var lineHeight = Math.round(65536/width) //Math.round((Math.round(width/10)*10)/width*Math.ceil(65536/width));
-    displayWidth = Math.round((Math.round(width/10)*10)/width*displayWidth)
+    displayWidth = Math.round((Math.round(width/30)*30)/width*displayWidth)
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor("s",i)
         if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
@@ -276,7 +276,7 @@ var drawSimHeat = function(offset,chunks) {
     // var startOffset = (start - 1 - width*8 - Math.max( Math.floor((start-width*8)/(65536*scale) ), 0 )*65536*scale )*4;
 
     var lineLength = displayWidth*4;
-    var startOffset = (Math.ceil(start/width) - 8 -1 - Math.max( Math.floor((start-width*8)/65536), 0 )*lineHeight)*lineLength
+    var startOffset = (Math.ceil(start/width/scale) - 8 -1 - Math.max( Math.floor((start/scale-width*8)/65536), 0 )*lineHeight)*lineLength
     var l = 0, i = startOffset
     for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
         var y = (x - l*lineLength)
