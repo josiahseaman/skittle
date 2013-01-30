@@ -49,7 +49,10 @@ def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3):
         if len(newline) >= targetWidth * nChannels: 
             p.append(newline)
             newline = []
-    if newline and newline[0] != []: 
+    if newline and newline[0] != []:
+#        print newline, len(newline)
+        while len(newline) < targetWidth * nChannels:
+            newline.append( 0 ) #pad with zeros for a partial line at the end of the chromosome
         p.append(newline) #append a partial line if there is one
     return p
 
