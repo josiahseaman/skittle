@@ -327,7 +327,7 @@ var setScaleTo = function(newScale) {
         if (scale==1) return;
         scale = 1;
     }
-    else if (newScale > 100) scale = 100;
+    else if (newScale > 5000) scale = 5000;
     else scale = Math.round(newScale)
         
     calcSkixelsOnScreen();
