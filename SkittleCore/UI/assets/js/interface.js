@@ -186,7 +186,8 @@ function mouseWheelDials(e) {
             linkPopover.toggle();
         }
         linkPopover.offset({ top: (offset.top - 10), left: (offset.left + $(this).outerWidth() + 16) })
-        linkPopover.html('Copy this link: <br>' + currentURL);
+        linkPopover.html('Copy this link: <br><span>' + currentURL + '</span>');
+        selectText(linkPopover.children('span')[0])
         setTimeout(function() {
           linkPopover.removeClass('active');
         }, 1500);
@@ -247,9 +248,8 @@ var updateDials = function() {
     updateScale();
 }
 var UIwidthChange = function(newWidth) {
-    // var newWidth = this.value
-    if (isNaN(newWidth / 1) == false) { // check if this is really just a number
-        setWidthTo(newWidth);
+    if (newWidth.match(/(\d+)/)) { // check if this is really just a number
+        setWidthTo(newWidth.match(/(\d+)/)[0]);
     }
     else {
         console.log('Width input is not a valid number')
@@ -259,10 +259,21 @@ var updateWidth = function() {
     $('#widthDisplay').text(width + " skixels")
     updateEnd();
 }
+var UIscaleChange = function(newScale) {
+    if (newScale.match(/(\d+)/)) { // check if this is really just a number
+        setScaleTo(newScale.match(/(\d+)/)[0])
+    }
+    else {
+        console.log('Scale input is not a valid number')
+    }
+}
+var updateScale = function() {
+    $('#scaleDisplay').text(scale + " bp/pixel")
+    updateEnd();
+}
 var UIstartChange = function(newStart) {
-    // var newStart = this.value
-    if (isNaN(newStart / 1) == false) { // check if this is really just a number
-        setStartTo(newStart)
+    if (newStart.match(/(\d+)/)) { // check if this is really just a number
+        setStartTo(newStart.match(/(\d+)/)[0])
     }
     else {
         console.log('Start index input is not a valid number')
@@ -273,8 +284,8 @@ var updateStart = function() {
     updateEnd();
 }
 var UIendChange = function(newEnd) {
-    if (isNaN(newEnd / 1) == false) { // check if this is really just a number
-        setStartTo(newEnd - ( skixelsOnScreen - (25+37)*width - 1 )*scale)
+    if (newEnd.match(/(\d+)/)) { // check if this is really just a number
+        setStartTo(newEnd.match(/(\d+)/)[0] - ( skixelsOnScreen - (25+37)*width - 1 )*scale)
     }
     else {
         console.log('End index input is not a valid number')
@@ -284,18 +295,6 @@ var updateEnd = function() {
     newEnd = Math.round( start + (skixelsOnScreen - (25+37)*width - 1)*scale )
     if (newEnd > fileLength) $('#endDisplay').text(fileLength);
     else $('#endDisplay').text(newEnd)
-}
-var UIscaleChange = function(newScale) {
-    if (isNaN(newScale / 1) == false) { // check if this is really just a number
-        setScaleTo(newScale)
-    }
-    else {
-        console.log('Scale input is not a valid number')
-    }
-}
-var updateScale = function() {
-    $('#scaleDisplay').text(scale + " bp/pixel")
-    updateEnd();
 }
 
 // setters and setter utilities
