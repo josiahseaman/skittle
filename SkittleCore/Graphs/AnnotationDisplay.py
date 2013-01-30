@@ -13,10 +13,10 @@ registerGraph('a',"Annotation Display", __name__, False)
 class Annotation():
     def getStartingLine(self, state):
         assert isinstance(state, RequestPacket)
-        return self.start / state.width
+        return self.start / state.nucleotidesPerLine()
 
     def lengthIndices(self, state):
-        indices = range(self.start / state.width, self.stop / state.width +1 )
+        indices = range(self.start / state.nucleotidesPerLine(), self.stop / state.nucleotidesPerLine() +1 )
         return indices
 
     def __init__(self, Start, End):

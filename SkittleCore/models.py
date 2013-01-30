@@ -39,7 +39,7 @@ class RequestPacket(models.Model):
     is 1 less than the number displayed on the website.  This also means that you should print
     index+1 whenever you are writing user readable output.'''
     start = models.IntegerField(default=None, null=True)
-    length = models.IntegerField(default=chunkSize)
+    length = models.IntegerField(default=0)
     requestedGraph = models.CharField(max_length=1, default=None, null=True)
     
     searchStart = models.IntegerField(default=10)
@@ -50,21 +50,23 @@ class RequestPacket(models.Model):
     
     '''Derived value height may need to be further reduced for functions that must scan ahead.'''
     def height(self):
-        return self.length / self.width
+        return self.length / self.nucleotidesPerLine()
     
-    def charactersPerLine(self):
+    def nucleotidesPerLine(self):
         return self.width * self.scale
     
+    '''This is a multifunctional 'make the file bigger' read logic for sequential chunks'''
     def readAndAppendNextChunk(self, addPadding = False):
-        newState = copy.copy(self) #shallow copy
-        newState.start = self.start + self.length #chunk size 
-        sequence = readFile(newState)# FastaFiles.
+        startBackup = self.start
+        self.start = self.start + self.length # jump to the end of the current sequence  (+ chunkSize) 
+        sequence = readFile(self)# see if there's a file that begins where you end, this will stop on a partial file
         if sequence is not None:
-            newState.seq = self.seq + sequence #append two sequences together
+            self.seq = self.seq + sequence #append two sequences together
         elif addPadding:
-            newState.seq = newState.seq + ('N' * 65536)
-        newState.length = len(newState.seq)
-        return newState
+            self.seq = self.seq + ('N' * chunkSize)
+        self.start = startBackup
+        self.length = len(self.seq)
+        return self
 
    
 class StatePacket(RequestPacket): 

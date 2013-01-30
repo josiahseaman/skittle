@@ -63,10 +63,10 @@ var imageRequestor = function(graph,chunkOffset) {
     return imageObj[graph][chunkOffset]
 }
 var graphURL = function(graph,chunkOffset) {
-    var startTopOfScreen = (start-8*width) >  0 ? (start-8*width) : 1
+    var startTopOfScreen = (start-8*width*scale) >  0 ? (start-8*width*scale) : 1
     var startChunk = ( ( Math.floor(startTopOfScreen/(65536*scale) ) + chunkOffset )*65536*scale + 1 );
     var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + scale;
-    if (graph=='m') graphPath += "&width=" + Math.round(width/30)*30 
+    if (graph =='m' || graph == 's') graphPath += "&width=" + Math.round(width/30)*30 
     else if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + Math.round(width/10)*10 
     if (graph == 'h') graphPath += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd
     if (graphStatus[graph].colorPaletteSensitive) graphPath += "&colorPalette="+colorPalette
@@ -86,7 +86,7 @@ var drawGraphs = function() {
     drawPixelStuff = [];
     b.clearRect(0,0,1024,1000)
     var offset = xOffset + gutterWidth
-    var chunks = Math.min( Math.ceil(skixelsOnScreen/65536 + 1),(Math.ceil(fileLength/65536)-Math.floor((start-8*width)/65536)) )
+    var chunks = Math.min( Math.ceil(skixelsOnScreen/65536 + 1),(Math.ceil(fileLength/(65536*scale))-Math.floor((start-8*width*scale)/(65536*scale))),Math.ceil(fileLength/(65536*scale)) )
     // for (key in graphStatus) {
     for (var i=0;i<graphOrder.length;i++) {
         var key = graphOrder[i];
@@ -130,7 +130,7 @@ var drawVerticalGraph = function(graph,offset,chunks) {
         var imageObj = imageRequestor(graph,i)
         if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
         else var graphWidth = imageObj.width
-        var vOffset = -Math.round(((start-8*width)%65536)/(width*scale) - i*(65536/width));
+        var vOffset = -Math.round(((Math.round(start/scale)-8*width)%(65536))/(width) - i*(65536/width));
         i == chunks - 1 ? graphHeight = imageObj.height : graphHeight = Math.ceil(65536/width)
         b.drawImage(imageObj,offset,vOffset,graphWidth,graphHeight) // render data on hidden canvas
         // b.beginPath();
@@ -150,10 +150,10 @@ var drawAnnotations = function(offset,chunks) {
     b.fill()
 
     for(var i=0;i<annotation.length;i++) {
-        if (   (annotation[i].from > (start - 8*width) && annotation[i].from < ( start + (skixelsOnScreen + 37*width - 1)*scale ) )
-            || (annotation[i].to > (start - 8*width) && annotation[i].to < ( start + (skixelsOnScreen + 37*width - 1)*scale ) ) ) {
+        if (   (annotation[i].from > (start - 8*width*scale) && annotation[i].from < ( start + (skixelsOnScreen + 37*width - 1)*scale ) )
+            || (annotation[i].to   > (start - 8*width*scale) && annotation[i].to   < ( start + (skixelsOnScreen + 37*width - 1)*scale ) ) ) {
             b.beginPath()
-            b.rect(offset,(annotation[i].from-start)/width+8,annotationWidth,(annotation[i].to-annotation[i].from)/width+8)
+            b.rect(offset,(annotation[i].from-start)/(width*scale)+8,annotationWidth,(annotation[i].to-annotation[i].from)/(width*scale)+8)
             b.fillStyle=annotation[i].color
             b.fill()
         }
@@ -174,8 +174,8 @@ var drawNucDisplay = function(offset,chunks) {
     var newImageData = b.createImageData(width,toSkixels(1000)) //create new image data with desired dimentions (width)
     var newData = newImageData.data;
 
-    var startOffset = (start - 1 - width*8 - Math.max( Math.floor((start-width*8)/(65536*scale) ), 0 )*65536*scale )*4;
-    for (var x = 0; x < newData.length; x += 4*scale) { // read in data from original pixel by pixel
+    var startOffset = (Math.round(start/scale) - 1 - width*8 - Math.max( Math.floor((start/scale-width*8)/(65536) ), 0 )*65536 )*4;
+    for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
         var y = x + startOffset
         newData[x] = data[y] || 0;
         newData[x + 1] = data[y + 1] || 0;
@@ -199,8 +199,8 @@ var drawSeqHighlight = function(offset,chunks) {
     var newImageData = b.createImageData(width,toSkixels(1000)) //create new image data with desired dimentions (width)
     var newData = newImageData.data;
 
-    var startOffset = (start - 1 - width*8 - Math.max( Math.floor((start-width*8)/(65536*scale) ), 0 )*65536*scale )*4;
-    for (var x = 0; x < newData.length; x += 4*scale) { // read in data from original pixel by pixel
+    var startOffset = (Math.round(start/scale) - 1 - width*8 - Math.max( Math.floor((start/scale-width*8)/(65536) ), 0 )*65536 )*4;
+    for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
         var y = x + startOffset
         newData[x] = data[y] || 0;
         newData[x + 1] = data[y + 1] || 0;
@@ -240,7 +240,7 @@ var drawRMap = function(offset,chunks) {
             //         megaColumn++
             //     } 
             // }
-            var widthPosition = offset + 17.3*Math.log(width) - 43.7;
+            var widthPosition = offset + 17.3*Math.log(width*scale) - 43.7;
             c.beginPath();
             c.moveTo(widthPosition-1.18181818,0)
             c.lineTo(widthPosition-1.18181818,500)
@@ -294,7 +294,7 @@ var drawSimHeat = function(offset,chunks) {
     }
 
     b.putImageData(newImageData, offset, 0);
-        // var vOffset = -Math.round(((start-8*width)%65536)/(width*scale));
+        var vOffset = -Math.round(((start-8*width)%65536)/(width*scale));
         // b.putImageData(imageData, offset+320, vOffset);
     return calculateOffsetWidth(displayWidth)
     

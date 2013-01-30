@@ -19,7 +19,7 @@ def measureSequenceMatches(state, sequenceEntry):
     searchSeq = sequenceEntry.seq
     maxMismatches = int(findSize - float(findSize) * sequenceEntry.minimumPercentage + .999)
     #at 50%   1 = 0,  2 = 1, 3 = 1
-    for start_i in range(min( state.length, len(state.seq)  - (findSize-1))) :
+    for start_i in range(min( chunkSize, len(state.seq)  - (findSize-1))) :
         mismatches = 0
         L = 0
         while mismatches <= maxMismatches and L < findSize:
@@ -79,7 +79,7 @@ def getSearchSequenceFromRequestPacket(state):
         newState.start = chunkStart
         newState.seq = FastaFiles.readFile(newState)
         print "Length of new chunk: ", len(newState.seq)
-    if chunkStop != newState.start + (newState.length - chunkSize):
+    if chunkStop != newState.start:
         newState.readAndAppendNextChunk()
         print "Length of new chunk: ", len(newState.seq)
         

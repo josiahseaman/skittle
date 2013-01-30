@@ -10,7 +10,7 @@ from SkittleCore.Graphs.models import *
 from DNAStorage.StorageRequestHandler import GetChromosomeLength
 # import json
 
-def browse(request, specimen="hg19",chromosome="chrY-sample"):
+def browse(request, specimen="hg18",chromosome="chrY-sample"):
     width = request.GET.get('width',100)
     scale = request.GET.get('scale',1)
     start = request.GET.get('start',1)
@@ -23,7 +23,7 @@ def browse(request, specimen="hg19",chromosome="chrY-sample"):
     return render(request, 'browse.html',context)
 
 @cache_control(must_revalidate=False, max_age=3600)
-def graph(request, specimen="hg19",chromosome="chrY-sample"):
+def graph(request, specimen="hg18",chromosome="chrY-sample"):
     state = RequestPacket()
     state.chromosome = chromosome
     state.specimen = specimen
@@ -41,7 +41,7 @@ def graph(request, specimen="hg19",chromosome="chrY-sample"):
     # image_data = open("/Users/marshallds/Sites/Skittle/master/SkittleCore/UI/assets/n-display.png", "rb").read()
     return HttpResponse(image_data, content_type="image/png")
 
-def annotation(request, specimen="hg19",chromosome="chrY-sample"):
+def annotation(request, specimen="hg18",chromosome="chrY-sample"):
     json = '''annotation = [
         {from:209,to:220,name:"annotation one",color:"#0ba5ba"},
         {from:1209,to:1520,name:"annotation two",color:"#9c312a"},

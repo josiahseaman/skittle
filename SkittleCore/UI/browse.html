@@ -36,9 +36,7 @@
 	</div>
 	<header>
 		<ul>
-			<li>Discover</li>
-			<li>Share</li>
-			<li>Learn</li>
+			<li><a href="/discover">Discover</a></li><li><a>Share</a></li><li><a>Learn</a></li>
 		</ul>
 		<p><a href="https://twitter.com/genome_skittle"><img src="{{STATIC_URL}}gfx/twitter-bird-dark-bgs.png" height="36" width="36"></a>
 			<a href="https://github.com/josiahseaman/skittle"><img src="{{STATIC_URL}}gfx/github-white.png" height="22"></a></p>
@@ -48,10 +46,10 @@
 			<li class="" id="buttonGraphs"><img src="{{STATIC_URL}}gfx/icons/67.png" width="20" height="20">Graphs</li>
 			<li class="radio-tools active" data-tool="Move"><img src="{{STATIC_URL}}gfx/icons/41.png" width="20" height="20">Move</li>
 			<li class="radio-tools" data-tool="Select"><img src="{{STATIC_URL}}gfx/icons/dialog.png" width="20" height="20">Select</li>
-			<li class="radio-tools" data-tool="Find"><img src="{{STATIC_URL}}gfx/icons/7.png" width="20" height="20">Find</li>
-			<li class="radio-tools" data-tool="Annotate"><img src="{{STATIC_URL}}gfx/icons/39.png" width="20" height="20">Annotate</li>
+<!-- 			<li class="radio-tools" data-tool="Find"><img src="{{STATIC_URL}}gfx/icons/7.png" width="20" height="20">Find</li>
+			<li class="radio-tools" data-tool="Annotate"><img src="{{STATIC_URL}}gfx/icons/39.png" width="20" height="20">Annotate</li> -->
 			<li id="link-here"><img src="{{STATIC_URL}}gfx/icons/flag.png" width="20" height="20">Link Here</li>
-			<li><img src="{{STATIC_URL}}gfx/icons/camera.png" width="20" height="20">Screenshot</li>
+			<!-- <li><img src="{{STATIC_URL}}gfx/icons/camera.png" width="20" height="20">Screenshot</li> -->
 			<li class="bottom"><img src="{{STATIC_URL}}gfx/icons/cog.png" width="20" height="20">Settings</li>
 		</ul>
 	</div>
@@ -63,10 +61,10 @@
 					<div class="button" onClick="halfWidth()">/2</div>
 				</div>
 			</li>
-			<li>Scale: <span id="scaleDisplay">{{ scale }} bp/pixel</span>
+			<li>Scale: <span id="scaleDisplay" data-fn="UIscaleChange">{{ scale }} bp/pixel</span>
 				<div id="scaleBubble" class="popover arrow-bottom-center">
-					<div class="button" onClick="setStartTo(1)">1:1</div>
-					<div class="button" onClick="goToEnd()">Whole File</div>
+					<div class="button" onClick="setScaleTo(1)">1:1</div>
+					<div class="button" onClick="scaleToFile()">Whole File</div>
 				</div>
 			</li>
 			<li>Start Index: <span id="startDisplay" data-fn="UIstartChange">{{ start }}</span>

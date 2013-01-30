@@ -1,3 +1,4 @@
+{% load humanize %}
 <html>
 <head>
 	<title>Skittle|Select a Genome</title>
@@ -33,6 +34,18 @@
 			font-weight: 300;
 			margin-bottom: 0.2em
 		}
+		h3 {
+			font-size: 2em;
+			margin-bottom: 0.2em;
+			font-weight: 300;
+			color:#fda;
+		}
+		h4 {
+			font-size: 1.3em;
+			margin-bottom: 0.2em;
+			font-weight: 300;
+			color:#fda;
+		}
 		.breadcrumbs a {
 			color:#fda;
 		}
@@ -46,7 +59,10 @@
 			border-color: #888;
 			border-style: solid;
 		}
-		#previewPane>img {
+		.previewSpecimen {
+			display: none;
+		}
+		.previewSpecimen>img {
 			border-radius: 12px;
 			clear:both;
 			margin-bottom: 12px;
@@ -67,6 +83,7 @@
 			border:2px solid #864;
 			border-radius: 6px;
 			background:#000;
+			cursor: pointer;
 		}
 		#genomes section:hover {
 			background: #111;
@@ -86,6 +103,8 @@
 		}
 		section img {
 			border-radius: 6px;
+			float:left;
+			margin: -8px 10px -8px -8px;
 		}
 		.seqNum {
 			font-style: italic;
@@ -100,6 +119,22 @@
 			color:#bbb;
 		}
 
+		.chromosomeList {
+			list-style: none;
+		}
+		.chromosomeList li>a {
+			display: inline-block;
+			/*line-height: 1.5em;*/
+			padding:0.5em;
+			color:#fda;
+			text-decoration: none;
+			border:1px solid transparent;
+			border-radius: 6px;
+		}
+		.chromosomeList li>a:hover {
+			color: #fff;
+			border:1px solid #fda;
+		}
 	</style>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 	<script type="text/javascript">
@@ -112,105 +147,147 @@
 	
 	<header>
 		<ul>
-			<li>Discover</li>
-			<li>Share</li>
-			<li>Learn</li>
+			<li><a href="#">Discover</a></li><li><a>Share</a></li><li><a>Learn</a></li>
 		</ul>
 		<p><a href="https://twitter.com/genome_skittle"><img src="{{STATIC_URL}}gfx/twitter-bird-dark-bgs.png" height="36" width="36"></a>
 			<a href="https://github.com/josiahseaman/skittle"><img src="{{STATIC_URL}}gfx/github-white.png" height="22"></a></p>
 	</header>
 
-	<div id="previewPane">
-		<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="150" height="150"><br>
-		<h3>Human Genome - hg19</h3>
-
-		<p>Source: blah blah</p>
-		<p>Length: 20349589 bp</p>
-		<p>Description: Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-		tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-		quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-		consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-		cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-		proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-		<h3>Chromosomes:</h3>
-		<ul>
-			<li>Chromosome Y</li>
-			<li>Chromosome X</li>
-		</ul>
-		<h3>Available Annotations:</h3>
-	</div>
 	<div id="listPane">
 		<h2>Genome Library</h2>
-		<input type="text" placeholder="search" id="searchbox">
-<!-- 		<ul>
-			<li>Animalia</li>
-			<li>Planta</li>
-		</ul> -->
-<nav class="breadcrumbs"><a href=#>Animals</a> > <a href=#>Vertibrates</a> > <a href=#>Mammals</a></nav>
+<!-- 		<input type="text" placeholder="search" id="searchbox">
+
+		<nav class="breadcrumbs"><a href=#>Animals</a> > <a href=#>Vertibrates</a> > <a href=#>Mammals</a></nav> -->
+
 		<div id="genomes">
-		
-		<section>
-			<p class="source"><span>Source:</span>UCSC</p>
-			<h2>Human Genome</h2>
-			<p class="source">more...</p>
-			<p class="info"><span class="seqNum">Feb. 2009 (hg19, GRCh37)</span> Length:109kbp</p>
-		</section>
-		<section>
-			<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="52" height="52">
-			<h2>Human Genome</h2>
-			<p class="source"><span>Source:</span>UCSC</p>
-			<p class="seqNum">Mar. 2006 (hg18)</p>
-		</section>
-		<section>
-			<h2>Cat Genome</h2>
-			<p class="source"><span>Source:</span>UCSC</p>
-			<p class="seqNum">Dec. 2008 (felCat4)</p>
-		</section>
-		<section>
-			<h2>Cat Genome</h2>
-			<p class="source"><span>Source:</span>UCSC</p>
-			<p class="seqNum">Mar. 2006 (felCat3)</p>
-		</section>
-		<section>
-			<h2>Chicken Genome</h2>
-			<p class="source"><span>Source:</span>UCSC</p>
-			<p class="seqNum">Nov. 2011 (galGal4)</p>
-		</section>
-		<section>
-			<h2>Chimpanzee Genome</h2>
-			<p class="source"><span>Source:</span>UCSC</p>
-			<p class="seqNum">Oct. 2010 (panTro3)</p>
-		</section>
-		<section>
-			<h2>Chimpanzee Genome</h2>
-			<p class="source"><span>Source:</span>UCSC</p>
-			<p class="seqNum">Mar. 2006 (panTro2)</p>
-		</section>
-		<section>
-			<h2>Chimpanzee Genome</h2>
-			<p class="source"><span>Source:</span>UCSC</p>
-			<p class="seqNum">Nov. 2003 (panTro1)</p>
-		</section>
-		<section>
-			<h2>Cat Genome</h2>
-			<p class="source"><span>Source:</span>UCSC</p>
-			<p class="seqNum">Oct. 2011 (bosTau7)</p>
-		</section>
-		<section>
-			<h2>Cow Genome</h2>
-			<p class="source"><span>Source:</span>UCSC</p>
-			<p class="seqNum">Nov. 2009 (bosTau6)</p>
-		</section>
-	</div>
+			{% for specimen in specimens %}
+			<section data-target="preview-{{ specimen.Name }}">
+				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
+				<h2>{% firstof specimen.ExtendedName " Genome" %}</h2>
+				<p class="source"><span>Source:</span>{{ specimen.Source }}</p>
+				<p class="info"><span class="seqNum">Feb. 2009 ({{ specimen.Name }})</span> Length: {{ specimen.GenomeLength|intcomma }} bp</p>
+			</section>
+			{% endfor %}
+<!-- 			<section>
+				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
+				<p class="source"><span>Source:</span>UCSC</p>
+				<h2>Human Genome</h2>
+				<p class="source">more...</p>
+				<p class="info"><span class="seqNum">Feb. 2009 (hg19, GRCh37)</span> Length:109kbp</p>
+			</section>
+			<section>
+				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
+				<h2>Human Genome</h2>
+				<p class="source"><span>Source:</span>UCSC</p>
+				<p class="seqNum">Mar. 2006 (hg18)</p>
+			</section>
+			<section>
+				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
+				<h2>Cat Genome</h2>
+				<p class="source"><span>Source:</span>UCSC</p>
+				<p class="seqNum">Dec. 2008 (felCat4)</p>
+			</section>
+			<section>
+				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
+				<h2>Cat Genome</h2>
+				<p class="source"><span>Source:</span>UCSC</p>
+				<p class="seqNum">Mar. 2006 (felCat3)</p>
+			</section>
+			<section>
+				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
+				<h2>Chicken Genome</h2>
+				<p class="source"><span>Source:</span>UCSC</p>
+				<p class="seqNum">Nov. 2011 (galGal4)</p>
+			</section>
+			<section>
+				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
+				<h2>Chimpanzee Genome</h2>
+				<p class="source"><span>Source:</span>UCSC</p>
+				<p class="seqNum">Oct. 2010 (panTro3)</p>
+			</section>
+			<section>
+				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
+				<h2>Chimpanzee Genome</h2>
+				<p class="source"><span>Source:</span>UCSC</p>
+				<p class="seqNum">Mar. 2006 (panTro2)</p>
+			</section>
+			<section>
+				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
+				<h2>Chimpanzee Genome</h2>
+				<p class="source"><span>Source:</span>UCSC</p>
+				<p class="seqNum">Nov. 2003 (panTro1)</p>
+			</section>
+			<section>
+				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
+				<h2>Cat Genome</h2>
+				<p class="source"><span>Source:</span>UCSC</p>
+				<p class="seqNum">Oct. 2011 (bosTau7)</p>
+			</section>
+			<section>
+				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
+				<h2>Cow Genome</h2>
+				<p class="source"><span>Source:</span>UCSC</p>
+				<p class="seqNum">Nov. 2009 (bosTau6)</p>
+			</section>
+ -->		</div>
 	</div>
 
+	<div id="previewPane">&nbsp;
+		<div class="previewSpecimen">
+			<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="150" height="150"><br>
+			<h3>Human Genome - hg19</h3>
+
+			<p>Source: blah blah</p>
+			<p>Length: 20349589 bp</p>
+			<p>Description: Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+			tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+			consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+			cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+			proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+			<h4>Chromosomes:</h4>
+			<ul class="chromosomeList">
+				{% for chromosome in chromosomes %}
+				<li><a href="/browse/{{ chromosome.Specimen.Name }}/{{ chromosome.Chromosome }}">{{ chromosome.Chromosome|capfirst }}</a></li>
+				{% endfor %}
+				<li><a href="">Chromosome X</a></li>
+				<li><a href="">Chromosome 1</a></li>
+				<li><a href="">Chromosome 2</a></li>
+				<li><a href="">Chromosome 3</a></li>
+				<li><a href="">Chromosome 4</a></li>
+				<li><a href="">Chromosome 5</a></li>
+				<li><a href="">Chromosome 6</a></li>
+			</ul>
+		</div>
+		{% for specimen in specimens %}
+		<div class="previewSpecimen" id="preview-{{ specimen.Name }}">
+			<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="150" height="150"><br>
+			<h3>{% firstof specimen.ExtendedName " Genome" %} ({{specimen.Name}})</h3>
+
+			<p>Source: {{ specimen.Source }}</p>
+			<p>Length: {{ specimen.GenomeLength|intcomma }} bp</p>
+			<p>Description: {{ specimen.Description }}</p>
+			<h4>Chromosomes:</h4>
+			<ul class="chromosomeList">
+				{% for chromosome in chromosomes %}
+				{% if chromosome.Specimen == specimen %}
+				<li><a href="/browse/{{ chromosome.Specimen.Name }}/{{ chromosome.Chromosome }}">{{ chromosome.Chromosome|capfirst }}</a></li>
+				{% endif %}
+				{% endfor %}
+			</ul>
+		</div>
+		{% endfor %}
+	</div>
 
 	<script type="text/javascript">
 
 
 	$(document).ready(function() {
 
-
+		$('#genomes section').click(function(){
+			$('.previewSpecimen:visible').hide()
+			$('#'+$(this).attr('data-target')).show();
+		})
 
 	})
 	</script>

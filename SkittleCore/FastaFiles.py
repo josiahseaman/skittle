@@ -37,4 +37,3 @@ def readFile(state):
     except IOError:
         print "Couldn't open file.  Maybe it doesn't exist."
         return None
-     

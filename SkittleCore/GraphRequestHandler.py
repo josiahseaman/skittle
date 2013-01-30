@@ -16,7 +16,7 @@ def registerGraph(symbol, name, moduleName, rasterGraph = False, colorPalletteDe
     moduleReference = sys.modules[moduleName]
     availableGraphs.add(GraphDescription(symbol, name, moduleReference, rasterGraph, colorPalletteDependant))
     
-from SkittleCore.models import RequestPacket
+from SkittleCore.models import RequestPacket, chunkSize
 import SkittleCore.FastaFiles as FastaFiles
 import Graphs.AnnotationDisplay
 import Graphs.NucleotideDisplay
@@ -37,10 +37,10 @@ import DNAStorage.StorageRequestHandler as StorageRequestHandler
 #    print graph 
 
 def calculatePixels(state):
-    sequence = FastaFiles.readFile(state)
-    if sequence is None:
-        raise IOError('Cannot proceed without sequence')
-    state.seq = sequence
+    state.seq = ''
+    for chunk in range(state.scale):
+        state.readAndAppendNextChunk()
+    
     graphData = getGraphDescription(state)
     name, graphModule = graphData[1], graphData[2]
 #    activeSet = state.getActiveGraphs()
@@ -70,7 +70,6 @@ def handleRequest(state):
 def isRasterGraph(state):
     graphDescription = getGraphDescription(state)
     return graphDescription[3]
-
     
 def getGraphDescription(state):
     targetGraphTuple = filter(lambda x: state.requestedGraph == x[0], availableGraphs)
