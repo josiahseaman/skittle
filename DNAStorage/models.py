@@ -6,7 +6,7 @@ class Specimen(models.Model):
     Genus = models.CharField(max_length=50)
     Class = models.CharField(max_length=50)
     Kingdom = models.CharField(max_length=50)
-    GenomeLength = models.IntegerField(null=True)
+    GenomeLength = models.BigIntegerField(null=True)
     ExtendedName = models.CharField(max_length=255, null=True)
     Source = models.CharField(max_length=255, null=True)
     Description = models.TextField(null=True)
