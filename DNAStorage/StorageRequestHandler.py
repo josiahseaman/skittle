@@ -1,4 +1,4 @@
-from models import FastaFiles, FastaChunkFiles, ImageFiles
+from models import FastaFiles, FastaChunkFiles, ImageFiles, Specimen
 from SkittleTree import settings
 import shutil, os, os.path, re
 
@@ -113,7 +113,21 @@ def GetTreeList():
     
     tree = dict()
     
-    tree = {"Kingdom": {"Class": {"Genus": {"Species": {"Specimen": {"ExtendedName", "Source", "Description", "DatePublished", "Thumbnail", {"ChromosomeListing",}}}}}}}
+    #tree = {"Kingdom": {"Class": {"Genus": {"Species": {"Specimen": {"ExtendedName", "Source", "Description", "DatePublished", "Thumbnail", {"ChromosomeListing",}}}}}}}
     
     for entry in specimens:
-        tree = {entry.Specimen.Kingdom: {entry.Specimen.Class: {entry.Specimen.Genus: {entry.Specimen.Species: {entry.Name: ()}}}}}
+        #Go through all chromosomes related to this specimen and generate list
+        chromosomeList = []
+        chromosomes = FastaFiles.objects.filter(Specimen = entry)
+        for chr in chromosomes:
+            chromosomeList.append(chr.Chromosome)
+            
+        #Gather all specimen details (including chromosomes) into list
+        details = [entry.ExtendedName, entry.Source, entry.Description, entry.DatePublished, entry.Thumbnail, chromosomeList]
+        
+        subtree = {entry.Kingdom: {entry.Class: {entry.Genus: {entry.Species: {entry.Name: details}}}}}
+        
+        #add this generated tree to the main tree
+        tree.update(subtree)
+        
+    return tree

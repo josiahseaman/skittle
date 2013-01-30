@@ -7,8 +7,4 @@ if __name__ == "__main__":
     
     from DNAStorage.StorageRequestHandler import *
         
-    if HasFastaFile("hg19", "chrY-sample"):
-        print "YES!"
-    print GetChromosomeLength("hg19", "chrY-sample")
-    #GetFastaFilePath("hg19", "chrY-sample", 1)
-    #GetPngFilePath("hg19", "chrY-sample", 'n', 1, scale=1)
+    print GetTreeList()
