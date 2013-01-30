@@ -109,7 +109,9 @@ def normalizeDictionary(listing, referencePoint = 0):
 
 def countNucleotides(seq, oligomerSize = 1):
     if hasDepth(seq):
-        return map(lambda x: countNucleotides(x, oligomerSize), seq)
+        return [ countNucleotides(x, oligomerSize) for x in seq if x]
+    if not seq:
+        return {}
     counts = {'A':0, 'C':0, 'G':0, 'T':0, 'N':0}
     if oligomerSize == 1:#optimized for Nucleotide Display
         for c in seq:

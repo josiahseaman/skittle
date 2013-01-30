@@ -12,8 +12,7 @@ max_bar_width = 20
 
 def calculateBiasBarSizes(state):
     order = ['C', 'G', 'A', 'T', 'N']
-    tempWidth = state.nucleotidesPerLine()
-    lines = chunkUpList(state.seq, tempWidth )
+    lines = chunkUpList(state.seq, state.nucleotidesPerLine() )
     countsPerLine = countNucleotides(lines, 1)
     barLengthsPerLine = []
     for h in range( len(countsPerLine) ):#once per line
@@ -21,7 +20,7 @@ def calculateBiasBarSizes(state):
         remainder = 0.0
         floating_sum = 0.0
         for key in order:
-            barSize = float(countsPerLine[h].get(key,0)) / tempWidth * max_bar_width + .00001  #normalize the size of the bar to display_width
+            barSize = float(countsPerLine[h].get(key,0)) / state.nucleotidesPerLine() * max_bar_width + .00001  #normalize the size of the bar to display_width
             floating_sum += barSize
             barSize += remainder
             remainder = floating_sum - int(floating_sum + .5)
