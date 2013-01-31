@@ -7,11 +7,11 @@ class Specimen(models.Model):
     Class = models.CharField(max_length=50)
     Kingdom = models.CharField(max_length=50)
     GenomeLength = models.BigIntegerField(null=True)
-    ExtendedName = models.CharField(max_length=255, null=True)
-    Source = models.CharField(max_length=255, null=True)
-    Description = models.TextField(null=True)
-    DatePublished = models.CharField(max_length=50, null=True)
-    Thumbnail = models.CharField(max_length=255, null=True)
+    ExtendedName = models.CharField(max_length=255, null=True,blank=True)
+    Source = models.CharField(max_length=255, null=True,blank=True)
+    Description = models.TextField(null=True,blank=True)
+    DatePublished = models.CharField(max_length=50, null=True,blank=True)
+    Thumbnail = models.CharField(max_length=255, null=True,blank=True)
 
 class FastaFiles(models.Model):
     Specimen = models.ForeignKey(Specimen)
