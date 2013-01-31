@@ -126,12 +126,15 @@ var drawGraph = function(graph,offset,chunks) {
 }
 var drawVerticalGraph = function(graph,offset,chunks) {
     var graphWidth = 0, graphHeight = 0;
+    if (graph =='m' || graph == 's') var stretchFactor = Math.round(width/30)*30/width //Math.ceil(65536/width)
+    else var stretchFactor = Math.round(width/10)*10/width //Math.ceil(65536/width)
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor(graph,i)
         if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
         else var graphWidth = imageObj.width
         var vOffset = -Math.round(((Math.round(start/scale)-8*width)%(65536))/(width) - i*(65536/width));
-        i == chunks - 1 ? graphHeight = imageObj.height : graphHeight = Math.ceil(65536/width)
+        // i == chunks - 1 ? graphHeight = imageObj.height : graphHeight = Math.ceil(65536/width)
+        graphHeight = Math.ceil(imageObj.height*stretchFactor)
         b.drawImage(imageObj,offset,vOffset,graphWidth,graphHeight) // render data on hidden canvas
         // b.beginPath();
         // b.moveTo(offset,vOffset-0.5)
@@ -143,23 +146,42 @@ var drawVerticalGraph = function(graph,offset,chunks) {
 }
 var drawAnnotations = function(offset,chunks) {
     var annotationWidth = 2
-
+    var columnFilledTilRow = []
     b.beginPath()
     b.rect(offset,0.5,annotationWidth,500)
     b.fillStyle="#333";
     b.fill()
 
     for(var i=0;i<annotation.length;i++) {
-        if (   (annotation[i].from > (start - 8*width*scale) && annotation[i].from < ( start + (skixelsOnScreen + 37*width - 1)*scale ) )
-            || (annotation[i].to   > (start - 8*width*scale) && annotation[i].to   < ( start + (skixelsOnScreen + 37*width - 1)*scale ) ) ) {
+        if (   (annotation[i].from < ( start + (skixelsOnScreen + 37*width - 1)*scale ) && annotation[i].to > ( start + (skixelsOnScreen + 37*width - 1)*scale ) )
+            || (annotation[i].from < (start - 8*width*scale) && annotation[i].to > (start - 8*width*scale) )
+            || (annotation[i].from > (start - 8*width*scale) && annotation[i].to < ( start + (skixelsOnScreen + 37*width - 1)*scale ) ) ) {
+            
+            var currentColumn = 0
+            var startRow = Math.floor((annotation[i].from-start)/(width*scale)+8)
+            var rowHeight = Math.ceil((annotation[i].to-annotation[i].from)/(width*scale))
+
+            for (currentColumn=0;currentColumn<=columnFilledTilRow.length;currentColumn++) {
+                if (!columnFilledTilRow[currentColumn] || startRow > columnFilledTilRow[currentColumn]) {
+                    if (!columnFilledTilRow[currentColumn]) {
+                        b.beginPath()
+                        b.rect(offset+currentColumn*annotationWidth,0.5,annotationWidth,500)
+                        b.fillStyle="#333";
+                        b.fill()
+                    }
+                    columnFilledTilRow[currentColumn] = startRow + rowHeight
+                    break;
+                }
+            }
+
             b.beginPath()
-            b.rect(offset,(annotation[i].from-start)/(width*scale)+8,annotationWidth,(annotation[i].to-annotation[i].from)/(width*scale))
+            b.rect(offset+currentColumn*annotationWidth,startRow,annotationWidth,rowHeight)
             b.fillStyle=annotation[i].color
             b.fill()
         }
     }
 
-    return calculateOffsetWidth(annotationWidth)
+    return calculateOffsetWidth(annotationWidth*columnFilledTilRow.length)
 }
 var drawNucDisplay = function(offset,chunks) {
     a.clearRect(0,0,1024,500)
