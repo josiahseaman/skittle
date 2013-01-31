@@ -172,7 +172,7 @@
 		text-align: center;
 	}
 	#dials li {
-		width: 200px;
+		width: 175px;
 		padding: 8px;
 	}
 	#dials span {
@@ -184,7 +184,7 @@
 		color:inherit;
 		padding:2px;
 		margin: -4px;
-		width:120px;
+		width:115px;
 		font:inherit;
 		border-radius: 8px;
 		border: 2px solid rgba(50,50,50,0.5);
