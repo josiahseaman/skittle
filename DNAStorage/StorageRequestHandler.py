@@ -123,7 +123,7 @@ def GetTreeList():
             chromosomeList.append(chr.Chromosome)
             
         #Gather all specimen details (including chromosomes) into list
-        details = [entry.ExtendedName, entry.Source, entry.Description, entry.DatePublished, entry.Thumbnail, chromosomeList]
+        details = {"ExtendedName": entry.ExtendedName, "Source": entry.Source, "Description": entry.Description, "DatePublished": entry.DatePublished, "Thumbnail": entry.Thumbnail, "Chromosomes": chromosomeList}
         
         subtree = {entry.Kingdom: {entry.Class: {entry.Genus: {entry.Species: {entry.Name: details}}}}}
         
