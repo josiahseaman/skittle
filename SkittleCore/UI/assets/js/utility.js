@@ -34,3 +34,43 @@ function selectText(element) {
         selection.addRange(range);
     }
 }
+String.prototype.hashCode = function(){ // from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+	var hash = 0;
+	if (this.length == 0) return hash;
+	for (i = 0; i < this.length; i++) {
+		char = this.charCodeAt(i);
+		hash = ((hash<<5)-hash)+char;
+		hash = hash & hash; // Convert to 32bit integer
+	}
+	return hash;
+}
+
+var getGoodDeterministicColor = function(input) {
+	input = input + "padding"
+	var hash = input.hashCode().toString(16)
+	var red = parseInt(hash.slice(1,3),16)
+	var green = parseInt(hash.slice(3,5),16)
+	var blue = parseInt(hash.slice(5,7),16)
+
+	if (red < green && red < blue) red = 0
+	else if (green < red && green < blue) green = 0
+	else if (blue < red && blue < green) blue = 0
+	else {
+		if (hash%3 == 0) red = 0
+		else if (hash%3==1) green = 0
+		else blue = 0
+	}
+	for (var i=0;red+green+blue < 220;i++) {
+		red = Math.min(red*2,255)
+		green = Math.min(green*2,255)
+		blue = Math.min(blue*2,255)
+	}
+
+	red=("0"+red.toString(16)).slice(-2)
+	green=("0"+green.toString(16)).slice(-2)
+	blue=("0"+blue.toString(16)).slice(-2)
+	var color = "#" + red + green + blue
+	return color
+}
+
+

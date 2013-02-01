@@ -176,6 +176,7 @@ var drawAnnotations = function(offset,chunks) {
 
             b.beginPath()
             b.rect(offset+currentColumn*annotationWidth,startRow,annotationWidth,rowHeight)
+            annotation[i].color = annotation[i].color || getGoodDeterministicColor(annotation[i].from + annotation[i].to +"")
             b.fillStyle=annotation[i].color
             b.fill()
         }
