@@ -144,10 +144,10 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
 )
 
+INSTALLED_APPS += (
+    'Utilities',
+)
 if DEBUG:
-    INSTALLED_APPS += (
-        'Utilities',
-    )
     MIDDLEWARE_CLASSES += (
         'Utilities.debug.HotshotProfileMiddleware',
         'Utilities.debug.cProfileMiddleware',
