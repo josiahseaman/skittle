@@ -1,13 +1,13 @@
 # Django settings for SkittleTree project.
 import os, socket, sys
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 if socket.gethostname().startswith('nyx'):
-    SkittleTreeLoc = "/var/www/skittle-development/"
+    SkittleTreeLoc = "/var/www/skittle-production/"
     
-    SkittleTreeURL = "http://skittle.newlinetechnicalinnovations.com/"
+    SkittleTreeURL = "http://dnaskittle.com/"
 else:
     SkittleTreeLoc = os.getcwd().replace("\\", "/") + "/"
     SkittleTreeURL = "/"
@@ -23,7 +23,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'SkittleTree',                # Or path to database file if using sqlite3.
+        'NAME': 'DNASkittle',                # Or path to database file if using sqlite3.
         'USER': 'skittle',                    # Not used with sqlite3.
         'PASSWORD': 'sk!77l3PandaDatabase%',  # Not used with sqlite3.
         'HOST': '',                           # Set to empty string for localhost. Not used with sqlite3.
@@ -144,10 +144,11 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
 )
 
+
+INSTALLED_APPS += (
+    'Utilities',
+)
 if DEBUG:
-    INSTALLED_APPS += (
-        'Utilities',
-    )
     MIDDLEWARE_CLASSES += (
         'Utilities.debug.HotshotProfileMiddleware',
         'Utilities.debug.cProfileMiddleware',
