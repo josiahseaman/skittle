@@ -217,7 +217,7 @@ function mouseWheelDials(e) {
         var targetFunction = $(this).attr('data-fn')
         var offset = $(this).position();
         var inputBox = $('<input type="text">');
-        $(this).parent().append(inputBox.offset(offset).val($(this).html()));
+        $(this).parent().append(inputBox.css('position','absolute').offset(offset).val($(this).html()));
         inputBox.select();
         // inputBox.val().split(' ')[0].select();
         inputBox.blur(function() {

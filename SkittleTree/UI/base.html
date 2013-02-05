@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>{{ specimen }} WebSkittle Mockup</title>
+	<title>{% block pageTitle %}DNASkittle Alpha Preview{% endblock %}</title>
 
+	{% block styles %}
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/popover.css">
 	<style type="text/css">
 
 	</style>
+	{% endblock %}
+	{% block scripts %}
 <!--[if lt IE 9]>
     <script src="{{STATIC_URL}}js/excanvas.js"></script>
 <![endif]-->
@@ -21,8 +24,10 @@
 
 
 	</script>
+	{% endblock %}
 </head>
 <body>
+	{% block header %}
 	<h1 id="logo"><a href="/"><img src="{{STATIC_URL}}gfx/skittle-logo3.png"><span>DNA</span>Skittle</a></h1>
 	
 	<header>
@@ -32,6 +37,8 @@
 		<p><a href="https://twitter.com/genome_skittle" target="blank"><img src="{{STATIC_URL}}gfx/twitter-bird-dark-bgs.png" height="36" width="36"></a>
 			<a href="https://github.com/josiahseaman/skittle" target="blank"><img src="{{STATIC_URL}}gfx/github-white.png" height="22"></a></p>
 	</header>
+	{% endblock %}
+	{% block content %}
 	<div id="canvasContainer">
 	    <canvas id="c" width="2000" height="1000"></canvas>
 		<div id="graph-labels">
@@ -87,66 +94,7 @@
 		</ul>
 	</div>
 
-
-	<script type="text/javascript">
-    var cc, c, b, a;
-    var isDrag = false;
-    var dragWidth = false;
-    var activeTool = 'Move';
-
-    var isInvalidDisplay = true
-    
-    // initial values
-    xOffset = 0
-    specimen = "{{ specimen }}"
-    chromosome = "{{ chromosome }}"
-    colorPalette = "{{ colorPalette }}"
-    start = {{ start }};
-    width = {{ width }};
-    scale = {{ scale }};
-    zoom  = {{ zoom }};
-    fileLength = {{ fileLength }};
-    skixelsOnScreen = toSkixels($('#canvasContainer').height())*width;
-    selectionStart = selectionEnd = 1
-
-    // if graphs are specified in the url set their visibility
-    var initialGraphs = "{{ graphs }}".split('')
-    for (var key in graphStatus) {
-    	if ($.inArray(key,initialGraphs)>=0) showGraph(key)
-    	else hideGraph(key)
-    }
-	
-
-    imageUnrendered = new Image()
-    imageUnrendered.src = "{{STATIC_URL}}gfx/checkers.png"
-
-	$(document).ready(function() {
-
-		cc = document.getElementById('c') //visible canvas - scale will be 3*zoom
-		c = cc.getContext("2d");
-	    var bb = document.createElement('canvas'); //scratch canvas
-	    bb.height = 1000
-	    bb.width = 5000
-	    b = bb.getContext("2d");
-	    var aa = document.createElement('canvas');
-	    aa.height = 10000
-	    aa.width = 1050
-	    a = aa.getContext("2d");
-
-
-	    init();
-
-	    document.onkeydown = keyListener; 
-	    
-	    cc.onselectstart = function () { return false; } //fixes a problem where double clicking causes text to get selected on the canvas
-	    cc.onmousedown = mouseDown;
-	    cc.onmousemove = mouseMove;
-	    cc.onmouseup = mouseUp;
-	    cc.onmousewheel = mouseWheel;
-	    $('#dials li').on('mousewheel',mouseWheelDials)
-
-	})
-	</script>
+{% endblock %}
 
 </body>
 </html>
