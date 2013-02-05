@@ -221,7 +221,9 @@ function mouseWheelDials(e) {
         inputBox.select();
         // inputBox.val().split(' ')[0].select();
         inputBox.blur(function() {
-            if(targetFunction) eval(targetFunction + '("' + this.value + '")')
+            if(typeof window[targetFunction] != 'undefined' && window[targetFunction] instanceof Function) {
+                window[targetFunction](this.value)
+            } 
             $(this).remove();
         })
     })

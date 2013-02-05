@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>DNA Skittle</title>
+
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
+	<style type="text/css">
+	body {
+		background: #080808;
+		margin: 0;
+		font-size: 16px;
+		color:#ddd;
+	}
+	a {
+		color:#8f5;
+	}
+	a:visited {
+		color:#90EE68;
+	}
+	a:hover {
+		color:#E2FFD6;
+	}
+	a:active {
+		color:#fff;
+	}
+	p {
+		font-family: trebuchet,'myriad pro',optima,helvetica;
+		text-shadow:#000 0 0 8px,#000 0 0 4px,#000 0 0 12px,#000 0 0 16px;
+	}
+	#container {
+		position: absolute;
+		background-color: #000;
+		background: -webkit-linear-gradient(bottom,#080808,transparent 250px),url('{{STATIC_URL}}gfx/home-bkg.png');
+		width:948px;
+		margin: 0;
+		margin-left: -470px;
+		left:50%;
+		top:0;
+		bottom: 0;
+	}
+	h1 {
+		position: absolute;
+		bottom: 6%;
+		width: 100%;
+		font-weight: 500;
+		font-size: 4em;
+		/*padding: 200px 0;*/
+		/*background: url('{{STATIC_URL}}gfx/bkg-home-logo.png') center center no-repeat;*/
+
+		color:#eee;
+		text-shadow:#000 0 0 8px;
+		text-align: center;
+		z-index: 0;
+	}
+	h1::before {
+		content: url('{{STATIC_URL}}gfx/bkg-home-logo.png');
+		position: absolute;
+		margin: -74px 0 0 -64px;
+		z-index: -1;
+	}
+	h1 span {
+		font-weight: 100;
+		text-shadow:#000 0 0 4px,#000 0 0 12px;
+	}
+	h1 img {
+		box-shadow: 0 0 4;
+		margin-bottom:-55px;
+		margin-left:-6px;
+		margin-right: -30px;
+	}
+	#introStatement {
+		font-size: 1.8em;
+		font-weight: 300;
+		color:#8f5;
+		text-shadow:#000 0 0 8px,#000 0 0 4px,#000 0 0 12px,#000 0 0 16px;
+		text-align: center;
+		margin: 5% 0;
+	}
+	nav {
+		position: absolute;
+		bottom: 201px;
+		height: 80px;
+		width: 100%;
+		border-top: 1px solid #fff;
+		background: url('{{STATIC_URL}}gfx/bkg-home-menu.png');
+		color: #8f5;
+		font-size: 1.2em;
+	}
+	nav ul {
+		list-style: none;
+		padding: 0;
+		margin: 0px auto;
+		text-align: center;
+	}
+	nav li {
+		display: inline-block;
+		padding: 8px;
+		margin: 0;
+	}
+	nav a {
+		text-decoration: none;
+		padding: 4px 20px;
+		border-top: 4px solid transparent;
+	}
+	nav a:hover,nav a.active {
+		border-top: 4px solid #8f5;
+
+	}
+	#webskittle {
+		position: absolute;
+		padding-top: 50px;
+		height: 170px;
+		width: 100%;
+		bottom: 0;
+		text-align: center;
+	}
+	#header {
+		background: -webkit-linear-gradient(bottom,rgba(0,0,0,0.8),transparent 150px),url('{{STATIC_URL}}gfx/home-bkg.png');
+		position: absolute;
+		top:0px;
+		bottom: 281px;
+		width: 100%;
+		border-bottom: 1px solid #fff;
+		-webkit-transition: all 1s ease;
+		transition: all 1s ease;
+	}
+	#header.active {
+		top:-300px;
+		bottom: 581px;
+	}
+	#intro {
+		font-size: 1.1em;
+		position: absolute;
+		color:#aaa;
+		text-shadow:#000 0 0 8px,#000 0 0 4px,#000 0 0 12px,#000 0 0 16px;
+		bottom: 8px;
+		margin: 0;
+		padding: 0 6em;
+		text-align: center;
+	}
+	#content {
+		background: #080808;
+		position: absolute;
+		bottom:281px;
+		height:300px;
+		width: 100%;
+		margin-top:1px;
+		overflow: hidden;
+	}
+	.actionButton {
+		text-decoration: none;
+		color:#fff;
+		font-size: 1.4em;
+		width: 250px;
+		margin: 0.5em auto;
+		padding:0.4em 1em;
+		background: #040;
+		border: 1px solid #040;
+		border-radius: 8px;
+		vertical-align: middle;
+		text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+		background-color: #123D00;
+		background-image: -moz-linear-gradient(top, #061400, #185200);
+		background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#061400), to(#185200));
+		background-image: -webkit-linear-gradient(top, #061400, #185200);
+		background-image: -o-linear-gradient(top, #061400, #185200);
+		background-image: linear-gradient(to bottom, #061400, #185200);
+		background-repeat: repeat-x;
+		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff061400', endColorstr='#ff185200', GradientType=0);
+		border-color: #185200 #185200 #38592a;
+		border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+		filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+		box-shadow: 0 0 8px #000,0 0 12px #000,0 0 16px #000;
+	}
+	.actionButton:visited {
+		color: #fff;
+	}
+	.actionButton:hover {
+		color: #fff;
+		background-color: #123D00;
+		background-image: -moz-linear-gradient(top, #185200, #061400);
+		background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#185200), to(#061400));
+		background-image: -webkit-linear-gradient(top, #185200, #061400);
+		background-image: -o-linear-gradient(top, #185200, #061400);
+		background-image: linear-gradient(to bottom, #185200, #061400);
+		background-repeat: repeat-x;
+	}
+	#content section {
+		position: absolute;
+		margin-bottom: -300px;
+		width: 96%;
+		padding: 0 2%;
+		opacity: 0;
+		-webkit-transition: all 1s ease;
+		transition: all 1s ease;
+	}
+	#content section.active {
+		opacity: 1;
+		margin-bottom: 0px;
+	}
+	#content article {
+		text-align: justify;
+		-moz-column-count:3;
+		-webkit-column-count:3;
+		column-count:3;
+	}
+	</style>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script type="text/javascript">
+
+
+	</script>
+</head>
+<body>
+	<div id="container">
+		<div id="content">
+			<section id="whySkittle" class="">
+				<h2>Why Skittle?</h2>
+				<article>
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+					tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+					quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+					consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+					cillum dolore eu fugiat nulla pariatur. </p>
+					<p>Ut enim ad minim veniam,
+					quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+					consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+					cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+					proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				</article>
+			</section>
+			<section id="contact" class="">
+				<h2>Contact Us</h2>
+				<article>
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+					tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+					quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+					consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+					cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+					proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				</article>
+			</section>
+			<section id="support" class="">
+				<h2>Support</h2>
+				<article>
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+					tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+					quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+					consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+					cillum dolore eu fugiat nulla pariatur. </p>
+					<p>Ut enim ad minim veniam,
+					quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+					consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+					cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+					proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				</article>
+			</section>
+		</div>
+		<div id="header" class="">
+			<div id="introStatement">The future of genome visualization is here...</div>
+			<h1><img src="{{STATIC_URL}}gfx/skittle-logo-m.png" height="150" width="150"><span>DNA</span>Skittle</h1>
+			<p id="intro">DNA Skittle is an ongoing bioinformatics project created to display two dimensional visualization of DNA sequences. Skittle has grown into a tool aimed at finding patterns and structure in the genomes of any organism and is now available through the web browser.</p>
+		</div>
+	<nav>
+		<ul>
+			<li><a href="#whySkittle">Why Skittle?</a></li>
+			<li><a href="#Visualizations">Visualizations</a></li>
+			<!-- <li><a href="#invest">Invest</a></li> -->
+			<li><a href="#support">Support</a></li>
+			<li><a href="#contact">Contact Us</a></li>
+		</ul>
+	</nav>
+
+	<div id="webskittle">
+		<a href="/discover" class="actionButton">Try DNA Skittle Online</a>
+		<p>This is an alpha preview release.  We recommend using <a href="http://google.com/chrome" target="_blank">Google Chrome</a>.</p><br>
+		<p>A <a href="http://genomeskittle.org">desktop version of Skittle</a> is also available for PC.</p>
+	</div>
+
+	</div>
+	<script type="text/javascript">
+
+
+	$(document).ready(function() {
+		$('nav a').on('click',function() {
+			$('nav a').removeClass('active')
+			$(this).addClass('active')
+			$('#header').addClass('active')
+			$('#content section').removeClass('active')
+			var target = $(this).attr('href')
+			if(target && target.slice(0,1) == "#") {
+				$(target).addClass('active')
+			}
+		})
+
+	})
+	</script>
+
+</body>
+</html>

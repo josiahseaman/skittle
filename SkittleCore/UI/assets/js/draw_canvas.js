@@ -88,8 +88,7 @@ var drawGraphs = function() {
     var offset = xOffset + gutterWidth
     var chunks = Math.min( Math.ceil(skixelsOnScreen/65536 + 1),(Math.ceil(fileLength/(65536*scale))-Math.floor((start-8*width*scale)/(65536*scale))),Math.ceil(fileLength/(65536*scale)) )
     // for (key in graphStatus) {
-    for (var i=0;i<graphOrder.length;i++) {
-        var key = graphOrder[i];
+    $.each(graphOrder,function(i,key){
         if (graphStatus[key].visible) {
             graphStatus[key].skixelOffset = offset;
             var skixelWidthofGraph = graphStatus[key].skixelWidth = drawGraph(key,offset,chunks);
@@ -97,7 +96,17 @@ var drawGraphs = function() {
             offset = offset + skixelWidthofGraph;
             $('#graphLabel-' + key).width(toPixels(skixelWidthofGraph));
         }
-    }
+    })
+    // for (var i=0;i<graphOrder.length;i++) {
+    //     var key = graphOrder[i];
+    //     if (graphStatus[key].visible) {
+    //         graphStatus[key].skixelOffset = offset;
+    //         var skixelWidthofGraph = graphStatus[key].skixelWidth = drawGraph(key,offset,chunks);
+    //         skixelWidthofGraph = Math.max(skixelWidthofGraph,toSkixels(minimumWidth))
+    //         offset = offset + skixelWidthofGraph;
+    //         $('#graphLabel-' + key).width(toPixels(skixelWidthofGraph));
+    //     }
+    // }
     // var imageObj = imageRequestor("m",0)
         // b.drawImage(imageObj,200,20,imageObj.width,imageObj.height*0.55) // render data on hidden canvas
 
