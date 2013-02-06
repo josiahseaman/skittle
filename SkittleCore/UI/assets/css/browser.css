@@ -28,6 +28,10 @@
 		font-weight: 100;
 		text-shadow:#000 0 0 4px,#000 0 0 12px;
 	}
+	#logo a,#logo a:visited,#logo a:hover,#logo a:active {
+		color:inherit;
+		text-decoration: none;
+	}
 	#canvas {
 		position: absolute;
 		top:30px;
@@ -172,6 +176,7 @@
 		text-align: center;
 	}
 	#dials li {
+		position: relative;
 		width: 175px;
 		padding: 8px;
 	}
@@ -182,6 +187,7 @@
 	}
 	#dials span {
 		font-weight: normal;
+		padding-right: 20px;
 	}
 	#dials input {
 		position: absolute;
@@ -240,19 +246,19 @@
 	}
 
 	#widthBubble {
-		left:202px;
+		left:32px;
 		bottom:40px;
 		width:62px;
 		height:30px;
 	}
 	#scaleBubble {
-		left:387px;
+		left:0;
 		bottom:40px;
 		width:108px;
 		height:30px;
 	}
 	#startBubble {
-		left:662px;
+		left:50px;
 		bottom:40px;
 		width:77px;
 		height:30px;
