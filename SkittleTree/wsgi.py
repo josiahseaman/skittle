@@ -15,7 +15,7 @@ framework.
 """
 import os, sys, socket
 
-PRODUCTION = False
+PRODUCTION = True
 
 if socket.gethostname().startswith('nyx') and PRODUCTION:
     sys.path.append('/var/www/skittle-production')
