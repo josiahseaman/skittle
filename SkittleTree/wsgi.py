@@ -15,7 +15,7 @@ framework.
 """
 import os, sys, socket
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
+PRODUCTION = False
 
 if socket.gethostname().startswith('nyx') and PRODUCTION:
     sys.path.append('/var/www/skittle-production')
