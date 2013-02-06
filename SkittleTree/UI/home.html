@@ -1,8 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>DNA Skittle</title>
-
+{% extends "base.html" %}
+{% block pageTitle %}DNA Skittle{% endblock %}
+{% block styles %}
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
 	<style type="text/css">
 	body {
@@ -23,20 +21,43 @@
 	a:active {
 		color:#fff;
 	}
-	p {
-		font-family: trebuchet,'myriad pro',optima,helvetica;
+	p,dl {
+		font-family: trebuchet,'trebuchet ms','myriad pro',helvetica,sans-serif;
+	}
+	#header p,#webskittle p {
+
 		text-shadow:#000 0 0 8px,#000 0 0 4px,#000 0 0 12px,#000 0 0 16px;
 	}
 	#container {
 		position: absolute;
 		background-color: #000;
 		background: -webkit-linear-gradient(bottom,#080808,transparent 250px),url('{{STATIC_URL}}gfx/home-bkg.png');
+		background: -moz-linear-gradient(bottom,#080808,transparent 250px),url('{{STATIC_URL}}gfx/home-bkg.png');
+		background: linear-gradient(bottom,#080808,transparent 250px),url('{{STATIC_URL}}gfx/home-bkg.png');
 		width:948px;
 		margin: 0;
 		margin-left: -470px;
 		left:50%;
 		top:0;
 		bottom: 0;
+	}
+	#header {
+		background: url('{{STATIC_URL}}gfx/bkg-home-logo.png') center bottom no-repeat,-webkit-linear-gradient(bottom,rgba(0,0,0,0.8),transparent 150px),url('{{STATIC_URL}}gfx/home-bkg.png');
+		background: -moz-linear-gradient(bottom,rgba(0,0,0,0.8),transparent 150px),url('{{STATIC_URL}}gfx/home-bkg.png');
+		background: linear-gradient(bottom,rgba(0,0,0,0.8),transparent 150px),url('{{STATIC_URL}}gfx/home-bkg.png');
+		position: absolute;
+		top:0px;
+		bottom: 281px;
+		width: 100%;
+		z-index: 10;
+		border-bottom: 1px solid #fff;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+	}
+	#header.active {
+		top:-300px;
+		bottom: 581px;
 	}
 	h1 {
 		position: absolute;
@@ -53,7 +74,7 @@
 		z-index: 0;
 	}
 	h1::before {
-		content: url('{{STATIC_URL}}gfx/bkg-home-logo.png');
+		/*content: url('{{STATIC_URL}}gfx/bkg-home-logo.png');*/
 		position: absolute;
 		margin: -74px 0 0 -64px;
 		z-index: -1;
@@ -65,7 +86,7 @@
 	h1 img {
 		box-shadow: 0 0 4;
 		margin-bottom:-55px;
-		margin-left:-6px;
+		margin-left:-30px;
 		margin-right: -30px;
 	}
 	#introStatement {
@@ -75,6 +96,52 @@
 		text-shadow:#000 0 0 8px,#000 0 0 4px,#000 0 0 12px,#000 0 0 16px;
 		text-align: center;
 		margin: 5% 0;
+	}
+	#shortDescription {
+		font-size: 1.1em;
+		position: absolute;
+		color:#aaa;
+		text-shadow:#000 0 0 8px,#000 0 0 4px,#000 0 0 12px,#000 0 0 16px;
+		bottom: 8px;
+		margin: 0;
+		padding: 0 6em;
+		text-align: center;
+	}
+	#content {
+		background: #080808;
+		position: absolute;
+		bottom:281px;
+		height:300px;
+		width: 100%;
+		margin-top:1px;
+		overflow: hidden;
+	}
+	#content section {
+		position: absolute;
+		margin-bottom: -300px;
+		width: 96%;
+		padding: 0 2%;
+		opacity: 0;
+		z-index: 0;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+	}
+	#content section.active {
+		opacity: 1;
+		margin-bottom: 0px;
+		z-index: 1;
+	}
+	#content article {
+		text-align: justify;
+		-moz-column-count:3;
+		-webkit-column-count:3;
+		column-count:3;
+		font-size: 0.95em;
+		line-height: 1.5em;
+	}
+	#content article p:first-child {
+		margin-top:0;
 	}
 	nav {
 		position: absolute;
@@ -99,11 +166,11 @@
 	}
 	nav a {
 		text-decoration: none;
-		padding: 4px 20px;
-		border-top: 4px solid transparent;
+		padding: 5px 20px;
+		border-top: 3px solid transparent;
 	}
 	nav a:hover,nav a.active {
-		border-top: 4px solid #8f5;
+		border-top: 3px solid #8f5;
 
 	}
 	#webskittle {
@@ -113,39 +180,6 @@
 		width: 100%;
 		bottom: 0;
 		text-align: center;
-	}
-	#header {
-		background: -webkit-linear-gradient(bottom,rgba(0,0,0,0.8),transparent 150px),url('{{STATIC_URL}}gfx/home-bkg.png');
-		position: absolute;
-		top:0px;
-		bottom: 281px;
-		width: 100%;
-		border-bottom: 1px solid #fff;
-		-webkit-transition: all 1s ease;
-		transition: all 1s ease;
-	}
-	#header.active {
-		top:-300px;
-		bottom: 581px;
-	}
-	#intro {
-		font-size: 1.1em;
-		position: absolute;
-		color:#aaa;
-		text-shadow:#000 0 0 8px,#000 0 0 4px,#000 0 0 12px,#000 0 0 16px;
-		bottom: 8px;
-		margin: 0;
-		padding: 0 6em;
-		text-align: center;
-	}
-	#content {
-		background: #080808;
-		position: absolute;
-		bottom:281px;
-		height:300px;
-		width: 100%;
-		margin-top:1px;
-		overflow: hidden;
 	}
 	.actionButton {
 		text-decoration: none;
@@ -185,86 +219,79 @@
 		background-image: linear-gradient(to bottom, #185200, #061400);
 		background-repeat: repeat-x;
 	}
-	#content section {
+	#social {
 		position: absolute;
-		margin-bottom: -300px;
-		width: 96%;
-		padding: 0 2%;
-		opacity: 0;
-		-webkit-transition: all 1s ease;
-		transition: all 1s ease;
+		bottom: 12px;
+		right: 12px;
 	}
-	#content section.active {
-		opacity: 1;
-		margin-bottom: 0px;
+	dt {
+		font-weight: bold;
 	}
-	#content article {
-		text-align: justify;
-		-moz-column-count:3;
-		-webkit-column-count:3;
-		column-count:3;
+	dd {
+		margin-left: 1em;
 	}
 	</style>
+	{% endblock %}
+	{% block scripts %}
+<!--[if lt IE 9]>
+<script src="dist/html5shiv.js"></script>
+<![endif]-->
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 	<script type="text/javascript">
 
 
 	</script>
-</head>
-<body>
+	{% endblock %}
+	{% block header %}{% endblock %}
+
+	{% block content %}
+
 	<div id="container">
 		<div id="content">
 			<section id="whySkittle" class="">
 				<h2>Why Skittle?</h2>
 				<article>
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-					tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-					quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-					consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-					cillum dolore eu fugiat nulla pariatur. </p>
-					<p>Ut enim ad minim veniam,
-					quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-					consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-					cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-					proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
 				</article>
 			</section>
-			<section id="contact" class="">
-				<h2>Contact Us</h2>
+			<section id="visualizations" class="">
+				<h2>Visualizations</h2>
 				<article>
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-					tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-					quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-					consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-					cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-					proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				<p>It is well known that the human mind excels at pattern recognition (e.g., near-instantaneous face recognition), but the mind needs graphical help when dealing with large amounts of numerical data, and there is currently a lack of tools available for genomic visualization in general. Several abstract tools do exist, but we felt a need for the introduction of a simple tool that is optimized for the visualization of genomic data specifically. The primary goal in the development of Skittle was to give the user the simplest possible way to visually examine raw genomic data.</p>
+
+				<p>Skittle was not designed to compete with the data heavy, directed search algorithms already in existence. These are excellent at detecting repeats and other genomic motifs, but most lack a high quality visualization feature. Skittle was designed around the need for visualization, not automated data generation.</p>
 				</article>
 			</section>
 			<section id="support" class="">
 				<h2>Support</h2>
 				<article>
+				<p>Though Skittle is still in a very early stage of development we are very interested in your feedback and input.  If you have encountered a bug or have trouble with any of the features please contact our support team at support@dnaskittle.com.</p>
+				</article>
+			</section>
+			<section id="contact" class="">
+				<h2>Contact Us</h2>
+				<article>
+				<p>DNA Skittle is developed by <a href="http://newlinetechnicalinnovations.com">Newline Technical Innovations</a>.  We are excited about this tool and would welcome discusion of any opportunities you would like to present.</p>
+				<p><dl>
+					<dt>Email:</dt><dd><a href="mailto:info@newlinetechnicalinnovations.com">info@newlinetechnicalinnovations.com</a></dd>
+					<dt>Phone:</dt><dd>970-599-1764</dd>
+				</dl></p>
 				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-					tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-					quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-					consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-					cillum dolore eu fugiat nulla pariatur. </p>
-					<p>Ut enim ad minim veniam,
-					quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-					consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-					cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-					proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+				quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+				consequat. </p>
 				</article>
 			</section>
 		</div>
 		<div id="header" class="">
 			<div id="introStatement">The future of genome visualization is here...</div>
 			<h1><img src="{{STATIC_URL}}gfx/skittle-logo-m.png" height="150" width="150"><span>DNA</span>Skittle</h1>
-			<p id="intro">DNA Skittle is an ongoing bioinformatics project created to display two dimensional visualization of DNA sequences. Skittle has grown into a tool aimed at finding patterns and structure in the genomes of any organism and is now available through the web browser.</p>
+			<p id="shortDescription">DNA Skittle is an ongoing bioinformatics project created to display two dimensional visualization of DNA sequences. Skittle has grown into a tool aimed at finding patterns and structure in the genomes of any organism and is now available through the web browser.</p>
 		</div>
 	<nav>
 		<ul>
 			<li><a href="#whySkittle">Why Skittle?</a></li>
-			<li><a href="#Visualizations">Visualizations</a></li>
+			<li><a href="#visualizations">Visualizations</a></li>
 			<!-- <li><a href="#invest">Invest</a></li> -->
 			<li><a href="#support">Support</a></li>
 			<li><a href="#contact">Contact Us</a></li>
@@ -276,8 +303,11 @@
 		<p>This is an alpha preview release.  We recommend using <a href="http://google.com/chrome" target="_blank">Google Chrome</a>.</p><br>
 		<p>A <a href="http://genomeskittle.org">desktop version of Skittle</a> is also available for PC.</p>
 	</div>
+	<div id="social"><a href="https://plus.google.com/b/113106795968395476024/113106795968395476024/about" target="blank"><img src="{{STATIC_URL}}gfx/gplus-white-32.png" height="32" width="32"></a><a href="https://twitter.com/genome_skittle" target="blank"><img src="{{STATIC_URL}}gfx/twitter-bird-dark-bgs.png" height="36" width="36"></a></div>
 
 	</div>
+
+
 	<script type="text/javascript">
 
 
@@ -293,8 +323,8 @@
 			}
 		})
 
+
 	})
 	</script>
 
-</body>
-</html>
+{% endblock %}

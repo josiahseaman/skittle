@@ -1,13 +1,18 @@
 # Django settings for SkittleTree project.
 import os, socket, sys
 
-DEBUG = False
+PRODUCTION = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-if socket.gethostname().startswith('nyx'):
+if socket.gethostname().startswith('nyx') and PRODUCTION:
     SkittleTreeLoc = "/var/www/skittle-production/"
     
-    SkittleTreeURL = "http://dnaskittle.com/"
+    SkittleTreeURL = "http://dnaskittle.com"
+elif socket.gethostname().startswith('nyx'):
+    SkittleTreeLoc = "/var/www/skittle-development/"
+    
+    SkittleTreeURL = "http://skittle.newlinetechnicalinnovations.com/"
 else:
     SkittleTreeLoc = os.getcwd().replace("\\", "/") + "/"
     SkittleTreeURL = "/"
@@ -20,16 +25,28 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'DNASkittle',                # Or path to database file if using sqlite3.
-        'USER': 'skittle',                    # Not used with sqlite3.
-        'PASSWORD': 'sk!77l3PandaDatabase%',  # Not used with sqlite3.
-        'HOST': '',                           # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                           # Set to empty string for default. Not used with sqlite3.
+if PRODUCTION:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+            'NAME': 'DNASkittle',                # Or path to database file if using sqlite3.
+            'USER': 'skittle',                    # Not used with sqlite3.
+            'PASSWORD': 'sk!77l3PandaDatabase%',  # Not used with sqlite3.
+            'HOST': '',                           # Set to empty string for localhost. Not used with sqlite3.
+            'PORT': '',                           # Set to empty string for default. Not used with sqlite3.
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+            'NAME': 'SkittleTree',                # Or path to database file if using sqlite3.
+            'USER': 'skittle',                    # Not used with sqlite3.
+            'PASSWORD': 'sk!77l3PandaDatabase%',  # Not used with sqlite3.
+            'HOST': '',                           # Set to empty string for localhost. Not used with sqlite3.
+            'PORT': '',                           # Set to empty string for default. Not used with sqlite3.
+        }
+    }
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -124,6 +141,16 @@ TEMPLATE_DIRS = (
     SkittleTreeLoc + 'SkittleCore/UI/',
     SkittleTreeLoc + 'DNAStorage/UI/',
     SkittleTreeLoc + 'SkittleTree/UI/',
+)
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",
+    "SkittleTree.context_processors.global_vars",
 )
 
 INSTALLED_APPS = (
