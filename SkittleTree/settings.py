@@ -8,7 +8,7 @@ TEMPLATE_DEBUG = DEBUG
 if socket.gethostname().startswith('nyx') and PRODUCTION:
     SkittleTreeLoc = "/var/www/skittle-production/"
     
-    SkittleTreeURL = "http://dnaskittle.com"
+    SkittleTreeURL = "http://dnaskittle.com/"
 elif socket.gethostname().startswith('nyx'):
     SkittleTreeLoc = "/var/www/skittle-development/"
     
