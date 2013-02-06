@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>DNA Skittle</title>
-
-<!--[if lt IE 9]>
-<script src="dist/html5shiv.js"></script>
-<![endif]-->
+{% extends "base.html" %}
+{% block pageTitle %}DNA Skittle{% endblock %}
+{% block styles %}
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
 	<style type="text/css">
 	body {
@@ -26,7 +21,7 @@
 	a:active {
 		color:#fff;
 	}
-	p {
+	p,dl {
 		font-family: trebuchet,'trebuchet ms','myriad pro',helvetica,sans-serif;
 	}
 	#header p,#webskittle p {
@@ -54,6 +49,7 @@
 		top:0px;
 		bottom: 281px;
 		width: 100%;
+		z-index: 10;
 		border-bottom: 1px solid #fff;
 		-webkit-transition: all 1s ease;
 		-moz-transition: all 1s ease;
@@ -126,6 +122,7 @@
 		width: 96%;
 		padding: 0 2%;
 		opacity: 0;
+		z-index: 0;
 		-webkit-transition: all 1s ease;
 		-moz-transition: all 1s ease;
 		transition: all 1s ease;
@@ -133,12 +130,18 @@
 	#content section.active {
 		opacity: 1;
 		margin-bottom: 0px;
+		z-index: 1;
 	}
 	#content article {
 		text-align: justify;
 		-moz-column-count:3;
 		-webkit-column-count:3;
 		column-count:3;
+		font-size: 0.95em;
+		line-height: 1.5em;
+	}
+	#content article p:first-child {
+		margin-top:0;
 	}
 	nav {
 		position: absolute;
@@ -219,57 +222,64 @@
 	#social {
 		position: absolute;
 		bottom: 12px;
-		right:12px;
+		right: 12px;
+	}
+	dt {
+		font-weight: bold;
+	}
+	dd {
+		margin-left: 1em;
 	}
 	</style>
+	{% endblock %}
+	{% block scripts %}
+<!--[if lt IE 9]>
+<script src="dist/html5shiv.js"></script>
+<![endif]-->
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 	<script type="text/javascript">
 
 
 	</script>
-</head>
-<body>
+	{% endblock %}
+	{% block header %}{% endblock %}
+
+	{% block content %}
+
 	<div id="container">
 		<div id="content">
 			<section id="whySkittle" class="">
 				<h2>Why Skittle?</h2>
 				<article>
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-					tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-					quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-					consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-					cillum dolore eu fugiat nulla pariatur. </p>
-					<p>Ut enim ad minim veniam,
-					quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-					consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-					cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-					proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
 				</article>
 			</section>
-			<section id="contact" class="">
-				<h2>Contact Us</h2>
+			<section id="visualizations" class="">
+				<h2>Visualizations</h2>
 				<article>
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-					tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-					quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-					consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-					cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-					proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				<p>It is well known that the human mind excels at pattern recognition (e.g., near-instantaneous face recognition), but the mind needs graphical help when dealing with large amounts of numerical data, and there is currently a lack of tools available for genomic visualization in general. Several abstract tools do exist, but we felt a need for the introduction of a simple tool that is optimized for the visualization of genomic data specifically. The primary goal in the development of Skittle was to give the user the simplest possible way to visually examine raw genomic data.</p>
+
+				<p>Skittle was not designed to compete with the data heavy, directed search algorithms already in existence. These are excellent at detecting repeats and other genomic motifs, but most lack a high quality visualization feature. Skittle was designed around the need for visualization, not automated data generation.</p>
 				</article>
 			</section>
 			<section id="support" class="">
 				<h2>Support</h2>
 				<article>
+				<p>Though Skittle is still in a very early stage of development we are very interested in your feedback and input.  If you have encountered a bug or have trouble with any of the features please contact our support team at support@dnaskittle.com.</p>
+				</article>
+			</section>
+			<section id="contact" class="">
+				<h2>Contact Us</h2>
+				<article>
+				<p>DNA Skittle is developed by <a href="http://newlinetechnicalinnovations.com">Newline Technical Innovations</a>.  We are excited about this tool and would welcome discusion of any opportunities you would like to present.</p>
+				<p><dl>
+					<dt>Email:</dt><dd><a href="mailto:info@newlinetechnicalinnovations.com">info@newlinetechnicalinnovations.com</a></dd>
+					<dt>Phone:</dt><dd>970-599-1764</dd>
+				</dl></p>
 				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-					tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-					quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-					consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-					cillum dolore eu fugiat nulla pariatur. </p>
-					<p>Ut enim ad minim veniam,
-					quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-					consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-					cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-					proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+				quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+				consequat. </p>
 				</article>
 			</section>
 		</div>
@@ -281,7 +291,7 @@
 	<nav>
 		<ul>
 			<li><a href="#whySkittle">Why Skittle?</a></li>
-			<li><a href="#Visualizations">Visualizations</a></li>
+			<li><a href="#visualizations">Visualizations</a></li>
 			<!-- <li><a href="#invest">Invest</a></li> -->
 			<li><a href="#support">Support</a></li>
 			<li><a href="#contact">Contact Us</a></li>
@@ -296,6 +306,8 @@
 	<div id="social"><a href="https://plus.google.com/b/113106795968395476024/113106795968395476024/about" target="blank"><img src="{{STATIC_URL}}gfx/gplus-white-32.png" height="32" width="32"></a><a href="https://twitter.com/genome_skittle" target="blank"><img src="{{STATIC_URL}}gfx/twitter-bird-dark-bgs.png" height="36" width="36"></a></div>
 
 	</div>
+
+
 	<script type="text/javascript">
 
 
@@ -311,21 +323,8 @@
 			}
 		})
 
+
 	})
 	</script>
-	<script type="text/javascript">
 
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-36361700-2']);
-	  _gaq.push(['_trackPageview']);
-
-	  (function() {
-	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-
-	</script>
-
-</body>
-</html>
+{% endblock %}

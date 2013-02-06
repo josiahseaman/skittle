@@ -142,6 +142,16 @@ TEMPLATE_DIRS = (
     SkittleTreeLoc + 'DNAStorage/UI/',
     SkittleTreeLoc + 'SkittleTree/UI/',
 )
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",
+    "SkittleTree.context_processors.global_vars",
+)
 
 INSTALLED_APPS = (
     'django.contrib.auth',
