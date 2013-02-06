@@ -21,6 +21,8 @@ if socket.gethostname().startswith('nyx') and PRODUCTION:
     sys.path.append('/var/www/skittle-production')
 elif socket.gethostname().startswith('nyx'):
     sys.path.append('/var/www/skittle-development')
+    
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SkittleTree.settings")
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
