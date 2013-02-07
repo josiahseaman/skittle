@@ -14,6 +14,7 @@
 	<script src="/browse/state.json"></script>
 	<script src="annotation.json"></script>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script src="{{STATIC_URL}}js/contactform.js"></script>
 	<script src="{{STATIC_URL}}js/utility.js"></script>
 	<script src="{{STATIC_URL}}js/interface.js"></script>
 	<script src="{{STATIC_URL}}js/draw_canvas.js"></script>
@@ -52,7 +53,8 @@
 			<li class="radio-tools" data-tool="Annotate"><img src="{{STATIC_URL}}gfx/icons/39.png" width="20" height="20">Annotate</li> -->
 			<li id="link-here"><img src="{{STATIC_URL}}gfx/icons/flag.png" width="20" height="20">Link Here</li>
 			<!-- <li><img src="{{STATIC_URL}}gfx/icons/camera.png" width="20" height="20">Screenshot</li> -->
-			<li class="bottom"><img src="{{STATIC_URL}}gfx/icons/cog.png" width="20" height="20">Settings</li>
+			<!-- <li class="bottom"><img src="{{STATIC_URL}}gfx/icons/cog.png" width="20" height="20">Settings</li> -->
+			<li id="bug-report" class="bottom"><img src="{{STATIC_URL}}gfx/icons/bug.png" width="20" height="20">Bug Report</li>
 		</ul>
 	</div>
 	<div id="dials">
@@ -88,7 +90,23 @@
 		</ul>
 	</div>
 
-
+	<div id="feedbackForm" class="popover arrow-left-bottom active" style="position:absolute;bottom:-16px;left:145px;padding-bottom:20px">
+	<form action="/sendFeedback" method="post" accept-charset="utf-8" id="bug-report-form">
+		<select id="feedback_type" name="feedback_type">
+			<option>Bug Report</option>
+			<option>Feature Request</option>
+			<option>Comment</option>
+		</select>
+		<input type="text" id="feedback_sender_email" name="feedback_sender_email" placeholder="email (optional)">
+		<input type="checkbox" name="feedback_contact_sender">I wish to be contacted about this
+		<h4>Description:</h4>
+		<textarea rows="5" name="feedback_content"></textarea>
+		<p>(your current view settings will automatically be sent with this report)</p>
+		<input type="hidden" name="feedback_current_view" id="feedback_current_view">
+		{% csrf_token %}
+		<input type="submit">
+	</form>
+	</div>
 	<script type="text/javascript">
     var cc, c, b, a;
     var isDrag = false;
@@ -156,6 +174,9 @@
 	    cc.onmouseup = mouseUp;
 	    cc.onmousewheel = mouseWheel;
 	    $('#dials li').on('mousewheel',mouseWheelDials)
+
+	contactForm();
+
 
 	})
 	</script>

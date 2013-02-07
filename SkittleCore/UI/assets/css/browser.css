@@ -290,3 +290,24 @@
 	li:hover #widthBubble,li:hover #scaleBubble,li:hover #startBubble, .popover:hover {
 		display: block;
 	}
+
+	#feedbackForm {
+		display: none;
+		width: 258px;
+	}
+	#bug-report-form input[type=text],select,textarea {
+		display: block;
+		width:250px;
+		font-size: 1.2em;
+		border-radius: 4px
+	}
+	#bug-report-form h4 {
+		margin-bottom: 0;
+	}
+	#bug-report-form input[type=submit] {
+		font-size: 1.2em;
+		border-radius: 4px;
+		width:100px;
+		background:#257A00;
+		color:#fff;
+	}

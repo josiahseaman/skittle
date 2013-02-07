@@ -173,11 +173,6 @@ function mouseWheelDials(e) {
 
         var offset = $(this).offset();
         // $(this).toggleClass('active');
-        var graphString = ""
-        for (var key in graphStatus) {
-            if (graphStatus[key].visible == true) graphString += key;
-        }
-        var currentURL = window.location.origin + "/browse/" + specimen + "/" + chromosome + "/?graphs=" + graphString + "&start=" + start + "&scale=" + scale + "&width=" + width 
         if (typeof linkPopover === "undefined") {
             linkPopover = $('<div class="popover active"></div>');
             $('body').append(linkPopover);
@@ -186,11 +181,15 @@ function mouseWheelDials(e) {
             linkPopover.toggle();
         }
         linkPopover.offset({ top: (offset.top - 10), left: (offset.left + $(this).outerWidth() + 16) })
-        linkPopover.html('Copy this link: <br><span>' + currentURL + '</span>');
+        linkPopover.html('Copy this link: <br><span>' + getCurrentPageURL() + '</span>');
         selectText(linkPopover.children('span')[0])
         setTimeout(function() {
           linkPopover.removeClass('active');
         }, 1500);
+    })
+    $('#bug-report').click(function(){
+        $('#feedback_current_view').val(getCurrentPageURL())
+        $('#feedbackForm').toggle()
     })
     $("#buttonGraphs").click(function(){
         $("#graphList").toggleClass('active')
@@ -254,6 +253,14 @@ var closeHelp = function(graph) {
     $('#graphLabel-'+graph+" .graphHelp").removeClass('active');
     $('#helpLabel-'+graph).remove()
     isInvalidDisplay = true;
+}
+var getCurrentPageURL = function() {
+    var graphString = ""
+    for (var key in graphStatus) {
+        if (graphStatus[key].visible == true) graphString += key;
+    }
+    var currentURL = window.location.origin + "/browse/" + specimen + "/" + chromosome + "/?graphs=" + graphString + "&start=" + start + "&scale=" + scale + "&width=" + width 
+    return currentURL
 }
 
 // UI Dials interaction
