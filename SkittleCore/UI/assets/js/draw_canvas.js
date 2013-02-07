@@ -94,6 +94,7 @@ var drawGraphs = function() {
             var skixelWidthofGraph = graphStatus[key].skixelWidth = drawGraph(key,offset,chunks);
             skixelWidthofGraph = Math.max(skixelWidthofGraph,toSkixels(minimumWidth))
             offset = offset + skixelWidthofGraph;
+            if (graphStatus[key].help) offset += toSkixels(200);
             $('#graphLabel-' + key).width(toPixels(skixelWidthofGraph));
         }
     })

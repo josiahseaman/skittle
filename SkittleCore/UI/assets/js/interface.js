@@ -204,8 +204,21 @@ function mouseWheelDials(e) {
         else hideGraph(graph)
     })
     $('#graph-labels .closeGraphButton').click(function() {
-        graph = this.parentNode.id.slice(-1);
+        var graph = this.parentNode.id.slice(-1);
         hideGraph(graph)
+        closeHelp(graph)
+    })
+    $('#graph-labels .helpGraphButton').click(function() {
+        var graph = this.parentNode.id.slice(-1);
+        helpLabel
+            .clone()
+            .attr('id', 'helpLabel-'+graph)
+            .insertAfter($(this).parent())
+            .children('.closeHelpButton').click(function() {
+                var graph = this.parentNode.id.slice(-1);
+                closeHelp(graph);
+            })
+        helpGraph(graph);
     })
     $("#dials li").on('mouseleave touchstart',function(){
         var target = $(this).children('div').addClass('active')
@@ -229,6 +242,19 @@ function mouseWheelDials(e) {
     })
 
   });
+
+var helpGraph = function(graph) {
+    graphStatus[graph].help = true;
+    if (graphHelpContents[graph]) $('#graphLabel-'+graph+" .graphHelp").html(graphHelpContents[graph])
+    $('#graphLabel-'+graph+" .graphHelp").addClass('active');
+    isInvalidDisplay = true;
+}
+var closeHelp = function(graph) {
+    graphStatus[graph].help = false;
+    $('#graphLabel-'+graph+" .graphHelp").removeClass('active');
+    $('#helpLabel-'+graph).remove()
+    isInvalidDisplay = true;
+}
 
 // UI Dials interaction
 var hideGraph = function(graph) {

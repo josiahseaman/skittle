@@ -66,7 +66,7 @@
 	}
 	#graph-labels {
 		position: absolute;
-		overflow: hidden;
+		/*overflow: hidden;*/
 		top:0;
 		left:24px;
 		right:0;
@@ -170,6 +170,7 @@
 		margin-bottom: 2px;
 	}
 	#graph-labels li {
+		position: relative;
 		float:left;
 		padding: 4px 0;
 		background: rgba(0,0,0,0.5);
@@ -244,6 +245,29 @@
 	#graphList.active, .popover.active {
 		display: block;
 	}
+	#graph-labels li.helpLabel {
+		display:list-item;
+		width:200px
+	}
+	.graphHelp {
+		position: absolute;
+		display: none;
+		top:40px;
+		right:-175px;
+		width: 170px;
+		padding: 10px;
+		border-left: 1px solid #eee;
+		text-align: justify;
+		font-family: trebuchet,'trebuchet ms','myriad pro',helvetica,ariel,sans-serif;
+		font-weight: 300;
+		/*font-size: 1.1em;*/
+		line-height: 1.5;
+		color: #ddd;
+	}
+	.graphHelp.active {
+		display: block;
+	}
+
 
 	#widthBubble {
 		left:32px;
