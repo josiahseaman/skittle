@@ -1,19 +1,20 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>{{ specimen }} WebSkittle Mockup</title>
-
+{% extends "base.html" %}
+{% block pageTitle %}{{ specimen }} WebSkittle Mockup{% endblock %}
+{% block styles %}
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/popover.css">
 	<style type="text/css">
 
 	</style>
+	{% endblock %}
+	{% block scripts %}
 <!--[if lt IE 9]>
     <script src="{{STATIC_URL}}js/excanvas.js"></script>
 <![endif]-->
 	<script src="/browse/state.json"></script>
 	<script src="annotation.json"></script>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script src="{{STATIC_URL}}js/contactform.js"></script>
 	<script src="{{STATIC_URL}}js/utility.js"></script>
 	<script src="{{STATIC_URL}}js/interface.js"></script>
 	<script src="{{STATIC_URL}}js/draw_canvas.js"></script>
@@ -21,23 +22,16 @@
 
 
 	</script>
-</head>
-<body>
-	<h1 id="logo"><a href="/"><img src="{{STATIC_URL}}gfx/skittle-logo3.png"><span>DNA</span>Skittle</a></h1>
-	
-	<header>
-		<ul>
-			<li><a href="/discover">Discover</a></li><!-- <li><a>Share</a></li> --><li><a href="/learn">Learn</a></li>
-		</ul>
-		<p><a href="https://twitter.com/genome_skittle" target="blank"><img src="{{STATIC_URL}}gfx/twitter-bird-dark-bgs.png" height="36" width="36"></a>
-			<a href="https://github.com/josiahseaman/skittle" target="blank"><img src="{{STATIC_URL}}gfx/github-white.png" height="22"></a></p>
-	</header>
+	{% endblock %}
+
+{% block content %}
 	<div id="canvasContainer">
 	    <canvas id="c" width="2000" height="1000"></canvas>
 		<div id="graph-labels">
 			<ul>
 			{% for graph in availableGraphs %}
-				<li id="graphLabel-{{ graph.symbol }}" style="width:159px;">{{ graph.name }} <img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton"></li>
+				<li id="graphLabel-{{ graph.symbol }}" style="width:159px;">{{ graph.name }} <img src="{{STATIC_URL}}gfx/icons/help.png" class="helpGraphButton"><img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton">
+					<div class="graphHelp"><p>This is a graph.</p></div></li>
 			{% endfor %}
 			</ul>
 		</div>
@@ -51,7 +45,8 @@
 			<li class="radio-tools" data-tool="Annotate"><img src="{{STATIC_URL}}gfx/icons/39.png" width="20" height="20">Annotate</li> -->
 			<li id="link-here"><img src="{{STATIC_URL}}gfx/icons/flag.png" width="20" height="20">Link Here</li>
 			<!-- <li><img src="{{STATIC_URL}}gfx/icons/camera.png" width="20" height="20">Screenshot</li> -->
-			<li class="bottom"><img src="{{STATIC_URL}}gfx/icons/cog.png" width="20" height="20">Settings</li>
+			<!-- <li class="bottom"><img src="{{STATIC_URL}}gfx/icons/cog.png" width="20" height="20">Settings</li> -->
+			<li id="bug-report" class="bottom"><img src="{{STATIC_URL}}gfx/icons/bug.png" width="20" height="20">Bug Report</li>
 		</ul>
 	</div>
 	<div id="dials">
@@ -87,7 +82,23 @@
 		</ul>
 	</div>
 
-
+	<div id="feedbackForm" class="popover arrow-left-bottom active" style="position:absolute;bottom:-16px;left:145px;padding-bottom:20px">
+	<form action="/sendFeedback" method="post" accept-charset="utf-8" id="bug-report-form">
+		<select id="feedback_type" name="feedback_type">
+			<option>Bug Report</option>
+			<option>Feature Request</option>
+			<option>Comment</option>
+		</select>
+		<input type="text" id="feedback_sender_email" name="feedback_sender_email" placeholder="email (optional)">
+		<input type="checkbox" name="feedback_contact_sender">I wish to be contacted about this
+		<h4>Description:</h4>
+		<textarea rows="5" name="feedback_content"></textarea>
+		<p>(your current view settings will automatically be sent with this report)</p>
+		<input type="hidden" name="feedback_current_view" id="feedback_current_view">
+		{% csrf_token %}
+		<input type="submit">
+	</form>
+	</div>
 	<script type="text/javascript">
     var cc, c, b, a;
     var isDrag = false;
@@ -116,6 +127,17 @@
     	else hideGraph(key)
     }
 	
+	var helpLabel = $('<li class="helpLabel">Help<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeHelpButton"></li>')
+	var graphHelpContents = {
+		'a':'Annotation Display is linked to an annotation file with start and stop positions for tracks.  It aligns these start and stop positions along with the rest of the graphs, expanding to accommodate overlapping annotations as necessary.  The user can select individual annotations and see the full text associated with that annotation.',
+		'n':'The four nucleotides of DNA are represented by four colors.  The pixels are arranged across the screen like text, reading from left to right, the jumping to the beginning of the next line when it reaches the width.  If width is set at a multiple of a tandem repeat, the repeat will appear as vertical bars.', 
+		'b':'This bar graph shows how often each nucleotide occurs per line.  It uses the same color palette as Nucleotide Display.',
+		's':'Use the “Select” tool and click on a line you would like to search for.  You can either click on Nucleotide Display or Sequence Highlighter to pick a sequence.  Given a search sequence, the Highlighter checks every start position on the screen.  The grayscale pixels are start positions that didn’t make the cut.  Light pixels are near misses.  When the Highlighter finds another sequence that is at least 70% the same, it highlights each of the matching nucleotides in bright green. ',
+		'm':'Repeat Map is used for identifying tandem repeats without the need for continually adjusting the width in Nucleotide Display.  It identifies periodicity of repeated sequences by checking all possible offsets and scoring 0-100% similarity displayed in grayscale.  The x-axis of the graph represents periodicity, starting at offset 1 on the left and increasing geometrically to offset 6,144 on the right.  This growth curve means that Repeat Map can accurately detect 2bp periodicities simultaneously with segmental duplications.  Vertical white lines show regions that contain tandem repeats.  Most of the graph will be 25-30% gray from random chance.  Black spots are created when two regions with opposite biases are compared as in the case of a CG repeat being compared with an AT repeat region.',
+		'o':'Each row is one display line equal to width.  Each column matches one oligomer of fixed size, arranged in alphabetical order (i.e. AA, AC, AG...).  The brightness of the pixel indicates how often that oligomer occurred compared to all the others.',
+		'h':'This graph is a heatmap that shows how similar each row is to every other row on the screen.  Red represents positive correlation, blue is negative, with black being neutral.  The red blue spectrum is normalized to account for baseline correlation from genome wide patterns.  The structure of a heatmap is diagonally symmetrical.  The upper right half is mirrored in the bottom left half.  The diagonal red line is self compared with self.  Each pixel represents a comparison between two other lines.  To see which rows are involved in a comparison trace one line straight down and another line to the left.  Where the lines intersect the diagonal indicates the rows being compared.  The Similarity Heatmap is useful to visualize the blocks of similar code found in the genome, such as large tandem repeats, and isochores at all scales.  The patterns in Similarity Heatmap correlate strongly with those generated from Hi-C experiments to map chromosome territories.',
+		't':'Threemer detector was designed to detect the weak 3 periodicity signature associated with codons inside protein coding regions.  It is much more sensitive than Repeat Map, but only detects a single periodicity.  Exon annotations are generally marked by a 3-mer spike.  Strong 3-mer signals outside of exon annotation that are not simple repeats merit further research.'
+	}
 
     imageUnrendered = new Image()
     imageUnrendered.src = "{{STATIC_URL}}gfx/checkers.png"
@@ -145,8 +167,9 @@
 	    cc.onmousewheel = mouseWheel;
 	    $('#dials li').on('mousewheel',mouseWheelDials)
 
+	contactForm();
+
+
 	})
 	</script>
-
-</body>
-</html>
+{% endblock %}
