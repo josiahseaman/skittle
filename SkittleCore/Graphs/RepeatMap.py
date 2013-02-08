@@ -10,7 +10,7 @@ from SkittleCore.GraphRequestHandler import registerGraph
 import math
 from random import choice, randrange
 
-registerGraph('m', "Repeat Map", __name__, False)
+registerGraph('m', "Repeat Map", __name__, False, False, 30)
 '''
 These are the functions that are specific to the use of RepeatMap and not generally applicable.  
 These functions use RepeatMapState to emulate an object with state.
@@ -70,6 +70,8 @@ def logRepeatMap(state, repeatMapState):
                 break
             end = start + scale*(skixelsPerSample*2)
             
+            
+            #created scaled sequences
             starterSequence = []
             if scale > 1:
                 for step in range(0, len(oldScaledSequence), growthPower):
@@ -85,6 +87,7 @@ def logRepeatMap(state, repeatMapState):
             original = scaledSequence[0:skixelsPerSample]
             rgbChannels = zip(*original)
             
+            #iterate horizontally within a mega-column
             for offset in range(skixelsPerSample/growthPower, skixelsPerSample): #range 5 - 12 but indexing starts at 0
                 offsetSequence = scaledSequence[offset : offset + skixelsPerSample]
                 if len(offsetSequence) == len(original):

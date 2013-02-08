@@ -10,11 +10,11 @@ from collections import namedtuple
 '''The set of availableGraphs is populated by the individual graph modules who are responsible for 
 registering with the request Handler using the 'registerGraph' function below. '''
 availableGraphs = set()
-GraphDescription = namedtuple('GraphDescription', ['symbol', 'name', 'moduleReference', 'rasterGraph','colorPalletteDependant'])
+GraphDescription = namedtuple('GraphDescription', ['symbol', 'name', 'moduleReference', 'rasterGraph','colorPalletteDependant', 'widthTolerance'])
 
-def registerGraph(symbol, name, moduleName, rasterGraph = False, colorPalletteDependant = False):
+def registerGraph(symbol, name, moduleName, rasterGraph = False, colorPalletteDependant = False, widthTolerance=10):
     moduleReference = sys.modules[moduleName]
-    availableGraphs.add(GraphDescription(symbol, name, moduleReference, rasterGraph, colorPalletteDependant))
+    availableGraphs.add(GraphDescription(symbol, name, moduleReference, rasterGraph, colorPalletteDependant, widthTolerance))
     
 from SkittleCore.models import RequestPacket, chunkSize
 import SkittleCore.FastaFiles as FastaFiles
@@ -89,15 +89,16 @@ def tryGetGraphPNG(state):
         return None
 
 class ServerSideGraphDescription():
-    def __init__(self, Name, IsRaster, colorSensitive):
+    def __init__(self, Name, IsRaster, colorSensitive, widthTolerance):
         self.name = Name
         self.rasterGraph = IsRaster
         self.colorPaletteSensitive = colorSensitive
+        self.widthTolerance = widthTolerance
     
 def generateGraphListForServer():
     graphs = {}
     for description in availableGraphs:
-        graphs[description[0]] = ServerSideGraphDescription(description[1], description[3], description[4]).__dict__
+        graphs[description[0]] = ServerSideGraphDescription(description[1], description[3], description[4], description[5]).__dict__
     return graphs
         
         

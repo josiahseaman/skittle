@@ -20,3 +20,12 @@ class FastaTest(TestCase):
         print state.getFastaFilePath()
         f = FastaFiles.readFile(state)
         print f        
+        
+import GraphRequestHandler
+class GraphImport(TestCase):
+    def test(self):
+        print "Available Graph Descriptions: "
+        desc = GraphRequestHandler.generateGraphListForServer()
+        print desc 
+        for i in desc.iteritems():
+            print i 
