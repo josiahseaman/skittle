@@ -42,9 +42,9 @@
 		bottom: 0;
 	}
 	#header {
-		background: url('{{STATIC_URL}}gfx/bkg-home-logo.png') center bottom no-repeat,-webkit-linear-gradient(bottom,rgba(0,0,0,0.8),transparent 150px),url('{{STATIC_URL}}gfx/home-bkg.png');
-		background: -moz-linear-gradient(bottom,rgba(0,0,0,0.8),transparent 150px),url('{{STATIC_URL}}gfx/home-bkg.png');
-		background: linear-gradient(bottom,rgba(0,0,0,0.8),transparent 150px),url('{{STATIC_URL}}gfx/home-bkg.png');
+		background: url('{{STATIC_URL}}gfx/bkg-home-logo.png') center bottom no-repeat,-webkit-linear-gradient(bottom,rgba(0,0,0,0.8),rgba(0,0,0,0.3) 150px,transparent 300px),url('{{STATIC_URL}}gfx/home-bkg.png');
+		background: -moz-linear-gradient(bottom,rgba(0,0,0,0.8),rgba(0,0,0,0.3) 150px,transparent 300px),url('{{STATIC_URL}}gfx/home-bkg.png');
+		background: linear-gradient(bottom,rgba(0,0,0,0.8),rgba(0,0,0,0.3s) 150px,transparent 300px),url('{{STATIC_URL}}gfx/home-bkg.png');
 		position: absolute;
 		top:0px;
 		bottom: 281px;
@@ -118,7 +118,10 @@
 	}
 	#content section {
 		position: absolute;
-		margin-bottom: -300px;
+		/*margin-bottom: -300px;*/
+		/*bottom:-300px;*/
+		height:300px;
+		overflow: hidden;
 		width: 96%;
 		padding: 0 2%;
 		opacity: 0;
@@ -129,7 +132,8 @@
 	}
 	#content section.active {
 		opacity: 1;
-		margin-bottom: 0px;
+		/*margin-bottom: 0px;*/
+		/*bottom:0;*/
 		z-index: 1;
 	}
 	#content article {
@@ -254,7 +258,9 @@
 			<section id="whySkittle" class="">
 				<h2>What is Skittle?</h2>
 				<article>
+					<p>Skittle is a new breed of genome browser based on interactive visualizations. It presents the raw sequence data in a way that your brain can process visually. Other genome browsers are forced to abstract or minimize the data. The downside to this is that you don’t find anything that you don’t already know to look for. The pick and choose method of research introduces a heavy sampling bias. As an alternative, Skittle gives you the tools to do undirected pattern searching. You can see the entire genomic context around any element and you can make intelligent decisions about parameters like thresholds. You can play with the numbers in real time and see how they affect outcomes instead of making important decisions blindly. </p> 
 
+					<p>The current Skittle toolset is particularly well suited for finding periodicities at all scales; starting with the 3-mer pattern characteristic of exons and extending all the way to detecting segmental duplications and assembly errors.  Research using the Skittle Genome Browser has already shown many novel variation patterns inside large tandem repeats.  These very same repeats go undetected by RepeatMasker and will throw off any statistical study where they are not properly accounted for.</p>
 				</article>
 			</section>
 			<section id="visualizations" class="">

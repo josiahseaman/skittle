@@ -172,7 +172,7 @@
 	#graph-labels li {
 		position: relative;
 		float:left;
-		padding: 4px 0;
+		padding: 4px 0 3px;
 		background: rgba(0,0,0,0.5);
 		text-align: center;
 	}
@@ -310,4 +310,5 @@
 		width:100px;
 		background:#257A00;
 		color:#fff;
+		float:left;
 	}

@@ -209,15 +209,18 @@ function mouseWheelDials(e) {
     })
     $('#graph-labels .helpGraphButton').click(function() {
         var graph = this.parentNode.id.slice(-1);
-        helpLabel
-            .clone()
-            .attr('id', 'helpLabel-'+graph)
-            .insertAfter($(this).parent())
-            .children('.closeHelpButton').click(function() {
-                var graph = this.parentNode.id.slice(-1);
-                closeHelp(graph);
-            })
-        helpGraph(graph);
+        if ( $('#helpLabel-'+graph).length > 0 ) closeHelp(graph)
+        else {
+            helpLabel
+                .clone()
+                .attr('id', 'helpLabel-'+graph)
+                .insertAfter($(this).parent())
+                .children('.closeHelpButton').click(function() {
+                    var graph = this.parentNode.id.slice(-1);
+                    closeHelp(graph);
+                })
+            helpGraph(graph);
+        }
     })
     $("#dials li").on('mouseleave touchstart',function(){
         var target = $(this).children('div').addClass('active')
