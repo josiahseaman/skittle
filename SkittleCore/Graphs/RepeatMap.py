@@ -2,13 +2,14 @@
 Created on Nov 29, 2012
 @author: Josiah Seaman
 '''
+from Utilities.debug import startDebug
 import NucleotideDisplay
 from SkittleGraphTransforms import correlationMap, countDepth, chunkUpList, countNucleotides, normalizeDictionary, countListToColorSpace, pearsonCorrelation
 from models import RepeatMapState
 from SkittleCore.models import RequestPacket
 from SkittleCore.GraphRequestHandler import registerGraph
 import math
-from random import choice, randrange
+from random import choice
 
 registerGraph('m', "Repeat Map", __name__, False, False, 30)
 '''
@@ -61,6 +62,11 @@ def logRepeatMap(state, repeatMapState):
     state.readAndAppendNextChunk()
     print "Done reading additional chunk.  Computing..."
     for h in range(height): # per line
+        percentCompletion = int(float(h) / height * 1000)
+        if percentCompletion % 100 == 0:
+            print percentCompletion/10, "% Complete"
+            
+#        skipToNextLine = False
         freq.append( [] )
         oldScaledSequence = []
         
@@ -71,6 +77,26 @@ def logRepeatMap(state, repeatMapState):
             end = start + scale*(skixelsPerSample*2)
             
             
+            #check if we have changed start enough to update the score 
+            #equation = h % ceil( tolerance / (increment / (skixelsPerSample*scale)))
+            ''' 
+            needComputation = h  % int(max(1.0, math.ceil( scale * 0.05))) == 0 #precomputed value 0.2 based on 10% of 24 skixels 
+            if not needComputation: #otherwise, use previous score
+                subColumnsPerMegaColumn = skixelsPerSample - skixelsPerSample / growthPower
+                previousLine = freq[ len(freq)-2 ][powerOfX*subColumnsPerMegaColumn: ] #reference previous display line
+                freq[h] += previousLine
+#                for i in range(powerOfX * subColumnsPerMegaColumn, (powerOfX+1)* subColumnsPerMegaColumn):
+#                    freq[h].append(previousLine[i])
+                skipToNextLine = True
+                break
+            else:
+                if skipToNextLine:
+                    print "Improper Skip: Start: ", start, "  Scale: ", scale
+            if skipToNextLine:
+                skipToNextLine = False
+                break                
+           ''' 
+             
             #created scaled sequences
             starterSequence = []
             if scale > 1:
@@ -83,6 +109,8 @@ def logRepeatMap(state, repeatMapState):
                 scaledSequence = starterSequence + [sequenceCount(state.seq, necessaryStart, scale, end)]
             oldScaledSequence = scaledSequence
             scaledSequence = colorizeSequence(scaledSequence)
+
+#            scaledSequence = colorizeSequence(sequenceCount(state.seq, start, scale, end))
 
             original = scaledSequence[0:skixelsPerSample]
             rgbChannels = zip(*original)
