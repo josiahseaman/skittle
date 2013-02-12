@@ -126,6 +126,7 @@ var drawGraph = function(graph,offset,chunks) {
     switch (graph) {
         case "a": return drawAnnotations(offset,chunks)
         case "n": return drawNucDisplay(offset,chunks);
+        case "p": return drawSNP(offset,chunks);
         case "h": return drawSeqHighlight(offset,chunks);
         case "b": return drawNucBias(offset,chunks);
         case "m": return drawRMap(offset,chunks);
@@ -223,6 +224,31 @@ var drawSeqHighlight = function(offset,chunks) {
     a.clearRect(0,0,1024,500)
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor("h",i)
+        if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
+        a.drawImage(imageObj,0,64*i) // render data on hidden canvas
+    }
+
+    var imageData = a.getImageData(0, 0, 1024, chunks*64);
+    var data = imageData.data;
+    var newImageData = b.createImageData(width,toSkixels(1000)) //create new image data with desired dimentions (width)
+    var newData = newImageData.data;
+
+    var startOffset = (Math.round(start/scale) - 1 - width*8 - Math.max( Math.floor((start/scale-width*8)/(65536) ), 0 )*65536 )*4;
+    for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
+        var y = x + startOffset
+        newData[x] = data[y] || 0;
+        newData[x + 1] = data[y + 1] || 0;
+        newData[x + 2] = data[y + 2] || 0;
+        newData[x + 3] = data[y + 3] || 0;
+    }
+    b.putImageData(newImageData, offset, 0);
+
+    return calculateOffsetWidth(width)
+}
+var drawSNP = function(offset,chunks) {
+    a.clearRect(0,0,1024,500)
+    for (var i=0;i<chunks;i++) {
+        var imageObj = imageRequestor("p",i)
         if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
         a.drawImage(imageObj,0,64*i) // render data on hidden canvas
     }

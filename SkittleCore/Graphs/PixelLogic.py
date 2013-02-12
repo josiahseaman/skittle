@@ -56,7 +56,10 @@ colorPalettes = {
         'C': (255, 0, 0),
         'G': (0, 255, 0),
         'T': (0, 0, 255),
-        'N': ( 200, 200, 200)}#not sequenced
+        'N': ( 200, 200, 200),#not sequenced
+        '_': (140,140,140),
+        'I': (255,0,255),
+        'D': (0,200,200)}
     }
 '''Safe accessor for nucleotide colors'''
 def getColor(state, character):
