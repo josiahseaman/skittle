@@ -26,13 +26,15 @@ def readFile(state):
         if not filePath:
             return None
         rawFile = open(filePath, 'r')
-        print 'Opened File'
-
-        for line in rawFile: # 1MB chunks at a time
-            collection.append( line )
-            
-        seq = ''.join(collection)
-        return seq #FastaFile(seq)
+        return rawFile.read()
+    
+#        print 'Opened File'
+#
+#        for line in rawFile: # 1MB chunks at a time
+#            collection.append( line )
+#            
+#        seq = ''.join(collection)
+#        return seq #FastaFile(seq)
     
     except IOError:
         print "Couldn't open file.  Maybe it doesn't exist."
