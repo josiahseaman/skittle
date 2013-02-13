@@ -55,7 +55,7 @@ def calculateOutputPixels(state, heatMapState = SimilarityHeatMapState()):
 ##        prettyPrint(heatMap)
 ##        print
 #        heatMap = rowColumnCorrelation(heatMap)
-    median = medianFromAllLines(heatMap)
+    median = 0.0 #medianFromAllLines(heatMap)
 
     pixels = twoSidedSpectrumColoring(heatMap, median)
     return pixels
