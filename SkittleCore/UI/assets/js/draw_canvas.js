@@ -66,8 +66,8 @@ var graphURL = function(graph,chunkOffset) {
     var startTopOfScreen = (start-8*width*scale) >  0 ? (start-8*width*scale) : 1
     var startChunk = ( ( Math.floor(startTopOfScreen/(65536*scale) ) + chunkOffset )*65536*scale + 1 );
     var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + scale;
-    if (graph =='m' || graph == 's') graphPath += "&width=" + Math.round(width/30)*30 
-    else if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + Math.round(width/10)*10 
+    if (graph =='m' || graph == 's') graphPath += "&width=" + Math.max(12, Math.round(width/30)*30 )
+    else if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + Math.max(12, Math.round(width/10)*10 )
     if (graph == 'h') graphPath += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd
     if (graphStatus[graph].colorPaletteSensitive) graphPath += "&colorPalette="+colorPalette
     return graphPath
@@ -137,8 +137,8 @@ var drawGraph = function(graph,offset,chunks) {
 }
 var drawVerticalGraph = function(graph,offset,chunks) {
     var graphWidth = 0, graphHeight = 0;
-    if (graph =='m' || graph == 's') var stretchFactor = Math.round(width/30)*30/width //Math.ceil(65536/width)
-    else var stretchFactor = Math.round(width/10)*10/width //Math.ceil(65536/width)
+    if (graph =='m' || graph == 's') var stretchFactor = Math.max(12, Math.round(width/30)*30 )/width //Math.ceil(65536/width)
+    else var stretchFactor = Math.max(12, Math.round(width/10)*10 )/width //Math.ceil(65536/width)
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor(graph,i)
         if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
@@ -281,15 +281,9 @@ var drawNucBias = function(offset,chunks) {
 }
 var drawRMap = function(offset,chunks) {
     var offsetWidth = drawVerticalGraph("m",offset,chunks)
-    // for (var i=0;i<chunks;i++) {
-    //     var imageObj = imageRequestor("m",i)
-    //     if(!imageObj.complete) imageObj = imageUnrendered;
-    //     var vOffset = 8 - Math.round((start%65536)/(width*scale) - i*(65536/width));
-    //     b.drawImage(imageObj,offset,vOffset,fWidth,(65536/width)) // render data on hidden canvas
-    // }
     
     drawPixelStuff.push(function() { 
-        if ( width > 12) { //draw the red lines
+        if ( width >= 12) { //draw the red lines
             // var remainingWidth = 0, megaColumn=0, subColumn=0;
             // while (remainingWidth<(width-12)) {
             //     remainingWidth += 2^megaColumn
@@ -299,12 +293,13 @@ var drawRMap = function(offset,chunks) {
             //         megaColumn++
             //     } 
             // }
-            var widthPosition = offset + 17.3*Math.log(width*scale) - 43.7;
+            var widthPosition = offset + 17.315*Math.log(width*scale) - 42.85 - Math.min(0.9,(width*scale)/36);
+            widthPosition = Math.round(widthPosition*3)/3
             c.beginPath();
-            c.moveTo(widthPosition-1.18181818,0)
-            c.lineTo(widthPosition-1.18181818,500)
-            c.moveTo(widthPosition+0.18181818,0)
-            c.lineTo(widthPosition+0.18181818,500)
+            c.moveTo(widthPosition-0.18181818,0)
+            c.lineTo(widthPosition-0.18181818,500)
+            c.moveTo(widthPosition+1.18181818,0)
+            c.lineTo(widthPosition+1.18181818,500)
             c.strokeStyle = "#f00"
             c.lineWidth = 0.333333333
             c.stroke();
