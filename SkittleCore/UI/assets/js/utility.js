@@ -34,6 +34,13 @@ function selectText(element) {
         selection.addRange(range);
     }
 }
+var expRound = function(value,stretchFactor) { // stretchFactor is between 0 to 1 (0 in not stretchy, 1 is very stretchy)
+	if (stretchFactor<=0.01) return value;
+	stretchFactor = 1/stretchFactor;
+	var round = Math.pow(2,(Math.round(Math.log(Math.pow(value,stretchFactor))/Math.LN2)/stretchFactor))
+	return Math.max(12,Math.round(round)); 
+}
+
 String.prototype.hashCode = function(){ // from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
 	var hash = 0;
 	if (this.length == 0) return hash;

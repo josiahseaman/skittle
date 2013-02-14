@@ -66,8 +66,7 @@ var graphURL = function(graph,chunkOffset) {
     var startTopOfScreen = (start-8*width*scale) >  0 ? (start-8*width*scale) : 1
     var startChunk = ( ( Math.floor(startTopOfScreen/(65536*scale) ) + chunkOffset )*65536*scale + 1 );
     var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + scale;
-    if (graph =='m' || graph == 's') graphPath += "&width=" + Math.max(12, Math.round(width/30)*30 )
-    else if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + Math.max(12, Math.round(width/10)*10 )
+    if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + expRound(width,graphStatus[graph].widthTolerance)
     if (graph == 'h') graphPath += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd
     if (graphStatus[graph].colorPaletteSensitive) graphPath += "&colorPalette="+colorPalette
     return graphPath
@@ -137,8 +136,7 @@ var drawGraph = function(graph,offset,chunks) {
 }
 var drawVerticalGraph = function(graph,offset,chunks) {
     var graphWidth = 0, graphHeight = 0;
-    if (graph =='m' || graph == 's') var stretchFactor = Math.max(12, Math.round(width/30)*30 )/width //Math.ceil(65536/width)
-    else var stretchFactor = Math.max(12, Math.round(width/10)*10 )/width //Math.ceil(65536/width)
+    var stretchFactor = expRound(width,graphStatus[graph].widthTolerance)/width //Math.ceil(65536/width)
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor(graph,i)
         if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
@@ -310,7 +308,7 @@ var drawRMap = function(offset,chunks) {
 var drawSimHeat = function(offset,chunks) {
     a.clearRect(0,0,350,10000)
     var displayWidth = 300
-    var stretchFactor = Math.round(width/30)*30/width 
+    var stretchFactor = expRound(width,graphStatus[graph].widthTolerance)
     var lineHeight = Math.round(65536/width) //Math.round((Math.round(width/10)*10)/width*Math.ceil(65536/width));
     var displayWidth = Math.round(stretchFactor*displayWidth)
     for (var i=0;i<chunks;i++) {
