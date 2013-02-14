@@ -13,7 +13,7 @@ from PixelLogic import twoSidedSpectrumColoring
 import copy
 import math
 
-registerGraph('s', "Similarity Heatmap", __name__, False, False, 0.3)
+registerGraph('s', "Similarity Heatmap", __name__, False, False, 0.4)
 
 def prettyPrint(heatMap):
     for line in heatMap:
