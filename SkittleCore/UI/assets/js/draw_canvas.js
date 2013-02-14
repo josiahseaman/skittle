@@ -309,7 +309,7 @@ var drawRMap = function(offset,chunks) {
 var drawSimHeat = function(offset,chunks) {
     a.clearRect(0,0,350,10000)
     var displayWidth = 300
-    var stretchFactor = expRound(width,graphStatus[graph].widthTolerance)
+    var stretchFactor = expRound(width,graphStatus['s'].widthTolerance)/width
     var lineHeight = Math.round(65536/width) //Math.round((Math.round(width/10)*10)/width*Math.ceil(65536/width));
     var displayWidth = Math.round(stretchFactor*displayWidth)
     for (var i=0;i<chunks;i++) {
