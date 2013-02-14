@@ -282,16 +282,17 @@ var drawRMap = function(offset,chunks) {
     
     drawPixelStuff.push(function() { 
         if ( width >= 12) { //draw the red lines
-            // var remainingWidth = 0, megaColumn=0, subColumn=0;
-            // while (remainingWidth<(width-12)) {
-            //     remainingWidth += 2^megaColumn
-            //     subColumn++
-            //     if(subColumn>=12) {
-            //         subColumn=0
-            //         megaColumn++
-            //     } 
-            // }
-            var widthPosition = offset + 17.315*Math.log(width*scale) - 42.85 - Math.min(0.9,(width*scale)/36);
+            var remainingWidth = 0, megaColumn=0, subColumn=0;
+            while (remainingWidth<(width-12)) {
+                remainingWidth += Math.pow(2,megaColumn)
+                subColumn++
+                if(subColumn>=12) {
+                    subColumn=0
+                    megaColumn++
+                } 
+            }
+            var widthPosition = offset + megaColumn*12+subColumn - 0 -(remainingWidth-width+12)/Math.pow(2,megaColumn)
+            // var widthPosition = offset + 17.315*Math.log(width*scale) - 42.85 - Math.min(0.9,(width*scale)/36);
             widthPosition = Math.round(widthPosition*3)/3
             c.beginPath();
             c.moveTo(widthPosition-0.18181818,0)
