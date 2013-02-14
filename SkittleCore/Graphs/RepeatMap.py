@@ -11,7 +11,7 @@ from SkittleCore.GraphRequestHandler import registerGraph
 import math
 from random import choice
 
-registerGraph('m', "Repeat Map", __name__, False, False, 30)
+registerGraph('m', "Repeat Map", __name__, False, False, 0.3)
 '''
 These are the functions that are specific to the use of RepeatMap and not generally applicable.  
 These functions use RepeatMapState to emulate an object with state.
