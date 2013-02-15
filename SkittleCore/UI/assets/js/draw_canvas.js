@@ -304,7 +304,7 @@ var drawRMap = function(offset,chunks) {
             c.stroke();
         }
     })
-    return Math.max(offsetWidth,100)
+    return Math.max(offsetWidth,116)
 }
 var drawSimHeat = function(offset,chunks) {
     a.clearRect(0,0,350,10000)

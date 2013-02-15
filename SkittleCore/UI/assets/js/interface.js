@@ -23,7 +23,7 @@ var keyListener = function(e) {
             e.preventDefault() /
             halfWidth()
         }
-        if(e.keyCode==88){ // x
+        if(e.keyCode==88 || e.keyCode==190) { // x or .
             e.preventDefault() 
             doubleWidth()
         }
