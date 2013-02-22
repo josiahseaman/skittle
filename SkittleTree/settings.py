@@ -5,17 +5,23 @@ PRODUCTION = False
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+#--------------------
+
+CHUNK_SIZE = 65536
+
+#--------------------
+
 if socket.gethostname().startswith('nyx') and PRODUCTION:
-    SkittleTreeLoc = "/var/www/skittle-production/"
+    SKITTLE_TREE_LOC = "/var/www/skittle-production/"
     
-    SkittleTreeURL = "http://dnaskittle.com/"
+    SKITTLE_TREE_URL = "http://dnaskittle.com/"
 elif socket.gethostname().startswith('nyx'):
-    SkittleTreeLoc = "/var/www/skittle-development/"
+    SKITTLE_TREE_LOC = "/var/www/skittle-development/"
     
-    SkittleTreeURL = "http://skittle.newlinetechnicalinnovations.com/"
+    SKITTLE_TREE_URL = "http://skittle.newlinetechnicalinnovations.com/"
 else:
-    SkittleTreeLoc = os.getcwd().replace("\\", "/") + "/"
-    SkittleTreeURL = "/"
+    SKITTLE_TREE_LOC = os.getcwd().replace("\\", "/") + "/"
+    SKITTLE_TREE_URL = "/"
 
 ADMINS = (
     ('Josiah Seaman', 'josiah@newlinetechnicalinnovations.com'),
@@ -74,22 +80,22 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = SkittleTreeLoc + 'media/'
+MEDIA_ROOT = SKITTLE_TREE_LOC + 'media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = SkittleTreeURL + 'media/'
+MEDIA_URL = SKITTLE_TREE_URL + 'media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = SkittleTreeLoc + 'static/'
+STATIC_ROOT = SKITTLE_TREE_LOC + 'static/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = SkittleTreeURL + 'static/'
+STATIC_URL = SKITTLE_TREE_URL + 'static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -97,7 +103,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    SkittleTreeLoc + 'SkittleCore/UI/assets/',
+    SKITTLE_TREE_LOC + 'SkittleCore/UI/assets/',
 )
 
 # List of finder classes that know how to find static files in
@@ -138,9 +144,9 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    SkittleTreeLoc + 'SkittleCore/UI/',
-    SkittleTreeLoc + 'DNAStorage/UI/',
-    SkittleTreeLoc + 'SkittleTree/UI/',
+    SKITTLE_TREE_LOC + 'SkittleCore/UI/',
+    SKITTLE_TREE_LOC + 'DNAStorage/UI/',
+    SKITTLE_TREE_LOC + 'SkittleTree/UI/',
 )
 TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.auth.context_processors.auth",

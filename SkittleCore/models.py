@@ -3,7 +3,6 @@ Created on Nov 30, 2012
 
 @author: Josiah
 '''
-from SkittleTree import settings
 from django.db import models
 import Graphs.models   #import ParentState
 import copy
