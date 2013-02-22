@@ -50,7 +50,7 @@ def ImportGFF(specimen, file):
                 annotation = Annotation()
                 #TODO: Handle when values come back null from not finding a matching chromosome!
                 annotation.Specimen = specimen
-                annotation.Chromosome = parseChromosomeName(validChromosomes, specimen, elements[0], elements[3]) #Related validChromosomes, specimen, chromosome, start position
+                annotation.Chromosome = parseChromosomeName(validChromosomes, elements[0]) #Related validChromosomes, chromosome
                 annotation.Source = elements[1]
                 annotation.Feature = elements[2]
                 annotation.Start = elements[3]
@@ -93,7 +93,7 @@ def ImportGFF(specimen, file):
     chunkAndStoreAnnotations(gff, annotations)
     
 #Parse which chromosome the specific annotation is associated with
-def parseChromosomeName(validChromosomes, specimen, seqname, start):
+def parseChromosomeName(validChromosomes, seqname):
     possibleMatches = list()
     
     for chromosome in validChromosomes: 
