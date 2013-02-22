@@ -131,3 +131,32 @@ def GetTreeList():
         tree.update(subtree)
         
     return tree
+    
+#Get list of chromosomes related to a specimen
+def GetRelatedChromosomes(specimen):
+    fastaFiles = FastaFiles.objects.filter(Specimen__Name = specimen)
+    
+    chromosomes = list()
+    
+    for fasta in fastaFiles:
+        chromosomes += [fasta.Chromosome]
+        
+    return chromosomes
+    
+#Get the fasta chunk file at the given start position for the specified chromosome
+def GetFastaChunkFile(specimen, chromosome, start):
+    fastaChunkFile = FastaChunkFiles.objects.filter(FastaFile__Specimen__Name = specimen, FastaFile__Chromosome = chromosome, Start = start)[:1]
+    
+    if fastaChunkFile:
+        return fastaChunkFile[0]
+    else:
+        return None
+        
+#Get the specimen in the database with the given name
+def GetSpecimen(specimen):
+    specimen = Specimen.objects.filter(Name = specimen)[:1]
+    
+    if specimen:
+        return specimen
+    else:
+        return None
