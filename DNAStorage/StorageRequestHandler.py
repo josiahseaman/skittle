@@ -71,7 +71,7 @@ def StorePng(request, fileObject):
     if fastaFile:
         fastaFile = fastaFile[0]
     else:
-        raise "No associated FastaFile for this PNG!"
+        raise Exception("No associated FastaFile for this PNG!")
         return None
     
     #Move temp file from temp storage into cache storage

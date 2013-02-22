@@ -23,7 +23,7 @@ var keyListener = function(e) {
             e.preventDefault() /
             halfWidth()
         }
-        if(e.keyCode==88){ // x
+        if(e.keyCode==88 || e.keyCode==190) { // x or .
             e.preventDefault() 
             doubleWidth()
         }
@@ -160,7 +160,7 @@ function mouseWheelDials(e) {
     }
 }
 // html widgets
-  $(document).ready(function() {
+  $(function() {
 
     $('#tools .radio-tools').click(function() {
         $('#tools .radio-tools').removeClass('active');
@@ -263,6 +263,7 @@ var getCurrentPageURL = function() {
         if (graphStatus[key].visible == true) graphString += key;
     }
     var currentURL = window.location.origin + "/browse/" + specimen + "/" + chromosome + "/?graphs=" + graphString + "&start=" + start + "&scale=" + scale + "&width=" + width 
+    if (graphStatus['h'].visible) currentURL += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd
     return currentURL
 }
 

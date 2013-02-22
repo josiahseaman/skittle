@@ -78,14 +78,17 @@ def getSearchSequenceFromRequestPacket(state):
         newState = copy.copy(state)
         newState.start = chunkStart
         newState.seq = FastaFiles.readFile(newState)
-        print "Length of new chunk: ", len(newState.seq)
+#        print "Length of new chunk: ", len(newState.seq)
     if chunkStop != newState.start:
         newState.readAndAppendNextChunk()
-        print "Length of new chunk: ", len(newState.seq)
+#        print "Length of new chunk: ", len(newState.seq)
         
-    
-    searchSeq = newState.seq[ state.searchStart - newState.start : state.searchStop - newState.start]
-    if not searchSeq: searchSeq = 'AAAAAAAA'
+    searchSeq =''
+    try:
+        searchSeq = newState.seq[ state.searchStart - newState.start : state.searchStop - newState.start]
+    except: pass
+    if not searchSeq: 
+        searchSeq = 'AAAAAAAAAA'
     entry = SequenceEntry()
     entry.seq = searchSeq
     return [entry]

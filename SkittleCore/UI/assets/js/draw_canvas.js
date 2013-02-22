@@ -66,8 +66,7 @@ var graphURL = function(graph,chunkOffset) {
     var startTopOfScreen = (start-8*width*scale) >  0 ? (start-8*width*scale) : 1
     var startChunk = ( ( Math.floor(startTopOfScreen/(65536*scale) ) + chunkOffset )*65536*scale + 1 );
     var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + scale;
-    if (graph =='m' || graph == 's') graphPath += "&width=" + Math.round(width/30)*30 
-    else if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + Math.round(width/10)*10 
+    if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + expRound(width,graphStatus[graph].widthTolerance)
     if (graph == 'h') graphPath += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd
     if (graphStatus[graph].colorPaletteSensitive) graphPath += "&colorPalette="+colorPalette
     return graphPath
@@ -126,6 +125,7 @@ var drawGraph = function(graph,offset,chunks) {
     switch (graph) {
         case "a": return drawAnnotations(offset,chunks)
         case "n": return drawNucDisplay(offset,chunks);
+        case "p": return drawSNP(offset,chunks);
         case "h": return drawSeqHighlight(offset,chunks);
         case "b": return drawNucBias(offset,chunks);
         case "m": return drawRMap(offset,chunks);
@@ -136,8 +136,7 @@ var drawGraph = function(graph,offset,chunks) {
 }
 var drawVerticalGraph = function(graph,offset,chunks) {
     var graphWidth = 0, graphHeight = 0;
-    if (graph =='m' || graph == 's') var stretchFactor = Math.round(width/30)*30/width //Math.ceil(65536/width)
-    else var stretchFactor = Math.round(width/10)*10/width //Math.ceil(65536/width)
+    var stretchFactor = expRound(width,graphStatus[graph].widthTolerance)/width //Math.ceil(65536/width)
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor(graph,i)
         if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
@@ -244,6 +243,31 @@ var drawSeqHighlight = function(offset,chunks) {
 
     return calculateOffsetWidth(width)
 }
+var drawSNP = function(offset,chunks) {
+    a.clearRect(0,0,1024,500)
+    for (var i=0;i<chunks;i++) {
+        var imageObj = imageRequestor("p",i)
+        if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
+        a.drawImage(imageObj,0,64*i) // render data on hidden canvas
+    }
+
+    var imageData = a.getImageData(0, 0, 1024, chunks*64);
+    var data = imageData.data;
+    var newImageData = b.createImageData(width,toSkixels(1000)) //create new image data with desired dimentions (width)
+    var newData = newImageData.data;
+
+    var startOffset = (Math.round(start/scale) - 1 - width*8 - Math.max( Math.floor((start/scale-width*8)/(65536) ), 0 )*65536 )*4;
+    for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
+        var y = x + startOffset
+        newData[x] = data[y] || 0;
+        newData[x + 1] = data[y + 1] || 0;
+        newData[x + 2] = data[y + 2] || 0;
+        newData[x + 3] = data[y + 3] || 0;
+    }
+    b.putImageData(newImageData, offset, 0);
+
+    return calculateOffsetWidth(width)
+}
 var drawNucBias = function(offset,chunks) {
     b.beginPath()
     b.rect(offset+20,0,20,500)
@@ -255,41 +279,37 @@ var drawNucBias = function(offset,chunks) {
 }
 var drawRMap = function(offset,chunks) {
     var offsetWidth = drawVerticalGraph("m",offset,chunks)
-    // for (var i=0;i<chunks;i++) {
-    //     var imageObj = imageRequestor("m",i)
-    //     if(!imageObj.complete) imageObj = imageUnrendered;
-    //     var vOffset = 8 - Math.round((start%65536)/(width*scale) - i*(65536/width));
-    //     b.drawImage(imageObj,offset,vOffset,fWidth,(65536/width)) // render data on hidden canvas
-    // }
     
     drawPixelStuff.push(function() { 
-        if ( width > 12) { //draw the red lines
-            // var remainingWidth = 0, megaColumn=0, subColumn=0;
-            // while (remainingWidth<(width-12)) {
-            //     remainingWidth += 2^megaColumn
-            //     subColumn++
-            //     if(subColumn>=12) {
-            //         subColumn=0
-            //         megaColumn++
-            //     } 
-            // }
-            var widthPosition = offset + 17.3*Math.log(width*scale) - 43.7;
+        if ( width >= 12) { //draw the red lines
+            var remainingWidth = 0, megaColumn=0, subColumn=0;
+            while (remainingWidth<(width-12)) {
+                remainingWidth += Math.pow(2,megaColumn)
+                subColumn++
+                if(subColumn>=12) {
+                    subColumn=0
+                    megaColumn++
+                } 
+            }
+            var widthPosition = offset + megaColumn*12+subColumn - 0 -(remainingWidth-width+12)/Math.pow(2,megaColumn)
+            // var widthPosition = offset + 17.315*Math.log(width*scale) - 42.85 - Math.min(0.9,(width*scale)/36);
+            widthPosition = Math.round(widthPosition*3)/3
             c.beginPath();
-            c.moveTo(widthPosition-1.18181818,0)
-            c.lineTo(widthPosition-1.18181818,500)
-            c.moveTo(widthPosition+0.18181818,0)
-            c.lineTo(widthPosition+0.18181818,500)
+            c.moveTo(widthPosition-0.18181818,0)
+            c.lineTo(widthPosition-0.18181818,500)
+            c.moveTo(widthPosition+1.18181818,0)
+            c.lineTo(widthPosition+1.18181818,500)
             c.strokeStyle = "#f00"
             c.lineWidth = 0.333333333
             c.stroke();
         }
     })
-    return Math.max(offsetWidth,100)
+    return Math.max(offsetWidth,116)
 }
 var drawSimHeat = function(offset,chunks) {
     a.clearRect(0,0,350,10000)
     var displayWidth = 300
-    var stretchFactor = Math.round(width/30)*30/width 
+    var stretchFactor = expRound(width,graphStatus['s'].widthTolerance)/width
     var lineHeight = Math.round(65536/width) //Math.round((Math.round(width/10)*10)/width*Math.ceil(65536/width));
     var displayWidth = Math.round(stretchFactor*displayWidth)
     for (var i=0;i<chunks;i++) {

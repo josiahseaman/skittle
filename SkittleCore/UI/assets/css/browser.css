@@ -3,6 +3,9 @@
 		font-family: 'Exo', Helvetica, sans-serif;
 		background: #000;
 	}
+	img {
+		border: none;
+	}
 	#logo {
 		position: absolute;
 		z-index: 100;
@@ -27,6 +30,12 @@
 	#logo span {
 		font-weight: 100;
 		text-shadow:#000 0 0 4px,#000 0 0 12px;
+	}
+	#logo:after {
+		content: url('../gfx/alpha.png');
+		position: absolute;
+		top:-10px;
+		left:230px;
 	}
 	#logo a,#logo a:visited,#logo a:hover,#logo a:active {
 		color:inherit;
@@ -307,7 +316,7 @@
 	#bug-report-form input[type=submit] {
 		font-size: 1.2em;
 		border-radius: 4px;
-		width:100px;
+		width:140px;
 		background:#257A00;
 		color:#fff;
 		float:left;

@@ -62,8 +62,8 @@ class ThreeMerDetectorState(ParentState):
 
 class SequenceEntry(models.Model):
     ownerGraph = models.ForeignKey(HighlighterState)
-    seq = models.CharField(max_length=1000, default='AAAAAAAA')
-    minimumPercentage = models.FloatField(default = .8) 
+    seq = models.CharField(max_length=1000, default='AAAAAAAAAA')
+    minimumPercentage = models.FloatField(default = .6) 
     color = models.CommaSeparatedIntegerField(max_length=3, default=None, null=True)
     
             

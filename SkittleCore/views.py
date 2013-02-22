@@ -17,9 +17,11 @@ def browse(request, specimen="hg18",chromosome="chrY-sample"):
     zoom = request.GET.get('zoom',1)
     graphs = request.GET.get('graphs',"n")
     colorPalette = request.GET.get('colorPalette','Classic')
+    selectionStart = request.GET.get('searchStart',1)
+    selectionEnd = request.GET.get('searchStop',1)
 
     fileLength = GetChromosomeLength(specimen,chromosome) 
-    context = {'availableGraphs':GraphRequestHandler.availableGraphs,'specimen':specimen,'chromosome':chromosome,'colorPalette':colorPalette,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength}
+    context = {'availableGraphs':GraphRequestHandler.availableGraphs,'specimen':specimen,'chromosome':chromosome,'colorPalette':colorPalette,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength,'selectionStart':selectionStart,'selectionEnd':selectionEnd}
     return render(request, 'browse.html',context)
 
 @cache_control(must_revalidate=False, max_age=3600)
@@ -28,9 +30,9 @@ def graph(request, specimen="hg18",chromosome="chrY-sample"):
     state.chromosome = chromosome
     state.specimen = specimen
 
-    state.start = int(request.GET.get('start',1))
-    state.width = int(request.GET.get('width',100))
-    state.scale = int(request.GET.get('scale',1))
+    state.start = max(1,int(request.GET.get('start',1)))
+    state.width = max(12,int(request.GET.get('width',100)))
+    state.scale = max(1,int(request.GET.get('scale',1)))
     state.requestedGraph = request.GET.get('graph','n')
     state.colorPalette = request.GET.get('colorPalette','Classic')
     if state.requestedGraph == 'h':
@@ -57,6 +59,6 @@ def state(request):
         "m":{name:"Repeat Map",visible:false,isRasterable:false}
     }''' 
     json = "graphStatus = " + simplejson.dumps(GraphRequestHandler.generateGraphListForServer())
-    json += ";graphOrder = ['a','n','h','b','t','o','m','s'];"
+    json += ";graphOrder = ['a','n','p','h','b','t','o','m','s'];"
     return HttpResponse(json,content_type="application/json")
 

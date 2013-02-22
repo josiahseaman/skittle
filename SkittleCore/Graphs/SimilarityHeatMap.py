@@ -13,7 +13,7 @@ from PixelLogic import twoSidedSpectrumColoring
 import copy
 import math
 
-registerGraph('s', "Similarity Heatmap", __name__, False)
+registerGraph('s', "Similarity Heatmap", __name__, False, False, 0.4)
 
 def prettyPrint(heatMap):
     for line in heatMap:
@@ -55,7 +55,7 @@ def calculateOutputPixels(state, heatMapState = SimilarityHeatMapState()):
 ##        prettyPrint(heatMap)
 ##        print
 #        heatMap = rowColumnCorrelation(heatMap)
-    median = medianFromAllLines(heatMap)
+    median = 0.0 #medianFromAllLines(heatMap)
 
     pixels = twoSidedSpectrumColoring(heatMap, median)
     return pixels
