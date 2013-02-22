@@ -17,9 +17,11 @@ def browse(request, specimen="hg18",chromosome="chrY-sample"):
     zoom = request.GET.get('zoom',1)
     graphs = request.GET.get('graphs',"n")
     colorPalette = request.GET.get('colorPalette','Classic')
+    selectionStart = request.GET.get('searchStart',1)
+    selectionEnd = request.GET.get('searchStop',1)
 
     fileLength = GetChromosomeLength(specimen,chromosome) 
-    context = {'availableGraphs':GraphRequestHandler.availableGraphs,'specimen':specimen,'chromosome':chromosome,'colorPalette':colorPalette,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength}
+    context = {'availableGraphs':GraphRequestHandler.availableGraphs,'specimen':specimen,'chromosome':chromosome,'colorPalette':colorPalette,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength,'selectionStart':selectionStart,'selectionEnd':selectionEnd}
     return render(request, 'browse.html',context)
 
 @cache_control(must_revalidate=False, max_age=3600)

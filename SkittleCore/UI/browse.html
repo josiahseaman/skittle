@@ -96,7 +96,7 @@
 		<p>(your current view settings will automatically be sent with this report)</p>
 		<input type="hidden" name="feedback_current_view" id="feedback_current_view">
 		{% csrf_token %}
-		<input type="submit">
+		<input type="submit" value="Send Feedback">
 	</form>
 	</div>
 	<script type="text/javascript">
@@ -118,7 +118,8 @@
     zoom  = {{ zoom }};
     fileLength = {{ fileLength }};
     skixelsOnScreen = toSkixels($('#canvasContainer').height())*width;
-    selectionStart = selectionEnd = 1
+    selectionStart = {{ selectionStart }}
+    selectionEnd = {{ selectionEnd }}
 
     // if graphs are specified in the url set their visibility
     var initialGraphs = "{{ graphs }}".split('')

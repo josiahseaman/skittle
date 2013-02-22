@@ -5,7 +5,7 @@ from models import RequestPacket
 class TestServerLaunch(TestCase):
     def test_index(self):
         resp = self.client.get('/')
-        self.assertEqual(resp.status_code, 301)
+        self.assertEqual(resp.status_code, 200)
         
     def test_browse(self):
         resp = self.client.get('/browse/')

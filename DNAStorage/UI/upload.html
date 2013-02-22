@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load nti_filters %}
+{% block pageTitle %}DNASkittle|Select a Genome{% endblock %}
+{% block styles %}
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/popover.css">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/jquery-ui-1.10.1.custom.min.css">
+	<style type="text/css">
+		.container {
+			position: relative;
+			margin-top: 70px;
+			color:#ccc;
+			margin-left: 3.5em;
+		}
+		p,input {
+			font-family: trebuchet,'trebuchet ms','myriad pro','helvetica neue',helvetica, ariel, sans-serif
+		}
+		h2 {
+			font-size: 2.3em;
+			font-weight: 300;
+			margin-bottom: 0.2em
+		}
+		h3 {
+			font-size: 2em;
+			margin-bottom: 0.2em;
+			font-weight: 300;
+			color:#fda;
+		}
+		h4 {
+			font-size: 1.3em;
+			margin-bottom: 0.2em;
+			font-weight: 300;
+			color:#fda;
+		}
+		#uploadForm {
+			width:450px;
+			line-height: 2.2;
+			float: left;
+		}
+		#info {
+			max-width: 600px;
+			margin-left: 450px;
+			padding:2em;
+			border-left: 1px solid #fff;
+		}
+		#info>h3 {
+			margin-top: 0;
+		}
+		#templates {
+			display: none;
+		}
+		input {
+			font-size: 1.1em;
+		}
+		input[type="text"] {
+			background: #333;
+			color:#fff;
+			border: 1px solid #444;
+			padding: 0.2em;
+			border-radius:4px;
+			width:200px;
+
+		}
+		input[type="button"] {
+			border: default;
+			background: default;
+
+		}
+		.vertical-grid input[type="text"] {
+			width:200px;
+		}
+		.vertical-grid label {
+			display: inline-block;
+			width:150px;
+			padding-right: 0.5em;
+			text-align: right;
+			clear:left;
+		}
+		#taxonomyBuilder .taxonomy {
+			color:#8f5;
+			position: relative;
+			cursor: pointer;
+		}
+		#taxonomyBuilder .taxonomy::after {
+			content:" > ";
+			color:#aaa;
+		}
+		#taxonomyBuilder .taxonomy:nth-child(4)::after {
+			content:"";
+		}
+		#level0:hover::before {
+			content: "KINGDOM";
+			color:#999;
+			font-size: 0.7em;
+			font-weight: bold;
+			position: absolute;
+			top:1.2em;
+		}
+		#level1:hover::before {
+			content: "CLASS";
+			color:#999;
+			font-size: 0.7em;
+			font-weight: bold;
+			position: absolute;
+			top:1.2em;
+		}
+		#level2:hover::before {
+			content: "GENUS";
+			color:#999;
+			font-size: 0.7em;
+			font-weight: bold;
+			position: absolute;
+			top:1.2em;
+		}
+		#level3:hover::before {
+			content: "SPECIES";
+			color:#999;
+			font-size: 0.7em;
+			font-weight: bold;
+			position: absolute;
+			top:1.2em;
+		}
+		.headingbutton {
+			font-size: 0.5em;
+			margin-left: 1em;
+			vertical-align: middle;
+		}
+
+	</style>
+	{% endblock %}
+	{% block scripts %}
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="{{ STATIC_URL }}js/jquery-ui-1.10.1.custom.min.js"></script>
+	<script src="{{ STATIC_URL }}js/taxonomy.json"></script>
+	<script type="text/javascript">
+
+
+	</script>
+	{% endblock %}
+{% block content %}
+
+	<div class="container">
+		<h2>Upload a Genome</h2>
+		<form id="uploadForm">
+			<div class="vertical-grid">
+			<label for="fastaPublic">Availability:</label>
+			<input type="radio" name="fastaPublic" value="public" checked>Public
+			<input type="radio" name="fastaPublic" value="private">Private
+			<br>
+			<label for="fastaName">Genome Name:</label><input type="text" name="fastaName" placeholder="(e.g. Human Genome)" class="primary"><br>
+			<label for="fastaSpecimen">Specimen Name:</label><input type="text" name="fastaSpecimen" placeholder="(e.g. hg19)" class="primary"><br>
+			<label for="fastaSource">Source:</label><input type="text" name="fastaSource" value=
+			"{{ user.name }}"><br>
+			<label for="fastaDate">Date Sequenced:</label><input type="text" name="fastaDate" placeholder="mo. year"><br>
+		</div>
+			<h4>Taxonomy:</h4>
+			<input type="checkbox" name="uncategorized" id="uncategorized" checked><label for="uncategorized">Uncategorized</label>
+			<div id="taxonomyBuilder" style="display:none;">
+				
+			</div>
+
+
+			<h3>Chromosomes:</h3>
+			<div id="chromosomes">
+			<div class="chromosome">
+				<input type="text" name="chrName" placeholder="Name" class="primary">
+				<input type="button" value="upload file..." class="">
+			</div>
+			</div>
+		</form>
+		<div id="info">
+			<h3>Info</h3>
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+			tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+			consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+			cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+			proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+			^.*(Phylum:|Order:|Family:|Subclass:|Infraclass:|Tribe:).*[\r\n]
+			^.*(Genus:  )(\w*) 
+			{"$2"},
+		</div>
+	</div>
+	<div id="templates">
+		<div class="chromosome">
+			<input type="text" name="chrName" placeholder="Name" class="primary">
+			<input type="button" value="upload file..." class="">
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+	var levels = ['Kingdom','Class','Genus','Species']
+	$(function() {
+		$('#uncategorized').on('click',function(){
+			if ($(this).is(':checked')) {
+				$('#taxonomyBuilder').hide()
+			}
+			else {
+				$('#taxonomyBuilder').show()
+				if (!$('#taxonomyBuilder #level0').length) {
+					addLevel(0);
+				}
+			}
+		})
+		$('#addChr').on('click',function(){
+			$('#templates .chromosome').clone().appendTo($('#chromosomes'))
+		})
+		$('.deleteChr').on('click',function(){
+			$(this).parent().remove()
+		})
+
+	})
+	var getTypeaheadValues = function(level) {
+		var taxonomy = currentTaxonomy
+		for (var i=0;i<level;i++) {
+			taxonomy = taxonomy[$('#taxonomyBuilder #level'+i).text()]
+			if (!taxonomy) return []
+		}
+		if (!taxonomy) return []
+		var list = []
+		$.each(taxonomy,function(i,v){
+			list.push(i)
+		})
+		return list
+	}
+	var addLevel = function(level) {
+		levelInput = addLevelInput(level);
+		levelInput
+			.select()
+			.autocomplete({source:getTypeaheadValues(level),minLength: 0})
+			.blur(function() {
+				if ($(this).val().length>0) {
+					var levelSpan = $('<span id="level'+level+'" class="taxonomy">'+$(this).val()+'</span>')
+					levelSpan
+						.insertAfter($(this))
+						.on('click',function(){
+							$('#taxonomyBuilder input').remove()
+							var level = $(this).prop('id').slice(-1)
+							addLevel(level)
+						})
+						.nextAll().remove()
+					$(this).remove()
+					level++
+					if (level < 4) addLevel(level);
+				}
+			})
+	}
+	var addLevelInput = function(level) {
+		var value = ($('#taxonomyBuilder #level'+level).length>0) ? $('#taxonomyBuilder #level'+level).text() : "";
+		var levelInput = $('<input type="text" id="level'+level+'" placeholder="' + levels[level] + '" value="'+value+'">')
+		var insertPoint = $('#taxonomyBuilder #level'+level)
+		if (insertPoint.length>0) {
+			levelInput.insertAfter(insertPoint)
+			insertPoint.remove()
+		}
+		else {
+			$('#taxonomyBuilder').append(levelInput)
+		}
+		return levelInput;
+	}
+	</script>
+
+{% endblock %}
