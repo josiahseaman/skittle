@@ -8,6 +8,7 @@ from django.db import models
 import Graphs.models   #import ParentState
 import copy
 from FastaFiles import readFile
+import DNAStorage.StorageRequestHandler as StorageRequestHandler
 
 chunkSize = 65536
 '''
@@ -44,6 +45,9 @@ class RequestPacket(models.Model):
     
     searchStart = models.IntegerField(default=10)
     searchStop  = models.IntegerField(default=20)
+    
+    def getFastaFilePath(self):
+        return StorageRequestHandler.GetFastaFilePath(self.specimen, self.chromosome, self.start)
 
     def getActiveGraphSettings(self):
         return Graphs.models.ParentState.objects.filter(session = self, visible = True)

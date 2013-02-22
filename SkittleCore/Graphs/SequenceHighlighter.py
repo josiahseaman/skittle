@@ -83,9 +83,12 @@ def getSearchSequenceFromRequestPacket(state):
         newState.readAndAppendNextChunk()
 #        print "Length of new chunk: ", len(newState.seq)
         
-    
-    searchSeq = newState.seq[ state.searchStart - newState.start : state.searchStop - newState.start]
-    if not searchSeq: searchSeq = 'AAAAAAAA'
+    searchSeq =''
+    try:
+        searchSeq = newState.seq[ state.searchStart - newState.start : state.searchStop - newState.start]
+    except: pass
+    if not searchSeq: 
+        searchSeq = 'AAAAAAAAAA'
     entry = SequenceEntry()
     entry.seq = searchSeq
     return [entry]
