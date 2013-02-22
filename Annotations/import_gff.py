@@ -1,6 +1,6 @@
 from django.db import models
 from models import Annotation, GFF
-from DNAStorage.StorageRequestHandler import GetRelatedChromosomes, GetFastaChunkFile, GetSpecimen
+from DNAStorage.StorageRequestHandler import GetRelatedChromosomes, GetFastaChunkFile, GetSpecimen, StoreAnnotationChunk
 from django.conf import settings
 
 import sys, math, re
@@ -8,6 +8,9 @@ import sys, math, re
 #Import a GFF for a specific specimen
 def ImportGFF(specimen, file):
     gff = GFF()
+    fileName = file.split('/')
+    gff.FileName = fileName[-1].split('.')[0]
+    print gff.FileName
     #Get the specimen this annotation file is for
     gff.Specimen = GetSpecimen(specimen)
     #Set default version type
@@ -28,6 +31,7 @@ def ImportGFF(specimen, file):
         if counter == 10:
             break
     annotationFile.close()
+    gff.save()
     
     #Grab a list of chromosomes related to this specimen
     validChromosomes = GetRelatedChromosomes(specimen)
@@ -51,6 +55,7 @@ def ImportGFF(specimen, file):
                 #TODO: Handle when values come back null from not finding a matching chromosome!
                 annotation.Specimen = specimen
                 annotation.Chromosome = parseChromosomeName(validChromosomes, elements[0]) #Related validChromosomes, chromosome
+                annotation.ID = counter
                 annotation.Source = elements[1]
                 annotation.Feature = elements[2]
                 annotation.Start = elements[3]
@@ -75,6 +80,8 @@ def ImportGFF(specimen, file):
                     annotation.Attribute = elements[8:]
                 else:
                     annotation.Attribute = None
+                    
+                annotations.append(annotation)
                 
                 if counter % 10000 == 0:
                     sys.stdout.write('.')
@@ -113,7 +120,27 @@ def parseChromosomeName(validChromosomes, seqname):
         
 #Take a sorted list of annotations and chunk it into json chunks
 def chunkAndStoreAnnotations(gff, annotations):
-    print ""
+    print "START CHUNKING..."
+    chunkStart = 1
+    chunkEnd = settings.CHUNK_SIZE
+    jsonStart = "\"" + gff.FileName + "\":{"
+    chunk = jsonStart
+    for annotation in annotations:
+        if int(annotation.Start) <= chunkEnd:
+            frame = annotation.Frame or "null"
+            if annotation.Attribute:
+                attribute = "\"" + ''.join(annotation.Attribute).replace('\n', '') + "\""
+            else:
+                attribute = "null"
+            chunk += str(annotation.ID) + ":[\"" + annotation.Source + "\",\"" + annotation.Feature + "\"," + str(annotation.Start) + "," + str(annotation.End) + "," + str(annotation.Score) + ",\"" + annotation.Strand + "\"," + str(frame) + "," + attribute + "],"
+        else:
+            chunk = chunk[:-1] +  "}"
+            StoreAnnotationChunk(gff, chunk)
+            chunk = jsonStart
+            chunkStart = chunkEnd + 1
+            chunkEnd = chunkStart + settings.CHUNK_SIZE - 1
+    print "DONE CHUNKING!"
+            
     
 def getRoundedIndex(index):
     return int(math.floor(int(index) / settings.CHUNK_SIZE) * settings.CHUNK_SIZE) + 1

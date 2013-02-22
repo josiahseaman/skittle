@@ -12,11 +12,20 @@ class GFF(models.Model):
     RNA = models.TextField(null=True, blank=True)
     Protein = models.TextField(null=True, blank=True)
     SequenceRegion = models.CharField(max_length=255, null=True, blank=True)
+    FileName = models.CharField(max_length=255)
+    
+# Database of all gff chunk files storing json
+class AnnotationJsonChunk(models.Model):
+    GFF = models.ForeignKey(GFF)
+    Chromosome = models.CharField(max_length=25)
+    Start = models.IntegerField()
+    IsInRamDisk = models.BooleanField(default=False)
 
 # Object for storing temporary annotations
 class Annotation():
     Specimen = models.CharField(max_length=255)
-    Chromosome = models.CharField(max_length=255)
+    Chromosome = models.CharField(max_length=25)
+    ID = models.BigIntegerField()
     Source = models.CharField(max_length=255)
     Feature = models.CharField(max_length=50)
     Start = models.BigIntegerField()
