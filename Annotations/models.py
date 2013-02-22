@@ -15,7 +15,8 @@ class GFF(models.Model):
 
 # Object for storing temporary annotations
 class Annotation():
-    Connection = models.ForeignKey(FastaChunkFiles)
+    Specimen = models.CharField(max_length=255)
+    Chromosome = models.CharField(max_length=255)
     Source = models.CharField(max_length=255)
     Feature = models.CharField(max_length=50)
     Start = models.BigIntegerField()

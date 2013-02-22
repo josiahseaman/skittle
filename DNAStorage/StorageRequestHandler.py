@@ -157,6 +157,6 @@ def GetSpecimen(specimen):
     specimen = Specimen.objects.filter(Name = specimen)[:1]
     
     if specimen:
-        return specimen
+        return specimen[0]
     else:
         return None

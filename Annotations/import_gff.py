@@ -49,7 +49,8 @@ def ImportGFF(specimen, file):
 
                 annotation = Annotation()
                 #TODO: Handle when values come back null from not finding a matching chromosome!
-                annotation.Connection = parseConnection(validChromosomes, specimen, elements[0], elements[3]) #Related validChromosomes, specimen, chromosome, start position
+                annotation.Specimen = specimen
+                annotation.Chromosome = parseChromosomeName(validChromosomes, specimen, elements[0], elements[3]) #Related validChromosomes, specimen, chromosome, start position
                 annotation.Source = elements[1]
                 annotation.Feature = elements[2]
                 annotation.Start = elements[3]
@@ -91,8 +92,8 @@ def ImportGFF(specimen, file):
     
     chunkAndStoreAnnotations(gff, annotations)
     
-#Parse which FastaChunkFile the specific annotation is associated with
-def parseConnection(validChromosomes, specimen, seqname, start):
+#Parse which chromosome the specific annotation is associated with
+def parseChromosomeName(validChromosomes, specimen, seqname, start):
     possibleMatches = list()
     
     for chromosome in validChromosomes: 
@@ -101,13 +102,13 @@ def parseConnection(validChromosomes, specimen, seqname, start):
             
     if len(possibleMatches) == 1:
         #Grab fastachunk for one and only match
-        return GetFastaChunkFile(specimen, possibleMatches[0], getRoundedIndex(start))
+        return possibleMatches[0]
     else:
         #Look at possible matches and try to guess at the best one
         #First, why don't we remove all non-numbers from both comparisons
         for possible in possibleMatches:
             if re.sub("[^0-9]", "", possible) == re.sub("[^0-9]", "", seqname):
-                return GetFastaChunkFile(specimen, possible, getRoundedIndex(start))
+                return possible
         return None
         
 #Take a sorted list of annotations and chunk it into json chunks
