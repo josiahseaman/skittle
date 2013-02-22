@@ -3,6 +3,9 @@
 		font-family: 'Exo', Helvetica, sans-serif;
 		background: #000;
 	}
+	img {
+		border: none;
+	}
 	#logo {
 		position: absolute;
 		z-index: 100;
@@ -313,7 +316,7 @@
 	#bug-report-form input[type=submit] {
 		font-size: 1.2em;
 		border-radius: 4px;
-		width:100px;
+		width:140px;
 		background:#257A00;
 		color:#fff;
 		float:left;
