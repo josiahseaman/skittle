@@ -62,7 +62,7 @@ def multiplyGreyscale(p, greyMax = 255):
     return p
 
 def squishImage(pixels):
-    if isinstance(pixels, list):
+    if isinstance(pixels, list) and pixels: #not empty
         if isinstance(pixels[0], list):
             return reduce(lambda x,y: x + squishImage(y), pixels, [])
         else:

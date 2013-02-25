@@ -65,6 +65,7 @@ def handleRequest(state):
     if png is None:
         pixels = calculatePixels(state)
 #        print pixels[:10]
+        print "Saving to width =", state.width
         png = convertToPng(state, pixels, isRasterGraph(state))
     print 'Done'
     return png
