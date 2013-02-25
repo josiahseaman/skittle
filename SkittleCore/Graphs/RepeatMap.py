@@ -166,7 +166,7 @@ def squishStoredMaps(state, repeatMapState):
     data = []
     if filepath:
         decoder = Reader(filename=filepath)
-        data = list(decoder.asFloat(0.5)[2])
+        data = list(decoder.asFloat(1.0)[2])
     else:
         data = calculateOutputPixels(state, repeatMapState)
         convertToPng(state, data )#store the newly created data to file
