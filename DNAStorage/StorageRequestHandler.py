@@ -1,5 +1,6 @@
 from models import FastaFiles, FastaChunkFiles, ImageFiles, Specimen
-from SkittleTree import settings
+from Annotations.models import GFF
+from django.conf import settings
 import shutil, os, os.path, re
 
 #Returns if the system contains the requested fasta file. This does NOT return full data associated with it for speed purposes.
@@ -15,7 +16,7 @@ def GetFastaFilePath(specimen, chromosome, start):
         if fastaFile[0].IsInRamDisk:
             fastaFilePath = None
         else:
-            fastaFilePath = settings.SkittleTreeLoc + "DNAStorage/fasta/" + fastaFile[0].FastaFile.Specimen.Kingdom + "/" + fastaFile[0].FastaFile.Specimen.Class + "/" + fastaFile[0].FastaFile.Specimen.Genus + "/" + fastaFile[0].FastaFile.Specimen.Species + "/" + fastaFile[0].FastaFile.Specimen.Name + "/" + fastaFile[0].FastaFile.Chromosome + "/" + str(fastaFile[0].Start) + ".fasta"
+            fastaFilePath = settings.SKITTLE_TREE_LOC + "DNAStorage/fasta/" + fastaFile[0].FastaFile.Specimen.Kingdom + "/" + fastaFile[0].FastaFile.Specimen.Class + "/" + fastaFile[0].FastaFile.Specimen.Genus + "/" + fastaFile[0].FastaFile.Specimen.Species + "/" + fastaFile[0].FastaFile.Specimen.Name + "/" + fastaFile[0].FastaFile.Chromosome + "/" + str(fastaFile[0].Start) + ".fasta"
             
         return fastaFilePath
     else: return None
@@ -55,7 +56,7 @@ def GetPngFilePath(request):
         if pngFile[0].IsInRamDisk:
             pngFilePath = None
         else:
-            pngFilePath = settings.SkittleTreeLoc + "DNAStorage/png/" + pngFile[0].FastaFile.Specimen.Kingdom + "/" + pngFile[0].FastaFile.Specimen.Class + "/" + pngFile[0].FastaFile.Specimen.Genus + "/" + pngFile[0].FastaFile.Specimen.Species + "/" + pngFile[0].FastaFile.Specimen.Name + "/" + pngFile[0].FastaFile.Chromosome + "/" + generatePngName(graph, start, scale, charsPerLine)
+            pngFilePath = settings.SKITTLE_TREE_LOC + "DNAStorage/png/" + pngFile[0].FastaFile.Specimen.Kingdom + "/" + pngFile[0].FastaFile.Specimen.Class + "/" + pngFile[0].FastaFile.Specimen.Genus + "/" + pngFile[0].FastaFile.Specimen.Species + "/" + pngFile[0].FastaFile.Specimen.Name + "/" + pngFile[0].FastaFile.Chromosome + "/" + generatePngName(graph, start, scale, charsPerLine)
         return pngFilePath
     else: 
         return None
@@ -75,7 +76,7 @@ def StorePng(request, fileObject):
         return None
     
     #Move temp file from temp storage into cache storage
-    pngFilePath = settings.SkittleTreeLoc + "DNAStorage/png/" + fastaFile.Specimen.Kingdom + "/" + fastaFile.Specimen.Class + "/" + fastaFile.Specimen.Genus + "/" + fastaFile.Specimen.Species + "/" + fastaFile.Specimen.Name + "/" + fastaFile.Chromosome + "/" + generatePngName(graph, start, scale, charsPerLine)
+    pngFilePath = settings.SKITTLE_TREE_LOC + "DNAStorage/png/" + fastaFile.Specimen.Kingdom + "/" + fastaFile.Specimen.Class + "/" + fastaFile.Specimen.Genus + "/" + fastaFile.Specimen.Species + "/" + fastaFile.Specimen.Name + "/" + fastaFile.Chromosome + "/" + generatePngName(graph, start, scale, charsPerLine)
     shutil.copyfile(fileObject.name, pngFilePath)
     
     #Log this file in the database
@@ -89,6 +90,10 @@ def StorePng(request, fileObject):
     imageFile.save()
     
     return imageFile
+    
+#Take a json annotation chunk and store it in the correct disk location and create a reference to it in the DB
+def StoreAnnotationChunk(gff, chunk):
+    pass
 
 #Delete the database entries and PNG files associated with the given graph
 def DeleteCache(graph):
@@ -97,7 +102,7 @@ def DeleteCache(graph):
     
     #Now remove PNG files
     #CD into the folder where this file is located as it should be the DNAStorage folder
-    workingDir = settings.SkittleTreeLoc + "DNAStorage/png/"
+    workingDir = settings.SKITTLE_TREE_LOC + "DNAStorage/png/"
     
     graphString = graph + "_"
     
@@ -131,3 +136,32 @@ def GetTreeList():
         tree.update(subtree)
         
     return tree
+    
+#Get list of chromosomes related to a specimen
+def GetRelatedChromosomes(specimen):
+    fastaFiles = FastaFiles.objects.filter(Specimen__Name = specimen)
+    
+    chromosomes = list()
+    
+    for fasta in fastaFiles:
+        chromosomes += [fasta.Chromosome]
+        
+    return chromosomes
+    
+#Get the fasta chunk file at the given start position for the specified chromosome
+def GetFastaChunkFile(specimen, chromosome, start):
+    fastaChunkFile = FastaChunkFiles.objects.filter(FastaFile__Specimen__Name = specimen, FastaFile__Chromosome = chromosome, Start = start)[:1]
+    
+    if fastaChunkFile:
+        return fastaChunkFile[0]
+    else:
+        return None
+        
+#Get the specimen in the database with the given name
+def GetSpecimen(specimen):
+    specimen = Specimen.objects.filter(Name = specimen)[:1]
+    
+    if specimen:
+        return specimen[0]
+    else:
+        return None

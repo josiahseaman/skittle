@@ -1,11 +1,11 @@
 import sys, os, os.path, re, shutil
 from models import FastaFiles, FastaChunkFiles, Specimen
 from StorageRequestHandler import HasFastaFile
-from SkittleTree import settings
+from django.conf import settings
 
 #Take a fasta file, split it and sort it into the correct folders
 def splitAndSort(file, storageLocation, workingLocation):       
-    bp = 65536
+    bp = settings.CHUNK_SIZE
     
     #Take the file name and split it at each delim.
     #Then check to make sure that we have all 6 identifiers:
@@ -118,7 +118,7 @@ def splitAndSort(file, storageLocation, workingLocation):
 #----------------------------------------------------------------------------------------
 def run():
     #CD into the folder where this file is located as it should be the DNAStorage folder
-    workingDir = settings.SkittleTreeLoc + "DNAStorage"
+    workingDir = settings.SKITTLE_TREE_LOC + "DNAStorage"
     os.chdir(workingDir)
 
     #Look to see if there are any files in to_import
