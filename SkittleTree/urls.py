@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     url(r'^discover/', include('DNAStorage.urls')),
     (r'^$', redirect_to, {'url': '/browse/'}),
     # url(r'^$', include('SkittleCore.urls')),
+    url(r'^googlef44684f34c2340e5.html$', 'SkittleTree.views.google'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
@@ -20,5 +21,4 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'^sendFeedback$', 'SkittleTree.views.feedbackSend')
-    url(r'^googlef44684f34c2340e5.html$', 'SkittleTree.views.google')
 )
