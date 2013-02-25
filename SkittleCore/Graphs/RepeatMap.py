@@ -119,7 +119,10 @@ def logRepeatMap(state, repeatMapState):
             rgbChannels = zip(*original)
             
             #iterate horizontally within a mega-column
-            for offset in range(skixelsPerSample/growthPower, skixelsPerSample): #range 5 - 12 but indexing starts at 0
+            startingOffset = skixelsPerSample / growthPower
+            if scale == 1:
+                startingOffset = 1
+            for offset in range(startingOffset, skixelsPerSample): #range 12 - 24 but indexing starts at 0
                 offsetSequence = scaledSequence[offset : offset + skixelsPerSample]
                 if len(offsetSequence) == len(original):
                     targetChannels = zip(*offsetSequence)
@@ -172,9 +175,6 @@ def squishStoredMaps(state, repeatMapState):
         convertToPng(state, data )#store the newly created data to file
     state.width = oldWidth
         
-    print "REPEAT MAP DATA!!"
-#    print data
-    
     #averaging the lines
     newData = []
     nLines = int(math.ceil(oldWidth / float(skixelsPerSample)))
