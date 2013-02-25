@@ -33,3 +33,6 @@ def feedbackSend(request):
             return HttpResponse("Something went wrong: " + str(e))
     else:
         return HttpResponse("Something went wrong.")
+
+def google(request):
+    return render(request, 'googlef44684f34c2340e5.html')
