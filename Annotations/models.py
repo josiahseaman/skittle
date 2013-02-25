@@ -1,5 +1,5 @@
 from django.db import models
-from DNAStorage.models import FastaChunkFiles, Specimen
+from DNAStorage.models import Specimen
 
 # Database for storing imported GFF information
 class GFF(models.Model):
