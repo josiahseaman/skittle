@@ -4,14 +4,18 @@ Created on Nov 29, 2012
 '''
 from Utilities.debug import startDebug
 import NucleotideDisplay
-from SkittleGraphTransforms import correlationMap, countDepth, chunkUpList, countNucleotides, normalizeDictionary, countListToColorSpace, pearsonCorrelation
+from SkittleGraphTransforms import correlationMap, countDepth, chunkUpList, countNucleotides, normalizeDictionary, countListToColorSpace, pearsonCorrelation, average
 from models import RepeatMapState
-from SkittleCore.models import RequestPacket
+from SkittleCore.models import RequestPacket, chunkSize
 from SkittleCore.GraphRequestHandler import registerGraph
 import math
 from random import choice
+from DNAStorage.StorageRequestHandler import GetPngFilePath
+from SkittleCore.png import Reader
+from SkittleCore.PngConversionHelper import convertToPng
 
 registerGraph('m', "Repeat Map", __name__, False, False, 0.4)
+skixelsPerSample = 24
 '''
 These are the functions that are specific to the use of RepeatMap and not generally applicable.  
 These functions use RepeatMapState to emulate an object with state.
@@ -56,7 +60,6 @@ def addDictionaries(jim, larry):
 def logRepeatMap(state, repeatMapState):
     freq = []
     start = 0
-    skixelsPerSample = 24
     growthPower = 2
     height = repeatMapState.height(state, state.seq)
     state.readAndAppendNextChunk()
@@ -154,10 +157,43 @@ def oldRepeatMap(state, repeatMapState):
             freq[h][w] = countMatches(state.seq, offset, offset + w + repeatMapState.F_start, lineSize)
     return freq
 
+def squishStoredMaps(state, repeatMapState):
+    #read in the one png at fixed width= skixelsPerSample
+    oldWidth = state.width * state.scale
+    state.width = skixelsPerSample
+    state.scale = 1
+    filepath = GetPngFilePath(state)
+    data = []
+    if filepath:
+        decoder = Reader(filename=filepath)
+        data = list(decoder.asFloat(1.0)[2])
+    else:
+        data = calculateOutputPixels(state, repeatMapState)
+        convertToPng(state, data )#store the newly created data to file
+    state.width = oldWidth
+        
+    print "REPEAT MAP DATA!!"
+#    print data
+    
+    #averaging the lines
+    newData = []
+    nLines = int(math.ceil(oldWidth / float(skixelsPerSample)))
+    for start in range(0, chunkSize, oldWidth):
+        startLine = int(math.floor( start / float(skixelsPerSample)))
+        stopLine = startLine + nLines
+        sample = zip(*data[startLine:stopLine])
+        finalLine = [average(x) for x in sample]
+        newData.append(finalLine)
+    return newData
 
 def calculateOutputPixels(state, repeatMapState = RepeatMapState()):
     assert isinstance(repeatMapState, RepeatMapState)
     assert isinstance(state, RequestPacket)
+
+    if state.nucleotidesPerLine() != skixelsPerSample:
+        return squishStoredMaps(state, repeatMapState)
+
+
 #    state.seq = generateRepeatDebugSequence(53, 400, 1)
     scores = logRepeatMap(state, repeatMapState)
     return scores
