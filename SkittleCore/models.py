@@ -17,7 +17,7 @@ This state packet is equivalent to an URL or a request from the Skittle website.
 class RequestPacket(models.Model):
     #TODO: user = models.ForeignKey(User)
     #TODO: session
-    specimen = models.CharField(max_length=200, default='hg19')
+    specimen = models.CharField(max_length=200, default='hg18')
     chromosome = models.CharField(max_length=200, default='chrY-sample')
     '''It is debatable whether or not the sequence should be stored in the state
     variable since it is only referenced at the first level operation.  Past the first
@@ -73,7 +73,7 @@ class RequestPacket(models.Model):
 
    
 class StatePacket(RequestPacket): 
-    specimen = 'hg19'
+    specimen = 'hg18'
     chromosome = 'chrY-sample'
     width =  200
     scale = 1
