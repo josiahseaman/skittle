@@ -136,14 +136,14 @@ var drawGraph = function(graph,offset,chunks) {
 }
 var drawVerticalGraph = function(graph,offset,chunks) {
     var graphWidth = 0, graphHeight = 0;
-    var stretchFactor = expRound(width,graphStatus[graph].widthTolerance)/width //Math.ceil(65536/width)
+    var stretchFactor = expRound(width,graphStatus[graph].widthTolerance)/width 
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor(graph,i)
         if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
         else var graphWidth = imageObj.width
         var vOffset = -Math.round(((Math.round(start/scale)-8*width)%(65536))/(width) - i*(65536/width));
-        // i == chunks - 1 ? graphHeight = imageObj.height : graphHeight = Math.ceil(65536/width)
-        graphHeight = Math.ceil(imageObj.height*stretchFactor)
+        (i == chunks - 1) ? graphHeight = imageObj.height*stretchFactor : graphHeight = Math.ceil(65536/width) // don't stretch last chunk
+        // graphHeight = Math.ceil(imageObj.height*stretchFactor)
         b.drawImage(imageObj,offset,vOffset,graphWidth,graphHeight) // render data on hidden canvas
         // b.beginPath();
         // b.moveTo(offset,vOffset-0.5)
@@ -281,17 +281,19 @@ var drawRMap = function(offset,chunks) {
     var offsetWidth = drawVerticalGraph("m",offset,chunks)
     
     drawPixelStuff.push(function() { 
-        if ( width >= 12) { //draw the red lines
-            var remainingWidth = 0, megaColumn=0, subColumn=0;
-            while (remainingWidth<(width-12)) {
-                remainingWidth += Math.pow(2,megaColumn)
+        bpPerLine = width*scale
+        if ( bpPerLine >= 1) { //draw the red lines
+            var cumulativeWidth = 0, megaColumn=0, subColumn=0;
+
+            while (cumulativeWidth<(bpPerLine-12)) {
+                cumulativeWidth += Math.pow(2,megaColumn)
                 subColumn++
                 if(subColumn>=12) {
                     subColumn=0
                     megaColumn++
                 } 
             }
-            var widthPosition = offset + megaColumn*12+subColumn - 0 -(remainingWidth-width+12)/Math.pow(2,megaColumn)
+            var widthPosition = offset + 11 + megaColumn*12+subColumn -(cumulativeWidth-bpPerLine+12)/Math.pow(2,megaColumn)
             // var widthPosition = offset + 17.315*Math.log(width*scale) - 42.85 - Math.min(0.9,(width*scale)/36);
             widthPosition = Math.round(widthPosition*3)/3
             c.beginPath();
@@ -304,7 +306,7 @@ var drawRMap = function(offset,chunks) {
             c.stroke();
         }
     })
-    return Math.max(offsetWidth,116)
+    return Math.max(offsetWidth,calculateOffsetWidth(143))
 }
 var drawSimHeat = function(offset,chunks) {
     a.clearRect(0,0,350,10000)
