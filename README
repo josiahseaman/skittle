@@ -36,6 +36,9 @@ make install
 
 ====================OTHER INSTALLS====================
 pip install SQLAlchemy
+http://docs.sqlalchemy.org/en/rel_0_8/intro.html#installation
+
+#
 
 ====================DATABASE EVOLUTIONS====================   
 DROP DATABASE `SkittleTree`;
