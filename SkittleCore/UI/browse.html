@@ -127,7 +127,7 @@
     	if ($.inArray(key,initialGraphs)>=0) showGraph(key)
     	else hideGraph(key)
     }
-	
+	var annotations = {}
 	var helpLabel = $('<li class="helpLabel">Help<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeHelpButton"></li>')
 	var graphHelpContents = {
 		'a':'Annotation Display is linked to an annotation file with start and stop positions for tracks.  It aligns these start and stop positions along with the rest of the graphs, expanding to accommodate overlapping annotations as necessary.  The user can select individual annotations and see the full text associated with that annotation.',

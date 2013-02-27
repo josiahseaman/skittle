@@ -71,14 +71,15 @@ var graphURL = function(graph,chunkOffset) {
     if (graphStatus[graph].colorPaletteSensitive) graphPath += "&colorPalette="+colorPalette
     return graphPath
 }
+    var loadedAnnotations = []
 var annotationRequestor = function(chunkOffset) {
-    $.getJSON('annotation.json',function(data){
-        console.log(data)
-        return data
-    }).error(function(jqXHR, textStatus, errorThrown){console.log(jqXHR.responseText,textStatus,errorThrown)})
-    //get annotation.json?start=chunkOffset
-    //add it to the annotations object
-    //invalidate displays
+    if(!loadedAnnotations[chunkOffset]) {
+        $.getJSON('annotation.json',{start:chunkOffset},function(data){
+            $.extend(annotations,data[chunkOffset])
+            isInvalidDisplay = true
+            loadedAnnotations[chunkOffset] = true
+        }).error(function(jqXHR, textStatus, errorThrown){console.log(jqXHR.responseText,textStatus,errorThrown)})
+    }
 }
 
 
@@ -192,10 +193,14 @@ var drawAnnotations = function(offset,chunks) {
     b.fillStyle="#333";
     b.fill()
 
-    var annotationsProcessed = []
-    $.each(annotations["1"],function(i,annotation){ // [2] = from, [3] = to
-        if($.inArray(i,annotationsProcessed)<0) { //check for duplicate annotations and push identifier to array if not.
-            annotationsProcessed.push(i)
+    for (var i = 0; i < chunks; i++) {
+        annotationRequestor((Math.floor(start/65536)+i)*65536+1)
+    };
+    
+    // var annotationsProcessed = []
+    $.each(annotations,function(i,annotation){ // [2] = from, [3] = to
+        // if($.inArray(i,annotationsProcessed)<0) { //check for duplicate annotations and push identifier to array if not. --Might not need, looks like $.extend gets rid of dups
+            // annotationsProcessed.push(i)
             if (   (annotation[2] < ( start + (skixelsOnScreen + 37*width - 1)*scale ) && annotation[3] > ( start + (skixelsOnScreen + 37*width - 1)*scale ) )
                 || (annotation[2] < (start - 8*width*scale) && annotation[3] > (start - 8*width*scale) )
                 || (annotation[2] > (start - 8*width*scale) && annotation[3] < ( start + (skixelsOnScreen + 37*width - 1)*scale ) ) ) {
@@ -223,7 +228,7 @@ var drawAnnotations = function(offset,chunks) {
                 b.fillStyle=annotation.color
                 b.fill()
             }
-        }
+        // }
         //else do nothing
     })
 
