@@ -92,7 +92,8 @@ function mouseDown(e) {
     //}
     }
     else if (activeTool == "Select") {
-        selectionStart = start + (toSkixels(my-25))*width*scale
+        var x = Math.max(0,Math.min(width,(toSkixels(mx)-graphStatus["n"].skixelOffset+1)))
+        selectionStart = start + (toSkixels(my-25))*width*scale + x*scale
         selectionEnd = selectionStart + width*scale - 1;
         console.log('selection start:' + selectionStart + " selection end:" + selectionEnd)
         showGraph('h');
