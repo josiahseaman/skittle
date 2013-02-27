@@ -2,13 +2,14 @@
 Created on Nov 29, 2012
 @author: Josiah Seaman
 '''
-from SkittleGraphTransforms import sensitiveTestForSpecificFrequency
+from SkittleGraphTransforms import sensitiveTestForSpecificFrequency, normalize
 from models import RepeatMapState
 from SkittleCore.models import RequestPacket
 import RepeatMap
 from SkittleCore.GraphRequestHandler import registerGraph
 from models import ThreeMerDetectorState
 from PixelLogic import drawBar
+import math
 
 registerGraph('t', "Threemer Detector", __name__, False)
 
@@ -30,7 +31,7 @@ def oldRepeatMap(state, threeMerState):
         for w in range(1, len(freq[h])):
             freq[h][w] = countMatches(state.seq, offset, offset + w + 1, lineSize)
     return freq
-    
+
 def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
     assert isinstance(state, RequestPacket)
     state.scale = 1 #these calculations are only meaningful at scale 1
@@ -39,13 +40,18 @@ def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
     scores = oldRepeatMap(state, threeMerState)
     threemer_scores = sensitiveTestForSpecificFrequency(scores, 3, threeMerState.samples)
     
+    minimum = 00#min(threemer_scores)
+    maximum = max(threemer_scores)
+#    print "                    3mer max:", maximum
     outputPixels = []
     for size in threemer_scores:
-        barSize = int(size * threeMerState.barWidth)
-        barColor = (255, 0, 255)
-        if size > 0.25:
-            barColor = (0,255,0)
+        normalized = normalize(size, minimum, maximum)
+        barSize = min(max(0, int(normalized * threeMerState.barWidth)), threeMerState.barWidth)
+        barColor = (44, 85, 185)
+        if normalized > 0.90:
+            barColor = (93,4,157)
         bar = drawBar(barSize, int(threeMerState.barWidth- barSize), barColor, False)
+        assert len(bar) == threeMerState.barWidth
         outputPixels.append( bar )
     return outputPixels
         

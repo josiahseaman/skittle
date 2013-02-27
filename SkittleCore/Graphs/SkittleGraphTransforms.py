@@ -100,6 +100,11 @@ def composedOfNs(countDict):
         colorMapping = colorPalettes['Classic']
         return countDict == colorMapping['N']
 
+'''Generic normalization reduces any number to a floating point between 0.0 and 1.0'''
+def normalize(value, minimum, maximum):
+    value = min(maximum, max(minimum, value))
+    return (value-minimum) / float(maximum - minimum) 
+
 
 '''ReferencePoint is the number that all elements are divided by.  This defaults to the sum of dictionary 
 elements if not defined.  ReferencePoint can also be an evaluation function that returns a single number
