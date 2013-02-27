@@ -34,7 +34,7 @@ MANAGERS = ADMINS
 if PRODUCTION:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+            'ENGINE': 'mysql_pool', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
             'NAME': 'DNASkittle',                # Or path to database file if using sqlite3.
             'USER': 'skittle',                    # Not used with sqlite3.
             'PASSWORD': 'sk!77l3PandaDatabase%',  # Not used with sqlite3.
@@ -42,6 +42,8 @@ if PRODUCTION:
             'PORT': '',                           # Set to empty string for default. Not used with sqlite3.
         }
     }
+    
+    DATABASE_WAIT_TIMEOUT = 28800
 else:
     DATABASES = {
         'default': {
