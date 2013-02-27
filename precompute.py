@@ -15,15 +15,16 @@ def computeRequest(request):
     specimen = request[0]
     chromosomes = StorageRequestHandler.GetRelatedChromosomes(specimen)
     for chromosome in chromosomes:
-        length = StorageRequestHandler.GetChromosomeLength(specimen, chromosome)
-        chunks = range(1, length+1, 2**16)
-        for targetIndex in range(request[2], len(chunks), request[1]):
-            start = chunks[targetIndex]
-            state = makePacket(specimen, chromosome, start)
-            
-            print "Computing: ", state.specimen, state.chromosome, state.start    
-            GraphRequestHandler.handleRequest(state)
-            print "Done computing ", state.specimen, state.chromosome, state.start
+        if chromosome == 'chrY':
+            length = StorageRequestHandler.GetChromosomeLength(specimen, chromosome)
+            chunks = range(1, length+1, 2**16)
+            for targetIndex in range(request[2], len(chunks), request[1]):
+                start = chunks[targetIndex]
+                state = makePacket(specimen, chromosome, start)
+                
+                print "Computing: ", state.specimen, state.chromosome, state.start    
+                GraphRequestHandler.handleRequest(state)
+                print "Done computing ", state.specimen, state.chromosome, state.start
 
 def makePacket(specimen, chromosome, start):
     from SkittleCore import models  
