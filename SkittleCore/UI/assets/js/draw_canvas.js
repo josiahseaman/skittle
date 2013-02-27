@@ -71,7 +71,15 @@ var graphURL = function(graph,chunkOffset) {
     if (graphStatus[graph].colorPaletteSensitive) graphPath += "&colorPalette="+colorPalette
     return graphPath
 }
-
+var annotationRequestor = function(chunkOffset) {
+    $.getJSON('annotation.json',function(data){
+        console.log(data)
+        return data
+    }).error(function(jqXHR, textStatus, errorThrown){console.log(jqXHR.responseText,textStatus,errorThrown)})
+    //get annotation.json?start=chunkOffset
+    //add it to the annotations object
+    //invalidate displays
+}
 
 
 // the part that does the actual work
@@ -124,15 +132,38 @@ var drawGraphs = function() {
 var drawGraph = function(graph,offset,chunks) {
     switch (graph) {
         case "a": return drawAnnotations(offset,chunks)
-        case "n": return drawNucDisplay(offset,chunks);
-        case "p": return drawSNP(offset,chunks);
-        case "h": return drawSeqHighlight(offset,chunks);
         case "b": return drawNucBias(offset,chunks);
         case "m": return drawRMap(offset,chunks);
         case "s": return drawSimHeat(offset,chunks);
         default: 
-            return drawVerticalGraph(graph,offset,chunks);
+            if (graphStatus[graph].rasterGraph == true) return drawRasterGraph(graph,offset,chunks);
+            else return drawVerticalGraph(graph,offset,chunks);
     }
+}
+var drawRasterGraph = function(graph,offset,chunks) {
+    a.clearRect(0,0,1024,500)
+    for (var i=0;i<chunks;i++) {
+        var imageObj = imageRequestor(graph,i)
+        if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
+        a.drawImage(imageObj,0,64*i) // render data on hidden canvas
+    }
+
+    var imageData = a.getImageData(0, 0, 1024, chunks*64);
+    var data = imageData.data;
+    var newImageData = b.createImageData(width,toSkixels(1000)) //create new image data with desired dimentions (width)
+    var newData = newImageData.data;
+
+    var startOffset = (Math.round(start/scale) - 1 - width*8 - Math.max( Math.floor((start/scale-width*8)/(65536) ), 0 )*65536 )*4;
+    for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
+        var y = x + startOffset
+        newData[x] = data[y] || 0;
+        newData[x + 1] = data[y + 1] || 0;
+        newData[x + 2] = data[y + 2] || 0;
+        newData[x + 3] = data[y + 3] || 0;
+    }
+    b.putImageData(newImageData, offset, 0);
+
+    return calculateOffsetWidth(width)
 }
 var drawVerticalGraph = function(graph,offset,chunks) {
     var graphWidth = 0, graphHeight = 0;
@@ -161,112 +192,42 @@ var drawAnnotations = function(offset,chunks) {
     b.fillStyle="#333";
     b.fill()
 
-    for(var i=0;i<annotation.length;i++) {
-        if (   (annotation[i].from < ( start + (skixelsOnScreen + 37*width - 1)*scale ) && annotation[i].to > ( start + (skixelsOnScreen + 37*width - 1)*scale ) )
-            || (annotation[i].from < (start - 8*width*scale) && annotation[i].to > (start - 8*width*scale) )
-            || (annotation[i].from > (start - 8*width*scale) && annotation[i].to < ( start + (skixelsOnScreen + 37*width - 1)*scale ) ) ) {
-            
-            var currentColumn = 0
-            var startRow = Math.floor((annotation[i].from-start)/(width*scale)+8)
-            var rowHeight = Math.ceil((annotation[i].to-annotation[i].from)/(width*scale))
+    var annotationsProcessed = []
+    $.each(annotations["1"],function(i,annotation){ // [2] = from, [3] = to
+        if($.inArray(i,annotationsProcessed)<0) { //check for duplicate annotations and push identifier to array if not.
+            annotationsProcessed.push(i)
+            if (   (annotation[2] < ( start + (skixelsOnScreen + 37*width - 1)*scale ) && annotation[3] > ( start + (skixelsOnScreen + 37*width - 1)*scale ) )
+                || (annotation[2] < (start - 8*width*scale) && annotation[3] > (start - 8*width*scale) )
+                || (annotation[2] > (start - 8*width*scale) && annotation[3] < ( start + (skixelsOnScreen + 37*width - 1)*scale ) ) ) {
+                
+                var currentColumn = 0
+                var startRow = Math.floor((annotation[2]-start)/(width*scale)+8)
+                var rowHeight = Math.ceil((annotation[3]-annotation[2])/(width*scale))
 
-            for (currentColumn=0;currentColumn<=columnFilledTilRow.length;currentColumn++) {
-                if (!columnFilledTilRow[currentColumn] || startRow > columnFilledTilRow[currentColumn]) {
-                    if (!columnFilledTilRow[currentColumn]) {
-                        b.beginPath()
-                        b.rect(offset+currentColumn*annotationWidth,0.5,annotationWidth,500)
-                        b.fillStyle="#333";
-                        b.fill()
+                for (currentColumn=0;currentColumn<=columnFilledTilRow.length;currentColumn++) {
+                    if (!columnFilledTilRow[currentColumn] || startRow > columnFilledTilRow[currentColumn]) {
+                        if (!columnFilledTilRow[currentColumn]) {
+                            b.beginPath()
+                            b.rect(offset+currentColumn*annotationWidth,0.5,annotationWidth,500)
+                            b.fillStyle="#333";
+                            b.fill()
+                        }
+                        columnFilledTilRow[currentColumn] = startRow + rowHeight
+                        break;
                     }
-                    columnFilledTilRow[currentColumn] = startRow + rowHeight
-                    break;
                 }
-            }
 
-            b.beginPath()
-            b.rect(offset+currentColumn*annotationWidth,startRow,annotationWidth,rowHeight)
-            annotation[i].color = annotation[i].color || getGoodDeterministicColor(annotation[i].from + annotation[i].to +"")
-            b.fillStyle=annotation[i].color
-            b.fill()
+                b.beginPath()
+                b.rect(offset+currentColumn*annotationWidth,startRow,annotationWidth,rowHeight)
+                annotation.color = annotation.color || getGoodDeterministicColor(annotation[2] + annotation[3] +"")
+                b.fillStyle=annotation.color
+                b.fill()
+            }
         }
-    }
+        //else do nothing
+    })
 
     return calculateOffsetWidth(annotationWidth*columnFilledTilRow.length)
-}
-var drawNucDisplay = function(offset,chunks) {
-    a.clearRect(0,0,1024,500)
-    for (var i=0;i<chunks;i++) {
-        var imageObj = imageRequestor("n",i)
-        if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
-        a.drawImage(imageObj,0,64*i) // render data on hidden canvas
-    }
-
-    var imageData = a.getImageData(0, 0, 1024, chunks*64);
-    var data = imageData.data;
-    var newImageData = b.createImageData(width,toSkixels(1000)) //create new image data with desired dimentions (width)
-    var newData = newImageData.data;
-
-    var startOffset = (Math.round(start/scale) - 1 - width*8 - Math.max( Math.floor((start/scale-width*8)/(65536) ), 0 )*65536 )*4;
-    for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
-        var y = x + startOffset
-        newData[x] = data[y] || 0;
-        newData[x + 1] = data[y + 1] || 0;
-        newData[x + 2] = data[y + 2] || 0;
-        newData[x + 3] = data[y + 3] || 0;
-    }
-    b.putImageData(newImageData, offset, 0);
-
-    return calculateOffsetWidth(width)
-}
-var drawSeqHighlight = function(offset,chunks) {
-    a.clearRect(0,0,1024,500)
-    for (var i=0;i<chunks;i++) {
-        var imageObj = imageRequestor("h",i)
-        if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
-        a.drawImage(imageObj,0,64*i) // render data on hidden canvas
-    }
-
-    var imageData = a.getImageData(0, 0, 1024, chunks*64);
-    var data = imageData.data;
-    var newImageData = b.createImageData(width,toSkixels(1000)) //create new image data with desired dimentions (width)
-    var newData = newImageData.data;
-
-    var startOffset = (Math.round(start/scale) - 1 - width*8 - Math.max( Math.floor((start/scale-width*8)/(65536) ), 0 )*65536 )*4;
-    for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
-        var y = x + startOffset
-        newData[x] = data[y] || 0;
-        newData[x + 1] = data[y + 1] || 0;
-        newData[x + 2] = data[y + 2] || 0;
-        newData[x + 3] = data[y + 3] || 0;
-    }
-    b.putImageData(newImageData, offset, 0);
-
-    return calculateOffsetWidth(width)
-}
-var drawSNP = function(offset,chunks) {
-    a.clearRect(0,0,1024,500)
-    for (var i=0;i<chunks;i++) {
-        var imageObj = imageRequestor("p",i)
-        if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
-        a.drawImage(imageObj,0,64*i) // render data on hidden canvas
-    }
-
-    var imageData = a.getImageData(0, 0, 1024, chunks*64);
-    var data = imageData.data;
-    var newImageData = b.createImageData(width,toSkixels(1000)) //create new image data with desired dimentions (width)
-    var newData = newImageData.data;
-
-    var startOffset = (Math.round(start/scale) - 1 - width*8 - Math.max( Math.floor((start/scale-width*8)/(65536) ), 0 )*65536 )*4;
-    for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
-        var y = x + startOffset
-        newData[x] = data[y] || 0;
-        newData[x + 1] = data[y + 1] || 0;
-        newData[x + 2] = data[y + 2] || 0;
-        newData[x + 3] = data[y + 3] || 0;
-    }
-    b.putImageData(newImageData, offset, 0);
-
-    return calculateOffsetWidth(width)
 }
 var drawNucBias = function(offset,chunks) {
     b.beginPath()
