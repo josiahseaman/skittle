@@ -32,7 +32,7 @@ This is the link and definition of the settings tab for Repeat Map.
 I'm dubious about where to put this since GraphTransforms depends on it, but otherwise
 it would be included in RepeatMap.py'''
 class RepeatMapState(ParentState):
-    F_width = models.IntegerField(default=9)
+    F_width = models.IntegerField(default=11)
     F_start = models.IntegerField(default=1)
     
     def height(self, state, pixels):

@@ -39,7 +39,8 @@ import DNAStorage.StorageRequestHandler as StorageRequestHandler
 
 def calculatePixels(state):
     state.seq = ''
-    for chunk in range(state.scale):
+    numChunks = state.scale or 1 
+    for chunk in range(numChunks):
         state.readAndAppendNextChunk()
     
     graphData = getGraphDescription(state)
@@ -65,6 +66,7 @@ def handleRequest(state):
     if png is None:
         pixels = calculatePixels(state)
 #        print pixels[:10]
+        print "Saving to width =", state.width
         png = convertToPng(state, pixels, isRasterGraph(state))
     print 'Done'
     return png

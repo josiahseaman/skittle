@@ -1,10 +1,16 @@
-	@import url(http://fonts.googleapis.com/css?family=Exo:100,200,300,400,500,600,700|Titillium+Web:400,200,300,600,700|Open+Sans:400,600,300,700|Share:400,700|Aldrich);
+	/*@import url(http://fonts.googleapis.com/css?family=Exo:100,200,300,400,500,600,700|Titillium+Web:400,200,300,600,700|Open+Sans:400,600,300,700|Share:400,700|Aldrich);*/
+	@import url(http://fonts.googleapis.com/css?family=Exo:100,200,300,400,500,600,700|Source+Code+Pro:400,500,600);
 	body {
 		font-family: 'Exo', Helvetica, sans-serif;
 		background: #000;
 	}
 	img {
 		border: none;
+	}
+	.seq {
+		font-family: 'Source Code Pro', monospace;
+		font-weight: 600;
+		color:#dd9;
 	}
 	#logo {
 		position: absolute;

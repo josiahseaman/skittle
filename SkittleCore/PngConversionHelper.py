@@ -5,6 +5,7 @@ Created on Jan 17, 2013
 '''
 import png, tempfile
 from DNAStorage.StorageRequestHandler import GetPngFilePath, StorePng
+import copy
 
 def checkForGreyscale(state):
     grayGraph = ['m', 'o']
@@ -57,12 +58,13 @@ def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3):
     return p
 
 def multiplyGreyscale(p, greyMax = 255):
-    for index, line in enumerate(p):
-        p[index] = map(lambda x: int(max(x,0.0) * greyMax), line)
-    return p
+    saveData = copy.deepcopy(p)
+    for index, line in enumerate(saveData):
+        saveData[index] = map(lambda x: int(max(x,0.0) * greyMax), line)
+    return saveData
 
 def squishImage(pixels):
-    if isinstance(pixels, list):
+    if isinstance(pixels, list) and pixels: #not empty
         if isinstance(pixels[0], list):
             return reduce(lambda x,y: x + squishImage(y), pixels, [])
         else:
