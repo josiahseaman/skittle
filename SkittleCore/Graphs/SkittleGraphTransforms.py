@@ -90,6 +90,17 @@ def countListToColorSpace(countList, colorPalette):
     resultingColor =  map(sum, zip(*colorContributions))
     return tuple(resultingColor)
 
+
+
+def composedOfNs(countDict):
+    if isinstance(countDict, dict):
+        total = sum(countDict.values())
+        return countDict['N'] == total
+    else:
+        colorMapping = colorPalettes['Classic']
+        return countDict == colorMapping['N']
+
+
 '''ReferencePoint is the number that all elements are divided by.  This defaults to the sum of dictionary 
 elements if not defined.  ReferencePoint can also be an evaluation function that returns a single number
 when given the values of 'listing' as an argument.'''

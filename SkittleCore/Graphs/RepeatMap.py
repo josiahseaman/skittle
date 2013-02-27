@@ -4,7 +4,7 @@ Created on Nov 29, 2012
 '''
 from Utilities.debug import startDebug
 import NucleotideDisplay
-from SkittleGraphTransforms import correlationMap, countDepth, chunkUpList, countNucleotides, normalizeDictionary, countListToColorSpace, pearsonCorrelation, average
+from SkittleGraphTransforms import correlationMap, countDepth, chunkUpList, countNucleotides, normalizeDictionary, countListToColorSpace, pearsonCorrelation, average, composedOfNs
 from models import RepeatMapState
 from SkittleCore.models import RequestPacket, chunkSize
 from SkittleCore.GraphRequestHandler import registerGraph
@@ -124,7 +124,10 @@ def logRepeatMap(state, repeatMapState):
                 startingOffset = 1
             for offset in range(startingOffset, skixelsPerSample): #range 12 - 24 but indexing starts at 0
                 offsetSequence = scaledSequence[offset : offset + skixelsPerSample]
-                if len(offsetSequence) == len(original):
+                validComparison = len(offsetSequence) == len(original) and len(offsetSequence) and len(original)
+                if validComparison: #this line is necessary to avoid array index out of bounds or referencing an unsigned variable stretchIsSequenced
+                    stretchIsSequenced = not any( map(composedOfNs, [offsetSequence[0], offsetSequence[-1:][0], original[0], original[-1:][0] ]))  
+                if validComparison and stretchIsSequenced: #this line is necessary to avoid array index out of bounds or referencing an unsigned variable stretchIsSequenced
                     targetChannels = zip(*offsetSequence)
                     resultSum = 0.0
                     for index, currentChannel in enumerate(rgbChannels):
