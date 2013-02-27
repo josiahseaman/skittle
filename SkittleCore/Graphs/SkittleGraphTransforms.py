@@ -297,8 +297,8 @@ def sensitiveTestForSpecificFrequency(floatList, frequency = 3, numberOfSamples 
         if (i % frequency == 0):
             mask.append(1.0)
         else:
-            mask.append(-1 * (1/(frequency-1)))
-
+            mask.append(-1 * (1/float(frequency-1)))
+    
     score = 0.0
     for x in range( min( len(mask), len(floatList))):
         if floatList[x] is not None:

@@ -146,28 +146,13 @@ def logRepeatMap(state, repeatMapState):
 
 
 
-def countMatches(sequence, beginA, beginB, lineSize):
-    matches = 0
-    for index in range(lineSize):
-        if sequence[beginA + index] == sequence[beginB + index]:
-            matches += 1
-    return float(matches) / lineSize
-
-def oldRepeatMap(state, repeatMapState):
-    freq = []
-    lineSize = state.nucleotidesPerLine()
-    for h in range(repeatMapState.height(state, state.seq)):
-        freq.append([0.0]*(repeatMapState.F_width+1))
-        offset = h * lineSize
-        for w in range(1, len(freq[h])):#calculate across widths 1:F_width
-            freq[h][w] = countMatches(state.seq, offset, offset + w + repeatMapState.F_start, lineSize)
-    return freq
-
 def squishStoredMaps(state, repeatMapState):
     #read in the one png at fixed width= skixelsPerSample
     oldWidth = state.width * state.scale
     state.width = skixelsPerSample
     state.scale = 1
+    oldgraph = state.requestedGraph
+    state.requestedGraph = 'm'
     filepath = GetPngFilePath(state)
     data = []
     if filepath:
@@ -177,6 +162,7 @@ def squishStoredMaps(state, repeatMapState):
         data = calculateOutputPixels(state, repeatMapState)
         convertToPng(state, data )#store the newly created data to file
     state.width = oldWidth
+    state.requestedGraph = oldgraph
         
     #averaging the lines
     newData = []

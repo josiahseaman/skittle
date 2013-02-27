@@ -1,5 +1,6 @@
 
 from django.db import models
+import math
 
 # Create your models here.
 
@@ -59,6 +60,10 @@ class SimilarityHeatMapState(OligomerUsageState):
 class ThreeMerDetectorState(ParentState):
     barWidth = models.IntegerField(default=20)    #used for display size calculations
     samples = models.IntegerField(default=20)
+    
+    def height(self, state, seq):
+        F_height = int(math.ceil( ((len(seq)) - (self.samples*3)*state.scale ) / state.nucleotidesPerLine() ))
+        return F_height
 
 class SequenceEntry(models.Model):
     ownerGraph = models.ForeignKey(HighlighterState)
