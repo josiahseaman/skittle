@@ -17,11 +17,12 @@ def lockAndWriteFile(w,a,m):
 def outputThreemerNormalization(request):
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SkittleTree.settings")
     from SkittleCore.Graphs import ThreeMerDetector
+    from SkittleCore.Graphs.SkittleGraphTransforms import getChunkStart
     
     specimen = request[0]
     chromosomes = ['chr2']
     for chromosome in chromosomes:
-        chunks = range(26673153, 27721729, 2**16) 
+        chunks = [getChunkStart(x) for x in range(16518287, 20987087, 2**16)] 
         for targetIndex in range(len(chunks)):
             start = chunks[targetIndex]
             widths = range(10,500,20)

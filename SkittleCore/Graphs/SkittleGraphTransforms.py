@@ -27,6 +27,13 @@ def hasDepth(listLike):
     except:
         return False
     
+def getChunkStart(arbitraryStart):
+    if hasDepth(arbitraryStart):
+        return map(lambda x: getChunkStart(x), arbitraryStart)
+    arbitraryStart = int(arbitraryStart)
+    chunkNumber = int(arbitraryStart / 2**16)
+    return chunkNumber * (2**16) + 1
+    
 def mirrorDiagonalMatrix(heatMap):
     for y in range(len(heatMap)):
         for x in range(y+1, len(heatMap[y])):#only iterates on the upper right half
