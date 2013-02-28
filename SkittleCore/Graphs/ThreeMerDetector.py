@@ -42,7 +42,7 @@ def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
     
     minimum = 00#min(threemer_scores)
     '''This trend was found experimentally based on maximums over 69 chunks at width 10-490  #max(threemer_scores)'''
-    maximum = min(0.2, 1.725816397 * (state.width / 69.0 * 20.0)**(-0.6403354918)) /2.0
+    maximum = min(0.2, 1.725816397 * (state.width / 69.0 * 20.0)**(-0.6403354918)) /4.0
     avg = average(threemer_scores)
     
 #    return (state.width, avg, maximum)
@@ -52,7 +52,7 @@ def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
         normalized = normalize(size, minimum, maximum)
         barSize = min(max(0, int(normalized * threeMerState.barWidth)), threeMerState.barWidth)
         barColor = (44, 85, 185)
-        if normalized > 0.90:
+        if normalized > 0.75:
             barColor = (93,4,157)
         bar = drawBar(barSize, int(threeMerState.barWidth- barSize), barColor, False)
         assert len(bar) == threeMerState.barWidth
