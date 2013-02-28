@@ -16,6 +16,7 @@ def lockAndWriteFile(w,a,m):
 
 def outputThreemerNormalization(request):
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SkittleTree.settings")
+    from SkittleCore import GraphRequestHandler
     from SkittleCore.Graphs import ThreeMerDetector
     from SkittleCore.Graphs.SkittleGraphTransforms import getChunkStart
     
@@ -32,9 +33,10 @@ def outputThreemerNormalization(request):
                 state.width = width
                 state.requestedGraph = 't'
                 print "Computing: ", state.specimen, state.chromosome, state.start, state.width    
-                state.readAndAppendNextChunk()
-                (w, a, m) = ThreeMerDetector.calculateOutputPixels(state)
-                lockAndWriteFile(w,a,m)
+#                state.readAndAppendNextChunk()
+                GraphRequestHandler.handleRequest(state)
+#                (w, a, m) = ThreeMerDetector.calculateOutputPixels(state)
+#                lockAndWriteFile(w,a,m)
                 print "Done computing ", state.specimen, state.chromosome, state.start, state.width
 
 
