@@ -298,16 +298,22 @@ def sensitiveTestForSpecificFrequency(floatList, frequency = 3, numberOfSamples 
     assert isinstance(frequency, int), "Please use an integer offset frequency."
     reach = numberOfSamples * frequency
     mask = [] #float
-    for i in range(reach):#create mask:
+    for i in range(reach+1):#create mask:
         if (i % frequency == 0):
             mask.append(1.0)
         else:
             mask.append(-1 * (1/float(frequency-1)))
-    
+    mask[0] = 0.0
+    mask[10] = 0.0
+    mask[11] = 0.0
+    mask[12] = 0.0
+    assert sum(mask) == 0.0
+    assert len(mask) == len(floatList) 
+    assert len(mask) == 61
     score = 0.0
-    for x in range( min( len(mask), len(floatList))):
+    for x in range(1, len(mask) ):#start at index 1 because repeatMap at offset 0 is undefined
         if floatList[x] is not None:
-            score += (mask[x] * floatList[x]) / float(numberOfSamples)
+            score += (mask[x] * floatList[x]) / float(numberOfSamples - 3)############
         #score += min((float)0.5, mask[x] * freq[y][x])//the amount that any position can affect is capped because of tandem repeats with 100% similarity
     return score
 

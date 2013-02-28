@@ -4,9 +4,41 @@ import sys
 from collections import namedtuple
 from multiprocessing import Pool
 
+def lockAndWriteFile(w,a,m):
+    succeeded = False
+    while not succeeded:
+        try:
+            f = open('results.csv', 'a')
+            f.write(str(w) + ',' + str(a)+ ',' + str(m) + '\n')
+            f.close()
+            succeeded = True
+        except: succeeded = False
+
+def outputThreemerNormalization(request):
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SkittleTree.settings")
+    from SkittleCore.Graphs import ThreeMerDetector
+    
+    specimen = request[0]
+    chromosomes = ['chr2']
+    for chromosome in chromosomes:
+        chunks = range(26673153, 27721729, 2**16) 
+        for targetIndex in range(len(chunks)):
+            start = chunks[targetIndex]
+            widths = range(10,500,20)
+            for widthIndex in range(request[2], len(widths), request[1]):
+                width = widths[widthIndex]
+                state = makeRequestPacket(specimen, chromosome, start)
+                state.width = width
+                state.requestedGraph = 't'
+                print "Computing: ", state.specimen, state.chromosome, state.start, state.width    
+                state.readAndAppendNextChunk()
+                (w, a, m) = ThreeMerDetector.calculateOutputPixels(state)
+                lockAndWriteFile(w,a,m)
+                print "Done computing ", state.specimen, state.chromosome, state.start, state.width
 
 
-def computeRequest(request):
+
+def precomputeRepeatMap(request):
     
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SkittleTree.settings")
     from SkittleCore import GraphRequestHandler
@@ -19,13 +51,13 @@ def computeRequest(request):
         chunks = range(1, length+1, 2**16)
         for targetIndex in range(request[2], len(chunks), request[1]):
             start = chunks[targetIndex]
-            state = makePacket(specimen, chromosome, start)
+            state = makeRequestPacket(specimen, chromosome, start)
             
             print "Computing: ", state.specimen, state.chromosome, state.start    
             GraphRequestHandler.handleRequest(state)
             print "Done computing ", state.specimen, state.chromosome, state.start
 
-def makePacket(specimen, chromosome, start):
+def makeRequestPacket(specimen, chromosome, start):
     from SkittleCore import models  
     from SkittleCore.Graphs import RepeatMap
     
@@ -40,10 +72,13 @@ def makePacket(specimen, chromosome, start):
 
 if __name__ == "__main__":
         
-    nProcessors = 6
+    nProcessors = 7
     specimen = sys.argv[1]
 #    ProcessorRequest = namedtuple('ProcessorRequest', ['specimen', 'nProcessors', 'PID'])
     requests = [(specimen, nProcessors, PID) for PID in range(nProcessors)]
+    
     processors = Pool(nProcessors)
-    processors.map(computeRequest, requests)
+##    processors.map(precomputeRepeatMap, requests)
+    processors.map(outputThreemerNormalization, requests)
+#    outputThreemerNormalization( requests[0])
     

@@ -2,13 +2,13 @@
 Created on Nov 29, 2012
 @author: Josiah Seaman
 '''
-from SkittleGraphTransforms import sensitiveTestForSpecificFrequency, normalize
-from models import RepeatMapState
-from SkittleCore.models import RequestPacket
-import RepeatMap
-from SkittleCore.GraphRequestHandler import registerGraph
-from models import ThreeMerDetectorState
+from SkittleGraphTransforms import average
 from PixelLogic import drawBar
+from SkittleCore.GraphRequestHandler import registerGraph
+from SkittleCore.models import RequestPacket
+from SkittleGraphTransforms import sensitiveTestForSpecificFrequency, normalize
+from models import RepeatMapState, ThreeMerDetectorState
+import RepeatMap
 import math
 
 registerGraph('t', "Threemer Detector", __name__, False)
@@ -42,6 +42,9 @@ def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
     
     minimum = 00#min(threemer_scores)
     maximum = max(threemer_scores)
+    avg = average(threemer_scores)
+    
+    return (state.width, avg, maximum)
 #    print "                    3mer max:", maximum
     outputPixels = []
     for size in threemer_scores:

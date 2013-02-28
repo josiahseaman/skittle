@@ -61,6 +61,8 @@ class RequestPacket(models.Model):
     '''This is a multifunctional 'make the file bigger' read logic for sequential chunks'''
     def readAndAppendNextChunk(self, addPadding = False):
         startBackup = self.start
+        if not self.seq: 
+            self.seq = '' #ensure that seq is at least a string object
         self.start = self.start + self.length # jump to the end of the current sequence  (+ chunkSize) 
         sequence = readFile(self)# see if there's a file that begins where you end, this will stop on a partial file
         if sequence is not None:
