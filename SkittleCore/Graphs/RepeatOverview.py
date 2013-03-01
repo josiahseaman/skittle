@@ -22,7 +22,7 @@ def findMaxScore(line):
     for index, value in enumerate(line):
         if value > valueToBeat:
             column, score = index, value
-            valueToBeat = score * 1.1 #this is made to bias the "winner" towards lower number repeats, rather than a multiple of the base frequency
+            valueToBeat = score * 1.05 #this is made to bias the "winner" towards lower number repeats, rather than a multiple of the base frequency
     return column, score
 
 def alignmentColor(score, column):
@@ -34,10 +34,16 @@ def alignmentColor(score, column):
 
 def convertRepeatDataToRepeatOverview(state, data):
     pixels = []
-    for line in data:
-        column, score = findMaxScore(line)
-        pixels += [alignmentColor(score, column)] * RepeatMap.skixelsPerSample #create duplicate pixels because each pixel represents a line
-    return pixels
+    if state.scale <= RepeatMap.skixelsPerSample:
+        currentPosition = 0
+        for lineNumber, line in enumerate(data):
+            column, score = findMaxScore(line)
+            while currentPosition < (lineNumber+1) * RepeatMap.skixelsPerSample: 
+                pixels += [alignmentColor(score, column)]
+                currentPosition += state.scale
+    else:
+        raise Exception("Scale > 24 " + str(state.scale))    
+    return pixels 
 
 
 def calculateOutputPixels(state):
