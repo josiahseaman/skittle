@@ -41,6 +41,8 @@ def convertRepeatDataToRepeatOverview(state, data):
             while currentPosition < (lineNumber+1) * RepeatMap.skixelsPerSample: 
                 pixels += [alignmentColor(score, column)]
                 currentPosition += state.scale
+        while len(pixels) < chunkSize:
+            pixels += pixels[-1:]
     else:
         raise Exception("Scale > 24 " + str(state.scale))    
     return pixels 
