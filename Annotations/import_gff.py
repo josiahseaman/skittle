@@ -83,16 +83,16 @@ def ImportGFF(specimen, file):
                     
                 if annotation.Chromosome in annotations:
                     #appent to the current list
-                    annotions[annotation.Chromosome].append(annotation)
+                    annotations[annotation.Chromosome].append(annotation)
                 else:
                     #Create the chromosome entry in the annotations dictionary
                     annotations[annotation.Chromosome] = list()
-                    annotations[annocation.Chromosome].append(annotation)
+                    annotations[annotation.Chromosome].append(annotation)
                 
                 if counter % 10000 == 0:
                     sys.stdout.write('.')
             
-                #print "RESULTS: ", annotation.Connection.FastaFile.Chromosome, annotation.Source, annotation.Feature, annotation.Start, annotation.End, annotation.Score, annotation.Strand, annotation.Frame, annotation.Attribute
+                #print "RESULTS: ", annotation.Specimen, annotation.Source, annotation.Feature, annotation.Start, annotation.End, annotation.Score, annotation.Strand, annotation.Frame, annotation.Attribute
         
         print "DONE READING FILE!"
     else:
@@ -146,6 +146,8 @@ def chunkAndStoreAnnotations(gff, annotations):
                 chunk += "\"" + str(annotation.ID) + "\":[\"" + annotation.Source + "\",\"" + annotation.Feature + "\"," + str(annotation.Start) + "," + str(annotation.End) + "," + str(annotation.Score) + ",\"" + annotation.Strand + "\"," + str(frame) + "," + attribute + "],"
             else:
                 chunk = chunk[:-1] +  "}"
+                print chunk
+                return
                 StoreAnnotationChunk(gff, chunk, annotation.Chromosome)
                 chunk = jsonStart
                 chunkStart = chunkEnd + 1
