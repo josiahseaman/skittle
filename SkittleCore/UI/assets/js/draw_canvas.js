@@ -36,6 +36,11 @@ var init = function() {
         calcSkixelsOnScreen();
         updateEnd();
     });
+    $.each(graphStatus,function(i,v){ //add unordered graphs to the end of the order
+        if ($.inArray(i,graphOrder)<0) {
+            graphOrder.push(i)
+        }
+    })
     for (var i=0;i<graphOrder.length;i++) {
         $("#graphLabel-" + graphOrder[i]).appendTo("#graph-labels ul")
         $("#showGraph-" + graphOrder[i]).parent().appendTo("#graphList ul")
