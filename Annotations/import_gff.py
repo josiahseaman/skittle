@@ -36,7 +36,7 @@ def ImportGFF(specimen, file):
     #Grab a list of chromosomes related to this specimen
     validChromosomes = GetRelatedChromosomes(specimen)
     
-    annotations = list()
+    annotations = dict()
     
     #In GFF format, each line is an annotation. 
     #Read in each annotation and split at tabs (as per gff spec)
@@ -81,7 +81,13 @@ def ImportGFF(specimen, file):
                 else:
                     annotation.Attribute = None
                     
-                annotations.append(annotation)
+                if annotation.Chromosome in annotations:
+                    #appent to the current list
+                    annotions[annotation.Chromosome].append(annotation)
+                else:
+                    #Create the chromosome entry in the annotations dictionary
+                    annotations[annotation.Chromosome] = list()
+                    annotations[annocation.Chromosome].append(annotation)
                 
                 if counter % 10000 == 0:
                     sys.stdout.write('.')
@@ -89,12 +95,14 @@ def ImportGFF(specimen, file):
                 #print "RESULTS: ", annotation.Connection.FastaFile.Chromosome, annotation.Source, annotation.Feature, annotation.Start, annotation.End, annotation.Score, annotation.Strand, annotation.Frame, annotation.Attribute
         
         print "DONE READING FILE!"
-        print "BEGINNING SORTING LIST..."
     else:
         print "THIS GFF VERSION IS NOT SUPPORTED: Version", gff.GFFVersion
         
+    print "BEGINNING SORTING LIST..."
     #Sort the list of annotations read in by their start value (this could probably be optimized by using an always ordered list and inserting in order above)
-    annotations = sorted(annotations, key = lambda annotation: annotation.Start)
+    #annotations = sorted(annotations, key = lambda annotation: annotation.Start)
+    for sublist in annotations:
+        sublist = sorted(sublist, key = lambda annotation: annotation.Start)
     print "DONE SORTING!"
     
     chunkAndStoreAnnotations(gff, annotations)
@@ -132,7 +140,8 @@ def chunkAndStoreAnnotations(gff, annotations):
                 attribute = "\"" + ''.join(annotation.Attribute).replace('\n', '') + "\""
             else:
                 attribute = "null"
-            chunk += str(annotation.ID) + ":[\"" + annotation.Source + "\",\"" + annotation.Feature + "\"," + str(annotation.Start) + "," + str(annotation.End) + "," + str(annotation.Score) + ",\"" + annotation.Strand + "\"," + str(frame) + "," + attribute + "],"
+                
+            chunk += "\"" + str(annotation.ID) + "\":[\"" + annotation.Source + "\",\"" + annotation.Feature + "\"," + str(annotation.Start) + "," + str(annotation.End) + "," + str(annotation.Score) + ",\"" + annotation.Strand + "\"," + str(frame) + "," + attribute + "],"
         else:
             chunk = chunk[:-1] +  "}"
             StoreAnnotationChunk(gff, chunk, annotation.Chromosome)
