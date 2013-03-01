@@ -35,6 +35,7 @@ it would be included in RepeatMap.py'''
 class RepeatMapState(ParentState):
     F_width = models.IntegerField(default=11)
     F_start = models.IntegerField(default=1)
+    skixelsPerSample = 24
     
     def height(self, state, pixels):
         F_height = len(pixels) / state.nucleotidesPerLine() # self.F_width*20
@@ -45,6 +46,10 @@ class RepeatMapState(ParentState):
         F_height = ((len(pixels)) - (self.F_start-1)*state.scale - self.F_width*state.scale ) / state.nucleotidesPerLine()
 #        F_height = max(0, min(400, F_height) )
         return F_height
+    
+    def numberOfColumns(self):
+        return (self.F_width+1) * self.skixelsPerSample
+    
 class NucleotideDisplayState(ParentState):
     visible = True
     

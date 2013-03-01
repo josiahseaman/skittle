@@ -118,7 +118,17 @@ class ThreeMerDetectorTest(TestCase):
         state = TestPacket()
         extra = ThreeMerDetectorState()
         print ThreeMerDetector.calculateOutputPixels(state, extra)
-        
+
+import SkittleCore.Graphs.RepeatOverview
+from PixelLogic import spectrum
+class RepeatOverviewTest(TestCase):
+    def test(self):
+        pixels = []
+        for y in range(64):
+            for i in range(1024):
+                pixels.append(spectrum(i / 1024.0))
+        return pixels
+    
 #import grph
 #class grphTest(TestCase):
 #    def test(self):

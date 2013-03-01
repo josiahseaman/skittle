@@ -27,6 +27,7 @@ import Graphs.SequenceHighlighter
 import Graphs.SimilarityHeatMap
 import Graphs.ThreeMerDetector
 import Graphs.SNPdisplay
+import Graphs.RepeatOverview
 from Graphs.SkittleGraphTransforms import countDepth
 from PngConversionHelper import convertToPng
 import DNAStorage.StorageRequestHandler as StorageRequestHandler

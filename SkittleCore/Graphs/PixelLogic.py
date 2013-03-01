@@ -123,12 +123,28 @@ def hasDepth(listLike):
         return False
 
 def interpolate(Atuple, Btuple, start, end, position):
+    if start == end: return Atuple
     progress = (position - start) / (end - start)#progress goes from 0.0 p1  to 1.0 p2
     inverse = 1.0 - progress;
     x2 = Atuple[0] * inverse + Btuple[0] * progress;
     y2 = Atuple[1] * inverse + Btuple[1] * progress;
     z2 = Atuple[2] * inverse + Btuple[2] * progress;
     return (x2, y2, z2)
+
+def __colorByCustomSpectrum(spectrumDict, position):
+    assert isinstance(spectrumDict, dict)
+    below = min(spectrumDict.keys())
+    above = max(spectrumDict.keys())
+    try:   below = max(filter(lambda point: point <= position, spectrumDict.keys()))
+    except: pass
+    try:   above = min(filter(lambda point: point >= position, spectrumDict.keys()))
+    except: pass
+    
+    return interpolate(spectrumDict[below], spectrumDict[above], below, above, position)
+
+def spectrum(floatingPoint):
+    spectrumPoints = {0.0: (0, 0, 255), 0.25: (255,0,0), 0.5:(255,255,0), 0.75:(0,255,0), 1.0:(0,255,255)}
+    return __colorByCustomSpectrum(spectrumPoints, floatingPoint)
 
 def twoSidedSpectrumColoring(floatList, midpoint = 0.0):
     if hasDepth(floatList):

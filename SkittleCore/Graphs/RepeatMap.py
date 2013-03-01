@@ -16,11 +16,11 @@ from SkittleCore.PngConversionHelper import convertToPng
 import copy
 
 registerGraph('m', "Repeat Map", __name__, False, False, 0.4)
-skixelsPerSample = 24
 '''
 These are the functions that are specific to the use of RepeatMap and not generally applicable.  
 These functions use RepeatMapState to emulate an object with state.
 '''
+skixelsPerSample = 24
 
 def generateRepeatDebugSequence(maxFrequency, bpPerFrequency, startFrequency = 1):
     seq = []
@@ -145,14 +145,12 @@ def logRepeatMap(state, repeatMapState):
         start += state.nucleotidesPerLine()
     return freq
 
-
-
-def squishStoredMaps(state, repeatMapState):
+def getBaseRepeatMapData(state, repeatMapState = RepeatMapState()):
     #read in the one png at fixed width= skixelsPerSample
     tempState = copy.deepcopy(state)
     tempState.width = skixelsPerSample
     tempState.scale = 1
-    state.requestedGraph = 'm'
+    tempState.requestedGraph = 'm'
     
     fullData = []
     for s in range(state.scale):
@@ -164,12 +162,16 @@ def squishStoredMaps(state, repeatMapState):
             data = calculateOutputPixels(tempState, repeatMapState)
             convertToPng(tempState, data )#store the newly created data to file
             fullData += data
-        tempState.start += chunkSize 
-        
+        tempState.start += chunkSize
+    return fullData 
+    
+
+def squishStoredMaps(state, repeatMapState):
+    fullData = getBaseRepeatMapData(state, repeatMapState)
     #averaging the lines
     newData = []
     nLines = int(math.ceil(state.nucleotidesPerLine() / float(skixelsPerSample)))
-    for start in range(0, len(fullData) * tempState.width, state.nucleotidesPerLine()):
+    for start in range(0, len(fullData) * skixelsPerSample, state.nucleotidesPerLine()):
         startLine = int(math.floor( start / float(skixelsPerSample)))
         stopLine = startLine + nLines
         sample = zip(*fullData[startLine:stopLine])
