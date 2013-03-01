@@ -133,21 +133,23 @@ def chunkAndStoreAnnotations(gff, annotations):
     chunkEnd = settings.CHUNK_SIZE
     jsonStart = "\"" + gff.FileName + "\":{"
     chunk = jsonStart
-    for annotation in annotations:
-        if int(annotation.Start) <= chunkEnd:
-            frame = annotation.Frame or "null"
-            if annotation.Attribute:
-                attribute = "\"" + ''.join(annotation.Attribute).replace('\n', '') + "\""
-            else:
-                attribute = "null"
+    
+    for chromosome in annotations:
+        for annotation in chromosome:
+            if int(annotation.Start) <= chunkEnd:
+                frame = annotation.Frame or "null"
+                if annotation.Attribute:
+                    attribute = "\"" + ''.join(annotation.Attribute).replace('\n', '') + "\""
+                else:
+                    attribute = "null"
                 
-            chunk += "\"" + str(annotation.ID) + "\":[\"" + annotation.Source + "\",\"" + annotation.Feature + "\"," + str(annotation.Start) + "," + str(annotation.End) + "," + str(annotation.Score) + ",\"" + annotation.Strand + "\"," + str(frame) + "," + attribute + "],"
-        else:
-            chunk = chunk[:-1] +  "}"
-            StoreAnnotationChunk(gff, chunk, annotation.Chromosome)
-            chunk = jsonStart
-            chunkStart = chunkEnd + 1
-            chunkEnd = chunkStart + settings.CHUNK_SIZE - 1
+                chunk += "\"" + str(annotation.ID) + "\":[\"" + annotation.Source + "\",\"" + annotation.Feature + "\"," + str(annotation.Start) + "," + str(annotation.End) + "," + str(annotation.Score) + ",\"" + annotation.Strand + "\"," + str(frame) + "," + attribute + "],"
+            else:
+                chunk = chunk[:-1] +  "}"
+                StoreAnnotationChunk(gff, chunk, annotation.Chromosome)
+                chunk = jsonStart
+                chunkStart = chunkEnd + 1
+                chunkEnd = chunkStart + settings.CHUNK_SIZE - 1
     print "DONE CHUNKING!"
             
     
