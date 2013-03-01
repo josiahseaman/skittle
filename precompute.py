@@ -74,14 +74,14 @@ def makeRequestPacket(specimen, chromosome, start):
     return state
 
 if __name__ == "__main__":
-        
-    nProcessors = 7
+    if len(sys.argv) >= 3: nProcessors = sys.argv[2]     
+    else: nProcessors = 6
     specimen = sys.argv[1]
 #    ProcessorRequest = namedtuple('ProcessorRequest', ['specimen', 'nProcessors', 'PID'])
     requests = [(specimen, nProcessors, PID) for PID in range(nProcessors)]
     
     processors = Pool(nProcessors)
-##    processors.map(precomputeRepeatMap, requests)
-    processors.map(outputThreemerNormalization, requests)
+    processors.map(precomputeRepeatMap, requests)
+#    processors.map(outputThreemerNormalization, requests)
 #    outputThreemerNormalization( requests[0])
     
