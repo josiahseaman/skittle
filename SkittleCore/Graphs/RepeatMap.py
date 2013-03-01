@@ -13,6 +13,7 @@ from random import choice
 from DNAStorage.StorageRequestHandler import GetPngFilePath
 from SkittleCore.png import Reader
 from SkittleCore.PngConversionHelper import convertToPng
+import copy
 
 registerGraph('m', "Repeat Map", __name__, False, False, 0.4)
 skixelsPerSample = 24
@@ -148,31 +149,33 @@ def logRepeatMap(state, repeatMapState):
 
 def squishStoredMaps(state, repeatMapState):
     #read in the one png at fixed width= skixelsPerSample
-    oldWidth = state.width * state.scale
-    state.width = skixelsPerSample
-    state.scale = 1
-    oldgraph = state.requestedGraph
+    tempState = copy.deepcopy(state)
+    tempState.width = skixelsPerSample
+    tempState.scale = 1
     state.requestedGraph = 'm'
-    filepath = GetPngFilePath(state)
-    data = []
-    if filepath:
-        decoder = Reader(filename=filepath)
-        data = list(decoder.asFloat(1.0)[2])
-    else:
-        data = calculateOutputPixels(state, repeatMapState)
-        convertToPng(state, data )#store the newly created data to file
-    state.width = oldWidth
-    state.requestedGraph = oldgraph
+    
+    fullData = []
+    for s in range(state.scale):
+        filepath = GetPngFilePath(tempState)
+        if filepath:
+            decoder = Reader(filename=filepath)
+            fullData += list(decoder.asFloat(1.0)[2])
+        else:
+            data = calculateOutputPixels(tempState, repeatMapState)
+            convertToPng(tempState, data )#store the newly created data to file
+            fullData += data
+        tempState.start += chunkSize 
         
     #averaging the lines
     newData = []
-    nLines = int(math.ceil(oldWidth / float(skixelsPerSample)))
-    for start in range(0, chunkSize, oldWidth):
+    nLines = int(math.ceil(state.nucleotidesPerLine() / float(skixelsPerSample)))
+    for start in range(0, len(fullData) * tempState.width, state.nucleotidesPerLine()):
         startLine = int(math.floor( start / float(skixelsPerSample)))
         stopLine = startLine + nLines
-        sample = zip(*data[startLine:stopLine])
+        sample = zip(*fullData[startLine:stopLine])
         finalLine = [average(x) for x in sample]
         newData.append(finalLine)
+    print "Repeat Map: scale", state.scale, "length", len(newData)
     return newData
 
 def calculateOutputPixels(state, repeatMapState = RepeatMapState()):
@@ -185,9 +188,6 @@ def calculateOutputPixels(state, repeatMapState = RepeatMapState()):
 
 #    state.seq = generateRepeatDebugSequence(53, 400, 1)
     scores = logRepeatMap(state, repeatMapState)
-    return scores
-    
-    scores = oldRepeatMap(state, repeatMapState)
     return scores
     
     pixels = NucleotideDisplay.calculateOutputPixels(state)
