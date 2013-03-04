@@ -28,7 +28,7 @@ def findMaxScore(line):
 def alignmentColor(score, column):
     defaultSettings = RepeatMapState()
     progress = normalize(column, 1, defaultSettings.numberOfColumns())
-    icolor = spectrum( progress*2 )
+    icolor = spectrum( progress*1.5 )
 
     return interpolate((0,0,0), icolor ,0.0, 1.0, max(0.0, score-.5)*3.0 ) #score should already be a floating point between 0.0 and 1.0
 
@@ -38,7 +38,7 @@ def convertRepeatDataToRepeatOverview(state, data, nucleotidesPerLine):
     currentPosition = 0
     for lineNumber, line in enumerate(data):
         column, score = findMaxScore(line)
-        while currentPosition < (lineNumber+1) * nucleotidesPerLine: 
+        while currentPosition < (lineNumber+1) * (nucleotidesPerLine): 
             pixels += [alignmentColor(score, column)]
             currentPosition += state.scale
     while len(pixels) < chunkSize:
