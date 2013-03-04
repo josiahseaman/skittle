@@ -1,6 +1,7 @@
 from django.db import models
 from models import Annotation, GFF
-from DNAStorage.StorageRequestHandler import GetRelatedChromosomes, GetFastaChunkFile, GetSpecimen, StoreAnnotationChunk
+from DNAStorage.StorageRequestHandler import GetRelatedChromosomes, GetFastaChunkFile, GetSpecimen
+from StorageRequestHandler import StoreAnnotationChunk
 from django.conf import settings
 
 import sys, math, re
@@ -153,7 +154,7 @@ def chunkAndStoreAnnotations(gff, annotations):
                 
                 chunk = chunk[:-1] +  "}}"
                 sys.stdout.write('.')
-                #StoreAnnotationChunk(gff, chunk, annotation.Chromosome)
+                StoreAnnotationChunk(gff, chunk, annotation.Chromosome)
                 chunkStart = chunkEnd + 1
                 chunkEnd = chunkStart + settings.CHUNK_SIZE - 1
                 jsonStart = "{\"" + str(chunkStart) + "\":{"
