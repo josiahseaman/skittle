@@ -154,7 +154,7 @@ def chunkAndStoreAnnotations(gff, annotations):
                 
                 chunk = chunk[:-1] +  "}}"
                 sys.stdout.write('.')
-                StoreAnnotationChunk(gff, annotation.Chromosome, chunk)
+                StoreAnnotationChunk(gff, annotation.Chromosome, chunk, chunkStart)
                 chunkStart = chunkEnd + 1
                 chunkEnd = chunkStart + settings.CHUNK_SIZE - 1
                 jsonStart = "{\"" + str(chunkStart) + "\":{"
