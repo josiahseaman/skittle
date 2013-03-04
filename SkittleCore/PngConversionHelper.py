@@ -43,10 +43,13 @@ def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3):
         if color is None:
             newline += (0,) * nChannels
         elif nChannels == 4:
-            newline += color 
+            pix = map(lambda c: int(min(255,max(0,c))), color)#cap the range
+            newline += pix
             newline += (255,) #alpha
         else: 
-            newline += color
+            pix = map(lambda c: int(min(255,max(0,c))), color)#cap the range
+            newline += pix
+            
         if len(newline) >= targetWidth * nChannels: 
             p.append(newline)
             newline = []
@@ -60,7 +63,7 @@ def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3):
 def multiplyGreyscale(p, greyMax = 255):
     saveData = copy.deepcopy(p)
     for index, line in enumerate(saveData):
-        saveData[index] = map(lambda x: int(max(x,0.0) * greyMax), line)
+        saveData[index] = map(lambda x: int(min(255, max(x,0) * greyMax)), line)
     return saveData
 
 def squishImage(pixels):

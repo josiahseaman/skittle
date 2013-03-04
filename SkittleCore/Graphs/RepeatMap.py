@@ -166,7 +166,7 @@ def getBaseRepeatMapData(state, repeatMapState = RepeatMapState()):
     return fullData 
     
 
-def squishStoredMaps(state, repeatMapState):
+def squishStoredMaps(state, repeatMapState = RepeatMapState()):
     fullData = getBaseRepeatMapData(state, repeatMapState)
     #averaging the lines
     newData = []
