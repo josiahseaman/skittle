@@ -20,11 +20,5 @@ def StoreAnnotationChunk(gff, chromosome, chunk, start):
     chunkFile = open(annotationChunkFilePath, 'w')
     chunkFile.write(chunk)
     chunkFile.close()
-    
-    chunkDB = AnnotationJsonChunk()
-    chunkDB.GFF = gff
-    chunkDB.Chromosome = chromosome
-    chunkDB.Start = start
-    chunkDB.IsInRamDisk = False
-    
-    chunkDB.save()
+       
+    chunkDB, created = AnnotationJsonChunk.objects.get_or_create(GFF = gff, Chromosome = chromosome, Start = start, IsInRamDisk = False)
