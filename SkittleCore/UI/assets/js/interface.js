@@ -103,6 +103,13 @@ function mouseDown(e) {
 }
 function mouseMove(e) {
     getMouseLocation(e)
+    if(graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
+        if(mx < toPixels(graphStatus["a"].skixelOffset +45) && mx > toPixels(graphStatus["a"].skixelOffset) ) {
+            var column = Math.floor((45-(toSkixels(mx)-graphStatus["a"].skixelOffset))/2)
+            var rowStart = start + (toSkixels(my-25))*width*scale
+            // console.log(column,rowStart)
+        }
+    }
     if(activeTool == "Move") {
         if (graphStatus["n"].visible) { //dragging width only applies to Nuc Display
             var leftSideOfClickZone = toPixels(graphStatus["n"].skixelOffset + width)
