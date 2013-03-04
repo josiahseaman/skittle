@@ -158,7 +158,7 @@ def chunkAndStoreAnnotations(gff, annotations):
                     active.remove(r)
                 
                 chunk = chunk[:-1] +  "}}"
-                sys.stdout.write('.')
+                #sys.stdout.write('.')
                 StoreAnnotationChunk(gff, annotation.Chromosome, chunk, chunkStart)
                 chunkStart = chunkEnd + 1
                 chunkEnd = chunkStart + settings.CHUNK_SIZE - 1
