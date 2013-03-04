@@ -1,4 +1,5 @@
 from models import GFF
+from DNAStorage.models import FastaFiles, Specimen
 from django.conf import settings
 import shutil, os, os.path, re
 
@@ -8,7 +9,6 @@ def generateAnnotationChunkName(gff, start):
     
 #Take a json annotation chunk and store it in the correct disk location and create a reference to it in the DB
 def StoreAnnotationChunk(gff, chunk):
-    return
     annotationChunkFilePath = settings.SKITTLE_TREE_LOC + "Annotations/chunks/" + fastaFile.Specimen.Kingdom + "/" + fastaFile.Specimen.Class + "/" + fastaFile.Specimen.Genus + "/" + fastaFile.Specimen.Species + "/" + fastaFile.Specimen.Name + "/" + fastaFile.Chromosome + "/"
     if not os.path.exists(annotationChunkFilePath):
         os.makedirs(annotationChunkFilePath)
