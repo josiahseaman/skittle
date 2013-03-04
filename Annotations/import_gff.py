@@ -102,7 +102,7 @@ def ImportGFF(specimen, file):
     #Sort the list of annotations read in by their start value (this could probably be optimized by using an always ordered list and inserting in order above)
     #annotations = sorted(annotations, key = lambda annotation: annotation.Start)
     for sublist in annotations:
-        sublist = sorted(sublist, key = lambda annotation: annotation.Start)
+        annotations[sublist] = sorted(annotations[sublist], key = lambda annotation: annotation.Start)
     print "DONE SORTING!"
     
     chunkAndStoreAnnotations(gff, annotations)
@@ -128,31 +128,50 @@ def parseChromosomeName(validChromosomes, seqname):
         
 #Take a sorted list of annotations and chunk it into json chunks
 def chunkAndStoreAnnotations(gff, annotations):
-    print "START CHUNKING..."
-    chunkStart = 1
-    chunkEnd = settings.CHUNK_SIZE
-    jsonStart = "\"" + gff.FileName + "\":{"
-    chunk = jsonStart
-    
+    print "START CHUNKING..."    
     for chromosome in annotations:
-        for annotation in chromosome:
+        chunkStart = 1
+        chunkEnd = settings.CHUNK_SIZE
+        jsonStart = "{\"" + str(chunkStart) + "\":{"
+        chunk = jsonStart
+        active = list()
+        
+        print chromosome
+        for annotation in annotations[chromosome]:
             if int(annotation.Start) <= chunkEnd:
-                frame = annotation.Frame or "null"
-                if annotation.Attribute:
-                    attribute = "\"" + ''.join(annotation.Attribute).replace('\n', '') + "\""
-                else:
-                    attribute = "null"
-                
-                chunk += "\"" + str(annotation.ID) + "\":[\"" + annotation.Source + "\",\"" + annotation.Feature + "\"," + str(annotation.Start) + "," + str(annotation.End) + "," + str(annotation.Score) + ",\"" + annotation.Strand + "\"," + str(frame) + "," + attribute + "],"
+                chunk = appendChunk(annotation, chunk)
+                if int(annotation.End) > chunkEnd:
+                    active.append(annotation)
             else:
-                chunk = chunk[:-1] +  "}"
-                print chunk
-                return
-                StoreAnnotationChunk(gff, chunk, annotation.Chromosome)
-                chunk = jsonStart
+                remove = list()
+                for extra in active:
+                    chunk = appendChunk(extra, chunk)
+                    if int(extra.End) <= chunkEnd:
+                        remove.append(extra)
+                for r in remove:
+                    active.remove(r)
+                
+                chunk = chunk[:-1] +  "}}"
+                sys.stdout.write('.')
+                #StoreAnnotationChunk(gff, chunk, annotation.Chromosome)
                 chunkStart = chunkEnd + 1
                 chunkEnd = chunkStart + settings.CHUNK_SIZE - 1
+                jsonStart = "{\"" + str(chunkStart) + "\":{"
+                chunk = jsonStart
+                chunk = appendChunk(annotation, chunk)
+                if int(annotation.End) > chunkEnd:
+                    active.append(annotation)
     print "DONE CHUNKING!"
+    
+def appendChunk(annotation, chunk):
+    frame = annotation.Frame or "null"
+    if annotation.Attribute:
+        attribute = "\"" + ''.join(annotation.Attribute).replace('\n', '') + "\""
+    else:
+        attribute = "null"
+                
+    chunk += "\"" + str(annotation.ID) + "\":[\"" + annotation.Source + "\",\"" + annotation.Feature + "\"," + str(annotation.Start) + "," + str(annotation.End) + "," + str(annotation.Score) + ",\"" + annotation.Strand + "\"," + str(frame) + "," + attribute + "],"
+    return chunk
             
     
 def getRoundedIndex(index):
