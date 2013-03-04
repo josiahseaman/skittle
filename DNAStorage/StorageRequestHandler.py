@@ -1,5 +1,4 @@
 from models import FastaFiles, FastaChunkFiles, ImageFiles, Specimen
-from Annotations.models import GFF
 from django.conf import settings
 import shutil, os, os.path, re
 
