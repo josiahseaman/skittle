@@ -142,6 +142,8 @@ def chunkAndStoreAnnotations(gff, annotations):
         
         print chromosome
         for annotation in annotations[chromosome]:
+            if chromosome == None:
+                continue
             if int(annotation.Start) <= chunkEnd:
                 chunk = appendChunk(annotation, chunk)
                 if int(annotation.End) > chunkEnd:
