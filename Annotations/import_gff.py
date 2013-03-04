@@ -144,6 +144,7 @@ def chunkAndStoreAnnotations(gff, annotations):
         for annotation in annotations[chromosome]:
             if chromosome == None:
                 continue
+                
             if int(annotation.Start) <= chunkEnd:
                 chunk = appendChunk(annotation, chunk)
                 if int(annotation.End) > chunkEnd:
@@ -164,9 +165,10 @@ def chunkAndStoreAnnotations(gff, annotations):
                 chunkEnd = chunkStart + settings.CHUNK_SIZE - 1
                 jsonStart = "{\"" + str(chunkStart) + "\":{"
                 chunk = jsonStart
-                chunk = appendChunk(annotation, chunk)
                 if int(annotation.End) > chunkEnd:
                     active.append(annotation)
+                else:
+                    chunk = appendChunk(annotation, chunk)
     print "DONE CHUNKING!"
     
 def appendChunk(annotation, chunk):
