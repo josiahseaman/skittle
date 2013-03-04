@@ -120,6 +120,7 @@
     skixelsOnScreen = toSkixels($('#canvasContainer').height())*width;
     selectionStart = {{ selectionStart }}
     selectionEnd = {{ selectionEnd }}
+    var annotationSelectedStart,annotationSelectedEnd = 0
 
     // if graphs are specified in the url set their visibility
     var initialGraphs = "{{ graphs }}".split('')

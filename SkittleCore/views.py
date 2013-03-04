@@ -8,6 +8,7 @@ from SkittleCore.GraphRequestHandler import handleRequest
 from SkittleCore.models import RequestPacket
 from SkittleCore.Graphs.models import *
 from DNAStorage.StorageRequestHandler import GetChromosomeLength
+from Annotations.StorageRequestHandler import GetChunkAnnotations
 # import json
 
 def browse(request, specimen="hg18",chromosome="chrY-sample"):
@@ -44,9 +45,9 @@ def graph(request, specimen="hg18",chromosome="chrY-sample"):
     return HttpResponse(image_data, content_type="image/png")
 
 def annotation(request, specimen="hg18",chromosome="chrY-sample"):
-    state.start = max(1,int(request.GET.get('start',1)))
-    json = '{"' + str(state.start) + '":{"1":["ensembl","chromosome",1,1567,0,".",null,"ID=9;Name=chromosome:AGPv2:9:1:156750706:1"],"76118":["ensembl","chromosome",3013,5413,0,".",null,"ID=1;Name=chromosome:AGPv2:1:1:301354135:1"],"232012":["ensembl","chromosome",24147,25504,0,".",null,"ID=4;Name=chromosome:AGPv2:4:1:241473504:1"],"337780":["ensembl","chromosome",21787,28520,0,".",null,"ID=5;Name=chromosome:AGPv2:5:1:217872852:1"],"454891":["ensembl","chromosome",23706,28873,0,".",null,"ID=2;Name=chromosome:AGPv2:2:1:237068873:1"],"571481":["ensembl","chromosome",1,33214,34174,0,".",null,"ID=3;Name=chromosome:AGPv2:3:1:232140174:1"],"677560":["ensembl","chromosome",41691,44353,0,".",null,"ID=6;Name=chromosome:AGPv2:6:1:169174353:1"],"760463":["ensembl","chromosome",51757,93759,0,".",null,"ID=8;Name=chromosome:AGPv2:8:1:175793759:1"],"848142":["ensembl","chromosome",51767,64762,0,".",null,"ID=7;Name=chromosome:AGPv2:7:1:176764762:1"],"926976":["ensembl","chromosome",51501,59435,0,".",null,"ID=10;Name=chromosome:AGPv2:10:1:150189435:1"],"992796":["ensembl","chromosome",57140,58151,0,".",null,"ID=UNKNOWN;Name=chromosome:AGPv2:UNKNOWN:1:7140151:1"],"993569":["ensembl","chromosome",61403,61484,0,".",null,"ID=Pt;Name=chromosome:AGPv2:Pt:1:140384:1"],"993818":["ensembl","chromosome",65696,65730,0,".",null,"ID=Mt;Name=chromosome:AGPv2:Mt:1:569630:1"]}}'
-    # json = '''{"1":["ensembl","chromosome",1,1567,0,".",null,"ID=9;Name=chromosome:AGPv2:9:1:156750706:1"]}''' 
+    start = max(1,int(request.GET.get('start',1)))
+    json = GetChunkAnnotations(specimen,chromosome,start)
+    # json = '{"' + str(state.start) + '":{"855785":["ensembl","exon",10454829,10454884,0,"-",null,"Parent=GRMZM2G578659_T01;Name=GRMZM2G578659_E03"],"855789":["ensembl","CDS",10454829,10454884,0,"-",0,"Parent=GRMZM2G578659_T01;Name=CDS.800878"],"855781":["ensembl","intron",10454885,10454962,0,"-",null,"Parent=GRMZM2G578659_T01;Name=intron.800870"],"855784":["ensembl","exon",10454963,10455069,0,"-",null,"Parent=GRMZM2G578659_T01;Name=GRMZM2G578659_E02"],"855788":["ensembl","CDS",10454963,10455069,0,"-",1,"Parent=GRMZM2G578659_T01;Name=CDS.800877"],"855780":["ensembl","intron",10455070,10455162,0,"-",null,"Parent=GRMZM2G578659_T01;Name=intron.800869"],"855783":["ensembl","exon",10455163,10455464,0,"-",null,"Parent=GRMZM2G578659_T01;Name=GRMZM2G578659_E01"],"855787":["ensembl","CDS",10455163,10455184,0,"-",null,"Parent=GRMZM2G578659_T01;Name=CDS.800876"]}}'
     return HttpResponse(json,content_type="application/json")
 
 def state(request):
