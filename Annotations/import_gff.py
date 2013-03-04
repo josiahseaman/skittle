@@ -7,9 +7,9 @@ import sys, math, re
 
 #Import a GFF for a specific specimen
 def ImportGFF(specimen, file):
-    gff = GFF()
     fileName = file.split('/')
-    gff.FileName = fileName[-1].split('.')[0]
+    fileName = fileName[-1].split('.')[0]
+    gff, created = GFF.objects.get_or_create(FileName = fileName)
     print gff.FileName
     #Get the specimen this annotation file is for
     gff.Specimen = GetSpecimen(specimen)
