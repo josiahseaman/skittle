@@ -146,7 +146,12 @@ def GetRelatedChromosomes(specimen):
     
 #Get the FastaFile related to the given specimen's chromosome
 def GetRelatedFastaFile(specimen, chromosome):
-    fastaFile = FastaFiles.objects.filter(Specimen
+    fastaFile = FastaFiles.objects.filter(Specimen = specimen, Chromosome = chromosome)[:1]
+    
+    if fastaFile:
+        return fastaFile[0]
+    else:
+        return None
     
 #Get the fasta chunk file at the given start position for the specified chromosome
 def GetFastaChunkFile(specimen, chromosome, start):
