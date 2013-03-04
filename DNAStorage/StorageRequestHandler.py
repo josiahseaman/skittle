@@ -89,11 +89,7 @@ def StorePng(request, fileObject):
     
     imageFile.save()
     
-    return imageFile
-    
-#Take a json annotation chunk and store it in the correct disk location and create a reference to it in the DB
-def StoreAnnotationChunk(gff, chunk):
-    pass
+    return imageFile 
 
 #Delete the database entries and PNG files associated with the given graph
 def DeleteCache(graph):
