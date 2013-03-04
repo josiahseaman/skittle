@@ -141,6 +141,7 @@ var drawGraph = function(graph,offset,chunks) {
         case "b": return drawNucBias(offset,chunks);
         case "m": return drawRMap(offset,chunks);
         case "s": return drawSimHeat(offset,chunks);
+        case "r": return drawRepeatOverview(offset,chunks);
         default: 
             if (graphStatus[graph].rasterGraph == true) return drawRasterGraph(graph,offset,chunks);
             else return drawVerticalGraph(graph,offset,chunks);
@@ -194,7 +195,7 @@ var drawAnnotations = function(offset,chunks) {
     var annotationWidth = 2
     var columnFilledTilRow = []
     b.beginPath()
-    b.rect(offset,0.5,annotationWidth,500)
+    b.rect(offset+45,0.5,-annotationWidth,500)
     b.fillStyle="#333";
     b.fill()
 
@@ -218,7 +219,7 @@ var drawAnnotations = function(offset,chunks) {
                     if (!columnFilledTilRow[currentColumn] || startRow > columnFilledTilRow[currentColumn]) {
                         if (!columnFilledTilRow[currentColumn]) {
                             b.beginPath()
-                            b.rect(offset+currentColumn*annotationWidth,0.5,annotationWidth,500)
+                            b.rect(offset+45-currentColumn*annotationWidth,0.5,-annotationWidth,500)
                             b.fillStyle="#333";
                             b.fill()
                         }
@@ -227,17 +228,26 @@ var drawAnnotations = function(offset,chunks) {
                     }
                 }
 
-                b.beginPath()
-                b.rect(offset+currentColumn*annotationWidth,startRow,annotationWidth,rowHeight)
-                annotation.color = annotation.color || getGoodDeterministicColor(annotation[2] + annotation[3] +"")
-                b.fillStyle=annotation.color
-                b.fill()
+                if (annotation[3]-annotation[2]>3) {
+                    b.beginPath()
+                    b.rect(offset+45-currentColumn*annotationWidth,startRow,-annotationWidth,rowHeight)
+                    annotation.color = annotation.color || getGoodDeterministicColor(annotation[2] + annotation[3] +"")
+                    b.fillStyle=annotation.color
+                    b.fill()
+                }
+                else {
+                    b.beginPath()
+                    b.arc(offset+45-currentColumn*annotationWidth-0.5,startRow+0.5,annotationWidth/2,0,2*Math.PI,false)
+                    annotation.color = annotation.color || getGoodDeterministicColor(annotation[2] + "" +  annotation[3] + "" + i + "")
+                    b.fillStyle=annotation.color
+                    b.fill()
+                }
             }
         // }
         //else do nothing
     })
 
-    return calculateOffsetWidth(annotationWidth*columnFilledTilRow.length)
+    return calculateOffsetWidth(45)
 }
 var drawNucBias = function(offset,chunks) {
     b.beginPath()
@@ -330,6 +340,37 @@ var drawSimHeat = function(offset,chunks) {
         // b.putImageData(imageData, offset+320, vOffset);
     return calculateOffsetWidth(displayWidth)
     
+}
+var drawRepeatOverview = function(offset,chunks) {
+    var offsetWidth = drawRasterGraph('r',offset+11,chunks)
+
+    var height = toSkixels($('#canvasContainer').height()-70)
+    drawPixelStuff.push(function() { 
+        var legendGradient = c.createLinearGradient(0,0,0,height)
+        legendGradient.addColorStop(0,'#00a')
+        legendGradient.addColorStop(0.25,'#a00')
+        legendGradient.addColorStop(0.5,'#aa0')
+        legendGradient.addColorStop(0.75,'#0a0')
+        legendGradient.addColorStop(1,'#0aa')
+        c.fillStyle = legendGradient
+        c.fillRect(offset,10,10,height)
+
+        c.textBaseline = "middle"
+        c.textAlign = "center"
+        c.fillStyle = '#fff'
+        c.font = "5px Exo,sans-serif"
+        c.shadowOffsetX = 1;
+        c.shadowOffsetY = 1;
+        c.shadowBlur    = 2;
+        c.shadowColor   = 'rgba(0, 0, 0, 1)';
+        c.fillText("1bp",offset+5,13)
+        c.fillText("50",offset+5,10+height/5*1)
+        c.fillText("100",offset+5,10+height/5*2)
+        c.fillText("150",offset+5,10+height/5*3)
+        c.fillText("200",offset+5,10+height/5*4)
+        c.fillText("250",offset+5,10+height-2)
+    })
+    return offsetWidth+11
 }
 var generatePlaceholderImage = function() {
 
