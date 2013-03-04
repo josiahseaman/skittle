@@ -4,7 +4,7 @@ from DNAStorage.models import Specimen
 # Database for storing imported GFF information
 class GFF(models.Model):
     Specimen = models.ForeignKey(Specimen)
-    GFFVersion = models.SmallIntegerField()
+    GFFVersion = models.SmallIntegerField(null=True)
     SourceVersion = models.CharField(max_length=255, null=True, blank=True)
     Date = models.DateField(null=True)
     Type = models.CharField(max_length=255, null=True, blank=True)
