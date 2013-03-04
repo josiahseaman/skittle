@@ -35,7 +35,7 @@ def ImportGFF(specimen, file):
     gff.save()
     
     #Grab a list of chromosomes related to this specimen
-    validChromosomes = GetRelatedChromosomes(specimen)
+    validChromosomes = GetRelatedChromosomes(gff.Specimen)
     
     annotations = dict()
     
@@ -154,7 +154,7 @@ def chunkAndStoreAnnotations(gff, annotations):
                 
                 chunk = chunk[:-1] +  "}}"
                 sys.stdout.write('.')
-                StoreAnnotationChunk(gff, chunk, annotation.Chromosome)
+                StoreAnnotationChunk(gff, annotation.Chromosome, chunk)
                 chunkStart = chunkEnd + 1
                 chunkEnd = chunkStart + settings.CHUNK_SIZE - 1
                 jsonStart = "{\"" + str(chunkStart) + "\":{"
