@@ -9,6 +9,7 @@ from SkittleCore.GraphRequestHandler import registerGraph
 registerGraph('n',"Nucleotide Display", __name__, True, True)
     
 def calculateOutputPixels(state):
+    state.readFastaChunks()
     assert isinstance(state, RequestPacket) 
 #    print state.seq
 #    chunks = chunkUpList(state.seq, state.nucleotidesPerLine() )

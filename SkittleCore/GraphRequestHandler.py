@@ -38,13 +38,7 @@ import DNAStorage.StorageRequestHandler as StorageRequestHandler
 #for graph in availableGraphs:
 #    print graph 
 
-def calculatePixels(state):
-    state.seq = ''
-    if state.requestedGraph not in ['r']:
-        numChunks = state.scale or 1 
-        for chunk in range(numChunks):
-            state.readAndAppendNextChunk()
-    
+def calculatePixels(state):    
     graphData = getGraphDescription(state)
     name, graphModule = graphData[1], graphData[2]
 #    activeSet = state.getActiveGraphs()

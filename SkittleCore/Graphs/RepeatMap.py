@@ -189,6 +189,7 @@ def calculateOutputPixels(state, repeatMapState = RepeatMapState()):
 
 
 #    state.seq = generateRepeatDebugSequence(53, 400, 1)
+    state.readFastaChunks()
     scores = logRepeatMap(state, repeatMapState)
     return scores
     

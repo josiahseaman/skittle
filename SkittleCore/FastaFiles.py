@@ -14,7 +14,6 @@ class FastaFile(str):
         return super.__str__(self, *args, **kwargs)[:1000]
 
 
-
 def readFile(state):
 #    assert isinstance(state, RequestPacket)
     seq = ''

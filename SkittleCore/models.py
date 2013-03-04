@@ -72,8 +72,13 @@ class RequestPacket(models.Model):
         self.start = startBackup
         self.length = len(self.seq)
         return self
-
    
+    def readFastaChunks(self):
+        self.seq = ''
+        numChunks = self.scale or 1 
+        for chunk in range(numChunks):
+            self.readAndAppendNextChunk()
+
 class StatePacket(RequestPacket): 
     specimen = 'hg18'
     chromosome = 'chrY-sample'

@@ -14,10 +14,11 @@ registerGraph('o', "Oligomer Usage", __name__, False)
 def calculateOutputPixels(state, oligState = OligomerUsageState()):
     assert isinstance(state, RequestPacket)
     assert isinstance(oligState, OligomerUsageState)
-#    print state.seq
+    state.readFastaChunks()
+
     overlap = oligState.oligomerSize-1
     lines = chunkUpList(state.seq, state.nucleotidesPerLine(), overlap) #chunk sequence by display line #we can't do this simply by line because of the overhang of oligState.oligState
-#    print lines
+
     counts = countNucleotides(lines, oligState.oligomerSize)
     
     #NORMALIZATION
