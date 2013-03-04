@@ -74,7 +74,7 @@ def makeRequestPacket(specimen, chromosome, start):
     return state
 
 if __name__ == "__main__":
-    if len(sys.argv) >= 3: nProcessors = sys.argv[2]     
+    if len(sys.argv) >= 3: nProcessors = int(sys.argv[2])     
     else: nProcessors = 6
     specimen = sys.argv[1]
 #    ProcessorRequest = namedtuple('ProcessorRequest', ['specimen', 'nProcessors', 'PID'])
