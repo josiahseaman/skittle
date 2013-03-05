@@ -162,7 +162,7 @@ var drawRasterGraph = function(graph,offset,chunks) {
 
     var fadePercent = 1
     if (annotationSelectedStart > 0) {
-        fadePercent = 0.4
+        fadePercent = 0.35
     }
     var chunkStartOffset = Math.max( Math.floor((start/scale-width*8)/(65536) ), 0 )*65536
     var startOffset = ( Math.round(start/scale) - 1 - width*8 - chunkStartOffset )*4;

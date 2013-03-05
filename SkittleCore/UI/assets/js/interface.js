@@ -106,11 +106,11 @@ function mouseMove(e) {
     if(graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
         if(mx < toPixels(graphStatus["a"].skixelOffset +graphStatus["a"].skixelWidth) && mx > toPixels(graphStatus["a"].skixelOffset) ) {
             var column = Math.floor((graphStatus["a"].skixelWidth-graphStatus["a"].skixelOffset-(toSkixels(mx)-graphStatus["a"].skixelOffset))/3)
-            var row = toSkixels(my-25)
+            var row = toSkixels(my)
             $.each(visibleAnnotations,function(i,v){
                 if(column == annotations[v].column) {
                         // console.log(column,row)
-                    if(row >= annotations[v].startRow && row <= (annotations[v].startRow + annotations[v].rowHeight)) {
+                    if((row+1) >= annotations[v].startRow && (row-1) <= (annotations[v].startRow + annotations[v].rowHeight)) {
                         console.log(column,row,annotations[v])
                         annotationSelectedStart = annotations[v][2]
                         annotationSelectedEnd = annotations[v][3]
@@ -118,6 +118,10 @@ function mouseMove(e) {
                         return false;
                     }
                 }
+
+                annotationSelectedStart = 0
+                annotationSelectedEnd = 0
+                isInvalidDisplay = true;
             })
         }
     }
