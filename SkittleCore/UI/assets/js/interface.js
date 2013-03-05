@@ -104,10 +104,21 @@ function mouseDown(e) {
 function mouseMove(e) {
     getMouseLocation(e)
     if(graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
-        if(mx < toPixels(graphStatus["a"].skixelOffset +45) && mx > toPixels(graphStatus["a"].skixelOffset) ) {
-            var column = Math.floor((45-(toSkixels(mx)-graphStatus["a"].skixelOffset))/2)
-            var rowStart = start + (toSkixels(my-25))*width*scale
-            // console.log(column,rowStart)
+        if(mx < toPixels(graphStatus["a"].skixelOffset +graphStatus["a"].skixelWidth) && mx > toPixels(graphStatus["a"].skixelOffset) ) {
+            var column = Math.floor((graphStatus["a"].skixelWidth-graphStatus["a"].skixelOffset-(toSkixels(mx)-graphStatus["a"].skixelOffset))/3)
+            var row = toSkixels(my-25)
+            $.each(visibleAnnotations,function(i,v){
+                if(column == annotations[v].column) {
+                        // console.log(column,row)
+                    if(row >= annotations[v].startRow && row <= (annotations[v].startRow + annotations[v].rowHeight)) {
+                        console.log(column,row,annotations[v])
+                        annotationSelectedStart = annotations[v][2]
+                        annotationSelectedEnd = annotations[v][3]
+                        isInvalidDisplay = true;
+                        return false;
+                    }
+                }
+            })
         }
     }
     if(activeTool == "Move") {

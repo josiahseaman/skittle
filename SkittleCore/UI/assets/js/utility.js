@@ -54,7 +54,7 @@ String.prototype.hashCode = function(){ // from http://werxltd.com/wp/2010/05/13
 
 var getGoodDeterministicColor = function(input) {
 	input = input + "padding"
-	var hash = input.hashCode().toString(16)
+	var hash = md5(input)
 	var red = parseInt(hash.slice(1,3),16)
 	var green = parseInt(hash.slice(3,5),16)
 	var blue = parseInt(hash.slice(5,7),16)

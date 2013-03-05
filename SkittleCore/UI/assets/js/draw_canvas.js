@@ -160,13 +160,20 @@ var drawRasterGraph = function(graph,offset,chunks) {
     var newImageData = b.createImageData(width,toSkixels(1000)) //create new image data with desired dimentions (width)
     var newData = newImageData.data;
 
-    var startOffset = (Math.round(start/scale) - 1 - width*8 - Math.max( Math.floor((start/scale-width*8)/(65536) ), 0 )*65536 )*4;
+    var fadePercent = 1
+    if (annotationSelectedStart > 0) {
+        fadePercent = 0.4
+    }
+    var chunkStartOffset = Math.max( Math.floor((start/scale-width*8)/(65536) ), 0 )*65536
+    var startOffset = ( Math.round(start/scale) - 1 - width*8 - chunkStartOffset )*4;
+    var selectedStart = ((annotationSelectedStart/scale) - chunkStartOffset)*4;
+    var selectedEnd = ((annotationSelectedEnd/scale) - chunkStartOffset)*4;
     for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
         var y = x + startOffset
         newData[x] = data[y] || 0;
         newData[x + 1] = data[y + 1] || 0;
         newData[x + 2] = data[y + 2] || 0;
-        newData[x + 3] = data[y + 3] || 0;
+        (selectedEnd >y && selectedStart<y) ? newData[x + 3] = data[y + 3] : newData[x + 3] = data[y + 3]*fadePercent;
     }
     b.putImageData(newImageData, offset, 0);
 
@@ -192,16 +199,15 @@ var drawVerticalGraph = function(graph,offset,chunks) {
     return calculateOffsetWidth(graphWidth)
 }
 var drawAnnotations = function(offset,chunks) {
-    var annotationWidth = 2
+    var annotationWidth = 3
     var columnFilledTilRow = []
-    b.beginPath()
-    b.rect(offset+45,0.5,-annotationWidth,500)
-    b.fillStyle="#333";
-    b.fill()
+
 
     for (var i = 0; i < chunks; i++) {
         annotationRequestor((Math.floor(start/65536)+i)*65536+1)
     };
+
+    visibleAnnotations = []
     
     // var annotationsProcessed = []
     $.each(annotations,function(i,annotation){ // [2] = from, [3] = to
@@ -211,43 +217,54 @@ var drawAnnotations = function(offset,chunks) {
                 || (annotation[2] < (start - 8*width*scale) && annotation[3] > (start - 8*width*scale) )
                 || (annotation[2] > (start - 8*width*scale) && annotation[3] < ( start + (skixelsOnScreen + 37*width - 1)*scale ) ) ) {
                 
-                var currentColumn = 0
-                var startRow = Math.floor((annotation[2]-start)/(width*scale)+8)
-                var rowHeight = Math.ceil((annotation[3]-annotation[2])/(width*scale))
 
-                for (currentColumn=0;currentColumn<=columnFilledTilRow.length;currentColumn++) {
-                    if (!columnFilledTilRow[currentColumn] || startRow > columnFilledTilRow[currentColumn]) {
-                        if (!columnFilledTilRow[currentColumn]) {
-                            b.beginPath()
-                            b.rect(offset+45-currentColumn*annotationWidth,0.5,-annotationWidth,500)
-                            b.fillStyle="#333";
-                            b.fill()
-                        }
-                        columnFilledTilRow[currentColumn] = startRow + rowHeight
-                        break;
-                    }
-                }
+                visibleAnnotations.push(i)
 
-                if (annotation[3]-annotation[2]>3) {
-                    b.beginPath()
-                    b.rect(offset+45-currentColumn*annotationWidth,startRow,-annotationWidth,rowHeight)
-                    annotation.color = annotation.color || getGoodDeterministicColor(annotation[2] + annotation[3] +"")
-                    b.fillStyle=annotation.color
-                    b.fill()
-                }
-                else {
-                    b.beginPath()
-                    b.arc(offset+45-currentColumn*annotationWidth-0.5,startRow+0.5,annotationWidth/2,0,2*Math.PI,false)
-                    annotation.color = annotation.color || getGoodDeterministicColor(annotation[2] + "" +  annotation[3] + "" + i + "")
-                    b.fillStyle=annotation.color
-                    b.fill()
-                }
             }
         // }
         //else do nothing
     })
+    visibleAnnotations.sort(function(a,b){return annotations[a][2]-annotations[b][2]})
 
-    return calculateOffsetWidth(45)
+    $.each(visibleAnnotations,function(i,v){
+        var currentColumn = 0
+        var startRow = Math.floor((annotations[v][2]-start)/(width*scale)+8)
+        var rowHeight = Math.ceil((annotations[v][3]-annotations[v][2])/(width*scale))
+
+        for (currentColumn=0;currentColumn<=columnFilledTilRow.length;currentColumn++) {
+            if (!columnFilledTilRow[currentColumn] || startRow > columnFilledTilRow[currentColumn]) {
+                columnFilledTilRow[currentColumn] = startRow + rowHeight
+                annotations[v].column = currentColumn
+                annotations[v].startRow = startRow
+                annotations[v].rowHeight = rowHeight
+                break;
+            }
+        }
+    })
+    
+    var offsetWidth = calculateOffsetWidth(columnFilledTilRow.length*annotationWidth)
+    drawPixelStuff.push(function(){
+        $.each(visibleAnnotations,function(i,v){
+            if (annotations[v][3]-annotations[v][2]>3) {
+                c.beginPath()
+                c.rect(offsetWidth-annotations[v].column*annotationWidth-1,annotations[v].startRow,-2/(zoom*3),annotations[v].rowHeight)
+                annotations[v].color = annotations[v].color || getGoodDeterministicColor(annotations[v][2] + "" + annotations[v][3] +"" + i + "")
+                c.fillStyle=annotations[v].color
+                c.fill()
+            }
+            else {
+                c.beginPath()
+                c.arc(offsetWidth-annotations[v].column*annotationWidth-annotationWidth/2,annotations[v].startRow+annotationWidth/2,annotationWidth/2,0,2*Math.PI,false)
+                annotations[v].color = annotations[v].color || getGoodDeterministicColor(annotations[v][2] + "" + annotations[v][3] + "" + i + "")
+                c.fillStyle=annotations[v].color
+                c.fill()
+            }
+        })
+
+    })
+
+
+    return calculateOffsetWidth(Math.max(columnFilledTilRow.length*annotationWidth))
 }
 var drawNucBias = function(offset,chunks) {
     b.beginPath()
@@ -355,6 +372,7 @@ var drawRepeatOverview = function(offset,chunks) {
         c.fillStyle = legendGradient
         c.fillRect(offset,10,10,height)
 
+
         c.textBaseline = "middle"
         c.textAlign = "center"
         c.fillStyle = '#fff'
@@ -363,6 +381,7 @@ var drawRepeatOverview = function(offset,chunks) {
         c.shadowOffsetY = 1;
         c.shadowBlur    = 2;
         c.shadowColor   = 'rgba(0, 0, 0, 1)';
+
         c.fillText("1bp",offset+5,13)
         c.fillText("50",offset+5,10+height/5*1)
         c.fillText("100",offset+5,10+height/5*2)
