@@ -78,19 +78,19 @@ var graphURL = function(graph,chunkOffset) {
 }
     var loadedAnnotations = []
 var annotationRequestor = function(chunkOffset) {
-    if(!loadedAnnotations[chunkOffset]) {
+    if(!loadedAnnotations[chunkOffset] && chunkOffset <= fileLength) {
         $.getJSON('annotation.json',{start:chunkOffset},function(data){
             $.extend(annotations,data[chunkOffset])
             isInvalidDisplay = true
             loadedAnnotations[chunkOffset] = true
-        }).error(function(jqXHR, textStatus, errorThrown){console.log(jqXHR.responseText,textStatus,errorThrown)})
+        }).error(function(jqXHR, textStatus, errorThrown){console.log(chunkOffset,jqXHR.responseText,textStatus,errorThrown)})
     }
 }
 
 
 // the part that does the actual work
 var gutterWidth = 8 //skixels
-var minimumWidth = 120 //pixels
+var minimumWidth = 160 //pixels
 var calculateOffsetWidth = function(skixelWidthofGraph) {
     return Math.max( (skixelWidthofGraph + gutterWidth), toSkixels(minimumWidth) )
 }
@@ -239,14 +239,14 @@ var drawAnnotations = function(offset,chunks) {
         $.each(visibleAnnotations,function(i,v){
             if (annotations[v][3]-annotations[v][2]>3) {
                 c.beginPath()
-                c.rect(offset + columnFilledTilRow.length*annotationWidth-annotations[v].column*annotationWidth+1,annotations[v].startRow,-2/(zoom*3),annotations[v].rowHeight)
+                c.rect(offset - gutterWidth + offsetWidth-annotations[v].column*annotationWidth+1,annotations[v].startRow,-2/(zoom*3),annotations[v].rowHeight)
                 annotations[v].color = annotations[v].color || getGoodDeterministicColor(annotations[v][2] + "" + annotations[v][3] +"" + i + "")
                 annotations[v].active == true ? c.fillStyle='#fff' : c.fillStyle=annotations[v].color
                 c.fill()
             }
             else {
                 c.beginPath()
-                c.arc(offset + columnFilledTilRow.length*annotationWidth-annotations[v].column*annotationWidth+1,annotations[v].startRow+0.5,annotationWidth/4,0,2*Math.PI,false)
+                c.arc(offset - gutterWidth + offsetWidth-annotations[v].column*annotationWidth+0.7,annotations[v].startRow+0.5,annotationWidth/4,0,2*Math.PI,false)
                 annotations[v].color = annotations[v].color || getGoodDeterministicColor(annotations[v][2] + "" + annotations[v][3] + "" + i + "")
                 annotations[v].active == true ? c.fillStyle='#fff' : c.fillStyle=annotations[v].color
                 c.fill()
@@ -256,7 +256,7 @@ var drawAnnotations = function(offset,chunks) {
     })
 
 
-    return calculateOffsetWidth(Math.max(columnFilledTilRow.length*annotationWidth))
+    return offsetWidth
 }
 var drawNucBias = function(offset,chunks) {
     b.beginPath()

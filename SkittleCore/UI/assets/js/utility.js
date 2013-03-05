@@ -81,21 +81,27 @@ var getGoodDeterministicColor = function(input) {
 }
 
 var formatGffDescription = function(annotationArray){
-	var html =$("<div />")
-	var table = $('<table class="annotationDetail" />')
+	var html =$('<div class="annotationDetail" />')
+	var table = $('<table />')
 	table.append($('<tr><th>Source:</th><td>'+annotationArray[0] + '</td></tr>'))
 	table.append($('<tr><th>Feature:</th><td>'+annotationArray[1] + '</td></tr>'))
 	table.append($('<tr><th>Start Index:</th><td>'+annotationArray[2] + '</td></tr>'))
 	table.append($('<tr><th>End Index:</th><td>'+annotationArray[3] + '</td></tr>'))
+	table.append($('<tr><th>Length:</th><td>'+(annotationArray[3]-annotationArray[2]) + 'bp</td></tr>'))
 	if(annotationArray[4] !=null) table.append($('<tr><th>Score:</th><td>'+annotationArray[4] + '</td></tr>'))
 	if(annotationArray[5] !=null) table.append($('<tr><th>Strand:</th><td>'+annotationArray[5] + '</td></tr>'))
 	if(annotationArray[6] !=null) table.append($('<tr><th>Frame:</th><td>'+annotationArray[6] + '</td></tr>'))
 	var descriptionArray = annotationArray[7].split(';')
-	$.each(descriptionArray,function(i,v){
-		var keyValue = v.split('=',2)
-		table.append($('<tr><th>'+keyValue[0]+':</th><td>'+keyValue[1] + '</td></tr>'))
-	})
-	html.append(table)
+	if (annotationArray.length>0) {
+		$.each(descriptionArray,function(i,v){
+			var keyValue = v.split('=',2)
+			table.append($('<tr><th>'+keyValue[0]+':</th><td>'+keyValue[1] + '</td></tr>'))
+		})
+		html.append(table)
+	} else {
+		html.append(table)
+		html.append($('<h4>Details:</h4><p>'+annotationArray[7]+'</p>'))
+	}
 
 	return html
 }

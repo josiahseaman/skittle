@@ -75,7 +75,7 @@ function mouseDown(e) {
     $('#annotationDetail').remove()
     if(graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
         if(mx < toPixels(graphStatus["a"].skixelOffset +graphStatus["a"].skixelWidth) && mx > toPixels(graphStatus["a"].skixelOffset) ) {
-            var column = Math.floor((graphStatus["a"].skixelWidth-graphStatus["a"].skixelOffset-(toSkixels(mx)-graphStatus["a"].skixelOffset))/3)
+            var column = Math.ceil((graphStatus["a"].skixelWidth+graphStatus["a"].skixelOffset-toSkixels(mx)-8)/3)
             var row = toSkixels(my)
             $.each(visibleAnnotations,function(i,v){
                 if(column == annotations[v].column) {
@@ -89,12 +89,18 @@ function mouseDown(e) {
 
 
                         var popup = $('<div id="annotationDetail" />').addClass('popover active').html(formatGffDescription(annotations[v]))
-                        if(annotations[v].startRow>toSkixels($('#canvasContainer').height())-(annotations[v].startRow+annotations[v].rowHeight)) {
+                        if(annotations[v].startRow <100 && toSkixels($('#canvasContainer').height())-(annotations[v].startRow+annotations[v].rowHeight) < 100) {
+                            popup.addClass('arrow-left-top') 
+                            popup.css({'top':'30px','left': toPixels(graphStatus['n'].skixelOffset+width+8)+'px'})
+                        } else if(annotations[v].startRow>toSkixels($('#canvasContainer').height())-(annotations[v].startRow+annotations[v].rowHeight)) {
                             popup.addClass('arrow-bottom-center') 
-                            popup.css({'bottom':($('#canvasContainer').height()-toPixels(annotations[v].startRow)+14)+'px','left':(toPixels(graphStatus['n'].skixelOffset+width/2)-150)+'px','width':'300px'})
+                            popup.css({'bottom':($('#canvasContainer').height()-toPixels(annotations[v].startRow)+14)+'px','left':(toPixels(graphStatus['n'].skixelOffset+width/2)-150)+'px'})
                         } else {
                             popup.addClass('arrow-top-center')
-                            popup.css({'top':toPixels(annotations[v].startRow+annotations[v].rowHeight+6)+'px','left':(toPixels(graphStatus['n'].skixelOffset+width/2)-150)+'px','width':'300px'})
+                            popup.css({'top':toPixels(annotations[v].startRow+annotations[v].rowHeight+6)+'px','left':(toPixels(graphStatus['n'].skixelOffset+width/2)-150)+'px'})
+                        }
+                        if(annotations[v][3]-annotations[v][2] < width) {
+                            popup.css({'left':(toPixels(graphStatus['n'].skixelOffset+(annotations[v][2]-start)%width)-143)+'px'})
                         }
 
                         $('#canvasContainer').append(popup)
@@ -142,7 +148,7 @@ function mouseMove(e) {
     getMouseLocation(e)
     if(activeAnnotation==0 && graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
         if(mx < toPixels(graphStatus["a"].skixelOffset +graphStatus["a"].skixelWidth) && mx > toPixels(graphStatus["a"].skixelOffset) ) {
-            var column = Math.floor((graphStatus["a"].skixelWidth-graphStatus["a"].skixelOffset-(toSkixels(mx)-graphStatus["a"].skixelOffset))/3)
+            var column = Math.ceil((graphStatus["a"].skixelWidth+graphStatus["a"].skixelOffset-toSkixels(mx)-8)/3)
             var row = toSkixels(my)
             $.each(visibleAnnotations,function(i,v){
                 if(annotations[v]) annotations[v].active = false
