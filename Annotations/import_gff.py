@@ -67,11 +67,15 @@ def ImportGFF(specimen, file):
         
                 #Do checking for Score
                 if elements[5] == '.':
-                    annotation.Score = 0
+                    annotation.Score = None
                 else:
                     annotation.Score = elements[5]
             
-                annotation.Strand = elements[6]
+                #Do checking for Strand
+                if elements[6] == '.':
+                    annotation.Strand = None
+                else:
+                    annotation.Strand = elements[6]
         
                 #Do checking for frame
                 if elements[7] == '.':
@@ -172,13 +176,15 @@ def chunkAndStoreAnnotations(gff, annotations):
     print "DONE CHUNKING!"
     
 def appendChunk(annotation, chunk):
+    score = annotation.Score or "null"
+    strand = annotation.Strand or "null"
     frame = annotation.Frame or "null"
     if annotation.Attribute:
         attribute = "\"" + ''.join(annotation.Attribute).replace('\n', '') + "\""
     else:
         attribute = "null"
                 
-    chunk += "\"" + str(annotation.ID) + "\":[\"" + annotation.Source + "\",\"" + annotation.Feature + "\"," + str(annotation.Start) + "," + str(annotation.End) + "," + str(annotation.Score) + ",\"" + annotation.Strand + "\"," + str(frame) + "," + attribute + "],"
+    chunk += "\"" + str(annotation.ID) + "\":[\"" + annotation.Source + "\",\"" + annotation.Feature + "\"," + str(annotation.Start) + "," + str(annotation.End) + "," + str(score) + ",\"" + str(strand) + "\"," + str(frame) + "," + attribute + "],"
     return chunk
             
     

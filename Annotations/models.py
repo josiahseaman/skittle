@@ -30,8 +30,8 @@ class Annotation():
     Feature = models.CharField(max_length=50)
     Start = models.BigIntegerField()
     End = models.BigIntegerField()
-    Score = models.FloatField()
-    Strand = models.CharField(max_length=1)
+    Score = models.FloatField(null=True)
+    Strand = models.CharField(max_length=1, null=True)
     Frame = models.SmallIntegerField(null=True)
     Attribute = models.TextField(null=True, blank=True)
     
