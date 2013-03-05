@@ -72,6 +72,43 @@ function getMouseLocation(e) {
 
 function mouseDown(e) {
     getMouseLocation(e);
+    $('#annotationDetail').remove()
+    if(graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
+        if(mx < toPixels(graphStatus["a"].skixelOffset +graphStatus["a"].skixelWidth) && mx > toPixels(graphStatus["a"].skixelOffset) ) {
+            var column = Math.floor((graphStatus["a"].skixelWidth-graphStatus["a"].skixelOffset-(toSkixels(mx)-graphStatus["a"].skixelOffset))/3)
+            var row = toSkixels(my)
+            $.each(visibleAnnotations,function(i,v){
+                if(column == annotations[v].column) {
+                        // console.log(column,row)
+                    if((row+1) >= annotations[v].startRow && (row-1) <= (annotations[v].startRow + annotations[v].rowHeight)) {
+                        annotationSelectedStart = annotations[v][2]
+                        annotationSelectedEnd = annotations[v][3]
+                        if(annotations[activeAnnotation]) annotations[activeAnnotation].active = false
+                        activeAnnotation = v
+                        annotations[activeAnnotation].active = true
+
+
+                        var popup = $('<div id="annotationDetail" />').addClass('popover active').html(formatGffDescription(annotations[v]))
+                        if(annotations[v].startRow>toSkixels($('#canvasContainer').height())-(annotations[v].startRow+annotations[v].rowHeight)) {
+                            popup.addClass('arrow-bottom-center') 
+                            popup.css({'bottom':($('#canvasContainer').height()-toPixels(annotations[v].startRow)+14)+'px','left':(toPixels(graphStatus['n'].skixelOffset+width/2)-150)+'px','width':'300px'})
+                        } else {
+                            popup.addClass('arrow-top-center')
+                            popup.css({'top':toPixels(annotations[v].startRow+annotations[v].rowHeight+6)+'px','left':(toPixels(graphStatus['n'].skixelOffset+width/2)-150)+'px','width':'300px'})
+                        }
+
+                        $('#canvasContainer').append(popup)
+
+                        isInvalidDisplay = true;
+                        return false;
+                    }
+                }
+                if(annotations[activeAnnotation]) annotations[activeAnnotation].active = false
+                activeAnnotation = annotationSelectedStart = annotationSelectedEnd = 0;
+                isInvalidDisplay = true;
+            })
+        }
+    }
     if(activeTool == "Move") {
         if (graphStatus["n"].visible) {
             var leftSideOfClickZone = toPixels(graphStatus["n"].skixelOffset + width)
@@ -103,24 +140,23 @@ function mouseDown(e) {
 }
 function mouseMove(e) {
     getMouseLocation(e)
-    if(graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
+    if(activeAnnotation==0 && graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
         if(mx < toPixels(graphStatus["a"].skixelOffset +graphStatus["a"].skixelWidth) && mx > toPixels(graphStatus["a"].skixelOffset) ) {
             var column = Math.floor((graphStatus["a"].skixelWidth-graphStatus["a"].skixelOffset-(toSkixels(mx)-graphStatus["a"].skixelOffset))/3)
             var row = toSkixels(my)
             $.each(visibleAnnotations,function(i,v){
+                if(annotations[v]) annotations[v].active = false
                 if(column == annotations[v].column) {
-                        // console.log(column,row)
                     if((row+1) >= annotations[v].startRow && (row-1) <= (annotations[v].startRow + annotations[v].rowHeight)) {
-                        console.log(column,row,annotations[v])
                         annotationSelectedStart = annotations[v][2]
                         annotationSelectedEnd = annotations[v][3]
+                        annotations[v].active = true
                         isInvalidDisplay = true;
                         return false;
                     }
                 }
 
-                annotationSelectedStart = 0
-                annotationSelectedEnd = 0
+                activeAnnotation = annotationSelectedStart = annotationSelectedEnd = 0;
                 isInvalidDisplay = true;
             })
         }

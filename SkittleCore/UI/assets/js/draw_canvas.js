@@ -209,20 +209,12 @@ var drawAnnotations = function(offset,chunks) {
 
     visibleAnnotations = []
     
-    // var annotationsProcessed = []
     $.each(annotations,function(i,annotation){ // [2] = from, [3] = to
-        // if($.inArray(i,annotationsProcessed)<0) { //check for duplicate annotations and push identifier to array if not. --Might not need, looks like $.extend gets rid of dups
-            // annotationsProcessed.push(i)
             if (   (annotation[2] < ( start + (skixelsOnScreen + 37*width - 1)*scale ) && annotation[3] > ( start + (skixelsOnScreen + 37*width - 1)*scale ) )
                 || (annotation[2] < (start - 8*width*scale) && annotation[3] > (start - 8*width*scale) )
                 || (annotation[2] > (start - 8*width*scale) && annotation[3] < ( start + (skixelsOnScreen + 37*width - 1)*scale ) ) ) {
-                
-
-                visibleAnnotations.push(i)
-
+                    visibleAnnotations.push(i)
             }
-        // }
-        //else do nothing
     })
     visibleAnnotations.sort(function(a,b){return annotations[a][2]-annotations[b][2]})
 
@@ -247,16 +239,16 @@ var drawAnnotations = function(offset,chunks) {
         $.each(visibleAnnotations,function(i,v){
             if (annotations[v][3]-annotations[v][2]>3) {
                 c.beginPath()
-                c.rect(offsetWidth-annotations[v].column*annotationWidth-1,annotations[v].startRow,-2/(zoom*3),annotations[v].rowHeight)
+                c.rect(offset + columnFilledTilRow.length*annotationWidth-annotations[v].column*annotationWidth+1,annotations[v].startRow,-2/(zoom*3),annotations[v].rowHeight)
                 annotations[v].color = annotations[v].color || getGoodDeterministicColor(annotations[v][2] + "" + annotations[v][3] +"" + i + "")
-                c.fillStyle=annotations[v].color
+                annotations[v].active == true ? c.fillStyle='#fff' : c.fillStyle=annotations[v].color
                 c.fill()
             }
             else {
                 c.beginPath()
-                c.arc(offsetWidth-annotations[v].column*annotationWidth-annotationWidth/2,annotations[v].startRow+annotationWidth/2,annotationWidth/2,0,2*Math.PI,false)
+                c.arc(offset + columnFilledTilRow.length*annotationWidth-annotations[v].column*annotationWidth+1,annotations[v].startRow+0.5,annotationWidth/4,0,2*Math.PI,false)
                 annotations[v].color = annotations[v].color || getGoodDeterministicColor(annotations[v][2] + "" + annotations[v][3] + "" + i + "")
-                c.fillStyle=annotations[v].color
+                annotations[v].active == true ? c.fillStyle='#fff' : c.fillStyle=annotations[v].color
                 c.fill()
             }
         })

@@ -327,3 +327,8 @@
 		color:#fff;
 		float:left;
 	}
+	table.annotationDetail th {
+		color:#8f5;
+		text-align: right;
+		font-weight: 500;
+	}
