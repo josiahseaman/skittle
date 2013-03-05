@@ -55,7 +55,6 @@ def calculateOutputPixels(state):
         pixels = convertRepeatDataToRepeatOverview(state, data, RepeatMap.skixelsPerSample)
     else:
         tempState = copy.deepcopy(state)
-#        targetPerLine = 
         tempState.width = 1
         data = RepeatMap.squishStoredMaps(tempState)
         pixels = convertRepeatDataToRepeatOverview(state, data, state.scale)
