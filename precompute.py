@@ -80,6 +80,9 @@ def startRepeatMap(specimen, nProcessors):
     processors.map(precomputeRepeatMap, requests)
 #    processors.map(outputThreemerNormalization, requests)
 #    outputThreemerNormalization( requests[0])
+
+def benchmarkHere(request):
+    precomputeAnyGraph(request)
     
 def precomputeAnyGraph(request):
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SkittleTree.settings")
@@ -90,7 +93,7 @@ def precomputeAnyGraph(request):
 #    chromosomes = StorageRequestHandler.GetRelatedChromosomes(specimen)
     for chromosome in ['chrY']: #chromosomes:
         length = StorageRequestHandler.GetChromosomeLength(specimen, chromosome)
-        chunks = range(1, length+1, 2**16)[-7:]
+        chunks = [1] #range(1, length+1, 2**16)[-7:]
         for targetIndex in range(request[1], len(chunks), request[0]):#this loop divies up the jobs by PID according to modulo nProcessors
             start = chunks[targetIndex]
             state = makeRequestPacket(specimen, chromosome, start, request[3], request[4])
@@ -109,7 +112,7 @@ if __name__ == "__main__":
     for graphSymbol in ['n','m','r','o','b','h','t' ]:
         for scale in [1, 16]:#scales we'd like to test
             requests = [(nProcessors, PID, specimen, graphSymbol, scale) for PID in range(nProcessors)]
-            processors.map(precomputeAnyGraph, requests)
+            processors.map(benchmarkHere, requests)
             
             
             
