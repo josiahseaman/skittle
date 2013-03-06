@@ -156,7 +156,7 @@ function mouseMove(e) {
                     if((row+1) >= annotations[v].startRow && (row-1) <= (annotations[v].startRow + annotations[v].rowHeight)) {
                         annotationSelectedStart = annotations[v][2]
                         annotationSelectedEnd = annotations[v][3]
-                        annotations[v].active = true
+                        annotations[v].active = true;
                         isInvalidDisplay = true;
                         return false;
                     }
@@ -350,6 +350,8 @@ var updateDials = function() {
     updateStart();
     updateEnd();
     updateScale();
+
+    window.history.replaceState(null,null,getCurrentPageURL())
 }
 var UIwidthChange = function(newWidth) {
     if (newWidth.match(/(\d+)/)) { // check if this is really just a number
