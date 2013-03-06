@@ -63,7 +63,9 @@ class RequestPacket(models.Model):
         startBackup = self.start
         if not self.seq: 
             self.seq = '' #ensure that seq is at least a string object
-        self.start = self.start + self.length # jump to the end of the current sequence  (+ chunkSize) 
+        self.start = self.start + self.length # jump to the end of the current sequence  (+ chunkSize)
+        
+        print "Requesting",self.specimen, self.chromosome, self.start 
         sequence = readFile(self)# see if there's a file that begins where you end, this will stop on a partial file
         if sequence is not None:
             self.seq = self.seq + sequence #append two sequences together
@@ -75,9 +77,11 @@ class RequestPacket(models.Model):
    
     def readFastaChunks(self):
         self.seq = ''
+        self.length = len(self.seq)
         numChunks = self.scale or 1 
         for chunk in range(numChunks):
             self.readAndAppendNextChunk()
+        assert len(self.seq) != 0, "No was file read"
 
 class StatePacket(RequestPacket): 
     specimen = 'hg18'
