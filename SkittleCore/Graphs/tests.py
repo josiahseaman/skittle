@@ -21,7 +21,7 @@ def TestPacket():
     state = RequestPacket()
     
     state.specimen = 'hg18'
-    state.chromosome = 'chrY-sample'
+    state.chromosome = 'chrY-test'
     state.seq = ''#ACGTAAAACCCCGGGGTTTTACGTACGTACGTACGTACGTACGTACGTACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTACGTACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
     state.colorPalette = 'Classic'
     state.width = 24
@@ -32,11 +32,19 @@ def TestPacket():
 
 import SkittleGraphTransforms
 import SkittleCore.FastaFiles
-import DNAStorage.StorageRequestHandler
+import shutil
+from DNAStorage import ProcessFasta, StorageRequestHandler
 
 class FastaTest(TestCase):
+    def testImport(self):
+        filename = 'Animalia_Mammalia_Homo_Sapiens_hg18_chrY-test.fa'
+        try: shutil.move("DNAStorage/history/" + filename, "DNAStorage/to_import/" + filename)#move chrY-sample to the import folder
+        except: print "File not found.  Already moved?"
+        ProcessFasta.run() #run import fasta
+        print "The test filename should be imported now"
+    
     def testFilePath(self):
-        path = DNAStorage.StorageRequestHandler.GetFastaFilePath('hg18', 'chrY-sample', 1)
+        path = StorageRequestHandler.GetFastaFilePath('hg18', 'chrY-test', 1)
         print path
         self.assertNotEqual(None, path, "Didn't return a path")
 
