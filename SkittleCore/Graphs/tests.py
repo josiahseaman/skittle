@@ -20,18 +20,26 @@ class SimpleTest(TestCase):
 def TestPacket():
     state = RequestPacket()
     
-    state.specimen = 'hg19'
+    state.specimen = 'hg18'
     state.chromosome = 'chrY-sample'
-    state.seq = 'ACGTAAAACCCCGGGGTTTTACGTACGTACGTACGTACGTACGTACGTACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTACGTACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    state.seq = ''#ACGTAAAACCCCGGGGTTTTACGTACGTACGTACGTACGTACGTACGTACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTACGTACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
     state.colorPalette = 'Classic'
-    state.width = 4
-    state.scale =2
-    state.start = 0
+    state.width = 24
+    state.scale = 2
+    state.start = 1
 #    state.requestedGraph = 'n'
     return state
 
 import SkittleGraphTransforms
 import SkittleCore.FastaFiles
+import DNAStorage.StorageRequestHandler
+
+class FastaTest(TestCase):
+    def testFilePath(self):
+        path = DNAStorage.StorageRequestHandler.GetFastaFilePath('hg18', 'chrY-sample', 1)
+        print path
+        self.assertNotEqual(None, path, "Didn't return a path")
+
 class TransformTest(TestCase):
     def testModelSeqDepth(self):
         state = TestPacket()
@@ -67,7 +75,7 @@ class NucleotideBiasTest(TestCase):
     def test(self):
         print 'Nucleotide Bias test case'
         state = TestPacket()
-        state.seq = 'ACGTACGTAAAACCCCGGGGTTTT'
+#        state.seq = 'ACGTACGTAAAACCCCGGGGTTTT'
         print NucleotideBias.calculateOutputPixels(state)
         
 import NucleotideDisplay        
@@ -99,7 +107,7 @@ class SequenceHighlighterTest(TestCase):#TODO: currently blank
     def test(self):
         print 'SequenceHighlighter test case'
         state = TestPacket()
-        state.seq = 'AAAAGGGGTATATATATATATGGGATAAAGCCCCC'
+#        state.seq = 'AAAAGGGGTATATATATATATGGGATAAAGCCCCC'
         print SequenceHighlighter.calculateOutputPixels(state, HighlighterState())
     
 import SimilarityHeatMap
@@ -107,7 +115,7 @@ class SimilarityHeatMapTest(TestCase):
     def test(self):
         print 'SimilarityHeatMap test case'
         state = TestPacket()
-        state.width = 30
+        state.width = 200
         heatMap = SimilarityHeatMap.calculateOutputPixels(state, heatMapState = SimilarityHeatMapState())
         SimilarityHeatMap.prettyPrint(heatMap[:5])
         
