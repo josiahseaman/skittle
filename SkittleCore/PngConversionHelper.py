@@ -34,6 +34,11 @@ def convertToPng(state, pixels, isRaster = False):
     StorePng(state, f)
     return data
 
+def capRange(color):
+    for part in color:
+        part =  int(min(255,max(0,part)))
+    return color
+
 def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3):
     pixels = squishImage(pixels)
     
@@ -43,11 +48,11 @@ def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3):
         if color is None:
             newline += (0,) * nChannels
         elif nChannels == 4:
-            pix = map(lambda c: int(min(255,max(0,c))), color)#cap the range
+            pix = capRange(color)
             newline += pix
             newline += (255,) #alpha
         else: 
-            pix = map(lambda c: int(min(255,max(0,c))), color)#cap the range
+            pix = capRange(color)
             newline += pix
             
         if len(newline) >= targetWidth * nChannels: 
