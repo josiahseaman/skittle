@@ -36,18 +36,24 @@ import shutil
 from DNAStorage import ProcessFasta, StorageRequestHandler
 
 class FastaTest(TestCase):
+    fixtures = ['testDatabase_fixture.json']
     def testImport(self):
         filename = 'Animalia_Mammalia_Homo_Sapiens_hg18_chrY-test.fa'
         try: shutil.move("DNAStorage/history/" + filename, "DNAStorage/to_import/" + filename)#move chrY-sample to the import folder
         except: print "File not found.  Already moved?"
         ProcessFasta.run() #run import fasta
         print "The test filename should be imported now"
-    
-    def testFilePath(self):
+        
+    def testFilePath(self):    
         path = StorageRequestHandler.GetFastaFilePath('hg18', 'chrY-test', 1)
         print path
         self.assertNotEqual(None, path, "Didn't return a path")
-
+    
+    def testSampleFilePath(self):    
+        path = StorageRequestHandler.GetFastaFilePath('hg18', 'chrY-sample', 1)
+        print path
+        self.assertNotEqual(None, path, "Didn't return a path")
+        
 class TransformTest(TestCase):
     def testModelSeqDepth(self):
         state = TestPacket()
