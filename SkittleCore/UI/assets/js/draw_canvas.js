@@ -111,19 +111,6 @@ var drawGraphs = function() {
             $('#graphLabel-' + key).width(toPixels(skixelWidthofGraph));
         }
     })
-    // for (var i=0;i<graphOrder.length;i++) {
-    //     var key = graphOrder[i];
-    //     if (graphStatus[key].visible) {
-    //         graphStatus[key].skixelOffset = offset;
-    //         var skixelWidthofGraph = graphStatus[key].skixelWidth = drawGraph(key,offset,chunks);
-    //         skixelWidthofGraph = Math.max(skixelWidthofGraph,toSkixels(minimumWidth))
-    //         offset = offset + skixelWidthofGraph;
-    //         $('#graphLabel-' + key).width(toPixels(skixelWidthofGraph));
-    //     }
-    // }
-    // var imageObj = imageRequestor("m",0)
-        // b.drawImage(imageObj,200,20,imageObj.width,imageObj.height*0.55) // render data on hidden canvas
-
 
     c.clearRect(0,0,2000,1000) // render on visible canvas (which has scale applied)
     c.drawImage(b.canvas, 0, 0);
@@ -216,7 +203,7 @@ var drawAnnotations = function(offset,chunks) {
                     visibleAnnotations.push(i)
             }
     })
-    visibleAnnotations.sort(function(a,b){return annotations[a][2]-annotations[b][2]})
+    visibleAnnotations.sort(function(a,b){return annotations[a][2]-annotations[b][2] + (annotations[b][3]/annotations[b][2]-annotations[a][3]/annotations[a][2])})
 
     $.each(visibleAnnotations,function(i,v){
         var currentColumn = 0
@@ -375,11 +362,11 @@ var drawRepeatOverview = function(offset,chunks) {
         c.shadowColor   = 'rgba(0, 0, 0, 1)';
 
         c.fillText("1bp",offset+5,13)
-        c.fillText("50",offset+5,10+height/5*1)
-        c.fillText("100",offset+5,10+height/5*2)
-        c.fillText("150",offset+5,10+height/5*3)
-        c.fillText("200",offset+5,10+height/5*4)
-        c.fillText("250",offset+5,10+height-2)
+        c.fillText("36",offset+5,10+height/5*1)
+        c.fillText("180",offset+5,10+height/5*2)
+        c.fillText("1k",offset+5,10+height/5*3)
+        c.fillText("5k",offset+5,10+height/5*4)
+        c.fillText("26k",offset+5,10+height-2)
     })
     return offsetWidth+11
 }
