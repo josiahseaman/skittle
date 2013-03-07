@@ -362,11 +362,11 @@ var drawRepeatOverview = function(offset,chunks) {
         c.shadowColor   = 'rgba(0, 0, 0, 1)';
 
         c.fillText("1bp",offset+5,13)
-        c.fillText("50",offset+5,10+height/5*1)
-        c.fillText("100",offset+5,10+height/5*2)
-        c.fillText("150",offset+5,10+height/5*3)
-        c.fillText("200",offset+5,10+height/5*4)
-        c.fillText("250",offset+5,10+height-2)
+        c.fillText("36",offset+5,10+height/5*1)
+        c.fillText("180",offset+5,10+height/5*2)
+        c.fillText("1k",offset+5,10+height/5*3)
+        c.fillText("5k",offset+5,10+height/5*4)
+        c.fillText("26k",offset+5,10+height-2)
     })
     return offsetWidth+11
 }
