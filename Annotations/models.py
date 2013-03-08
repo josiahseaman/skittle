@@ -41,6 +41,11 @@ class SnpIndexInfo(models.Model):
     Start = models.BigIntegerField() #start
     CompactIndex = models.BigIntegerField() #compact index
     
+    def __str__(self):
+        return self.SnpName + self.Chromosome + str( self.CompactIndex)
+    def __repr__(self):
+        return self.__str__()
+    
     
    
     

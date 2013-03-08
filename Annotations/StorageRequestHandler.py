@@ -1,6 +1,7 @@
 from models import GFF, AnnotationJsonChunk
 from DNAStorage.models import FastaFiles, Specimen
 from DNAStorage.StorageRequestHandler import GetRelatedFastaFile
+from Annotations.import_snp import createAnnotationsFromCompact
 from django.conf import settings
 import shutil, os, os.path, re
 
@@ -42,5 +43,7 @@ def GetChunkAnnotations(specimen, chromosome, start):
     contents = chunkFile.read()
     
     chunkFile.close()
+    
+    contents += createAnnotationsFromCompact( chromosome).__str__()
     
     return contents
