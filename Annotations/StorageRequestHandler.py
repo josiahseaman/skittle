@@ -44,6 +44,6 @@ def GetChunkAnnotations(specimen, chromosome, start):
     
     chunkFile.close()
     
-    contents += createAnnotationsFromCompact( chromosome).__str__()
+    #contents += createAnnotationsFromCompact( chromosome).__str__()
     
     return contents
