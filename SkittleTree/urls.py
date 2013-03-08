@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
-from django.views.generic.simple import redirect_to
+from django.views.generic import RedirectView
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -11,7 +11,7 @@ urlpatterns = patterns('',
     url(r'^$', 'SkittleTree.views.home', name='home'),
     url(r'^browse/', include('SkittleCore.urls')),
     url(r'^discover/', include('DNAStorage.urls')),
-    (r'^$', redirect_to, {'url': '/browse/'}),
+    (r'^$', RedirectView.as_view(url= '/browse/')),
     # url(r'^$', include('SkittleCore.urls')),
     url(r'^googlef44684f34c2340e5.html$', 'SkittleTree.views.google'),
 
