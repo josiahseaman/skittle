@@ -8,6 +8,7 @@ from SkittleCore.GraphRequestHandler import handleRequest
 from SkittleCore.models import RequestPacket
 from SkittleCore.Graphs.models import *
 from DNAStorage.StorageRequestHandler import GetChromosomeLength
+from Annotations.StorageRequestHandler import GetChunkAnnotations
 # import json
 
 def browse(request, specimen="hg18",chromosome="chrY-sample"):
@@ -44,13 +45,11 @@ def graph(request, specimen="hg18",chromosome="chrY-sample"):
     return HttpResponse(image_data, content_type="image/png")
 
 def annotation(request, specimen="hg18",chromosome="chrY-sample"):
-    json = '''annotation = [
-        {from:1,to:220,name:"annotation one"},
-        {from:1209,to:3520,name:"annotation two"},
-        {from:2039,to:2800,name:"annotation three"},
-        {from:12039,to:12800,name:"annotation four"},
-    ]''' 
+    start = max(1,int(request.GET.get('start',1)))
+    json = GetChunkAnnotations(specimen,chromosome,start)
+    # json = '{"' + str(state.start) + '":{"855785":["ensembl","exon",10454829,10454884,0,"-",null,"Parent=GRMZM2G578659_T01;Name=GRMZM2G578659_E03"],"855789":["ensembl","CDS",10454829,10454884,0,"-",0,"Parent=GRMZM2G578659_T01;Name=CDS.800878"],"855781":["ensembl","intron",10454885,10454962,0,"-",null,"Parent=GRMZM2G578659_T01;Name=intron.800870"],"855784":["ensembl","exon",10454963,10455069,0,"-",null,"Parent=GRMZM2G578659_T01;Name=GRMZM2G578659_E02"],"855788":["ensembl","CDS",10454963,10455069,0,"-",1,"Parent=GRMZM2G578659_T01;Name=CDS.800877"],"855780":["ensembl","intron",10455070,10455162,0,"-",null,"Parent=GRMZM2G578659_T01;Name=intron.800869"],"855783":["ensembl","exon",10455163,10455464,0,"-",null,"Parent=GRMZM2G578659_T01;Name=GRMZM2G578659_E01"],"855787":["ensembl","CDS",10455163,10455184,0,"-",null,"Parent=GRMZM2G578659_T01;Name=CDS.800876"]}}'
     return HttpResponse(json,content_type="application/json")
+
 def state(request):
     json = '''graphStatus = {
         "a":{name:"Annotations",visible:false,isRasterable:true},

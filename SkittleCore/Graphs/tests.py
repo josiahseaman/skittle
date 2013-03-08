@@ -20,18 +20,40 @@ class SimpleTest(TestCase):
 def TestPacket():
     state = RequestPacket()
     
-    state.specimen = 'hg19'
-    state.chromosome = 'chrY-sample'
-    state.seq = 'ACGTAAAACCCCGGGGTTTTACGTACGTACGTACGTACGTACGTACGTACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTACGTACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    state.specimen = 'hg18'
+    state.chromosome = 'chrY-test'
+    state.seq = ''#ACGTAAAACCCCGGGGTTTTACGTACGTACGTACGTACGTACGTACGTACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTACGTACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
     state.colorPalette = 'Classic'
-    state.width = 4
-    state.scale =2
-    state.start = 0
+    state.width = 24
+    state.scale = 2
+    state.start = 1
 #    state.requestedGraph = 'n'
     return state
 
 import SkittleGraphTransforms
 import SkittleCore.FastaFiles
+import shutil
+from DNAStorage import ProcessFasta, StorageRequestHandler
+
+class FastaTest(TestCase):
+    fixtures = ['testDatabase_fixture.json']
+    def testImport(self):
+        filename = 'Animalia_Mammalia_Homo_Sapiens_hg18_chrY-test.fa'
+        try: shutil.move("DNAStorage/history/" + filename, "DNAStorage/to_import/" + filename)#move chrY-sample to the import folder
+        except: print "File not found.  Already moved?"
+        ProcessFasta.run() #run import fasta
+        print "The test filename should be imported now"
+        
+    def testFilePath(self):    
+        path = StorageRequestHandler.GetFastaFilePath('hg18', 'chrY-test', 1)
+        print path
+        self.assertNotEqual(None, path, "Didn't return a path")
+    
+    def testSampleFilePath(self):    
+        path = StorageRequestHandler.GetFastaFilePath('hg18', 'chrY-sample', 1)
+        print path
+        self.assertNotEqual(None, path, "Didn't return a path")
+        
 class TransformTest(TestCase):
     def testModelSeqDepth(self):
         state = TestPacket()
@@ -67,7 +89,7 @@ class NucleotideBiasTest(TestCase):
     def test(self):
         print 'Nucleotide Bias test case'
         state = TestPacket()
-        state.seq = 'ACGTACGTAAAACCCCGGGGTTTT'
+#        state.seq = 'ACGTACGTAAAACCCCGGGGTTTT'
         print NucleotideBias.calculateOutputPixels(state)
         
 import NucleotideDisplay        
@@ -99,7 +121,7 @@ class SequenceHighlighterTest(TestCase):#TODO: currently blank
     def test(self):
         print 'SequenceHighlighter test case'
         state = TestPacket()
-        state.seq = 'AAAAGGGGTATATATATATATGGGATAAAGCCCCC'
+#        state.seq = 'AAAAGGGGTATATATATATATGGGATAAAGCCCCC'
         print SequenceHighlighter.calculateOutputPixels(state, HighlighterState())
     
 import SimilarityHeatMap
@@ -107,7 +129,7 @@ class SimilarityHeatMapTest(TestCase):
     def test(self):
         print 'SimilarityHeatMap test case'
         state = TestPacket()
-        state.width = 30
+        state.width = 200
         heatMap = SimilarityHeatMap.calculateOutputPixels(state, heatMapState = SimilarityHeatMapState())
         SimilarityHeatMap.prettyPrint(heatMap[:5])
         
@@ -118,7 +140,17 @@ class ThreeMerDetectorTest(TestCase):
         state = TestPacket()
         extra = ThreeMerDetectorState()
         print ThreeMerDetector.calculateOutputPixels(state, extra)
-        
+
+import SkittleCore.Graphs.RepeatOverview
+from PixelLogic import spectrum
+class RepeatOverviewTest(TestCase):
+    def test(self):
+        pixels = []
+        for y in range(64):
+            for i in range(1024):
+                pixels.append(spectrum(i / 1024.0))
+        return pixels
+    
 #import grph
 #class grphTest(TestCase):
 #    def test(self):

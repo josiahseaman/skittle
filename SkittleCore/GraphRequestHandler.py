@@ -27,6 +27,7 @@ import Graphs.SequenceHighlighter
 import Graphs.SimilarityHeatMap
 import Graphs.ThreeMerDetector
 import Graphs.SNPdisplay
+import Graphs.RepeatOverview
 from Graphs.SkittleGraphTransforms import countDepth
 from PngConversionHelper import convertToPng
 import DNAStorage.StorageRequestHandler as StorageRequestHandler
@@ -37,11 +38,7 @@ import DNAStorage.StorageRequestHandler as StorageRequestHandler
 #for graph in availableGraphs:
 #    print graph 
 
-def calculatePixels(state):
-    state.seq = ''
-    for chunk in range(state.scale):
-        state.readAndAppendNextChunk()
-    
+def calculatePixels(state):    
     graphData = getGraphDescription(state)
     name, graphModule = graphData[1], graphData[2]
 #    activeSet = state.getActiveGraphs()

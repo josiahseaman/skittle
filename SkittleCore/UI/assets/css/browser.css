@@ -327,3 +327,14 @@
 		color:#fff;
 		float:left;
 	}
+	.annotationDetail {
+		max-height: 300px;
+		width: 280px;
+		overflow: auto;
+	}
+	.annotationDetail th {
+		color:#8f5;
+		text-align: right;
+		font-weight: 500;
+		min-width: 80px;
+	}

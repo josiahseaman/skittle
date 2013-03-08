@@ -96,6 +96,7 @@ def getSearchSequenceFromRequestPacket(state):
 
 def calculateOutputPixels(state, highlighterState = HighlighterState()):
     assert isinstance(highlighterState, HighlighterState)
+    state.readFastaChunks()
     results = [] #2D array containing a screen full of scores per targetSequence
      
     #TODO: temporary workaround of settings  #targetSequenceEntries = highlighterState.getTargetSequenceEntries()

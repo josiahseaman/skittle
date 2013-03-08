@@ -34,6 +34,7 @@ def medianFromAllLines(heatMap):
     
 
 def calculateOutputPixels(state, heatMapState = SimilarityHeatMapState()):
+    state.readFastaChunks()
     width = 300
     while len(state.seq) < (chunkSize*state.scale) + width * state.nucleotidesPerLine(): #all starting positions plus the maximum reach from the last line
         state.readAndAppendNextChunk(True)

@@ -27,6 +27,13 @@ def hasDepth(listLike):
     except:
         return False
     
+def getChunkStart(arbitraryStart):
+    if hasDepth(arbitraryStart):
+        return map(lambda x: getChunkStart(x), arbitraryStart)
+    arbitraryStart = int(arbitraryStart)
+    chunkNumber = int(arbitraryStart / 2**16)
+    return chunkNumber * (2**16) + 1
+    
 def mirrorDiagonalMatrix(heatMap):
     for y in range(len(heatMap)):
         for x in range(y+1, len(heatMap[y])):#only iterates on the upper right half
@@ -89,6 +96,22 @@ def countListToColorSpace(countList, colorPalette):
         colorContributions.append(map(lambda c: c * magnitude, colorMapping[character])) #scales color amount by magnitude for each channel
     resultingColor =  map(sum, zip(*colorContributions))
     return tuple(resultingColor)
+
+
+
+def composedOfNs(countDict):
+    if isinstance(countDict, dict):
+        total = sum(countDict.values())
+        return countDict['N'] == total
+    else:
+        colorMapping = colorPalettes['Classic']
+        return countDict == colorMapping['N']
+
+'''Generic normalization reduces any number to a floating point between 0.0 and 1.0'''
+def normalize(value, minimum, maximum):
+    value = min(maximum, max(minimum, value))
+    return (value-minimum) / float(maximum - minimum) 
+
 
 '''ReferencePoint is the number that all elements are divided by.  This defaults to the sum of dictionary 
 elements if not defined.  ReferencePoint can also be an evaluation function that returns a single number
@@ -282,14 +305,17 @@ def sensitiveTestForSpecificFrequency(floatList, frequency = 3, numberOfSamples 
     assert isinstance(frequency, int), "Please use an integer offset frequency."
     reach = numberOfSamples * frequency
     mask = [] #float
-    for i in range(reach):#create mask:
+    for i in range(reach+1):#create mask:
         if (i % frequency == 0):
             mask.append(1.0)
         else:
-            mask.append(-1 * (1/(frequency-1)))
-
+            mask.append(-1 * (1/float(frequency-1)))
+    mask[0] = 0.0
+    assert sum(mask) == 0.0
+    assert len(mask) == len(floatList) 
+    assert len(mask) == 61
     score = 0.0
-    for x in range( min( len(mask), len(floatList))):
+    for x in range(1, len(mask) ):#start at index 1 because repeatMap at offset 0 is undefined
         if floatList[x] is not None:
             score += (mask[x] * floatList[x]) / float(numberOfSamples)
         #score += min((float)0.5, mask[x] * freq[y][x])//the amount that any position can affect is capped because of tandem repeats with 100% similarity

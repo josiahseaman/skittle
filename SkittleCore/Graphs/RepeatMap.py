@@ -4,7 +4,7 @@ Created on Nov 29, 2012
 '''
 from Utilities.debug import startDebug
 import NucleotideDisplay
-from SkittleGraphTransforms import correlationMap, countDepth, chunkUpList, countNucleotides, normalizeDictionary, countListToColorSpace, pearsonCorrelation, average
+from SkittleGraphTransforms import correlationMap, countDepth, chunkUpList, countNucleotides, normalizeDictionary, countListToColorSpace, pearsonCorrelation, average, composedOfNs
 from models import RepeatMapState
 from SkittleCore.models import RequestPacket, chunkSize
 from SkittleCore.GraphRequestHandler import registerGraph
@@ -13,13 +13,14 @@ from random import choice
 from DNAStorage.StorageRequestHandler import GetPngFilePath
 from SkittleCore.png import Reader
 from SkittleCore.PngConversionHelper import convertToPng
+import copy
 
 registerGraph('m', "Repeat Map", __name__, False, False, 0.4)
-skixelsPerSample = 24
 '''
 These are the functions that are specific to the use of RepeatMap and not generally applicable.  
 These functions use RepeatMapState to emulate an object with state.
 '''
+skixelsPerSample = 24
 
 def generateRepeatDebugSequence(maxFrequency, bpPerFrequency, startFrequency = 1):
     seq = []
@@ -119,9 +120,15 @@ def logRepeatMap(state, repeatMapState):
             rgbChannels = zip(*original)
             
             #iterate horizontally within a mega-column
-            for offset in range(skixelsPerSample/growthPower, skixelsPerSample): #range 5 - 12 but indexing starts at 0
+            startingOffset = skixelsPerSample / growthPower
+            if scale == 1:
+                startingOffset = 1
+            for offset in range(startingOffset, skixelsPerSample): #range 12 - 24 but indexing starts at 0
                 offsetSequence = scaledSequence[offset : offset + skixelsPerSample]
-                if len(offsetSequence) == len(original):
+                validComparison = len(offsetSequence) == len(original) and len(offsetSequence) and len(original)
+                if validComparison: #this line is necessary to avoid array index out of bounds or referencing an unsigned variable stretchIsSequenced
+                    stretchIsSequenced = not any( map(composedOfNs, [offsetSequence[0], offsetSequence[-1:][0], original[0], original[-1:][0] ]))  
+                if validComparison and stretchIsSequenced: #this line is necessary to avoid array index out of bounds or referencing an unsigned variable stretchIsSequenced
                     targetChannels = zip(*offsetSequence)
                     resultSum = 0.0
                     for index, currentChannel in enumerate(rgbChannels):
@@ -138,52 +145,39 @@ def logRepeatMap(state, repeatMapState):
         start += state.nucleotidesPerLine()
     return freq
 
-
-
-def countMatches(sequence, beginA, beginB, lineSize):
-    matches = 0
-    for index in range(lineSize):
-        if sequence[beginA + index] == sequence[beginB + index]:
-            matches += 1
-    return float(matches) / lineSize
-
-def oldRepeatMap(state, repeatMapState):
-    freq = []
-    lineSize = state.nucleotidesPerLine()
-    for h in range(repeatMapState.height(state, state.seq)):
-        freq.append([0.0]*(repeatMapState.F_width+1))
-        offset = h * lineSize
-        for w in range(1, len(freq[h])):#calculate across widths 1:F_width
-            freq[h][w] = countMatches(state.seq, offset, offset + w + repeatMapState.F_start, lineSize)
-    return freq
-
-def squishStoredMaps(state, repeatMapState):
+def getBaseRepeatMapData(state, repeatMapState = RepeatMapState()):
     #read in the one png at fixed width= skixelsPerSample
-    oldWidth = state.width * state.scale
-    state.width = skixelsPerSample
-    state.scale = 1
-    filepath = GetPngFilePath(state)
-    data = []
-    if filepath:
-        decoder = Reader(filename=filepath)
-        data = list(decoder.asFloat(1.0)[2])
-    else:
-        data = calculateOutputPixels(state, repeatMapState)
-        convertToPng(state, data )#store the newly created data to file
-    state.width = oldWidth
-        
-    print "REPEAT MAP DATA!!"
-#    print data
+    tempState = copy.deepcopy(state)
+    tempState.width = skixelsPerSample
+    tempState.scale = 1
+    tempState.requestedGraph = 'm'
     
+    fullData = []
+    for s in range(state.scale):
+        filepath = GetPngFilePath(tempState)
+        if filepath:
+            decoder = Reader(filename=filepath)
+            fullData += list(decoder.asFloat(1.0)[2])
+        else:
+            data = calculateOutputPixels(tempState, repeatMapState)
+            convertToPng(tempState, data )#store the newly created data to file
+            fullData += data
+        tempState.start += chunkSize
+    return fullData 
+    
+
+def squishStoredMaps(state, repeatMapState = RepeatMapState()):
+    fullData = getBaseRepeatMapData(state, repeatMapState)
     #averaging the lines
     newData = []
-    nLines = int(math.ceil(oldWidth / float(skixelsPerSample)))
-    for start in range(0, chunkSize, oldWidth):
+    nLines = int(math.ceil(state.nucleotidesPerLine() / float(skixelsPerSample)))
+    for start in range(0, len(fullData) * skixelsPerSample, state.nucleotidesPerLine()):
         startLine = int(math.floor( start / float(skixelsPerSample)))
         stopLine = startLine + nLines
-        sample = zip(*data[startLine:stopLine])
+        sample = zip(*fullData[startLine:stopLine])
         finalLine = [average(x) for x in sample]
         newData.append(finalLine)
+    print "Repeat Map: scale", state.scale, "length", len(newData)
     return newData
 
 def calculateOutputPixels(state, repeatMapState = RepeatMapState()):
@@ -195,10 +189,8 @@ def calculateOutputPixels(state, repeatMapState = RepeatMapState()):
 
 
 #    state.seq = generateRepeatDebugSequence(53, 400, 1)
+    state.readFastaChunks()
     scores = logRepeatMap(state, repeatMapState)
-    return scores
-    
-    scores = oldRepeatMap(state, repeatMapState)
     return scores
     
     pixels = NucleotideDisplay.calculateOutputPixels(state)

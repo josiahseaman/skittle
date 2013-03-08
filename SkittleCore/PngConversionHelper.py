@@ -5,6 +5,7 @@ Created on Jan 17, 2013
 '''
 import png, tempfile
 from DNAStorage.StorageRequestHandler import GetPngFilePath, StorePng
+import copy
 
 def checkForGreyscale(state):
     grayGraph = ['m', 'o']
@@ -33,6 +34,11 @@ def convertToPng(state, pixels, isRaster = False):
     StorePng(state, f)
     return data
 
+def capRange(color):
+    for part in color:
+        part =  int(min(255,max(0,part)))
+    return color
+
 def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3):
     pixels = squishImage(pixels)
     
@@ -42,10 +48,13 @@ def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3):
         if color is None:
             newline += (0,) * nChannels
         elif nChannels == 4:
-            newline += color 
+            pix = capRange(color)
+            newline += pix
             newline += (255,) #alpha
         else: 
-            newline += color
+            pix = capRange(color)
+            newline += pix
+            
         if len(newline) >= targetWidth * nChannels: 
             p.append(newline)
             newline = []
@@ -57,9 +66,10 @@ def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3):
     return p
 
 def multiplyGreyscale(p, greyMax = 255):
-    for index, line in enumerate(p):
-        p[index] = map(lambda x: int(max(x,0.0) * greyMax), line)
-    return p
+    saveData = copy.deepcopy(p)
+    for index, line in enumerate(saveData):
+        saveData[index] = map(lambda x: int(min(255, max(x,0) * greyMax)), line)
+    return saveData
 
 def squishImage(pixels):
     if isinstance(pixels, list) and pixels: #not empty

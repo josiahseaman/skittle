@@ -1,10 +1,10 @@
 from django.db import models
-from DNAStorage.models import FastaChunkFiles, Specimen
+from DNAStorage.models import Specimen
 
 # Database for storing imported GFF information
 class GFF(models.Model):
     Specimen = models.ForeignKey(Specimen)
-    GFFVersion = models.SmallIntegerField()
+    GFFVersion = models.SmallIntegerField(null=True)
     SourceVersion = models.CharField(max_length=255, null=True, blank=True)
     Date = models.DateField(null=True)
     Type = models.CharField(max_length=255, null=True, blank=True)
@@ -30,8 +30,8 @@ class Annotation():
     Feature = models.CharField(max_length=50)
     Start = models.BigIntegerField()
     End = models.BigIntegerField()
-    Score = models.FloatField()
-    Strand = models.CharField(max_length=1)
+    Score = models.FloatField(null=True)
+    Strand = models.CharField(max_length=1, null=True)
     Frame = models.SmallIntegerField(null=True)
     Attribute = models.TextField(null=True, blank=True)
     

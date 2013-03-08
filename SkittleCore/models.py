@@ -17,7 +17,7 @@ This state packet is equivalent to an URL or a request from the Skittle website.
 class RequestPacket(models.Model):
     #TODO: user = models.ForeignKey(User)
     #TODO: session
-    specimen = models.CharField(max_length=200, default='hg19')
+    specimen = models.CharField(max_length=200, default='hg18')
     chromosome = models.CharField(max_length=200, default='chrY-sample')
     '''It is debatable whether or not the sequence should be stored in the state
     variable since it is only referenced at the first level operation.  Past the first
@@ -61,7 +61,11 @@ class RequestPacket(models.Model):
     '''This is a multifunctional 'make the file bigger' read logic for sequential chunks'''
     def readAndAppendNextChunk(self, addPadding = False):
         startBackup = self.start
-        self.start = self.start + self.length # jump to the end of the current sequence  (+ chunkSize) 
+        if not self.seq: 
+            self.seq = '' #ensure that seq is at least a string object
+        self.start = self.start + self.length # jump to the end of the current sequence  (+ chunkSize)
+        
+        print "Requesting",self.specimen, self.chromosome, self.start 
         sequence = readFile(self)# see if there's a file that begins where you end, this will stop on a partial file
         if sequence is not None:
             self.seq = self.seq + sequence #append two sequences together
@@ -70,10 +74,17 @@ class RequestPacket(models.Model):
         self.start = startBackup
         self.length = len(self.seq)
         return self
-
    
+    def readFastaChunks(self):
+        self.seq = ''
+        self.length = len(self.seq)
+        numChunks = self.scale or 1 
+        for chunk in range(numChunks):
+            self.readAndAppendNextChunk()
+        assert len(self.seq) != 0, "No was file read"
+
 class StatePacket(RequestPacket): 
-    specimen = 'hg19'
+    specimen = 'hg18'
     chromosome = 'chrY-sample'
     width =  200
     scale = 1

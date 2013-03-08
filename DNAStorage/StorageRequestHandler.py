@@ -1,5 +1,4 @@
 from models import FastaFiles, FastaChunkFiles, ImageFiles, Specimen
-from Annotations.models import GFF
 from django.conf import settings
 import shutil, os, os.path, re
 
@@ -89,11 +88,7 @@ def StorePng(request, fileObject):
     
     imageFile.save()
     
-    return imageFile
-    
-#Take a json annotation chunk and store it in the correct disk location and create a reference to it in the DB
-def StoreAnnotationChunk(gff, chunk):
-    pass
+    return imageFile 
 
 #Delete the database entries and PNG files associated with the given graph
 def DeleteCache(graph):
@@ -139,7 +134,7 @@ def GetTreeList():
     
 #Get list of chromosomes related to a specimen
 def GetRelatedChromosomes(specimen):
-    fastaFiles = FastaFiles.objects.filter(Specimen__Name = specimen)
+    fastaFiles = FastaFiles.objects.filter(Specimen = specimen)
     
     chromosomes = list()
     
@@ -147,6 +142,15 @@ def GetRelatedChromosomes(specimen):
         chromosomes += [fasta.Chromosome]
         
     return chromosomes
+    
+#Get the FastaFile related to the given specimen's chromosome
+def GetRelatedFastaFile(specimen, chromosome):
+    fastaFile = FastaFiles.objects.filter(Specimen = specimen, Chromosome = chromosome)[:1]
+    
+    if fastaFile:
+        return fastaFile[0]
+    else:
+        return None
     
 #Get the fasta chunk file at the given start position for the specified chromosome
 def GetFastaChunkFile(specimen, chromosome, start):

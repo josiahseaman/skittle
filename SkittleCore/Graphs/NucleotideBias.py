@@ -32,6 +32,7 @@ def calculateBiasBarSizes(state):
 
 
 def calculateOutputPixels(state):
+    state.readFastaChunks()
     barSizesPerLine = calculateBiasBarSizes(state)
     outputPixels = []
     for line in range(len(barSizesPerLine)):

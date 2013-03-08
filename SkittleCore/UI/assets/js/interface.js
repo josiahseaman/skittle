@@ -72,6 +72,33 @@ function getMouseLocation(e) {
 
 function mouseDown(e) {
     getMouseLocation(e);
+    $('#annotationDetail').remove()
+    if(graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
+        if(mx < toPixels(graphStatus["a"].skixelOffset +graphStatus["a"].skixelWidth) && mx > toPixels(graphStatus["a"].skixelOffset) ) {
+            var column = calcAnnotationColumn(mx)
+            var row = toSkixels(my)
+            $.each(visibleAnnotations,function(i,v){
+                if(column == annotations[v].column) {
+                        // console.log(column,row)
+                    if((row+1) >= annotations[v].startRow && (row-1) <= (annotations[v].startRow + annotations[v].rowHeight)) {
+                        annotationSelectedStart = annotations[v][2]
+                        annotationSelectedEnd = annotations[v][3]
+                        if(annotations[activeAnnotation]) annotations[activeAnnotation].active = false
+                        activeAnnotation = v
+                        annotations[activeAnnotation].active = true;
+
+                        showAnnotationDetail(annotations[v]);
+
+                        isInvalidDisplay = true;
+                        return false; //aka break
+                    }
+                }
+                if(annotations[activeAnnotation]) annotations[activeAnnotation].active = false
+                activeAnnotation = annotationSelectedStart = annotationSelectedEnd = 0;
+                isInvalidDisplay = true;
+            })
+        }
+    }
     if(activeTool == "Move") {
         if (graphStatus["n"].visible) {
             var leftSideOfClickZone = toPixels(graphStatus["n"].skixelOffset + width)
@@ -92,7 +119,8 @@ function mouseDown(e) {
     //}
     }
     else if (activeTool == "Select") {
-        selectionStart = start + (toSkixels(my-25))*width*scale
+        var x = Math.max(0,Math.min(width,(toSkixels(mx)-graphStatus["n"].skixelOffset+1)))
+        selectionStart = start + (toSkixels(my-25))*width*scale + x*scale
         selectionEnd = selectionStart + width*scale - 1;
         console.log('selection start:' + selectionStart + " selection end:" + selectionEnd)
         showGraph('h');
@@ -102,6 +130,27 @@ function mouseDown(e) {
 }
 function mouseMove(e) {
     getMouseLocation(e)
+    if(activeAnnotation==0 && graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
+        if(mx < toPixels(graphStatus["a"].skixelOffset +graphStatus["a"].skixelWidth) && mx > toPixels(graphStatus["a"].skixelOffset) ) {
+            var column = calcAnnotationColumn(mx)
+            var row = toSkixels(my)
+            $.each(visibleAnnotations,function(i,v){
+                if(annotations[v]) annotations[v].active = false
+                if(column == annotations[v].column) {
+                    if((row+1) >= annotations[v].startRow && (row-1) <= (annotations[v].startRow + annotations[v].rowHeight)) {
+                        annotationSelectedStart = annotations[v][2]
+                        annotationSelectedEnd = annotations[v][3]
+                        annotations[v].active = true;
+                        isInvalidDisplay = true;
+                        return false;
+                    }
+                }
+
+                activeAnnotation = annotationSelectedStart = annotationSelectedEnd = 0;
+                isInvalidDisplay = true;
+            })
+        }
+    }
     if(activeTool == "Move") {
         if (graphStatus["n"].visible) { //dragging width only applies to Nuc Display
             var leftSideOfClickZone = toPixels(graphStatus["n"].skixelOffset + width)
@@ -141,6 +190,7 @@ function mouseUp(e) {
 }
 function mouseWheel(e) {
     e.preventDefault();
+
     var delta = calcDeltaFromScrollEvent(event)
 
     if (delta > 0.05 || delta < -0.05) {
@@ -181,14 +231,14 @@ function mouseWheelDials(e) {
             linkPopover.toggle();
         }
         linkPopover.offset({ top: (offset.top - 10), left: (offset.left + $(this).outerWidth() + 16) })
-        linkPopover.html('Copy this link: <br><span>' + getCurrentPageURL() + '</span>');
+        linkPopover.html('Copy this link: <br><span>' + getCurrentPageURL('fullURL') + '</span>');
         selectText(linkPopover.children('span')[0])
         setTimeout(function() {
           linkPopover.removeClass('active');
         }, 1500);
     })
     $('#bug-report').click(function(){
-        $('#feedback_current_view').val(getCurrentPageURL())
+        $('#feedback_current_view').val(getCurrentPageURL('fullURL'))
         $('#feedbackForm').toggle()
     })
     $("#buttonGraphs").click(function(){
@@ -257,14 +307,34 @@ var closeHelp = function(graph) {
     $('#helpLabel-'+graph).remove()
     isInvalidDisplay = true;
 }
-var getCurrentPageURL = function() {
+var getCurrentPageURL = function(fullURL) {
     var graphString = ""
     for (var key in graphStatus) {
         if (graphStatus[key].visible == true) graphString += key;
     }
-    var currentURL = window.location.origin + "/browse/" + specimen + "/" + chromosome + "/?graphs=" + graphString + "&start=" + start + "&scale=" + scale + "&width=" + width 
-    if (graphStatus['h'].visible) currentURL += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd
-    return currentURL
+    var baseURL = (window.location.origin) ? window.location.origin : window.location.protocol + window.location.host;
+    var currentURL = "/browse/" + specimen + "/" + chromosome + "/?graphs=" + graphString + "&start=" + start + "&scale=" + scale + "&width=" + width 
+    if (graphStatus['h'].visible) currentURL += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd;
+    return fullURL ? baseURL + currentURL : currentURL;
+}
+
+var showAnnotationDetail = function (annotation) {
+    var popup = $('<div id="annotationDetail" />').addClass('popover active').html(formatGffDescription(annotation))
+    if(annotation.startRow <100 && toSkixels($('#canvasContainer').height())-(annotation.startRow+annotation.rowHeight) < 100) {
+        popup.addClass('arrow-left-top') 
+        popup.css({'top':'30px','left': toPixels(graphStatus['n'].skixelOffset+width+8)+'px'})
+    } else if(annotation.startRow>toSkixels($('#canvasContainer').height())-(annotation.startRow+annotation.rowHeight)) {
+        popup.addClass('arrow-bottom-center') 
+        popup.css({'bottom':($('#canvasContainer').height()-toPixels(annotation.startRow)+14)+'px','left':(toPixels(graphStatus['n'].skixelOffset+width/2)-150)+'px'})
+    } else {
+        popup.addClass('arrow-top-center')
+        popup.css({'top':toPixels(annotation.startRow+annotation.rowHeight+6)+'px','left':(toPixels(graphStatus['n'].skixelOffset+width/2)-150)+'px'})
+    }
+    if(annotation[3]-annotation[2] < width) {
+        popup.css({'left':(toPixels(graphStatus['n'].skixelOffset+(annotation[2]-start)%width)-143)+'px'})
+    }
+
+    $('#canvasContainer').append(popup)
 }
 
 // UI Dials interaction
@@ -283,8 +353,15 @@ var showGraph = function(graph) {
 var updateDials = function() {
     updateWidth();
     updateStart();
-    updateEnd();
+    // updateEnd();
     updateScale();
+
+    if(activeAnnotation>0) {
+        $('#annotationDetail').remove()
+        showAnnotationDetail(annotations[activeAnnotation])
+    }
+
+    window.history.replaceState(null,null,getCurrentPageURL())
 }
 var UIwidthChange = function(newWidth) {
     if (newWidth.match(/(\d+)/)) { // check if this is really just a number

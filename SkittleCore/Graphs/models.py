@@ -1,5 +1,6 @@
 
 from django.db import models
+import math
 
 # Create your models here.
 
@@ -32,8 +33,9 @@ This is the link and definition of the settings tab for Repeat Map.
 I'm dubious about where to put this since GraphTransforms depends on it, but otherwise
 it would be included in RepeatMap.py'''
 class RepeatMapState(ParentState):
-    F_width = models.IntegerField(default=9)
+    F_width = models.IntegerField(default=11)
     F_start = models.IntegerField(default=1)
+    skixelsPerSample = 24
     
     def height(self, state, pixels):
         F_height = len(pixels) / state.nucleotidesPerLine() # self.F_width*20
@@ -44,6 +46,10 @@ class RepeatMapState(ParentState):
         F_height = ((len(pixels)) - (self.F_start-1)*state.scale - self.F_width*state.scale ) / state.nucleotidesPerLine()
 #        F_height = max(0, min(400, F_height) )
         return F_height
+    
+    def numberOfColumns(self):
+        return (self.F_width+1) * self.skixelsPerSample
+    
 class NucleotideDisplayState(ParentState):
     visible = True
     
@@ -59,6 +65,10 @@ class SimilarityHeatMapState(OligomerUsageState):
 class ThreeMerDetectorState(ParentState):
     barWidth = models.IntegerField(default=20)    #used for display size calculations
     samples = models.IntegerField(default=20)
+    
+    def height(self, state, seq):
+        F_height = int(math.ceil( ((len(seq)) - (self.samples*3)*state.scale ) / state.nucleotidesPerLine() ))
+        return F_height
 
 class SequenceEntry(models.Model):
     ownerGraph = models.ForeignKey(HighlighterState)

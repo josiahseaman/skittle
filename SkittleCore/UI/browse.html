@@ -12,9 +12,9 @@
     <script src="{{STATIC_URL}}js/excanvas.js"></script>
 <![endif]-->
 	<script src="/browse/state.json"></script>
-	<script src="annotation.json"></script>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 	<script src="{{STATIC_URL}}js/contactform.js"></script>
+	<script src="{{STATIC_URL}}js/md5.js"></script>
 	<script src="{{STATIC_URL}}js/utility.js"></script>
 	<script src="{{STATIC_URL}}js/interface.js"></script>
 	<script src="{{STATIC_URL}}js/draw_canvas.js"></script>
@@ -120,6 +120,7 @@
     skixelsOnScreen = toSkixels($('#canvasContainer').height())*width;
     selectionStart = {{ selectionStart }}
     selectionEnd = {{ selectionEnd }}
+    var annotationSelectedStart,annotationSelectedEnd,activeAnnotation = 0
 
     // if graphs are specified in the url set their visibility
     var initialGraphs = "{{ graphs }}".split('')
@@ -127,7 +128,8 @@
     	if ($.inArray(key,initialGraphs)>=0) showGraph(key)
     	else hideGraph(key)
     }
-	
+	var annotations = {}
+	var visibleAnnotations = {}
 	var helpLabel = $('<li class="helpLabel">Help<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeHelpButton"></li>')
 	var graphHelpContents = {
 		'a':'Annotation Display is linked to an annotation file with start and stop positions for tracks.  It aligns these start and stop positions along with the rest of the graphs, expanding to accommodate overlapping annotations as necessary.  The user can select individual annotations and see the full text associated with that annotation.',
