@@ -15,7 +15,7 @@ framework.
 """
 import os, sys, socket
 
-PRODUCTION = True
+PRODUCTION = False
 
 if PRODUCTION:
     sys.path.append('/var/www/skittle')

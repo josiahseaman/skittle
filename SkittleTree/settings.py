@@ -1,7 +1,7 @@
 # Django settings for SkittleTree project.
 import os, socket, sys
 
-PRODUCTION = True
+PRODUCTION = False
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
