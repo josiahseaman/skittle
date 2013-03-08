@@ -35,3 +35,13 @@ class Annotation():
     Frame = models.SmallIntegerField(null=True)
     Attribute = models.TextField(null=True, blank=True)
     
+class SnpIndexInfo(models.Model):
+    SnpName = models.CharField(max_length=255) #rs also serves as unique id
+    Chromosome = models.CharField(max_length=25) #chromosome
+    Start = models.BigIntegerField() #start
+    CompactIndex = models.BigIntegerField() #compact index
+    
+    
+   
+    
+    
