@@ -338,3 +338,29 @@
 		font-weight: 500;
 		min-width: 80px;
 	}
+	.SNPtable {
+		width: 100%
+	}
+	.SNPtable td, .SNPtable th {
+		text-align: center;
+		width: 33%;
+		font-size: 1.2em;
+	}
+
+
+	/* colors */
+	.nuc {
+		padding:0 0.4em;
+	}
+	.nuc-A {
+		background: #000000;
+	}
+	.nuc-C {
+		background: #aa0000;
+	}
+	.nuc-G {
+		background: #00aa00;
+	}
+	.nuc-T {
+		background: #0000ff;
+	}

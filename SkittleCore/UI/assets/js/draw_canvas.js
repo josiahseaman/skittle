@@ -153,14 +153,14 @@ var drawRasterGraph = function(graph,offset,chunks) {
     }
     var chunkStartOffset = Math.max( Math.floor((start/scale-width*8)/(65536) ), 0 )*65536
     var startOffset = ( Math.round(start/scale) - 1 - width*8 - chunkStartOffset )*4;
-    var selectedStart = ((annotationSelectedStart/scale) - chunkStartOffset)*4;
-    var selectedEnd = ((annotationSelectedEnd/scale) - chunkStartOffset)*4;
+    var selectedStart = (((annotationSelectedStart-1)/scale) - chunkStartOffset)*4;
+    var selectedEnd = (((annotationSelectedEnd-1)/scale) - chunkStartOffset)*4;
     for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
         var y = x + startOffset
         newData[x] = data[y] || 0;
         newData[x + 1] = data[y + 1] || 0;
         newData[x + 2] = data[y + 2] || 0;
-        (selectedEnd >y && selectedStart<y) ? newData[x + 3] = data[y + 3] : newData[x + 3] = data[y + 3]*fadePercent;
+        (selectedEnd >=y && selectedStart<=y) ? newData[x + 3] = data[y + 3] : newData[x + 3] = data[y + 3]*fadePercent;
     }
     b.putImageData(newImageData, offset, 0);
 
@@ -197,9 +197,11 @@ var drawAnnotations = function(offset,chunks) {
     visibleAnnotations = []
     
     $.each(annotations,function(i,annotation){ // [2] = from, [3] = to
+            annotation[3] = annotation[3] || annotation[2]
             if (   (annotation[2] < ( start + (skixelsOnScreen + 37*width - 1)*scale ) && annotation[3] > ( start + (skixelsOnScreen + 37*width - 1)*scale ) )
                 || (annotation[2] < (start - 8*width*scale) && annotation[3] > (start - 8*width*scale) )
                 || (annotation[2] > (start - 8*width*scale) && annotation[3] < ( start + (skixelsOnScreen + 37*width - 1)*scale ) ) ) {
+                    // annotation[0] = annotation[0] || i
                     visibleAnnotations.push(i)
             }
     })
@@ -212,7 +214,7 @@ var drawAnnotations = function(offset,chunks) {
 
         for (currentColumn=0;currentColumn<=columnFilledTilRow.length;currentColumn++) {
             if (!columnFilledTilRow[currentColumn] || startRow > columnFilledTilRow[currentColumn]) {
-                columnFilledTilRow[currentColumn] = startRow + rowHeight
+                columnFilledTilRow[currentColumn] = startRow + rowHeight+1
                 annotations[v].column = currentColumn
                 annotations[v].startRow = startRow
                 annotations[v].rowHeight = rowHeight

@@ -87,6 +87,8 @@ function mouseDown(e) {
                         activeAnnotation = v
                         annotations[activeAnnotation].active = true;
 
+                        annotations[v].snp_name = v
+
                         showAnnotationDetail(annotations[v]);
 
                         isInvalidDisplay = true;
@@ -319,19 +321,33 @@ var getCurrentPageURL = function(fullURL) {
 }
 
 var showAnnotationDetail = function (annotation) {
-    var popup = $('<div id="annotationDetail" />').addClass('popover active').html(formatGffDescription(annotation))
-    if(annotation.startRow <100 && toSkixels($('#canvasContainer').height())-(annotation.startRow+annotation.rowHeight) < 100) {
+    var formatFunction = /^\d.*/.test(annotation.snp_name) ? formatGffDescription : formatSNPDescription;
+    var popup = $('<div id="annotationDetail" />')
+                    .addClass('popover active')
+                    .html(formatFunction(annotation))
+
+    var rowsBelowSelection = toSkixels($('#canvasContainer').height())-(annotation.startRow+annotation.rowHeight) //visible height - bottom of selection
+
+    if( annotation.startRow < 100 && rowsBelowSelection < 100 ) {
         popup.addClass('arrow-left-top') 
-        popup.css({'top':'30px','left': toPixels(graphStatus['n'].skixelOffset+width+8)+'px'})
-    } else if(annotation.startRow>toSkixels($('#canvasContainer').height())-(annotation.startRow+annotation.rowHeight)) {
+        popup.css({ 'top':'30px',
+                    'left': toPixels(graphStatus['n'].skixelOffset+width+12)+'px'
+                    })
+    } 
+    else if( annotation.startRow > rowsBelowSelection ) {
         popup.addClass('arrow-bottom-center') 
-        popup.css({'bottom':($('#canvasContainer').height()-toPixels(annotation.startRow)+14)+'px','left':(toPixels(graphStatus['n'].skixelOffset+width/2)-150)+'px'})
-    } else {
+        popup.css({ 'bottom':($('#canvasContainer').height()-toPixels(annotation.startRow)+18)+'px',
+                    'left':(toPixels(graphStatus['n'].skixelOffset+width/2)-150)+'px'
+                    })
+    } 
+    else {
         popup.addClass('arrow-top-center')
-        popup.css({'top':toPixels(annotation.startRow+annotation.rowHeight+6)+'px','left':(toPixels(graphStatus['n'].skixelOffset+width/2)-150)+'px'})
+        popup.css({ 'top':toPixels(annotation.startRow+annotation.rowHeight+6)+'px',
+                    'left':(toPixels(graphStatus['n'].skixelOffset+width/2)-150)+'px'
+                    })
     }
-    if(annotation[3]-annotation[2] < width) {
-        popup.css({'left':(toPixels(graphStatus['n'].skixelOffset+(annotation[2]-start)%width)-143)+'px'})
+    if(annotation[3]-annotation[2] < width*scale) { //if selection is smaller than width
+        popup.css({ 'left':(toPixels(graphStatus['n'].skixelOffset+(annotation[2]-start)%width)-150)+'px'})
     }
 
     $('#canvasContainer').append(popup)
@@ -356,7 +372,7 @@ var updateDials = function() {
     // updateEnd();
     updateScale();
 
-    if(activeAnnotation>0) {
+    if(activeAnnotation!=0) {
         $('#annotationDetail').remove()
         showAnnotationDetail(annotations[activeAnnotation])
     }
