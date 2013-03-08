@@ -87,7 +87,7 @@ var formatGffDescription = function(annotationArray){
 	table.append($('<tr><th>Feature:</th><td>'+annotationArray[1] + '</td></tr>'))
 	table.append($('<tr><th>Start Index:</th><td>'+annotationArray[2] + '</td></tr>'))
 	table.append($('<tr><th>End Index:</th><td>'+annotationArray[3] + '</td></tr>'))
-	table.append($('<tr><th>Length:</th><td>'+(annotationArray[3]-annotationArray[2]) + 'bp</td></tr>'))
+	table.append($('<tr><th>Length:</th><td>'+(annotationArray[3]-annotationArray[2]+1) + 'bp</td></tr>'))
 	if(annotationArray[4] !=null) table.append($('<tr><th>Score:</th><td>'+annotationArray[4] + '</td></tr>'))
 	if(annotationArray[5] !=null) table.append($('<tr><th>Strand:</th><td>'+annotationArray[5] + '</td></tr>'))
 	if(annotationArray[6] !=null) table.append($('<tr><th>Frame:</th><td>'+annotationArray[6] + '</td></tr>'))
@@ -105,6 +105,21 @@ var formatGffDescription = function(annotationArray){
 
 	return html
 }
+var formatSNPDescription = function(annotationArray){
+	var html =$('<div class="annotationDetail" />')
+	var table = $('<table />')
+	table.append($('<tr><th>SNP Code:</th><td>'+annotationArray.snp_name + '</td></tr>'))
+	table.append($('<tr><th>Index:</th><td>'+annotationArray[2] + '</td></tr>'))
+	table.append($('<tr><th>Details:</th><td><a href="https://www.23andme.com/you/explorer/snp/?snp_name='+annotationArray.snp_name + '" target="_blank">23andMe</a></td></tr>'))
+	html.append(table)
+
+	var table = $('<table class="SNPtable" />').append($('<tr><th>Reference</th><th>Mother</th><th>Father</th></tr>'))
+	table.append($('<tr><td>?</td><td>'+colorfy(annotationArray[0])+'</td><td>'+colorfy(annotationArray[1]) + '</td></tr>'))
+
+	html.append(table)
+
+	return html
+}
 var calcAnnotationColumn = function(mx) {
 	return Math.ceil((graphStatus["a"].skixelWidth+graphStatus["a"].skixelOffset-toSkixels(mx)-8)/3)
 }
@@ -115,4 +130,15 @@ var benchmark = function(fn,count){
     };
     var endTime = new Date().getTime()
     return endTime - startTime
+}
+var colors = {"A":"#000000","C":"#ff0000","G":"#00ff00","T":"#0000ff","N":"#666666"}
+var colorfy = function(nuc) {
+	var nucArray = nuc.split('')
+	var colorizedString = ""
+
+	for (i in nucArray) {
+		if(colors[nucArray[i]]) colorizedString += '<span class="nuc nuc-'+nucArray[i]+'">'+nucArray[i]+'</span>';
+		else colorizedString += nucArray[i]
+	}
+	return colorizedString;
 }
