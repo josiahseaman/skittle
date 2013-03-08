@@ -11,8 +11,8 @@ CHUNK_SIZE = 65536
 
 #--------------------
 
-if socket.gethostname().startswith('nyx') and PRODUCTION:
-    SKITTLE_TREE_LOC = "/var/www/skittle-production/"
+if PRODUCTION:
+    SKITTLE_TREE_LOC = "/var/www/skittle/"
     
     SKITTLE_TREE_URL = "http://dnaskittle.com/"
 elif socket.gethostname().startswith('nyx'):
@@ -47,7 +47,7 @@ if PRODUCTION:
 else:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+            'ENGINE': 'mysql_pool', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
             'NAME': 'SkittleTree',                # Or path to database file if using sqlite3.
             'USER': 'skittle',                    # Not used with sqlite3.
             'PASSWORD': 'sk!77l3PandaDatabase%',  # Not used with sqlite3.
@@ -55,6 +55,8 @@ else:
             'PORT': '',                           # Set to empty string for default. Not used with sqlite3.
         }
     }
+    
+    DATABASE_WAIT_TIMEOUT = 28800
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
