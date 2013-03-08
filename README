@@ -38,6 +38,7 @@ make install
 pip install SQLAlchemy
 http://docs.sqlalchemy.org/en/rel_0_8/intro.html#installation
 mysql "show GLOBAL variables;" "set global wait_timeout = 28800;"
+Put mysql_pool into /usr/lib/python2.7
 
 #
 

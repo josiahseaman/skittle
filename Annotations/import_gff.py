@@ -8,6 +8,7 @@ import sys, math, re
 
 #Import a GFF for a specific specimen
 def ImportGFF(specimen, file):
+    return
     fileName = file.split('/')
     fileName = fileName[-1].split('.')[0]
     
@@ -173,6 +174,39 @@ def chunkAndStoreAnnotations(gff, annotations):
                     active.append(annotation)
                 else:
                     chunk = appendChunk(annotation, chunk)
+        remove = list()
+        for extra in active:
+            chunk = appendChunk(extra, chunk)
+            if int(extra.End) <= chunkEnd:
+                remove.append(extra)
+        for r in remove:
+            active.remove(r)
+        #Check for any remaining annotations in the active list
+        if len(active) >= 1:
+            final = 0
+            for annotation in active:
+                if annotation.End > final:
+                    final = annotation.End
+                    
+            remainder = list()
+            chunkNum = chunkEnd + 1
+            while chunkNum <= final:
+                if len(active) < 1:
+                    break
+                chunkStart = chunkNum
+                chunkEnd = chunkStart + settings.CHUNK_SIZE - 1
+                jsonStart = "{\"" + str(chunkStart) + "\":{"
+                chunk = jsonStart
+                remove = list()
+                for extra in active:
+                    chunk = appendChunk(extra, chunk)
+                    if int(extra.End) <= chunkEnd:
+                        remove.append(extra)
+                for r in remove:
+                    active.remove(r)
+                StoreAnnotationChunk(gff, active[0].Chromosome, chunk, chunkStart)
+                chunkNum = chunkNum + settings.CHUNK_SIZE
+            
     print "DONE CHUNKING!"
     
 def appendChunk(annotation, chunk):
