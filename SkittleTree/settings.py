@@ -32,9 +32,10 @@ ADMINS = (
 MANAGERS = ADMINS
 
 if PRODUCTION:
+    #TODOL mysql_pool
     DATABASES = {
         'default': {
-            'ENGINE': 'mysql_pool', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+            'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
             'NAME': 'DNASkittle',                # Or path to database file if using sqlite3.
             'USER': 'skittle',                    # Not used with sqlite3.
             'PASSWORD': 'sk!77l3PandaDatabase%',  # Not used with sqlite3.
@@ -42,12 +43,11 @@ if PRODUCTION:
             'PORT': '',                           # Set to empty string for default. Not used with sqlite3.
         }
     }
-    
-    DATABASE_WAIT_TIMEOUT = 28800
+
 else:
     DATABASES = {
         'default': {
-            'ENGINE': 'mysql_pool', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+            'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
             'NAME': 'SkittleTree',                # Or path to database file if using sqlite3.
             'USER': 'skittle',                    # Not used with sqlite3.
             'PASSWORD': 'sk!77l3PandaDatabase%',  # Not used with sqlite3.
@@ -56,7 +56,7 @@ else:
         }
     }
     
-    DATABASE_WAIT_TIMEOUT = 28800
+DATABASE_WAIT_TIMEOUT = 28800
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
