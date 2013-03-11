@@ -90,6 +90,7 @@ def precomputeAnyGraph(request):
     from DNAStorage import StorageRequestHandler
     
     specimen = request[2]
+    
 #    chromosomes = StorageRequestHandler.GetRelatedChromosomes(specimen)
     for chromosome in ['chrY']: #chromosomes:
         length = StorageRequestHandler.GetChromosomeLength(specimen, chromosome)
@@ -102,18 +103,24 @@ def precomputeAnyGraph(request):
             GraphRequestHandler.handleRequest(state)
             print "Done computing ", state.specimen, state.chromosome, state.start
 
-if __name__ == "__main__":
-    if len(sys.argv) >= 3: nProcessors = int(sys.argv[2])     
-    else: nProcessors = 7
-    specimen = sys.argv[1]
-    
+def allGraphs(specimen, nProcessors):
     processors = Pool(nProcessors)
-    
     for graphSymbol in ['n','m','r','o','b','h','t' ]:
         for scale in [1, 16]:#scales we'd like to test
             requests = [(nProcessors, PID, specimen, graphSymbol, scale) for PID in range(nProcessors)]
             processors.map(benchmarkHere, requests)
             
+
+if __name__ == "__main__":
+    if len(sys.argv) >= 3: nProcessors = int(sys.argv[2])     
+    else: nProcessors = 3
+    specimen = sys.argv[1]
+    
+    startRepeatMap(specimen, nProcessors)
+    #allGraphs(specimen, nProcessors)
+    
+    
+    
             
             
             
