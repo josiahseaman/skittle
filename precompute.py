@@ -47,7 +47,8 @@ def precomputeRepeatMap(request):
     from DNAStorage import StorageRequestHandler
     
     specimen = request[0]
-    chromosomes = StorageRequestHandler.GetRelatedChromosomes(specimen)
+    dbSpecimen = StorageRequestHandler.GetSpecimen(specimen)
+    chromosomes = StorageRequestHandler.GetRelatedChromosomes(dbSpecimen)
     for chromosome in chromosomes:
         length = StorageRequestHandler.GetChromosomeLength(specimen, chromosome)
         chunks = range(1, length+1, 2**16)
