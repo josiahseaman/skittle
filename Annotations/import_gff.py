@@ -8,7 +8,6 @@ import sys, math, re
 
 #Import a GFF for a specific specimen
 def ImportGFF(specimen, file):
-    return
     fileName = file.split('/')
     fileName = fileName[-1].split('.')[0]
     
