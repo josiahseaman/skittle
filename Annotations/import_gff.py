@@ -140,71 +140,22 @@ def chunkAndStoreAnnotations(gff, annotations):
     for chromosome in annotations:
         chunkStart = 1
         chunkEnd = settings.CHUNK_SIZE
-        jsonStart = "{\"" + str(chunkStart) + "\":{"
-        chunk = jsonStart
+        chunk = {"FileName": gff.FileName, "Start": str(chunkStart), "OtherGFFInfo": "blahblah...", "Annotations": list()}
         active = list()
         
         print chromosome
-        for annotation in annotations[chromosome]:
+        index = 0
+        while index <= len(annotations[chromosome] and len(active) != 0:
             if chromosome == None:
                 continue
                 
-            if int(annotation.Start) <= chunkEnd:
-                chunk = appendChunk(annotation, chunk)
-                if int(annotation.End) > chunkEnd:
-                    active.append(annotation)
-            else:
-                remove = list()
-                for extra in active:
-                    chunk = appendChunk(extra, chunk)
-                    if int(extra.End) <= chunkEnd:
-                        remove.append(extra)
-                for r in remove:
-                    active.remove(r)
+            while index <= len(annotations[chromosome] and int(annotations[chromosome][index].Start) <= chunkEnd:
+                chunk['Annotations'].append({"ID": annotations[chromosome][index].ID, "Source": annotations[chromosome][index].Source, "Feature": annotations[chromosome][index].Feature, "Start": annotations[chromosome][index].Start, "End": annotations[chromosome][index].End, "Score": annotations[chromosome][index].Score, "Strand": annotations[chromosome][index].Strand, "Frame": annotations[chromosome][index].Frame, "Attribute": annotations[chromosome][index].Attribute})
                 
-                chunk = chunk[:-1] +  "}}"
-                #sys.stdout.write('.')
-                StoreAnnotationChunk(gff, annotation.Chromosome, chunk, chunkStart)
-                chunkStart = getRoundedIndex(annotation.Start)
-                chunkEnd = chunkStart + settings.CHUNK_SIZE - 1
-                jsonStart = "{\"" + str(chunkStart) + "\":{"
-                chunk = jsonStart
-                if int(annotation.End) > chunkEnd:
-                    active.append(annotation)
-                else:
-                    chunk = appendChunk(annotation, chunk)
-        remove = list()
-        for extra in active:
-            chunk = appendChunk(extra, chunk)
-            if int(extra.End) <= chunkEnd:
-                remove.append(extra)
-        for r in remove:
-            active.remove(r)
-        #Check for any remaining annotations in the active list
-        if len(active) >= 1:
-            final = 0
-            for annotation in active:
-                if annotation.End > final:
-                    final = annotation.End
-                    
-            remainder = list()
-            chunkNum = chunkEnd + 1
-            while chunkNum <= final:
-                if len(active) < 1:
-                    break
-                chunkStart = chunkNum
-                chunkEnd = chunkStart + settings.CHUNK_SIZE - 1
-                jsonStart = "{\"" + str(chunkStart) + "\":{"
-                chunk = jsonStart
-                remove = list()
-                for extra in active:
-                    chunk = appendChunk(extra, chunk)
-                    if int(extra.End) <= chunkEnd:
-                        remove.append(extra)
-                for r in remove:
-                    active.remove(r)
-                StoreAnnotationChunk(gff, active[0].Chromosome, chunk, chunkStart)
-                chunkNum = chunkNum + settings.CHUNK_SIZE
+                if annotations[chromosome][index].End > chunkEnd:
+                    active.append(annotations[chromosome][index]
+                
+                index = index + 1
             
     print "DONE CHUNKING!"
     
