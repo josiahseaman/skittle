@@ -40,12 +40,9 @@ def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
     scores = oldRepeatMap(state, threeMerState)
     threemer_scores = sensitiveTestForSpecificFrequency(scores, 3, threeMerState.samples)
     
-    minimum = 00#min(threemer_scores)
     '''This trend was found experimentally based on maximums over 69 chunks at width 10-490  #max(threemer_scores)'''
     maximum = min(0.2, 1.725816397 * (state.width / 69.0 * 20.0)**(-0.6403354918)) /4.0
-    avg = average(threemer_scores)
-    
-#    return (state.width, avg, maximum)
+    minimum = 00#min(threemer_scores)    
 
     outputPixels = []
     for size in threemer_scores:
