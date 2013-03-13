@@ -36,12 +36,12 @@ def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
     assert isinstance(state, RequestPacket)
     state.scale = 1 #these calculations are only meaningful at scale 1
     
-    if RepeatMap.checkForCachedMap(state):
-        scores = RepeatMap.squishStoredMaps(state)
-        threeMerState.samples = 8 #there's less to work with in the cached version
-    else:
-        state.readFastaChunks()#read in next chunk
-        scores = oldRepeatMap(state, threeMerState)
+#    if RepeatMap.checkForCachedMap(state):
+#        scores = RepeatMap.squishStoredMaps(state)
+#        threeMerState.samples = 8 #there's less to work with in the cached version
+#    else:
+    state.readFastaChunks()#read in next chunk
+    scores = oldRepeatMap(state, threeMerState)
     
     threemer_scores = sensitiveTestForSpecificFrequency(scores, 3, threeMerState.samples)
     
