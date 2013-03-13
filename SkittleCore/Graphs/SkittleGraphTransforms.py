@@ -311,9 +311,9 @@ def sensitiveTestForSpecificFrequency(floatList, frequency = 3, numberOfSamples 
         else:
             mask.append(-1 * (1/float(frequency-1)))
     mask[0] = 0.0
-    assert sum(mask) == 0.0
-    assert len(mask) == len(floatList) 
-    assert len(mask) == 61
+#    assert sum(mask) == 0.0
+#    assert len(mask) == len(floatList) 
+#    assert len(mask) == 61
     score = 0.0
     for x in range(1, len(mask) ):#start at index 1 because repeatMap at offset 0 is undefined
         if floatList[x] is not None:

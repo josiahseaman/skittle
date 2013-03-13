@@ -35,14 +35,19 @@ def oldRepeatMap(state, threeMerState):
 def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
     assert isinstance(state, RequestPacket)
     state.scale = 1 #these calculations are only meaningful at scale 1
-    #TODO adjust score scaling according to the width
-    #TODO read in next chunk
-    scores = oldRepeatMap(state, threeMerState)
+    
+    if RepeatMap.checkForCachedMap(state):
+        scores = RepeatMap.squishStoredMaps(state)
+        threeMerState.samples = 8 #there's less to work with in the cached version
+    else:
+        state.readFastaChunks()#read in next chunk
+        scores = oldRepeatMap(state, threeMerState)
+    
     threemer_scores = sensitiveTestForSpecificFrequency(scores, 3, threeMerState.samples)
     
     '''This trend was found experimentally based on maximums over 69 chunks at width 10-490  #max(threemer_scores)'''
-    maximum = min(0.2, 1.725816397 * (state.width / 69.0 * 20.0)**(-0.6403354918)) /4.0
-    minimum = 00#min(threemer_scores)    
+    maximum = min(0.2, 1.725816397 * (state.width / 69.0 * 20.0)**(-0.6403354918)) / 4.0
+    minimum = 0  #min(threemer_scores)    
 
     outputPixels = []
     for size in threemer_scores:
