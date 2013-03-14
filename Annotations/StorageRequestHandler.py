@@ -3,6 +3,7 @@ from DNAStorage.models import FastaFiles, Specimen
 from DNAStorage.StorageRequestHandler import GetRelatedFastaFile
 from django.conf import settings
 import shutil, os, os.path, re
+import json
 
 #Generate file name for Annotation chunks  
 def generateAnnotationChunkName(gff, start):       
@@ -18,7 +19,7 @@ def StoreAnnotationChunk(gff, chromosome, chunk, start):
     annotationChunkFilePath = annotationChunkFilePath + generateAnnotationChunkName(gff, start)
     
     chunkFile = open(annotationChunkFilePath, 'w')
-    chunkFile.write(chunk)
+    chunkFile.write(json.dumps(chunk))
     chunkFile.close()
        
     chunkDB, created = AnnotationJsonChunk.objects.get_or_create(GFF = gff, Chromosome = chromosome, Start = start, IsInRamDisk = False)
