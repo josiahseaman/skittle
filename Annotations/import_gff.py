@@ -157,9 +157,9 @@ def chunkAndStoreAnnotations(gff, annotations):
             else:
                 toRemove = list()
                 for an in active:
-                    if an.Start > chunkStart:
+                    if an.Start < chunkStart:
                         chunk[gff.FileName].append({"ID": str(gff.id) + "-" + str(an.ID), "Source": an.Source, "Feature": an.Feature, "Start": an.Start, "End": an.End, "Score": an.Score, "Strand": an.Strand, "Frame": an.Frame, "Attribute": an.Attribute}) 
-                    if an.End >= chunkEnd:
+                    if an.End <= chunkEnd:
                         toRemove.append(an)
                 for rem in toRemove:
                     active.remove(rem) 
@@ -173,7 +173,7 @@ def chunkAndStoreAnnotations(gff, annotations):
                         toRemove = list()
                         for an in active:
                             chunk[gff.FileName].append({"ID": str(gff.id) + "-" + str(an.ID), "Source": an.Source, "Feature": an.Feature, "Start": an.Start, "End": an.End, "Score": an.Score, "Strand": an.Strand, "Frame": an.Frame, "Attribute": an.Attribute}) 
-                            if an.End >= chunkEnd:
+                            if an.End <= chunkEnd:
                                 toRemove.append(an)
                         for rem in toRemove:
                             active.remove(rem)
