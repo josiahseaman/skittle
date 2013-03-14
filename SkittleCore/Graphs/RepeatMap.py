@@ -145,6 +145,15 @@ def logRepeatMap(state, repeatMapState):
         start += state.nucleotidesPerLine()
     return freq
 
+def checkForCachedMap(state):
+    tempState = copy.deepcopy(state)
+    tempState.width = skixelsPerSample
+    tempState.scale = 1
+    tempState.requestedGraph = 'm'
+
+    filepath = GetPngFilePath(tempState)
+    return filepath is not None
+
 def getBaseRepeatMapData(state, repeatMapState = RepeatMapState()):
     #read in the one png at fixed width= skixelsPerSample
     tempState = copy.deepcopy(state)
