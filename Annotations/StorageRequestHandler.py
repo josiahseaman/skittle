@@ -23,7 +23,7 @@ def StoreAnnotationChunk(gff, chromosome, chunk, start):
        
     chunkDB, created = AnnotationJsonChunk.objects.get_or_create(GFF = gff, Chromosome = chromosome, Start = start, IsInRamDisk = False)
     
-def GetChunkAnnotations(specimen, chromosome, start):
+def GetAnnotationsChunk(specimen, chromosome, start):
     annotationJsonChunk = AnnotationJsonChunk.objects.filter(GFF__Specimen__Name = specimen, Chromosome = chromosome, Start = start)[:1]
     
     if annotationJsonChunk:
