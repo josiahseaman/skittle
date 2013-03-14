@@ -148,21 +148,21 @@ def chunkAndStoreAnnotations(gff, annotations):
         
         print chromosome
         index = 0
-        while index < len(annotations[chromosome]:                
+        while index < len(annotations[chromosome]):                
             if int(annotations[chromosome][index].Start) <= chunkEnd:
-                chunk[gff.FileName].append({"ID": gff.id + "-" + annotations[chromosome][index].ID, "Source": annotations[chromosome][index].Source, "Feature": annotations[chromosome][index].Feature, "Start": annotations[chromosome][index].Start, "End": annotations[chromosome][index].End, "Score": annotations[chromosome][index].Score, "Strand": annotations[chromosome][index].Strand, "Frame": annotations[chromosome][index].Frame, "Attribute": annotations[chromosome][index].Attribute})
+                chunk[gff.FileName].append({"ID": str(gff.id) + "-" + str(annotations[chromosome][index].ID), "Source": annotations[chromosome][index].Source, "Feature": annotations[chromosome][index].Feature, "Start": annotations[chromosome][index].Start, "End": annotations[chromosome][index].End, "Score": annotations[chromosome][index].Score, "Strand": annotations[chromosome][index].Strand, "Frame": annotations[chromosome][index].Frame, "Attribute": annotations[chromosome][index].Attribute})
                 
                 if annotations[chromosome][index].End > chunkEnd:
-                    active.append(annotations[chromosome][index]
+                    active.append(annotations[chromosome][index])
             else:
                 toRemove = list()
                 for an in active:
                     if an.Start > chunkStart:
-                        chunk[gff.FileName].append({"ID": gff.id + "-" + an[ID], "Source": an[Source], "Feature": an[Feature], "Start": an[Start], "End": an[End], "Score": an[Score], "Strand": an[Strand], "Frame": an[Frame], "Attribute": an[Attribute]}) 
+                        chunk[gff.FileName].append({"ID": str(gff.id) + "-" + str(an.ID), "Source": an.Source, "Feature": an.Feature, "Start": an.Start, "End": an.End, "Score": an.Score, "Strand": an.Strand, "Frame": an.Frame, "Attribute": an.Attribute}) 
                     if an.End >= chunkEnd:
                         toRemove.append(an)
                 for rem in toRemove:
-                    active.delete(rem) 
+                    active.remove(rem) 
                 StoreAnnotationChunk(gff, chromosome, chunk, chunkStart)   
                 #GO THROUGH ALL ACTIVE, THEN ADD IN CURRENT!!!
                 if len(active) > 0:
@@ -172,23 +172,25 @@ def chunkAndStoreAnnotations(gff, annotations):
                     while chunkEnd < annotations[chromosome][index].Start:
                         toRemove = list()
                         for an in active:
-                            chunk[gff.FileName].append({"ID": gff.id + "-" + an[ID], "Source": an[Source], "Feature": an[Feature], "Start": an[Start], "End": an[End], "Score": an[Score], "Strand": an[Strand], "Frame": an[Frame], "Attribute": an[Attribute]}) 
+                            chunk[gff.FileName].append({"ID": str(gff.id) + "-" + str(an.ID), "Source": an.Source, "Feature": an.Feature, "Start": an.Start, "End": an.End, "Score": an.Score, "Strand": an.Strand, "Frame": an.Frame, "Attribute": an.Attribute}) 
                             if an.End >= chunkEnd:
                                 toRemove.append(an)
                         for rem in toRemove:
-                            active.delete(rem)
+                            active.remove(rem)
+                        StoreAnnotationChunk(gff, chromosome, chunk, chunkStart)
                         chunk = {gff.FileName: list()}
                         chunkStart = chunkStart + chunkEnd
                         chunkEnd = chunkStart + settings.CHUNK_SIZE - 1                          
                     
                 chunk = {gff.FileName: list()}
-                chunkStart = getRoundedIndex(annotations[chromosome][index].Start
+                chunkStart = getRoundedIndex(annotations[chromosome][index].Start)
                 chunkEnd = chunkStart + settings.CHUNK_SIZE - 1   
-                chunk[gff.FileName].append({"ID": gff.id + "-" + annotations[chromosome][index].ID, "Source": annotations[chromosome][index].Source, "Feature": annotations[chromosome][index].Feature, "Start": annotations[chromosome][index].Start, "End": annotations[chromosome][index].End, "Score": annotations[chromosome][index].Score, "Strand": annotations[chromosome][index].Strand, "Frame": annotations[chromosome][index].Frame, "Attribute": annotations[chromosome][index].Attribute})
+                chunk[gff.FileName].append({"ID": str(gff.id) + "-" + str(annotations[chromosome][index].ID), "Source": annotations[chromosome][index].Source, "Feature": annotations[chromosome][index].Feature, "Start": annotations[chromosome][index].Start, "End": annotations[chromosome][index].End, "Score": annotations[chromosome][index].Score, "Strand": annotations[chromosome][index].Strand, "Frame": annotations[chromosome][index].Frame, "Attribute": annotations[chromosome][index].Attribute})
                 
                 if annotations[chromosome][index].End > chunkEnd:
-                    active.append(annotations[chromosome][index]                
+                    active.append(annotations[chromosome][index])                
             index = index + 1
+        StoreAnnotationChunk(gff, chromosome, chunk, chunkStart)
             
     print "DONE CHUNKING!"            
     
