@@ -40,7 +40,7 @@ def calculateOutputPixels(state, heatMapState = SimilarityHeatMapState()):
         state.readAndAppendNextChunk(True)
     height = int(math.ceil((chunkSize*state.scale) / float(state.nucleotidesPerLine()))) 
     
-    oligVectors = OligomerUsage.calculateOutputPixels(state, heatMapState)#TODO: performance: cap at 300 lines past the last chunk boundary
+    oligVectors = OligomerUsage.calculateOutputPixels(state)
     heatMap = [[None for x in range(width)] for y in range(height)]
     
     for y in range(len(heatMap)):
