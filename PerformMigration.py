@@ -8,4 +8,5 @@ if __name__ == "__main__":
     from migrateDB import *
     
     #RunMigration1()
-    RunMigration2()
+    #RunMigration2()
+    RunMigration3()
