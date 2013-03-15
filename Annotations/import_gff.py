@@ -150,7 +150,7 @@ def chunkAndStoreAnnotations(gff, annotations):
         index = 0
         while index < len(annotations[chromosome]):    
             if int(annotations[chromosome][index].Start) <= chunkEnd:
-                chunk[gff.FileName][str(gff.id) + "-" + str(annotations[chromosome][index].ID)] = {"Source": annotations[chromosome][index].Source, "Feature": annotations[chromosome][index].Feature, "Start": annotations[chromosome][index].Start, "End": annotations[chromosome][index].End, "Score": annotations[chromosome][index].Score, "Strand": annotations[chromosome][index].Strand, "Frame": annotations[chromosome][index].Frame, "Attribute": annotations[chromosome][index].Attribute})
+                chunk[gff.FileName][str(gff.id) + "-" + str(annotations[chromosome][index].ID)] = {"Source": annotations[chromosome][index].Source, "Feature": annotations[chromosome][index].Feature, "Start": annotations[chromosome][index].Start, "End": annotations[chromosome][index].End, "Score": annotations[chromosome][index].Score, "Strand": annotations[chromosome][index].Strand, "Frame": annotations[chromosome][index].Frame, "Attribute": annotations[chromosome][index].Attribute}
                 
                 if int(annotations[chromosome][index].End) > chunkEnd:
                     active.append(annotations[chromosome][index])
@@ -160,7 +160,7 @@ def chunkAndStoreAnnotations(gff, annotations):
                 chunk = {gff.FileName: list()}
                 chunkStart = getRoundedIndex(annotations[chromosome][index].Start)
                 chunkEnd = chunkStart + settings.CHUNK_SIZE - 1   
-                chunk[gff.FileName][str(gff.id) + "-" + str(annotations[chromosome][index].ID)] = {"Source": annotations[chromosome][index].Source, "Feature": annotations[chromosome][index].Feature, "Start": annotations[chromosome][index].Start, "End": annotations[chromosome][index].End, "Score": annotations[chromosome][index].Score, "Strand": annotations[chromosome][index].Strand, "Frame": annotations[chromosome][index].Frame, "Attribute": annotations[chromosome][index].Attribute})
+                chunk[gff.FileName][str(gff.id) + "-" + str(annotations[chromosome][index].ID)] = {"Source": annotations[chromosome][index].Source, "Feature": annotations[chromosome][index].Feature, "Start": annotations[chromosome][index].Start, "End": annotations[chromosome][index].End, "Score": annotations[chromosome][index].Score, "Strand": annotations[chromosome][index].Strand, "Frame": annotations[chromosome][index].Frame, "Attribute": annotations[chromosome][index].Attribute}
                 
                 if int(annotations[chromosome][index].End) > chunkEnd:
                     active.append(annotations[chromosome][index])                
@@ -175,7 +175,7 @@ def parseActiveList(gff, chromosome, annotations, index, active, chunk, chunkSta
     toRemove = list()
     for an in active:
         if int(an.Start) < chunkStart:
-            chunk[gff.FileName][str(gff.id) + "-" + str(annotations[chromosome][index].ID)] = {"Source": an.Source, "Feature": an.Feature, "Start": an.Start, "End": an.End, "Score": an.Score, "Strand": an.Strand, "Frame": an.Frame, "Attribute": an.Attribute}) 
+            chunk[gff.FileName][str(gff.id) + "-" + str(annotations[chromosome][index].ID)] = {"Source": an.Source, "Feature": an.Feature, "Start": an.Start, "End": an.End, "Score": an.Score, "Strand": an.Strand, "Frame": an.Frame, "Attribute": an.Attribute}
         if int(an.End) <= chunkEnd:
             toRemove.append(an)
     for rem in toRemove:
@@ -190,7 +190,7 @@ def parseActiveList(gff, chromosome, annotations, index, active, chunk, chunkSta
             while int(annotations[chromosome][index].Start) > int(chunkEnd):
                 toRemove = list()
                 for an in active:
-                    chunk[gff.FileName][str(gff.id) + "-" + str(annotations[chromosome][index].ID)] = {"Source": an.Source, "Feature": an.Feature, "Start": an.Start, "End": an.End, "Score": an.Score, "Strand": an.Strand, "Frame": an.Frame, "Attribute": an.Attribute}) 
+                    chunk[gff.FileName][str(gff.id) + "-" + str(annotations[chromosome][index].ID)] = {"Source": an.Source, "Feature": an.Feature, "Start": an.Start, "End": an.End, "Score": an.Score, "Strand": an.Strand, "Frame": an.Frame, "Attribute": an.Attribute}
                     if int(an.End) <= chunkEnd:
                         toRemove.append(an)
                 for rem in toRemove:
@@ -203,7 +203,7 @@ def parseActiveList(gff, chromosome, annotations, index, active, chunk, chunkSta
             while len(active) > 0:
                 toRemove = list()
                 for an in active:
-                    chunk[gff.FileName][str(gff.id) + "-" + str(annotations[chromosome][index].ID)] = {"Source": an.Source, "Feature": an.Feature, "Start": an.Start, "End": an.End, "Score": an.Score, "Strand": an.Strand, "Frame": an.Frame, "Attribute": an.Attribute}) 
+                    chunk[gff.FileName][str(gff.id) + "-" + str(annotations[chromosome][index].ID)] = {"Source": an.Source, "Feature": an.Feature, "Start": an.Start, "End": an.End, "Score": an.Score, "Strand": an.Strand, "Frame": an.Frame, "Attribute": an.Attribute}
                     if int(an.End) <= chunkEnd:
                         toRemove.append(an)
                 for rem in toRemove:
