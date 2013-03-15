@@ -157,7 +157,7 @@ def chunkAndStoreAnnotations(gff, annotations):
             else:
                 parseActiveList(gff, chromosome, annotations, index, active, chunk, chunkStart, chunkEnd)
                     
-                chunk = {gff.FileName: list()}
+                chunk = {gff.FileName: dict()}
                 chunkStart = getRoundedIndex(annotations[chromosome][index].Start)
                 chunkEnd = chunkStart + settings.CHUNK_SIZE - 1   
                 chunk[gff.FileName][str(gff.id) + "-" + str(annotations[chromosome][index].ID)] = {"Source": annotations[chromosome][index].Source, "Feature": annotations[chromosome][index].Feature, "Start": annotations[chromosome][index].Start, "End": annotations[chromosome][index].End, "Score": annotations[chromosome][index].Score, "Strand": annotations[chromosome][index].Strand, "Frame": annotations[chromosome][index].Frame, "Attribute": annotations[chromosome][index].Attribute}
@@ -183,7 +183,7 @@ def parseActiveList(gff, chromosome, annotations, index, active, chunk, chunkSta
     StoreAnnotationChunk(gff, chromosome, chunk, chunkStart)   
     #GO THROUGH ALL ACTIVE, THEN ADD IN CURRENT!!!
     if len(active) > 0:
-        chunk = {gff.FileName: list()}
+        chunk = {gff.FileName: dict()}
         chunkStart = chunkStart + settings.CHUNK_SIZE
         chunkEnd = chunkStart + settings.CHUNK_SIZE - 1   
         if index != -1:
@@ -196,7 +196,7 @@ def parseActiveList(gff, chromosome, annotations, index, active, chunk, chunkSta
                 for rem in toRemove:
                     active.remove(rem)
                 StoreAnnotationChunk(gff, chromosome, chunk, chunkStart)
-                chunk = {gff.FileName: list()}
+                chunk = {gff.FileName: dict()}
                 chunkStart = chunkStart + settings.CHUNK_SIZE
                 chunkEnd = chunkStart + settings.CHUNK_SIZE - 1 
         else:
@@ -209,7 +209,7 @@ def parseActiveList(gff, chromosome, annotations, index, active, chunk, chunkSta
                 for rem in toRemove:
                     active.remove(rem)
                 StoreAnnotationChunk(gff, chromosome, chunk, chunkStart)
-                chunk = {gff.FileName: list()}
+                chunk = {gff.FileName: dict()}
                 chunkStart = chunkStart + settings.CHUNK_SIZE
                 chunkEnd = chunkStart + settings.CHUNK_SIZE - 1            
     
