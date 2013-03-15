@@ -80,19 +80,19 @@ var getGoodDeterministicColor = function(input) {
 	return color
 }
 
-var formatGffDescription = function(annotationArray){
+var formatGffDescription = function(annotation){
 	var html =$('<div class="annotationDetail" />')
 	var table = $('<table />')
-	table.append($('<tr><th>Source:</th><td>'+annotationArray[0] + '</td></tr>'))
-	table.append($('<tr><th>Feature:</th><td>'+annotationArray[1] + '</td></tr>'))
-	table.append($('<tr><th>Start Index:</th><td>'+annotationArray[2] + '</td></tr>'))
-	table.append($('<tr><th>End Index:</th><td>'+annotationArray[3] + '</td></tr>'))
-	table.append($('<tr><th>Length:</th><td>'+(annotationArray[3]-annotationArray[2]+1) + 'bp</td></tr>'))
-	if(annotationArray[4] !=null) table.append($('<tr><th>Score:</th><td>'+annotationArray[4] + '</td></tr>'))
-	if(annotationArray[5] !=null) table.append($('<tr><th>Strand:</th><td>'+annotationArray[5] + '</td></tr>'))
-	if(annotationArray[6] !=null) table.append($('<tr><th>Frame:</th><td>'+annotationArray[6] + '</td></tr>'))
-	var descriptionArray = annotationArray[7].split(';')
-	if (annotationArray.length>0) {
+	table.append($('<tr><th>Source:</th><td>'+annotation["Source"] + '</td></tr>'))
+	table.append($('<tr><th>Feature:</th><td>'+annotation["Feature"] + '</td></tr>'))
+	table.append($('<tr><th>Start Index:</th><td>'+annotation["Start"] + '</td></tr>'))
+	table.append($('<tr><th>End Index:</th><td>'+annotation["End"] + '</td></tr>'))
+	table.append($('<tr><th>Length:</th><td>'+(annotation["End"]-annotation["Start"]+1) + 'bp</td></tr>'))
+	if(annotation["Score"] !=null) table.append($('<tr><th>Score:</th><td>'+annotation["Score"] + '</td></tr>'))
+	if(annotation["Strand"] !=null) table.append($('<tr><th>Strand:</th><td>'+annotation["Strand"] + '</td></tr>'))
+	if(annotation["Frame"] !=null) table.append($('<tr><th>Frame:</th><td>'+annotation["Frame"] + '</td></tr>'))
+	var descriptionArray = annotation["Attribute"].join(';').split(';')
+	if (descriptionArray.length>0) {
 		$.each(descriptionArray,function(i,v){
 			var keyValue = v.split('=',2)
 			table.append($('<tr><th>'+keyValue[0]+':</th><td>'+keyValue[1] + '</td></tr>'))
@@ -100,7 +100,7 @@ var formatGffDescription = function(annotationArray){
 		html.append(table)
 	} else {
 		html.append(table)
-		html.append($('<h4>Details:</h4><p>'+annotationArray[7]+'</p>'))
+		html.append($('<h4>Details:</h4><p>'+annotation["Attribute"].toString()+'</p>'))
 	}
 
 	return html
@@ -109,12 +109,12 @@ var formatSNPDescription = function(annotationArray){
 	var html =$('<div class="annotationDetail" />')
 	var table = $('<table />')
 	table.append($('<tr><th>SNP Code:</th><td>'+annotationArray.snp_name + '</td></tr>'))
-	table.append($('<tr><th>Index:</th><td>'+annotationArray[2] + '</td></tr>'))
+	table.append($('<tr><th>Index:</th><td>'+annotationArray["Start"] + '</td></tr>'))
 	table.append($('<tr><th>Details:</th><td><a href="https://www.23andme.com/you/explorer/snp/?snp_name='+annotationArray.snp_name + '" target="_blank">23andMe</a></td></tr>'))
 	html.append(table)
 
 	var table = $('<table class="SNPtable" />').append($('<tr><th>Reference</th><th>Mother</th><th>Father</th></tr>'))
-	table.append($('<tr><td>?</td><td>'+colorfy(annotationArray[0])+'</td><td>'+colorfy(annotationArray[1]) + '</td></tr>'))
+	table.append($('<tr><td>'+colorfy(getNucleotideValues(annotationArray["Start"]))+'</td><td>'+colorfy(annotationArray["Father"])+'</td><td>'+colorfy(annotationArray["Mother"]) + '</td></tr>'))
 
 	html.append(table)
 
@@ -141,4 +141,30 @@ var colorfy = function(nuc) {
 		else colorizedString += nucArray[i]
 	}
 	return colorizedString;
+}
+var getNucleotideValues = function(findStart,findEnd) {
+	if(findEnd===undefined) findEnd = findStart
+	var chunk = Math.floor(findStart/65536)*65536+1;
+    var tempImage = new Image()
+    tempImage.src = "data.png?graph=n&start=" + chunk + "&scale=1&colorPalette=Classic";
+    var sequence = "";
+    seq = tempImage.onload = function(){
+	    a.clearRect(0,0,1024,64)
+        a.drawImage(tempImage,0,0) 
+        for (var i=0;i<(findEnd+1 - findStart);i++) {
+			var y = Math.floor((findStart+i-chunk)/1024);
+			var x = (findStart+i-chunk) - y*1024;
+        	var pixel = a.getImageData(x,y,1,1).data
+        	if (pixel[0] == 255) sequence += "C"
+        	else if (pixel[1] == 255) sequence += "G"
+        	else if (pixel[2] == 255) sequence += "T"
+        	else if (pixel[1] == pixel[2] && pixel[2] >0 ) sequence += "N"
+        	else sequence += "A"
+        }
+	    // console.log(sequence)
+	    return sequence
+    }
+
+	return seq()
+
 }

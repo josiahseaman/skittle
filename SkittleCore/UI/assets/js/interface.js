@@ -81,8 +81,8 @@ function mouseDown(e) {
                 if(column == annotations[v].column) {
                         // console.log(column,row)
                     if((row+1) >= annotations[v].startRow && (row-1) <= (annotations[v].startRow + annotations[v].rowHeight)) {
-                        annotationSelectedStart = annotations[v][2]
-                        annotationSelectedEnd = annotations[v][3]
+                        annotationSelectedStart = annotations[v]["Start"]
+                        annotationSelectedEnd = annotations[v]["End"]
                         if(annotations[activeAnnotation]) annotations[activeAnnotation].active = false
                         activeAnnotation = v
                         annotations[activeAnnotation].active = true;
@@ -140,8 +140,8 @@ function mouseMove(e) {
                 if(annotations[v]) annotations[v].active = false
                 if(column == annotations[v].column) {
                     if((row+1) >= annotations[v].startRow && (row-1) <= (annotations[v].startRow + annotations[v].rowHeight)) {
-                        annotationSelectedStart = annotations[v][2]
-                        annotationSelectedEnd = annotations[v][3]
+                        annotationSelectedStart = annotations[v]["Start"]
+                        annotationSelectedEnd = annotations[v]["End"]
                         annotations[v].active = true;
                         isInvalidDisplay = true;
                         return false;
@@ -317,6 +317,7 @@ var getCurrentPageURL = function(fullURL) {
     var baseURL = (window.location.origin) ? window.location.origin : window.location.protocol + window.location.host;
     var currentURL = "/browse/" + specimen + "/" + chromosome + "/?graphs=" + graphString + "&start=" + start + "&scale=" + scale + "&width=" + width 
     if (graphStatus['h'].visible) currentURL += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd;
+    if (colorPalette !="Classic") graphPath += "&colorPalette="+colorPalette
     return fullURL ? baseURL + currentURL : currentURL;
 }
 
@@ -326,7 +327,7 @@ var showAnnotationDetail = function (annotation) {
                     .addClass('popover active')
                     .html(formatFunction(annotation))
 
-    var rowsBelowSelection = toSkixels($('#canvasContainer').height())-(annotation.startRow+annotation.rowHeight) //visible height - bottom of selection
+    var rowsBelowSelection = toSkixels($('#canvasContainer').height())-(Math.ceil(annotation.startRow)+annotation.rowHeight) //visible height - bottom of selection
 
     if( annotation.startRow < 100 && rowsBelowSelection < 100 ) {
         popup.addClass('arrow-left-top') 
@@ -336,17 +337,19 @@ var showAnnotationDetail = function (annotation) {
     } 
     else if( annotation.startRow > rowsBelowSelection ) {
         popup.addClass('arrow-bottom-center') 
-        popup.css({ 'bottom':($('#canvasContainer').height()-toPixels(annotation.startRow)+18)+'px',
+        popup.css({ 'bottom':($('#canvasContainer').height()-toPixels(Math.ceil(annotation.startRow))+16)+'px',
                     'left':(toPixels(graphStatus['n'].skixelOffset+width/2)-150)+'px'
                     })
     } 
+    else if (annotation.startRow < 0) {
+    }
     else {
         popup.addClass('arrow-top-center')
-        popup.css({ 'top':toPixels(annotation.startRow+annotation.rowHeight+6)+'px',
+        popup.css({ 'top':toPixels(Math.ceil(annotation.startRow)+annotation.rowHeight+6.3)+'px',
                     'left':(toPixels(graphStatus['n'].skixelOffset+width/2)-150)+'px'
                     })
     }
-    if(annotation[3]-annotation[2] < width*scale) { //if selection is smaller than width
+    if(annotation[3]-annotation[2] < width*scale && annotation[2]-start > 0) { //if selection is smaller than width
         popup.css({ 'left':(toPixels(graphStatus['n'].skixelOffset+(annotation[2]-start)%width)-150)+'px'})
     }
 
