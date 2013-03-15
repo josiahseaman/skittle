@@ -175,7 +175,7 @@ def parseActiveList(gff, chromosome, annotations, index, active, chunk, chunkSta
     toRemove = list()
     for an in active:
         if int(an.Start) < chunkStart:
-            chunk[gff.FileName][str(gff.id) + "-" + str(annotations[chromosome][index].ID)] = {"Source": an.Source, "Feature": an.Feature, "Start": an.Start, "End": an.End, "Score": an.Score, "Strand": an.Strand, "Frame": an.Frame, "Attribute": an.Attribute}
+            chunk[gff.FileName][str(gff.id) + "-" + str(an.ID)] = {"Source": an.Source, "Feature": an.Feature, "Start": an.Start, "End": an.End, "Score": an.Score, "Strand": an.Strand, "Frame": an.Frame, "Attribute": an.Attribute}
         if int(an.End) <= chunkEnd:
             toRemove.append(an)
     for rem in toRemove:
@@ -190,7 +190,7 @@ def parseActiveList(gff, chromosome, annotations, index, active, chunk, chunkSta
             while int(annotations[chromosome][index].Start) > int(chunkEnd):
                 toRemove = list()
                 for an in active:
-                    chunk[gff.FileName][str(gff.id) + "-" + str(annotations[chromosome][index].ID)] = {"Source": an.Source, "Feature": an.Feature, "Start": an.Start, "End": an.End, "Score": an.Score, "Strand": an.Strand, "Frame": an.Frame, "Attribute": an.Attribute}
+                    chunk[gff.FileName][str(gff.id) + "-" + str(an.ID)] = {"Source": an.Source, "Feature": an.Feature, "Start": an.Start, "End": an.End, "Score": an.Score, "Strand": an.Strand, "Frame": an.Frame, "Attribute": an.Attribute}
                     if int(an.End) <= chunkEnd:
                         toRemove.append(an)
                 for rem in toRemove:
@@ -203,7 +203,7 @@ def parseActiveList(gff, chromosome, annotations, index, active, chunk, chunkSta
             while len(active) > 0:
                 toRemove = list()
                 for an in active:
-                    chunk[gff.FileName][str(gff.id) + "-" + str(annotations[chromosome][index].ID)] = {"Source": an.Source, "Feature": an.Feature, "Start": an.Start, "End": an.End, "Score": an.Score, "Strand": an.Strand, "Frame": an.Frame, "Attribute": an.Attribute}
+                    chunk[gff.FileName][str(gff.id) + "-" + str(an.ID)] = {"Source": an.Source, "Feature": an.Feature, "Start": an.Start, "End": an.End, "Score": an.Score, "Strand": an.Strand, "Frame": an.Frame, "Attribute": an.Attribute}
                     if int(an.End) <= chunkEnd:
                         toRemove.append(an)
                 for rem in toRemove:
