@@ -80,7 +80,8 @@ var graphURL = function(graph,chunkOffset) {
 var annotationRequestor = function(chunkOffset) {
     if(!loadedAnnotations[chunkOffset] && chunkOffset <= fileLength) {
         $.getJSON('annotation.json',{start:chunkOffset},function(data){
-            $.extend(annotations,data["ZmB73_5b_FGS"])
+            for (var firstKey in data) break;
+            $.extend(annotations,data[firstKey])
             isInvalidDisplay = true
             loadedAnnotations[chunkOffset] = true
         }).error(function(jqXHR, textStatus, errorThrown){
