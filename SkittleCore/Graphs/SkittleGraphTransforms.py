@@ -317,7 +317,7 @@ def sensitiveTestForSpecificFrequency(floatList, frequency = 3, numberOfSamples 
     score = 0.0
     for x in range(1, len(mask) ):#start at index 1 because repeatMap at offset 0 is undefined
         if floatList[x] is not None:
-            score += (mask[x] * floatList[x]) / float(numberOfSamples)
+            score += (mask[x] * floatList[x]) #/ float(numberOfSamples)
         #score += min((float)0.5, mask[x] * freq[y][x])//the amount that any position can affect is capped because of tandem repeats with 100% similarity
     return score
 

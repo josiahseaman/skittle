@@ -7,9 +7,8 @@ from PixelLogic import drawBar
 from SkittleCore.GraphRequestHandler import registerGraph
 from SkittleCore.models import RequestPacket
 from SkittleGraphTransforms import sensitiveTestForSpecificFrequency, normalize
-from models import RepeatMapState, ThreeMerDetectorState
-import RepeatMap
-import math
+from models import ThreeMerDetectorState
+from MathLogic import lowPassFilter
 
 registerGraph('t', "Threemer Detector", __name__, False)
 
@@ -29,7 +28,7 @@ def oldRepeatMap(state, threeMerState):
         freq.append([0.0]*(threeMerState.samples*3+1))
         offset = h * lineSize
         for w in range(1, len(freq[h])):
-            freq[h][w] = countMatches(state.seq, offset, offset + w + 1, lineSize)
+            freq[h][w] = countMatches(state.seq, offset, offset + w , lineSize)
     return freq
 
 def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
@@ -44,10 +43,11 @@ def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
     scores = oldRepeatMap(state, threeMerState)
     
     threemer_scores = sensitiveTestForSpecificFrequency(scores, 3, threeMerState.samples)
+    threemer_scores = lowPassFilter(threemer_scores)
     
     '''This trend was found experimentally based on maximums over 69 chunks at width 10-490  #max(threemer_scores)'''
-    maximum = min(0.2, 1.725816397 * (state.width / 69.0 * 20.0)**(-0.6403354918)) / 4.0
-    minimum = 0  #min(threemer_scores)    
+    maximum = 1.2 # min(0.2, 1.725816397 * (state.width / 69.0 * 20.0)**(-0.6403354918)) / 4.0
+    minimum = 0.2  #min(threemer_scores)
 
     outputPixels = []
     for size in threemer_scores:
