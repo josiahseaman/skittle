@@ -380,7 +380,7 @@ var updateDials = function() {
         showAnnotationDetail(annotations[activeAnnotation])
     }
 
-    window.history.replaceState(null,null,getCurrentPageURL())
+    // window.history.replaceState(null,null,getCurrentPageURL())
 }
 var UIwidthChange = function(newWidth) {
     if (newWidth.match(/(\d+)/)) { // check if this is really just a number
