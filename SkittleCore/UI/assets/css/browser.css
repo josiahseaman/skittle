@@ -12,6 +12,9 @@
 		font-weight: 600;
 		color:#dd9;
 	}
+	a,a:visited {
+		color:#fda;
+	}
 	#logo {
 		position: absolute;
 		z-index: 100;
@@ -132,7 +135,7 @@
 	header li>a, #dials li {
 		display: inline-block;
 	}
-	header li>a {
+	header li>a,header li>a:visited {
 		margin: 0;
 		width:180px;
 		height:60px;

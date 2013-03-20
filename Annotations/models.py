@@ -18,7 +18,7 @@ class GFF(models.Model):
 class AnnotationJsonChunk(models.Model):
     GFF = models.ForeignKey(GFF)
     Chromosome = models.CharField(max_length=25)
-    Start = models.IntegerField()
+    Start = models.BigIntegerField()
     IsInRamDisk = models.BooleanField(default=False)
 
 # Object for storing temporary annotations

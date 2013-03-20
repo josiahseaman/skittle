@@ -21,12 +21,13 @@ def convertToPng(state, pixels, isRaster = False):
     if greyscale:
         p = multiplyGreyscale(pixels, 255)
         w = png.Writer(len(p[0]), len(p), greyscale=True)
-    elif not isRaster:   #Nucleotide Bias
-        p = flattenImage(pixels, len(pixels[0]), True, 4)
-        w = png.Writer(len(p[0])/4, len(p), greyscale=False, alpha=True)
-    else: #raster, color graphs
-        p = flattenImage(pixels, targetWidth)
-        w = png.Writer(targetWidth, len(p))
+    else:
+        if not isRaster:   #Nucleotide Bias
+            p = flattenImage(pixels, len(pixels[0]), True, 4)
+            w = png.Writer(len(p[0])/4, len(p), greyscale=False, alpha=True)
+        else: #raster, color graphs
+            p = flattenImage(pixels, targetWidth)
+            w = png.Writer(targetWidth, len(p))
     w.write(f, p)
     f.close()
     f = open(f.name, 'rb') #return the binary contents of the file
@@ -35,9 +36,10 @@ def convertToPng(state, pixels, isRaster = False):
     return data
 
 def capRange(color):
+    newColor = ()
     for part in color:
-        part =  int(min(255,max(0,part)))
-    return color
+        newColor +=  (int(min(255,max(0,part))),)
+    return newColor
 
 def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3):
     pixels = squishImage(pixels)

@@ -38,3 +38,11 @@ def RunMigration2():
     part1 = "ALTER TABLE `skittletree`.`annotations_gff` MODIFY COLUMN `GFFVersion` SMALLINT(6) DEFAULT NULL;"
     
     cur.execute(part1)
+    
+#####_____MIGRATION 3_____#####
+def RunMigration3():
+    cur = setupDB()
+    
+    part1 = "ALTER TABLE `skittletree`.`annotations_annotationjsonchunk` MODIFY COLUMN `Start` BIGINT(20) NOT NULL;"
+    
+    cur.execute(part1)

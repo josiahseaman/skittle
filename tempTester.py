@@ -7,4 +7,4 @@ if __name__ == "__main__":
     
     from Annotations.import_gff import ImportGFF
     
-    ImportGFF("ZmB73", "./Annotations/ZmB73_5b_FGS.gff")
+    ImportGFF("ZmB73", "./Annotations/history/ZmB73_5b_FGS.gff")

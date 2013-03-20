@@ -5,7 +5,6 @@ Created on Nov 30, 2012
 '''
 from django.db import models
 import Graphs.models   #import ParentState
-import copy
 from FastaFiles import readFile
 import DNAStorage.StorageRequestHandler as StorageRequestHandler
 
@@ -76,9 +75,11 @@ class RequestPacket(models.Model):
         return self
    
     def readFastaChunks(self):
+        numChunks = self.scale or 1 
+        if self.seq is not None and len(self.seq) >= numChunks * chunkSize:
+            return
         self.seq = ''
         self.length = len(self.seq)
-        numChunks = self.scale or 1 
         for chunk in range(numChunks):
             self.readAndAppendNextChunk()
         assert len(self.seq) != 0, "No was file read"

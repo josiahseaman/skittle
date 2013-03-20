@@ -80,10 +80,14 @@ var graphURL = function(graph,chunkOffset) {
 var annotationRequestor = function(chunkOffset) {
     if(!loadedAnnotations[chunkOffset] && chunkOffset <= fileLength) {
         $.getJSON('annotation.json',{start:chunkOffset},function(data){
-            $.extend(annotations,data[chunkOffset])
+            for (var firstKey in data) break;
+            $.extend(annotations,data[firstKey])
             isInvalidDisplay = true
             loadedAnnotations[chunkOffset] = true
-        }).error(function(jqXHR, textStatus, errorThrown){console.log(chunkOffset,jqXHR.responseText,textStatus,errorThrown)})
+        }).error(function(jqXHR, textStatus, errorThrown){
+            if(jqXHR.responseText=="None") loadedAnnotations[chunkOffset] = true
+            console.log(chunkOffset,jqXHR.responseText,textStatus,errorThrown)
+        })
     }
 }
 
@@ -196,21 +200,21 @@ var drawAnnotations = function(offset,chunks) {
 
     visibleAnnotations = []
     
-    $.each(annotations,function(i,annotation){ // [2] = from, [3] = to
-            annotation[3] = annotation[3] || annotation[2]
-            if (   (annotation[2] < ( start + (skixelsOnScreen + 37*width - 1)*scale ) && annotation[3] > ( start + (skixelsOnScreen + 37*width - 1)*scale ) )
-                || (annotation[2] < (start - 8*width*scale) && annotation[3] > (start - 8*width*scale) )
-                || (annotation[2] > (start - 8*width*scale) && annotation[3] < ( start + (skixelsOnScreen + 37*width - 1)*scale ) ) ) {
+    $.each(annotations,function(i,annotation){ 
+            annotation["End"] = annotation["End"] || annotation["Start"]
+            if (   (annotation["Start"] < ( start + (skixelsOnScreen + 37*width - 1)*scale ) && annotation["End"] > ( start + (skixelsOnScreen + 37*width - 1)*scale ) )
+                || (annotation["Start"] < (start - 8*width*scale) && annotation["End"] > (start - 8*width*scale) )
+                || (annotation["Start"] > (start - 8*width*scale) && annotation["End"] < ( start + (skixelsOnScreen + 37*width - 1)*scale ) ) ) {
                     // annotation[0] = annotation[0] || i
                     visibleAnnotations.push(i)
             }
     })
-    visibleAnnotations.sort(function(a,b){return annotations[a][2]-annotations[b][2] + (annotations[b][3]/annotations[b][2]-annotations[a][3]/annotations[a][2])})
+    visibleAnnotations.sort(function(a,b){return annotations[a]["Start"]-annotations[b]["Start"] + (annotations[b]["End"]/annotations[b]["Start"]-annotations[a]["End"]/annotations[a]["Start"])})
 
     $.each(visibleAnnotations,function(i,v){
         var currentColumn = 0
-        var startRow = Math.floor((annotations[v][2]-start)/(width*scale)+8)
-        var rowHeight = Math.ceil((annotations[v][3]-annotations[v][2])/(width*scale))
+        var startRow = Math.floor((annotations[v]["Start"]-start)/(width*scale)+8)
+        var rowHeight = Math.ceil((annotations[v]["End"]-annotations[v]["Start"])/(width*scale))
 
         for (currentColumn=0;currentColumn<=columnFilledTilRow.length;currentColumn++) {
             if (!columnFilledTilRow[currentColumn] || startRow > columnFilledTilRow[currentColumn]) {
@@ -226,17 +230,17 @@ var drawAnnotations = function(offset,chunks) {
     var offsetWidth = calculateOffsetWidth(columnFilledTilRow.length*annotationWidth)
     drawPixelStuff.push(function(){
         $.each(visibleAnnotations,function(i,v){
-            if (annotations[v][3]-annotations[v][2]>3) {
+            if (annotations[v]["End"]-annotations[v]["Start"]>3) {
                 c.beginPath()
                 c.rect(offset - gutterWidth + offsetWidth-annotations[v].column*annotationWidth+1,annotations[v].startRow,-2/(zoom*3),annotations[v].rowHeight)
-                annotations[v].color = annotations[v].color || getGoodDeterministicColor(annotations[v][2] + "" + annotations[v][3] +"" + i + "")
+                annotations[v].color = annotations[v].color || getGoodDeterministicColor(annotations[v]["Start"] + "" + annotations[v]["End"] +"" + i + "")
                 annotations[v].active == true ? c.fillStyle='#fff' : c.fillStyle=annotations[v].color
                 c.fill()
             }
             else {
                 c.beginPath()
                 c.arc(offset - gutterWidth + offsetWidth-annotations[v].column*annotationWidth+0.7,annotations[v].startRow+0.5,annotationWidth/4,0,2*Math.PI,false)
-                annotations[v].color = annotations[v].color || getGoodDeterministicColor(annotations[v][2] + "" + annotations[v][3] + "" + i + "")
+                annotations[v].color = annotations[v].color || getGoodDeterministicColor(annotations[v]["Start"] + "" + annotations[v]["End"] + "" + i + "")
                 annotations[v].active == true ? c.fillStyle='#fff' : c.fillStyle=annotations[v].color
                 c.fill()
             }
