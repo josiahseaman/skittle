@@ -10,7 +10,7 @@ from SkittleCore.models import RequestPacket, chunkSize
 from SkittleCore.GraphRequestHandler import registerGraph
 import math
 from random import choice
-from DNAStorage.StorageRequestHandler import GetPngFilePath
+from DNAStorage.StorageRequestHandler import GetPngFilePath, GetFastaFilePath
 from SkittleCore.png import Reader
 from SkittleCore.PngConversionHelper import convertToPng
 import copy
@@ -168,9 +168,10 @@ def getBaseRepeatMapData(state, repeatMapState = RepeatMapState()):
             decoder = Reader(filename=filepath)
             fullData += list(decoder.asFloat(1.0)[2])
         else:
-            data = calculateOutputPixels(tempState, repeatMapState)
-            convertToPng(tempState, data )#store the newly created data to file
-            fullData += data
+            if GetFastaFilePath(state.specimen, state.chromosome, state.start) is not None:
+                data = calculateOutputPixels(tempState, repeatMapState)
+                convertToPng(tempState, data )#store the newly created data to file
+                fullData += data
         tempState.start += chunkSize
     return fullData 
     
@@ -202,15 +203,15 @@ def calculateOutputPixels(state, repeatMapState = RepeatMapState()):
     scores = logRepeatMap(state, repeatMapState)
     return scores
     
-    pixels = NucleotideDisplay.calculateOutputPixels(state)
-    if countDepth(pixels) > 1:
-        singleLine = []
-        for x in pixels: #this can't be a list comprehension because we need the += operator instead of .append()
-            singleLine += x
-    else:
-        singleLine = pixels
-    scores = correlationMap(state, repeatMapState, singleLine) #2D array
-    return scores
+#    pixels = NucleotideDisplay.calculateOutputPixels(state)
+#    if countDepth(pixels) > 1:
+#        singleLine = []
+#        for x in pixels: #this can't be a list comprehension because we need the += operator instead of .append()
+#            singleLine += x
+#    else:
+#        singleLine = pixels
+#    scores = correlationMap(state, repeatMapState, singleLine) #2D array
+#    return scores
     
     
     
