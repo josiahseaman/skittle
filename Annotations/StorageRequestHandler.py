@@ -4,6 +4,7 @@ from DNAStorage.StorageRequestHandler import GetRelatedFastaFile
 from django.conf import settings
 import shutil, os, os.path, re
 import json
+import import_snp
 
 #Generate file name for Annotation chunks  
 def generateAnnotationChunkName(gff, start):       
@@ -29,9 +30,12 @@ def GetAnnotationsChunk(specimen, chromosome, start, annotations = None):
     if annotations:
         #Go through each given gff file
         for gff in annotations:
-            temp = AnnotationJsonChunk.objects.filter(GFF__Specimen__Name = specimen, Chromosome = chromosome, Start = start, GFF__FileName = gff)[:1]
-            if temp:
-                annotationJsonChunk.append(temp[0])
+            if gff == 'SNP':
+                annotationJsonChunk.append(import_snp.createAnnotationsFromCompact('23andMe_demo', chromosome, start))
+            else:
+                temp = AnnotationJsonChunk.objects.filter(GFF__Specimen__Name = specimen, Chromosome = chromosome, Start = start, GFF__FileName = gff)[:1]
+                if temp:
+                    annotationJsonChunk.append(temp[0])
     else:
         #Grab all gff files
         temp = AnnotationJsonChunk.objects.filter(GFF__Specimen__Name = specimen, Chromosome = chromosome, Start = start)
@@ -40,7 +44,7 @@ def GetAnnotationsChunk(specimen, chromosome, start, annotations = None):
                 annotationJsonChunk.append(annotation)
     
     if len(annotationJsonChunk) >= 1:
-        contents = ""
+        contents = "{"
         for annotation in annotationJsonChunk:
             gff = annotation.GFF
             fastaFile = GetRelatedFastaFile(gff.Specimen, chromosome)
@@ -50,7 +54,7 @@ def GetAnnotationsChunk(specimen, chromosome, start, annotations = None):
             
             read = chunkFile.read()
             chunkFile.close()
-            read = read[:-1] + ","
+            read = read[1:-1] + ","
             
             contents = contents + read
         
