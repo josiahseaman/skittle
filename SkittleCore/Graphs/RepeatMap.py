@@ -168,7 +168,7 @@ def getBaseRepeatMapData(state, repeatMapState = RepeatMapState()):
             decoder = Reader(filename=filepath)
             fullData += list(decoder.asFloat(1.0)[2])
         else:
-            if GetFastaFilePath(state.specimen, state.chromosome, state.start) is not None:
+            if GetFastaFilePath(tempState.specimen, tempState.chromosome, tempState.start) is not None:
                 data = calculateOutputPixels(tempState, repeatMapState)
                 convertToPng(tempState, data )#store the newly created data to file
                 fullData += data
