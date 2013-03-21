@@ -46,3 +46,11 @@ def RunMigration3():
     part1 = "ALTER TABLE `skittletree`.`annotations_annotationjsonchunk` MODIFY COLUMN `Start` BIGINT(20) NOT NULL;"
     
     cur.execute(part1)
+    
+#####_____MIGRATION 4_____#####
+def RunMigration4():
+    cur = setupDB()
+    
+    part1 = "CREATE TABLE `Annotations_snpindexinfo` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `SnpName` varchar(255) NOT NULL, `Chromosome` carchar(25) NOT NULL, `Start` bigint NOT NULL, `CompactIndex` bigint NOT NULL)"
+    
+    cur.execute(part1)
