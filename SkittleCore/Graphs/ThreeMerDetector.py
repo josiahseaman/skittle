@@ -49,7 +49,9 @@ def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
 
     
     '''This trend was found experimentally based on maximums over 69 chunks at width 10-490  #max(threemer_scores)'''
-    maximum =  6.1156908088 * (state.nucleotidesPerLine() *70 / 20.0)** (-0.4632922551)
+#    maximum =  6.1156908088 * (state.nucleotidesPerLine() *70 / 20.0)** (-0.4632922551) #this equation is based on the 95th Percentile of the raw data
+#    maximum =   3.6183367941 * (state.nucleotidesPerLine() *70 / 20.0)** (-0.4689448602) 
+    maximum = 2.4676524055 * state.nucleotidesPerLine() ** (-0.5070724543)#low Pass Filter: this equation is based on the 95th Percentile of the low pass filtered data
     minimum = 0.2  #min(threemer_scores)
 
     outputPixels = []
