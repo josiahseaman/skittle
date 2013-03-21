@@ -349,8 +349,8 @@ var showAnnotationDetail = function (annotation) {
                     'left':(toPixels(graphStatus['n'].skixelOffset+width/2)-150)+'px'
                     })
     }
-    if(annotation[3]-annotation[2] < width*scale && annotation[2]-start > 0) { //if selection is smaller than width
-        popup.css({ 'left':(toPixels(graphStatus['n'].skixelOffset+(annotation[2]-start)%width)-150)+'px'})
+    if(annotation["End"]-annotation["Start"] < width*scale && annotation["Start"]-start > 0) { //if selection is smaller than width
+        popup.css({ 'left':(toPixels(graphStatus['n'].skixelOffset+(annotation["Start"]-start)%width)-150)+'px'})
     }
 
     $('#canvasContainer').append(popup)

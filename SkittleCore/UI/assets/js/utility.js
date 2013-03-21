@@ -94,7 +94,9 @@ var formatGffDescription = function(annotation){
 	var descriptionArray = annotation["Attribute"].join(';').split(';')
 	if (descriptionArray.length>0) {
 		$.each(descriptionArray,function(i,v){
-			var keyValue = v.split('=',2)
+			var keyValue = v.split(/=| "/,2)
+			if(keyValue[1].slice(-1) == '"') keyValue[1] = keyValue[1].slice(0,-1)
+			keyValue[0] = keyValue[0][0].toUpperCase() + keyValue[0].slice(1).replace("_"," ")
 			table.append($('<tr><th>'+keyValue[0]+':</th><td>'+keyValue[1] + '</td></tr>'))
 		})
 		html.append(table)
