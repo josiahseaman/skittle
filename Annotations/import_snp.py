@@ -5,6 +5,7 @@ Created on Mar 7, 2013
 '''
 from models import SnpIndexInfo, Annotation
 import SkittleCore.Graphs.SNPdata
+import json
 
 def createSnpIndex():
     indexFile = open('snps.index.sorted.txt', 'r')
@@ -13,8 +14,8 @@ def createSnpIndex():
         entry, created = SnpIndexInfo.objects.get_or_create(Start=tokens[0], SnpName=tokens[1], Chromosome=tokens[2], CompactIndex=tokens[3])
 #        print entry
         
-def createAnnotationsFromCompact(clientGenotypeFilepath, chromosome):
-    annotations = {}
+def createAnnotationsFromCompact(clientDescription, chromosome, start):
+    chunkSnps = {'SNP_' + clientDescription.Name: dict()}
 #    f = open(clientGenotypeFilepath, 'r')
 #    compactString = f.read()
 #    f.close()
@@ -22,8 +23,11 @@ def createAnnotationsFromCompact(clientGenotypeFilepath, chromosome):
     
     #array with 8 values, coming from the GFF file.  Reorder slightly
     
+    
+    
     for snp in SnpIndexInfo.objects.filter(Chromosome=chromosome):
-        annotations[snp.SnpName] = [compactString[snp.CompactIndex*2], compactString[snp.CompactIndex*2+1], snp.Start]
+        uniqueID = snp.SnpName
+        chunkSnps['SNP_' + clientDescription.Name][uniqueID] = {"Start": snp.start, "Mother":compactString[snp.CompactIndex*2], "Father":compactString[snp.CompactIndex*2+1]}
     assert len(snp) != 0, "SNP index not loaded"
     
-    return annotations
+    return json.dumps(chunkSnps)
