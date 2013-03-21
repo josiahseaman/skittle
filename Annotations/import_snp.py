@@ -6,6 +6,7 @@ Created on Mar 7, 2013
 from models import SnpIndexInfo, Annotation
 import SkittleCore.Graphs.SNPdata
 import json
+from django.conf import settings
 
 def createSnpIndex():
     indexFile = open('snps.index.sorted.txt', 'r')
@@ -25,7 +26,7 @@ def createAnnotationsFromCompact(clientDescription, chromosome, start):
     
     
     
-    for snp in SnpIndexInfo.objects.filter(Chromosome=chromosome):
+    for snp in SnpIndexInfo.objects.filter(Chromosome=chromosome, Start_ge=start, Start_lt=start+settings.CHUNK_SIZE):
         uniqueID = snp.SnpName
         chunkSnps['SNP_' + clientDescription.Name][uniqueID] = {"Start": snp.start, "Mother":compactString[snp.CompactIndex*2], "Father":compactString[snp.CompactIndex*2+1]}
     assert len(snp) != 0, "SNP index not loaded"
