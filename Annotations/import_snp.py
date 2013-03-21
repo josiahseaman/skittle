@@ -11,7 +11,7 @@ def createSnpIndex():
     for line in indexFile:
         tokens = line.split()
         entry, created = SnpIndexInfo.objects.get_or_create(Start=tokens[0], SnpName=tokens[1], Chromosome=tokens[2], CompactIndex=tokens[3])
-        print entry
+#        print entry
         
 def createAnnotationsFromCompact(clientGenotypeFilepath, chromosome):
     annotations = {}
