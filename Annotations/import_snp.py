@@ -31,6 +31,6 @@ def createAnnotationsFromCompact(clientName, chromosome, start):
         uniqueID = snp.SnpName
         chunkSnps['SNP_' + clientName][uniqueID] = {"Start": snp.CompactIndex, "Allele 1":compactString[snp.Start*2], "Allele 2":compactString[snp.Start*2+1]}
         print uniqueID,
-    assert len(snp) != 0, "SNP index not loaded"
+    assert len(chunkSnps) != 0, "SNP index not loaded"
     
     return json.dumps(chunkSnps)

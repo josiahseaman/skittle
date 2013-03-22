@@ -26,6 +26,7 @@ def StoreAnnotationChunk(gff, chromosome, chunk, start):
     chunkDB, created = AnnotationJsonChunk.objects.get_or_create(GFF = gff, Chromosome = chromosome, Start = start, IsInRamDisk = False)
     
 def GetAnnotationsChunk(specimen, chromosome, start, annotations = None):
+    print "Requested chunk", specimen, chromosome, start, annotations
     annotationJsonChunk = list()
     if annotations:
         #Go through each given gff file
@@ -39,7 +40,7 @@ def GetAnnotationsChunk(specimen, chromosome, start, annotations = None):
         if temp:
             for annotation in temp:
                 annotationJsonChunk.append(annotation)
-    if chromosome == "hg19":
+    if specimen == "hg19":
         annotationJsonChunk.append(import_snp.createAnnotationsFromCompact('23andMe_demo', chromosome, start))
     
     if len(annotationJsonChunk) >= 1:
