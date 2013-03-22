@@ -9,7 +9,7 @@ def lockAndWriteFile(start, answerTuple):
     while not succeeded:
         try:
             f = open('results.csv', 'a')
-            data = str(answerTuple).replace('(', '').replace(')', '')
+            data = str(answerTuple).replace('(', '').replace(')', '').replace('[', '').replace(']', '')
             f.write(str(start) + ',' + data + '\n')
             f.close()
             succeeded = True
