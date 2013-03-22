@@ -7,7 +7,6 @@ from models import SnpIndexInfo, Annotation
 import SkittleCore.Graphs.SNPdata
 import json
 from django.conf import settings
-import StorageRequestHandler
 
 def createSnpIndex():
     indexFile = open(settings.SKITTLE_TREE_LOC+'Annotations/snps.index.sorted.txt', 'r')
@@ -21,6 +20,7 @@ def createSnpIndex():
             print index / 1047958.0 * 100
         index += 1
         
+import StorageRequestHandler
 def createAnnotationsFromCompact(clientName, chromosome, start):
     chunkSnps = {'SNP_' + clientName: dict()}
 
