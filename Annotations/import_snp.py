@@ -29,7 +29,7 @@ def createAnnotationsFromCompact(clientName, chromosome, start):
     
     for snp in SnpIndexInfo.objects.filter(Chromosome=chromosome, Start__gte=start, Start__lt=start+settings.CHUNK_SIZE):
         uniqueID = snp.SnpName
-        chunkSnps['SNP_' + clientName][uniqueID] = {"Start": snp.start, "Allele 1":compactString[snp.CompactIndex*2], "Allele 2":compactString[snp.CompactIndex*2+1]}
+        chunkSnps['SNP_' + clientName][uniqueID] = {"Start": snp.CompactIndex, "Allele 1":compactString[snp.Start*2], "Allele 2":compactString[snp.Start*2+1]}
     assert len(snp) != 0, "SNP index not loaded"
     
     return json.dumps(chunkSnps)
