@@ -34,7 +34,7 @@ def graph(request, specimen="hg18",chromosome="chrY-sample"):
     state.start = max(1,int(request.GET.get('start',1)))
     state.width = max(12,int(request.GET.get('width',100)))
     state.scale = max(1,int(request.GET.get('scale',1)))
-    state.requestedGraph = request.GET.get('graph','n')
+    state.requestedGraph = request.GET.get('graph','an')
     state.colorPalette = request.GET.get('colorPalette','Classic')
     if state.requestedGraph == 'h':
     	state.searchStart = int(request.GET.get('searchStart',1))
