@@ -45,17 +45,20 @@ def GetAnnotationsChunk(specimen, chromosome, start, annotations = None):
     if len(annotationJsonChunk) >= 1:
         contents = "{"
         for annotation in annotationJsonChunk:
-            gff = annotation.GFF
-            fastaFile = GetRelatedFastaFile(gff.Specimen, chromosome)
+            if isinstance(annotation, AnnotationJsonChunk):
+                gff = annotation.GFF
+                fastaFile = GetRelatedFastaFile(gff.Specimen, chromosome)
             
-            annotationChunkFilePath = settings.SKITTLE_TREE_LOC + "Annotations/chunks/" + fastaFile.Specimen.Kingdom + "/" + fastaFile.Specimen.Class + "/" + fastaFile.Specimen.Genus + "/" + fastaFile.Specimen.Species + "/" + fastaFile.Specimen.Name + "/" + fastaFile.Chromosome + "/" + generateAnnotationChunkName(gff, start)
-            chunkFile = open(annotationChunkFilePath, 'r')
+                annotationChunkFilePath = settings.SKITTLE_TREE_LOC + "Annotations/chunks/" + fastaFile.Specimen.Kingdom + "/" + fastaFile.Specimen.Class + "/" + fastaFile.Specimen.Genus + "/" + fastaFile.Specimen.Species + "/" + fastaFile.Specimen.Name + "/" + fastaFile.Chromosome + "/" + generateAnnotationChunkName(gff, start)
+                chunkFile = open(annotationChunkFilePath, 'r')
             
-            read = chunkFile.read()
-            chunkFile.close()
-            read = read[1:-1] + ","
+                read = chunkFile.read()
+                chunkFile.close()
+                read = read[1:-1] + ","
             
-            contents = contents + read
+                contents = contents + read
+            else:
+                contents = contents + annotation[1:-1] + ","
         
         contents = contents[:-1] + "}"
         return contents
