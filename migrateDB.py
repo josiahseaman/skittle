@@ -6,8 +6,10 @@ def setupDB():
 
     if settings.PRODUCTION:
         db = MySQLdb.connect(host="localhost", user="skittle", passwd="sk!77l3PandaDatabase%", db="DNASkittle")
+        dbName = "dnaskittle"
     else:
         db = MySQLdb.connect(host="localhost", user="skittle", passwd="sk!77l3PandaDatabase%", db="SkittleTree")
+        dbName = "skittletree"
     
     cur = db.cursor()
     return cur
@@ -35,7 +37,7 @@ def RunMigration1():
 def RunMigration2():
     cur = setupDB()
     
-    part1 = "ALTER TABLE `skittletree`.`annotations_gff` MODIFY COLUMN `GFFVersion` SMALLINT(6) DEFAULT NULL;"
+    part1 = "ALTER TABLE `annotations_gff` MODIFY COLUMN `GFFVersion` SMALLINT(6) DEFAULT NULL;"
     
     cur.execute(part1)
     
@@ -43,7 +45,7 @@ def RunMigration2():
 def RunMigration3():
     cur = setupDB()
     
-    part1 = "ALTER TABLE `skittletree`.`annotations_annotationjsonchunk` MODIFY COLUMN `Start` BIGINT(20) NOT NULL;"
+    part1 = "ALTER TABLE `annotations_annotationjsonchunk` MODIFY COLUMN `Start` BIGINT(20) NOT NULL;"
     
     cur.execute(part1)
     
@@ -51,6 +53,18 @@ def RunMigration3():
 def RunMigration4():
     cur = setupDB()
     
-    part1 = "CREATE TABLE `Annotations_snpindexinfo` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `SnpName` varchar(255) NOT NULL, `Chromosome` varchar(25) NOT NULL, `Start` bigint NOT NULL, `CompactIndex` bigint NOT NULL)"
+    part1 = "CREATE TABLE `annotations_snpindexinfo` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `SnpName` varchar(255) NOT NULL, `Chromosome` varchar(25) NOT NULL, `Start` bigint NOT NULL, `CompactIndex` bigint NOT NULL)"
     
     cur.execute(part1)
+    
+#####_____MIGRATION 5_____#####
+def RunMigration5():
+    cur = setupDB()
+    
+    part1 = "ALTER TABLE `annotations_snpindexinfo` CHANGE COLUMN `Start` `Temp` BIGINT(20) NOT NULL"
+    part2 = "ALTER TABLE `annotations_snpindexinfo` CHANGE COLUMN `CompactIndex` `Start` BIGINT(20) NOT NULL"
+    part3 = "ALTER TABLE `annotations_snpindexinfo` CHANGE COLUMN `Temp` `CompactIndex` BIGINT(20) NOT NULL"
+    
+    cur.execute(part1)
+    cur.execute(part2)
+    cur.execute(part3)
