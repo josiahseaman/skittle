@@ -40,19 +40,23 @@ def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
     
     threemer_scores = sensitiveTestForSpecificFrequency(scores, 3, threeMerState.samples)
     threemer_scores = lowPassFilter(threemer_scores)
+    
+    threemer_scores.sort()
 #    avg = average(threemer_scores)
-#    threemer_scores.sort()
 #    median = threemer_scores[len(threemer_scores)/2]
 #    percentile95 = threemer_scores[len(threemer_scores)*95/100]
-#    max_ = threemer_scores[-1]
-#    return state.width, avg, median, percentile95, max_
+#    max_ = threemer_scores[-1]  avg, median, percentile95, max_
+#    percentiles = []
+#    for p in range(50,100, 10):
+#        percentiles.append(threemer_scores[len(threemer_scores) * p /100])
+#    return (state.width, ) + percentiles
 
     
     '''This trend was found experimentally based on maximums over 69 chunks at width 10-490 '''
 #    maximum =  6.1156908088 * (state.nucleotidesPerLine() *70 / 20.0)** (-0.4632922551) #this equation is based on the 95th Percentile of the raw data
 #    maximum =   3.6183367941 * (state.nucleotidesPerLine() *70 / 20.0)** (-0.4689448602) 
     maximum = 2.4676524055 * state.nucleotidesPerLine() ** (-0.5070724543)#low Pass Filter: this equation is based on the 95th Percentile of the low pass filtered data
-    minimum = 0.2  #min(threemer_scores)
+    minimum = 0.0  #min(threemer_scores)
 
     outputPixels = []
     for size in threemer_scores:
