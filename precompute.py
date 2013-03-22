@@ -4,12 +4,13 @@ import sys
 from collections import namedtuple
 from multiprocessing import Pool
 
-def lockAndWriteFile(w,a,m):
+def lockAndWriteFile(start, answerTuple):
     succeeded = False
     while not succeeded:
         try:
             f = open('results.csv', 'a')
-            f.write(str(w) + ',' + str(a)+ ',' + str(m) + '\n')
+            data = str(answerTuple).replace('(', '').replace(')', '')
+            f.write(str(start) + ',' + data + '\n')
             f.close()
             succeeded = True
         except: succeeded = False
@@ -23,7 +24,7 @@ def outputThreemerNormalization(request):
     specimen = request[0]
     chromosomes = ['chr2']
     for chromosome in chromosomes:
-        chunks = [getChunkStart(x) for x in range(16518287, 20987087, 2**16)] 
+        chunks = [getChunkStart(x) for x in range(7077889, 11610965, 2**16)] #range(16518287, 20987087, 2**16) 
         for targetIndex in range(len(chunks)):
             start = chunks[targetIndex]
             widths = range(10,500,20)
@@ -34,9 +35,9 @@ def outputThreemerNormalization(request):
                 state.requestedGraph = 't'
                 print "Computing: ", state.specimen, state.chromosome, state.start, state.width    
 #                state.readAndAppendNextChunk()
-                GraphRequestHandler.handleRequest(state)
-#                (w, a, m) = ThreeMerDetector.calculateOutputPixels(state)
-#                lockAndWriteFile(w,a,m)
+#                GraphRequestHandler.handleRequest(state)
+                answerTuple = ThreeMerDetector.calculateOutputPixels(state)
+                lockAndWriteFile(state.start, answerTuple)
                 print "Done computing ", state.specimen, state.chromosome, state.start, state.width
 
 
@@ -73,14 +74,16 @@ def makeRequestPacket(specimen, chromosome, start, graphSymbol='m', scale=1):
     state.requestedGraph = graphSymbol
     return state
 
+def startThreemer(specimen, nProcessors):
+    requests = [(specimen, nProcessors, PID) for PID in range(nProcessors)]
+    processors = Pool(nProcessors)
+    processors.map(outputThreemerNormalization, requests)
+    
 def startRepeatMap(specimen, nProcessors):
 #    ProcessorRequest = namedtuple('ProcessorRequest', ['specimen', 'nProcessors', 'PID'])
     requests = [(specimen, nProcessors, PID) for PID in range(nProcessors)]
-    
     processors = Pool(nProcessors)
     processors.map(precomputeRepeatMap, requests)
-#    processors.map(outputThreemerNormalization, requests)
-#    outputThreemerNormalization( requests[0])
 
 def benchmarkHere(request):
     precomputeAnyGraph(request)
@@ -116,9 +119,12 @@ if __name__ == "__main__":
     if len(sys.argv) >= 3: nProcessors = int(sys.argv[2])     
     else: nProcessors = 3
     specimen = sys.argv[1]
+    print "Specimen: ", specimen, "Processors: ", str(nProcessors)
     
-    startRepeatMap(specimen, nProcessors)
-    #allGraphs(specimen, nProcessors)
+    
+    startThreemer(specimen, nProcessors)
+#    startRepeatMap(specimen, nProcessors)
+#    allGraphs(specimen, nProcessors)
     
     
     

@@ -7,7 +7,7 @@ from SkittleCore.models import RequestPacket, chunkSize
 from SkittleCore.GraphRequestHandler import registerGraph
 import SNPdata
 
-registerGraph('p',"SNP Display", __name__, True, True)
+#registerGraph('p',"SNP Display", __name__, True, True)
     
 def calculateOutputPixels(state):
     assert isinstance(state, RequestPacket) 

@@ -16,9 +16,6 @@ class FastaFile(str):
 
 def readFile(state):
 #    assert isinstance(state, RequestPacket)
-    seq = ''
-    collection = []
-    '''Id be happy to eliminate the need for accumulating this collection of lines'''
     try:
         filePath = StorageRequestHandler.GetFastaFilePath(state.specimen, state.chromosome, state.start)
         print "opening file " , filePath, 

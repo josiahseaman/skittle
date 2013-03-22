@@ -9,4 +9,6 @@ if __name__ == "__main__":
     
     #RunMigration1()
     #RunMigration2()
-    RunMigration3()
+    #RunMigration3()
+    #RunMigration4()
+    RunMigration5()

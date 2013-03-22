@@ -1,7 +1,7 @@
 from django.db import models
 from models import Annotation, GFF
 from DNAStorage.StorageRequestHandler import GetRelatedChromosomes, GetFastaChunkFile, GetSpecimen
-from StorageRequestHandler import StoreAnnotationChunk
+from StorageRequestHandler import StoreAnnotationChunk, ParseChromosomeName
 from django.conf import settings
 
 import sys, math, re
@@ -58,7 +58,7 @@ def ImportGFF(specimen, file):
                 annotation = Annotation()
                 #TODO: Handle when values come back null from not finding a matching chromosome!
                 annotation.Specimen = specimen
-                annotation.Chromosome = parseChromosomeName(validChromosomes, elements[0]) #Related validChromosomes, chromosome
+                annotation.Chromosome = ParseChromosomeName(validChromosomes, elements[0]) #Related validChromosomes, chromosome
                 annotation.ID = counter
                 annotation.Source = elements[1]
                 annotation.Feature = elements[2]
@@ -115,25 +115,6 @@ def ImportGFF(specimen, file):
     
     chunkAndStoreAnnotations(gff, annotations)
     
-#Parse which chromosome the specific annotation is associated with
-def parseChromosomeName(validChromosomes, seqname):
-    possibleMatches = list()
-    
-    for chromosome in validChromosomes: 
-        if seqname in chromosome:
-            possibleMatches += [chromosome]
-            
-    if len(possibleMatches) == 1:
-        #Grab fastachunk for one and only match
-        return possibleMatches[0]
-    else:
-        #Look at possible matches and try to guess at the best one
-        #First, why don't we remove all non-numbers from both comparisons
-        for possible in possibleMatches:
-            if re.sub("[^0-9]", "", possible) == re.sub("[^0-9]", "", seqname):
-                return possible
-        return None
-        
 #Take a sorted list of annotations and chunk it into json chunks
 def chunkAndStoreAnnotations(gff, annotations):
     print "START CHUNKING..."    

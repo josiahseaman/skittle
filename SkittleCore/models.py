@@ -59,6 +59,7 @@ class RequestPacket(models.Model):
     
     '''This is a multifunctional 'make the file bigger' read logic for sequential chunks'''
     def readAndAppendNextChunk(self, addPadding = False):
+        assert StorageRequestHandler.GetFastaFilePath(self.specimen, self.chromosome, 1) is not None, "Specimen and Chromosome is not in the database"
         startBackup = self.start
         if not self.seq: 
             self.seq = '' #ensure that seq is at least a string object
@@ -82,8 +83,7 @@ class RequestPacket(models.Model):
         self.length = len(self.seq)
         for chunk in range(numChunks):
             self.readAndAppendNextChunk()
-        assert len(self.seq) != 0, "No was file read"
-
+        
 class StatePacket(RequestPacket): 
     specimen = 'hg18'
     chromosome = 'chrY-sample'
