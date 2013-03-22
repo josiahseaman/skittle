@@ -4,12 +4,32 @@ from DNAStorage.StorageRequestHandler import GetRelatedFastaFile
 from django.conf import settings
 import shutil, os, os.path, re
 import json
-import import_snp
+from import_snp import createAnnotationsFromCompact
 
 #Generate file name for Annotation chunks  
 def generateAnnotationChunkName(gff, start):       
     return gff.FileName + "_" + str(start) + ".gff"
+
+#Parse which chromosome the specific annotation is associated with
+def ParseChromosomeName(validChromosomes, seqname):
+    possibleMatches = list()
     
+    for chromosome in validChromosomes: 
+        if seqname in chromosome or chromosome in seqname:
+            possibleMatches += [chromosome]
+            
+    if len(possibleMatches) == 1:
+        #Grab fastachunk for one and only match
+        return possibleMatches[0]
+    else:
+        #Look at possible matches and try to guess at the best one
+        #First, why don't we remove all non-numbers from both comparisons
+        for possible in possibleMatches:
+            if re.sub("[^0-9]", "", possible) == re.sub("[^0-9]", "", seqname):
+                return possible
+        return None
+        
+
 #Take a json annotation chunk and store it in the correct disk location and create a reference to it in the DB
 def StoreAnnotationChunk(gff, chromosome, chunk, start):
     fastaFile = GetRelatedFastaFile(gff.Specimen, chromosome)
@@ -41,7 +61,7 @@ def GetAnnotationsChunk(specimen, chromosome, start, annotations = None):
             for annotation in temp:
                 annotationJsonChunk.append(annotation)
     if specimen == "hg19":
-        annotationJsonChunk.append(import_snp.createAnnotationsFromCompact('23andMe_demo', chromosome, start))
+        annotationJsonChunk.append(createAnnotationsFromCompact('23andMe_demo', chromosome, start))
     
     if len(annotationJsonChunk) >= 1:
         contents = "{"

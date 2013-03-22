@@ -7,6 +7,7 @@ from models import SnpIndexInfo, Annotation
 import SkittleCore.Graphs.SNPdata
 import json
 from django.conf import settings
+import StorageRequestHandler
 
 def createSnpIndex():
     indexFile = open(settings.SKITTLE_TREE_LOC+'Annotations/snps.index.sorted.txt', 'r')
@@ -25,6 +26,10 @@ def createAnnotationsFromCompact(clientName, chromosome, start):
 #    f = open(clientGenotypeFilepath, 'r')
 #    compactString = f.read()
 #    f.close()
+
+    validChromosomes = SnpIndexInfo.objects.values_list('Chromosome', flat=True).distinct()
+    chromosome = StorageRequestHandler.ParseChromosomeName(validChromosomes, chromosome)
+#    chromosome = chromosome[3:]
     compactString =SkittleCore.Graphs.SNPdata.packedSNPs 
     print "Received SNP request"
     for snp in SnpIndexInfo.objects.filter(Chromosome=chromosome, CompactIndex__gte=start, CompactIndex__lt=start+settings.CHUNK_SIZE):
