@@ -26,10 +26,11 @@ def createAnnotationsFromCompact(clientName, chromosome, start):
 #    compactString = f.read()
 #    f.close()
     compactString =SkittleCore.Graphs.SNPdata.packedSNPs 
-    
+    print "Received SNP request"
     for snp in SnpIndexInfo.objects.filter(Chromosome=chromosome, CompactIndex__gte=start, CompactIndex__lt=start+settings.CHUNK_SIZE):
         uniqueID = snp.SnpName
         chunkSnps['SNP_' + clientName][uniqueID] = {"Start": snp.CompactIndex, "Allele 1":compactString[snp.Start*2], "Allele 2":compactString[snp.Start*2+1]}
-    assert len(snp) != 0, "SNP index not loaded"
+        print uniqueID,
+    assert len(chunkSnps) != 0, "SNP index not loaded"
     
     return json.dumps(chunkSnps)
