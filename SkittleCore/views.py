@@ -59,6 +59,6 @@ def state(request):
     }''' 
     json = "graphStatus = " + simplejson.dumps(GraphRequestHandler.generateGraphListForServer())
     # json = "annotationSources = " + simplejson.dumps(StorageRequestHandler.getAnnotations())
-    json += ";graphOrder = ['a','n','p','h','b','t','o','m','s'];"
+    json += ";graphOrder = ['a','n','h','b','t','o','m','s'];"
     return HttpResponse(json,content_type="application/json")
 
