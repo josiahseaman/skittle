@@ -117,8 +117,8 @@ var formatSNPDescription = function(annotationArray){
 	table.append($('<tr><th>Details:</th><td><a href="https://www.23andme.com/you/explorer/snp/?snp_name='+annotationArray.snp_name + '" target="_blank">23andMe</a></td></tr>'))
 	html.append(table)
 
-	var table = $('<table class="SNPtable" />').append($('<tr><th>Reference</th><th>Mother</th><th>Father</th></tr>'))
-	table.append($('<tr><td>'+colorfy(getNucleotideValues(annotationArray["Start"]))+'</td><td>'+colorfy(annotationArray["Father"])+'</td><td>'+colorfy(annotationArray["Mother"]) + '</td></tr>'))
+	var table = $('<table class="SNPtable" />').append($('<tr><th>Reference</th><th>Allele 1</th><th>Allele 2</th></tr>'))
+	table.append($('<tr><td>'+colorfy(getNucleotideValues(annotationArray["Start"]))+'</td><td>'+colorfy(annotationArray["Allele 1"])+'</td><td>'+colorfy(annotationArray["Allele 2"]) + '</td></tr>'))
 
 	html.append(table)
 
@@ -137,6 +137,7 @@ var benchmark = function(fn,count){
 }
 var colors = {"A":"#000000","C":"#ff0000","G":"#00ff00","T":"#0000ff","N":"#666666"}
 var colorfy = function(nuc) {
+	if (!nuc) return "";
 	var nucArray = nuc.split('')
 	var colorizedString = ""
 
