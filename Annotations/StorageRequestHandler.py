@@ -30,18 +30,17 @@ def GetAnnotationsChunk(specimen, chromosome, start, annotations = None):
     if annotations:
         #Go through each given gff file
         for gff in annotations:
-            if gff == 'SNP':
-                annotationJsonChunk.append(import_snp.createAnnotationsFromCompact('23andMe_demo', chromosome, start))
-            else:
-                temp = AnnotationJsonChunk.objects.filter(GFF__Specimen__Name = specimen, Chromosome = chromosome, Start = start, GFF__FileName = gff)[:1]
-                if temp:
-                    annotationJsonChunk.append(temp[0])
+            temp = AnnotationJsonChunk.objects.filter(GFF__Specimen__Name = specimen, Chromosome = chromosome, Start = start, GFF__FileName = gff)[:1]
+            if temp:
+                annotationJsonChunk.append(temp[0])
     else:
         #Grab all gff files
         temp = AnnotationJsonChunk.objects.filter(GFF__Specimen__Name = specimen, Chromosome = chromosome, Start = start)
         if temp:
             for annotation in temp:
                 annotationJsonChunk.append(annotation)
+    if chromosome == "hg19":
+        annotationJsonChunk.append(import_snp.createAnnotationsFromCompact('23andMe_demo', chromosome, start))
     
     if len(annotationJsonChunk) >= 1:
         contents = "{"
