@@ -4,7 +4,7 @@ from DNAStorage.StorageRequestHandler import GetRelatedFastaFile
 from django.conf import settings
 import shutil, os, os.path, re
 import json
-from import_snp import createAnnotationsFromCompact
+import import_snp# import createAnnotationsFromCompact
 
 #Generate file name for Annotation chunks  
 def generateAnnotationChunkName(gff, start):       
@@ -61,7 +61,7 @@ def GetAnnotationsChunk(specimen, chromosome, start, annotations = None):
             for annotation in temp:
                 annotationJsonChunk.append(annotation)
     if specimen == "hg19":
-        annotationJsonChunk.append(createAnnotationsFromCompact('23andMe_demo', chromosome, start))
+        annotationJsonChunk.append(import_snp.createAnnotationsFromCompact('23andMe_demo', chromosome, start))
     
     if len(annotationJsonChunk) >= 1:
         contents = "{"
