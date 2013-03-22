@@ -10,10 +10,15 @@ from django.conf import settings
 
 def createSnpIndex():
     indexFile = open(settings.SKITTLE_TREE_LOC+'Annotations/snps.index.sorted.txt', 'r')
-    for line in indexFile:
+    index = 0
+    for line  in indexFile:
         tokens = line.split()
+        if len(tokens) < 4: continue
         entry, created = SnpIndexInfo.objects.get_or_create(Start=tokens[0], SnpName=tokens[1], Chromosome=tokens[2], CompactIndex=tokens[3])
 #        print entry
+        if index % 1000 == 0:
+            print index / 1047958.0 * 100
+        index += 1
         
 def createAnnotationsFromCompact(clientName, chromosome, start):
     chunkSnps = {'SNP_' + clientName: dict()}
@@ -28,7 +33,7 @@ def createAnnotationsFromCompact(clientName, chromosome, start):
     
     for snp in SnpIndexInfo.objects.filter(Chromosome=chromosome, Start_ge=start, Start_lt=start+settings.CHUNK_SIZE):
         uniqueID = snp.SnpName
-        chunkSnps['SNP_' + clientName][uniqueID] = {"Start": snp.start, "Mother":compactString[snp.CompactIndex*2], "Father":compactString[snp.CompactIndex*2+1]}
+        chunkSnps['SNP_' + clientName][uniqueID] = {"Start": snp.start, "Allele 1":compactString[snp.CompactIndex*2], "Allele 2":compactString[snp.CompactIndex*2+1]}
     assert len(snp) != 0, "SNP index not loaded"
     
     return json.dumps(chunkSnps)
