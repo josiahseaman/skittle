@@ -7,7 +7,7 @@ from DNAStorage import StorageRequestHandler
 
 
 def index(request):
-    specimens = Specimen.objects.all
+    specimens = Specimen.objects.filter(Public=True)
     chromosomes = FastaFiles.objects.all
     context = {'specimens':specimens,'chromosomes':chromosomes}
     return render(request, 'index.html',context)

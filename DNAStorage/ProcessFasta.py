@@ -38,6 +38,7 @@ def splitAndSort(file, storageLocation, workingLocation):
     #Begin setting up the Specimen object for the database
     specimen, created = Specimen.objects.get_or_create(Name = taxonomic[4], Species = taxonomic[3], Genus = taxonomic[2], Class = taxonomic[1], Kingdom = taxonomic[0])
     if created:
+        specimen.Public = True
         specimen.GenomeLength = 0
         specimen.save()
     

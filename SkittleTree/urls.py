@@ -20,5 +20,6 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^sendFeedback$', 'SkittleTree.views.feedbackSend')
+    url(r'^sendFeedback$', 'SkittleTree.views.feedbackSend'),
+    (r'^card/?$', RedirectView.as_view(url= '/browse/businesscard/bcbanner/?graphs=abn&start=1&scale=1&width=296')),
 )

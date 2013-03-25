@@ -68,3 +68,18 @@ def RunMigration5():
     cur.execute(part1)
     cur.execute(part2)
     cur.execute(part3)
+    
+#####_____MIGRATION 6_____#####
+def RunMigration6():
+    cur = setupDB()
+    
+    part1 = "ALTER TABLE `DNAStorage_specimen` ADD COLUMN `Public` TINYINT(1) UNSIGNED NOT NULL AFTER `Thumbnail`"
+    
+    cur.execute(part1)
+    
+    #Set all imported chromosomes to default public for this first and only run of migration
+    from DNAStorage.models import Specimen
+    specimens = Specimen.objects.all()
+    for specimen in specimens:
+        specimen.Public = True
+        specimen.save()
