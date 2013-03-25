@@ -97,7 +97,7 @@ var formatGffDescription = function(annotation){
 			var keyValue = v.match(/([A-Za-z][A-Za-z0-9_]*)(=| )"?([^\s"]*)"?/)
 			console.log(keyValue)
 			if (keyValue) {
-				keyValue[1] = keyValue[1][0].toUpperCase() + keyValue[1].slice(1).replace("_"," ")
+				keyValue[1] = keyValue[1][0].toUpperCase() + keyValue[1].slice(1).replace(/_/g," ")
 				table.append($('<tr><th>'+keyValue[1]+':</th><td>'+keyValue[3] + '</td></tr>'))
 			}
 		})

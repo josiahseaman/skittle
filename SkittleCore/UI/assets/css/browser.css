@@ -1,5 +1,5 @@
 	/*@import url(http://fonts.googleapis.com/css?family=Exo:100,200,300,400,500,600,700|Titillium+Web:400,200,300,600,700|Open+Sans:400,600,300,700|Share:400,700|Aldrich);*/
-	@import url(http://fonts.googleapis.com/css?family=Exo:100,200,300,400,500,600,700|Source+Code+Pro:400,500,600);
+	@import url(http://fonts.googleapis.com/css?family=Exo:100,200,300,400,500,600,700|Source+Code+Pro:400,500,600|Rock+Salt);
 	body {
 		font-family: 'Exo', Helvetica, sans-serif;
 		background: #000;
@@ -227,6 +227,25 @@
 	    top:60px;
 	    bottom:0;
 	    overflow: hidden;
+	}
+	#learn {
+		display:none;
+		position: absolute;
+		color:#fda;
+		background: rgba(0,0,0,0.6);
+		top:0;
+		bottom: 0;
+		left:0;
+		right:0;
+		font-family: "Rock Salt",cursive;
+		line-height: 1.1em;
+		text-shadow:2px 2px 2px #000,0px 0px 2px #000;
+	}
+	#learn.active {
+		display: block;
+	}
+	#learn p,#learn div,#learn img {
+		position: absolute;
 	}
 
 	.button {
