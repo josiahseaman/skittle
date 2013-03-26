@@ -1,10 +1,4 @@
-var mainLoop = window.setInterval(function(){
-    if(isInvalidDisplay) {
-        isInvalidDisplay = false
-        drawGraphs();
-        updateDials();
-    }
-},50)
+
 
 var init = function() {
     imageObj = {};
@@ -45,6 +39,14 @@ var init = function() {
         $("#graphLabel-" + graphOrder[i]).appendTo("#graph-labels ul")
         $("#showGraph-" + graphOrder[i]).parent().appendTo("#graphList ul")
     }
+
+    var mainLoop = window.setInterval(function(){
+        if(isInvalidDisplay) {
+            isInvalidDisplay = false
+            drawGraphs();
+            updateDials();
+        }
+    },50)
 }
 
 var imageRequestor = function(graph,chunkOffset) {

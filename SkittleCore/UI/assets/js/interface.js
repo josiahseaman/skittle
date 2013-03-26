@@ -350,7 +350,7 @@ var showAnnotationDetail = function (annotation) {
                     })
     }
     if(annotation["End"]-annotation["Start"] < width*scale && annotation["Start"]-start > 0) { //if selection is smaller than width
-        popup.css({ 'left':(toPixels(graphStatus['n'].skixelOffset+(annotation["Start"]-start)%width)-150)+'px'})
+        popup.css({ 'left':(toPixels(graphStatus['n'].skixelOffset+((annotation["Start"]-start)/scale)%width)-150)+'px'})
     }
 
     $('#canvasContainer').append(popup)
@@ -403,7 +403,7 @@ var UIscaleChange = function(newScale) {
     }
 }
 var updateScale = function() {
-    $('#scaleDisplay').text(scale + " bp/pixel")
+    $('#scaleDisplay').text(scale + " bp/skixel")
     updateEnd();
 }
 var UIstartChange = function(newStart) {

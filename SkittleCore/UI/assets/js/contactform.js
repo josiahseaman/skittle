@@ -8,7 +8,7 @@ var contactForm = function() {
 	var submitButton = $('#bug-report-form button[type="submit"]')
 	
 	var sending = $(jQuery('<div id="sending" style="display:none; color:#ccdc33; line-height:1.5;">Sending...</div>'));
-	var success = $(jQuery('<div id="success" style="display: none; height:94px;padding:35px 0; font-size:150%;text-align:center; color:#99B666;">Your memo has been sent.</div>'));
+	var success = $(jQuery('<div id="success" style="display: none; height:94px;padding:35px 0; font-size:150%;text-align:center; color:#99B666;">Thank you for your feedback.</div>'));
 	var fail = $(jQuery('<div id="fail" style="display:none; color:#dd3333; line-height:1.4;">Please fill in the shaded fields</div>'));
 	form.append(sending).append(fail);
 
