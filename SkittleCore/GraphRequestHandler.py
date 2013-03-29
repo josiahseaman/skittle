@@ -69,10 +69,9 @@ def handleRequest(state):
         png = convertToPng(state, pixels, isRasterGraph(state))
         finishProcess(state)
     elif isBeingProcessed(state):
-        sleepTime = 1
+        sleepTime = 2
         sleep(sleepTime) #This extra sleep command is here to prevent hammering the IsBeingProcessed database
         while isBeingProcessed(state):
-            sleepTime = sleepTime * 2
             sleep(sleepTime)
         return handleRequest(state)
     print 'Done'
