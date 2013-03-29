@@ -61,10 +61,12 @@ def handleRequest(state):
         png = tryGetGraphPNG(state)
     #If it doesn't: grab pixel calculations
     if png is None and not isBeingProcessed(state):
+        beginProcess(state)
         pixels = calculatePixels(state)
 #        print pixels[:10]
         print "Saving to width =", state.width
         png = convertToPng(state, pixels, isRasterGraph(state))
+        finishProcess(state)
     elif isBeingProcessed(state):
         sleepTime = 1
         sleep(sleepTime) #This extra sleep command is here to prevent hammering the IsBeingProcessed database
