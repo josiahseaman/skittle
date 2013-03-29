@@ -268,7 +268,7 @@ var drawRMap = function(offset,chunks) {
     
     drawPixelStuff.push(function() { 
         bpPerLine = width*scale
-        if ( bpPerLine >= 1) { //draw the red lines
+        if ( bpPerLine >= 1 && bpPerLine < 26000 ) { //draw the red lines
             var cumulativeWidth = 0, megaColumn=0, subColumn=0;
 
             while (cumulativeWidth<(bpPerLine-12)) {
