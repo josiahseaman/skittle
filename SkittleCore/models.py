@@ -106,7 +106,7 @@ class ProcessQueue(models.model):
         assert isinstance(request, RequestPacket)
         specimen, chromosome, graph, start, scale, charsPerLine = request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.width
         
-        process = ProcessQueue.objects.filter(Specimen = specimen, Chromosome = chromosome, Graph = graph, Start = start, Scale = scale, CharsPerLine = charsPerLine)
+        process = ProcessQueue.objects.filter(Specimen = specimen, Chromosome = chromosome, Graph = graph, Start = start, Scale = scale, CharsPerLine = charsPerLine)[:1]
         
         if process:
             return True
@@ -114,8 +114,17 @@ class ProcessQueue(models.model):
             return False
             
     def BeginProcess(request):
-        pass
+        if not IsBeingProcessed(request):
+            process = ProcessQueue(Specimen = request.specimen, Chromosome = request.chromosome, Graph = request.requestedGraph, Start = request.start, Scale = request.scale, CharsPerLine = request.width)
+            process.save()
+            return True
+        else:
+            return False
         
     def FinishProcess(request):
-        pass
+        if IsBeingProcessed(request):
+            process = ProcessQueue.objects.filter(Specimen = specimen, Chromosome = chromosome, Graph = graph, Start = start, Scale = scale, CharsPerLine = charsPerLine).delete()
+            return True
+        else:
+            return False
     
