@@ -6,6 +6,7 @@ import io
 import sys
 import png
 from collections import namedtuple
+from time import sleep
 
 '''The set of availableGraphs is populated by the individual graph modules who are responsible for 
 registering with the request Handler using the 'registerGraph' function below. '''
@@ -16,7 +17,7 @@ def registerGraph(symbol, name, moduleName, rasterGraph = False, colorPalletteDe
     moduleReference = sys.modules[moduleName]
     availableGraphs.add(GraphDescription(symbol, name, moduleReference, rasterGraph, colorPalletteDependant, widthTolerance))
     
-from SkittleCore.models import RequestPacket, chunkSize
+from SkittleCore.models import RequestPacket, ProcessQueue
 import SkittleCore.FastaFiles as FastaFiles
 import Graphs.AnnotationDisplay
 import Graphs.NucleotideDisplay
@@ -59,11 +60,18 @@ def handleRequest(state):
     if state.requestedGraph not in ['h', ]:
         png = tryGetGraphPNG(state)
     #If it doesn't: grab pixel calculations
-    if png is None:
+    if png is None and not ProcessQueue.IsBeingProcessed(state):
         pixels = calculatePixels(state)
 #        print pixels[:10]
         print "Saving to width =", state.width
         png = convertToPng(state, pixels, isRasterGraph(state))
+    elif ProcessQueue.IsBeingProcessed(state):
+        sleepTime = 1
+        sleep(sleepTime) #This extra sleep command is here to prevent hammering the IsBeingProcessed database
+        while ProcessQueue.IsBeingProcessed(state):
+            sleepTime = sleepTime * 2
+            sleep(sleepTime)
+        return handleRequest(state)
     print 'Done'
     return png
 
