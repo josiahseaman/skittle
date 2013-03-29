@@ -61,6 +61,7 @@ def handleRequest(state):
         png = tryGetGraphPNG(state)
     #If it doesn't: grab pixel calculations
     if png is None and not isBeingProcessed(state):
+        #TODO: Handle beginProcess and finishProcess possible return of False
         beginProcess(state)
         pixels = calculatePixels(state)
 #        print pixels[:10]
@@ -96,6 +97,39 @@ def tryGetGraphPNG(state):
         return data
     except:
         return None
+        
+def isBeingProcessed(request):
+    specimen, chromosome, graph, start, scale, charsPerLine = request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.width
+        
+    process = ProcessQueue.objects.filter(Specimen = specimen, Chromosome = chromosome, Graph = graph, Start = start, Scale = scale, CharsPerLine = charsPerLine)[:1]
+        
+    if process:
+        return True
+    else:
+        return False
+            
+def beginProcess(request):
+    if not isBeingProcessed(request):
+        process = ProcessQueue()
+        process.Specimen = request.specimen
+        process.Chromosome = request.chromosome
+        process.Graph = request.requestedGraph
+        process.Start = request.start
+        process.Scale = request.scale
+        process.CharsPerLine = request.width
+        process.save()
+        return True
+    else:
+        return False
+        
+def finishProcess(request):
+    if isBeingProcessed(request):
+        specimen, chromosome, graph, start, scale, charsPerLine = request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.width
+        
+        process = ProcessQueue.objects.filter(Specimen = specimen, Chromosome = chromosome, Graph = graph, Start = start, Scale = scale, CharsPerLine = charsPerLine).delete()
+        return True
+    else:
+        return False
 
 class ServerSideGraphDescription():
     def __init__(self, Name, IsRaster, colorSensitive, widthTolerance):
@@ -108,32 +142,5 @@ def generateGraphListForServer():
     graphs = {}
     for description in availableGraphs:
         graphs[description[0]] = ServerSideGraphDescription(description[1], description[3], description[4], description[5]).__dict__
-    return graphs
-        
-def isBeingProcessed(request):
-    assert isinstance(request, RequestPacket)
-    specimen, chromosome, graph, start, scale, charsPerLine = request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.width
-        
-    process = ProcessQueue.objects.filter(Specimen = specimen, Chromosome = chromosome, Graph = graph, Start = start, Scale = scale, CharsPerLine = charsPerLine)[:1]
-        
-    if process:
-        return True
-    else:
-        return False
-            
-def beginProcess(request):
-    if not IsBeingProcessed(request):
-        process = ProcessQueue(Specimen = request.specimen, Chromosome = request.chromosome, Graph = request.requestedGraph, Start = request.start, Scale = request.scale, CharsPerLine = request.width)
-        process.save()
-        return True
-    else:
-        return False
-        
-def finishProcess(request):
-    if IsBeingProcessed(request):
-        process = ProcessQueue.objects.filter(Specimen = specimen, Chromosome = chromosome, Graph = graph, Start = start, Scale = scale, CharsPerLine = charsPerLine).delete()
-        return True
-    else:
-        return False
-        
+    return graphs       
     
