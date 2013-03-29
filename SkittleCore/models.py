@@ -94,7 +94,7 @@ class StatePacket(RequestPacket):
 #    length = 65536
     requestedGraph = 'n'
     
-class ProcessQueue(models.model):
+class ProcessQueue(models.Model):
     Specimen = models.CharField(max_length=200)
     Chromosome = models.CharField(max_length=200)
     Graph = models.CharField(max_length=1)
