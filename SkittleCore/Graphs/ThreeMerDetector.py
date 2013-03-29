@@ -41,7 +41,7 @@ def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
     threemer_scores = sensitiveTestForSpecificFrequency(scores, 3, threeMerState.samples)
     threemer_scores = lowPassFilter(threemer_scores)
     
-    threemer_scores.sort()
+#    threemer_scores.sort()
 #    avg = average(threemer_scores)
 #    median = threemer_scores[len(threemer_scores)/2]
 #    percentile95 = threemer_scores[len(threemer_scores)*95/100]
