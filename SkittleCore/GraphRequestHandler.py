@@ -60,15 +60,15 @@ def handleRequest(state):
     if state.requestedGraph not in ['h', ]:
         png = tryGetGraphPNG(state)
     #If it doesn't: grab pixel calculations
-    if png is None and not ProcessQueue.IsBeingProcessed(state):
+    if png is None and not IsBeingProcessed(state):
         pixels = calculatePixels(state)
 #        print pixels[:10]
         print "Saving to width =", state.width
         png = convertToPng(state, pixels, isRasterGraph(state))
-    elif ProcessQueue.IsBeingProcessed(state):
+    elif IsBeingProcessed(state):
         sleepTime = 1
         sleep(sleepTime) #This extra sleep command is here to prevent hammering the IsBeingProcessed database
-        while ProcessQueue.IsBeingProcessed(state):
+        while IsBeingProcessed(state):
             sleepTime = sleepTime * 2
             sleep(sleepTime)
         return handleRequest(state)
@@ -108,6 +108,30 @@ def generateGraphListForServer():
         graphs[description[0]] = ServerSideGraphDescription(description[1], description[3], description[4], description[5]).__dict__
     return graphs
         
+def IsBeingProcessed(request):
+    assert isinstance(request, RequestPacket)
+    specimen, chromosome, graph, start, scale, charsPerLine = request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.width
         
+    process = ProcessQueue.objects.filter(Specimen = specimen, Chromosome = chromosome, Graph = graph, Start = start, Scale = scale, CharsPerLine = charsPerLine)[:1]
+        
+    if process:
+        return True
+    else:
+        return False
+            
+def BeginProcess(request):
+    if not IsBeingProcessed(request):
+        process = ProcessQueue(Specimen = request.specimen, Chromosome = request.chromosome, Graph = request.requestedGraph, Start = request.start, Scale = request.scale, CharsPerLine = request.width)
+        process.save()
+        return True
+    else:
+        return False
+        
+def FinishProcess(request):
+    if IsBeingProcessed(request):
+        process = ProcessQueue.objects.filter(Specimen = specimen, Chromosome = chromosome, Graph = graph, Start = start, Scale = scale, CharsPerLine = charsPerLine).delete()
+        return True
+    else:
+        return False
         
     
