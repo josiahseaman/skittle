@@ -7,8 +7,9 @@ from django.db import models
 import Graphs.models   #import ParentState
 from FastaFiles import readFile
 import DNAStorage.StorageRequestHandler as StorageRequestHandler
+from django.conf import settings
 
-chunkSize = 65536
+chunkSize = settings.CHUNK_SIZE
 '''
 This is the single global state packet that defines a view state in Skittle.  
 This state packet is equivalent to an URL or a request from the Skittle website.
@@ -92,4 +93,29 @@ class StatePacket(RequestPacket):
     start = 1
 #    length = 65536
     requestedGraph = 'n'
+    
+class ProcessQueue(models.model):
+    Specimen = models.CharField(max_length=200)
+    Chromosome = models.CharField(max_length=200)
+    Graph = models.CharField(max_length=1)
+    Start = models.IntegerField()
+    Scale = models.IntegerField(default=None, null=True)
+    CharsPerLine = models.IntegerField(default=None, null=True)
+    
+    def IsBeingProcessed(request):
+        assert isinstance(request, RequestPacket)
+        specimen, chromosome, graph, start, scale, charsPerLine = request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.width
+        
+        process = ProcessQueue.objects.filter(Specimen = specimen, Chromosome = chromosome, Graph = graph, Start = start, Scale = scale, CharsPerLine = charsPerLine)
+        
+        if process:
+            return True
+        else:
+            return False
+            
+    def BeginProcess(request):
+        pass
+        
+    def FinishProcess(request):
+        pass
     
