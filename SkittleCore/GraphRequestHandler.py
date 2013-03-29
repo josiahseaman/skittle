@@ -60,15 +60,15 @@ def handleRequest(state):
     if state.requestedGraph not in ['h', ]:
         png = tryGetGraphPNG(state)
     #If it doesn't: grab pixel calculations
-    if png is None and not IsBeingProcessed(state):
+    if png is None and not isBeingProcessed(state):
         pixels = calculatePixels(state)
 #        print pixels[:10]
         print "Saving to width =", state.width
         png = convertToPng(state, pixels, isRasterGraph(state))
-    elif IsBeingProcessed(state):
+    elif isBeingProcessed(state):
         sleepTime = 1
         sleep(sleepTime) #This extra sleep command is here to prevent hammering the IsBeingProcessed database
-        while IsBeingProcessed(state):
+        while isBeingProcessed(state):
             sleepTime = sleepTime * 2
             sleep(sleepTime)
         return handleRequest(state)
@@ -108,7 +108,7 @@ def generateGraphListForServer():
         graphs[description[0]] = ServerSideGraphDescription(description[1], description[3], description[4], description[5]).__dict__
     return graphs
         
-def IsBeingProcessed(request):
+def isBeingProcessed(request):
     assert isinstance(request, RequestPacket)
     specimen, chromosome, graph, start, scale, charsPerLine = request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.width
         
@@ -119,7 +119,7 @@ def IsBeingProcessed(request):
     else:
         return False
             
-def BeginProcess(request):
+def beginProcess(request):
     if not IsBeingProcessed(request):
         process = ProcessQueue(Specimen = request.specimen, Chromosome = request.chromosome, Graph = request.requestedGraph, Start = request.start, Scale = request.scale, CharsPerLine = request.width)
         process.save()
@@ -127,7 +127,7 @@ def BeginProcess(request):
     else:
         return False
         
-def FinishProcess(request):
+def finishProcess(request):
     if IsBeingProcessed(request):
         process = ProcessQueue.objects.filter(Specimen = specimen, Chromosome = chromosome, Graph = graph, Start = start, Scale = scale, CharsPerLine = charsPerLine).delete()
         return True
