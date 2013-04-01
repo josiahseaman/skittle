@@ -200,7 +200,9 @@
 			<p>Source: {{ specimen.Source }}</p>
 			<p>Length: {{ specimen.GenomeLength|intcomma }} bp</p>
 			<p>Description: {{ specimen.Description }}</p>
-			<h4>Chromosomes:</h4>
+			<h4>{% if specimen.Kingdom == 'Eubacteria' %}Derivatives:
+				{% else %}Chromosomes:
+				{% endif %}</h4>
 			<ul class="chromosomeList">
 				{% for chromosome in chromosomes %}
 				{% if chromosome.Specimen == specimen %}

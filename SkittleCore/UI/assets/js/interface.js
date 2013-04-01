@@ -315,7 +315,7 @@ var getCurrentPageURL = function(fullURL) {
         if (graphStatus[key].visible == true) graphString += key;
     }
     var baseURL = (window.location.origin) ? window.location.origin : window.location.protocol + window.location.host;
-    var currentURL = "/browse/" + specimen + "/" + chromosome + "/?graphs=" + graphString + "&start=" + start + "&scale=" + scale + "&width=" + width 
+    var currentURL = window.location.pathname + "?graphs=" + graphString + "&start=" + start + "&scale=" + scale + "&width=" + width 
     if (graphStatus['h'].visible) currentURL += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd;
     if (colorPalette !="Classic") graphPath += "&colorPalette="+colorPalette
     return fullURL ? baseURL + currentURL : currentURL;
