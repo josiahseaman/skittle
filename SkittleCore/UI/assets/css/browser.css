@@ -294,7 +294,7 @@
 		width: 170px;
 		padding: 10px;
 		border-left: 1px solid #eee;
-		/*text-align: justify;*/
+		text-align: left;
 		font-family: trebuchet,'trebuchet ms','myriad pro',helvetica,ariel,sans-serif;
 		font-weight: 300;
 		/*font-size: 1.1em;*/

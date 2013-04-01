@@ -11,7 +11,7 @@ from DNAStorage.StorageRequestHandler import GetChromosomeLength
 from Annotations.StorageRequestHandler import GetAnnotationsChunk
 # import json
 
-def browse(request, specimen="hg18",chromosome="chrY-sample"):
+def browse(request, genus="homo",species="sapiens", specimen="hg18",chromosome="chrY-sample"):
     width = request.GET.get('width',100)
     scale = request.GET.get('scale',1)
     start = request.GET.get('start',1)
@@ -26,7 +26,7 @@ def browse(request, specimen="hg18",chromosome="chrY-sample"):
     return render(request, 'browse.html',context)
 
 @cache_control(must_revalidate=False, max_age=3600)
-def graph(request, specimen="hg18",chromosome="chrY-sample"):
+def graph(request, genus="homo",species="sapiens", specimen="hg18",chromosome="chrY-sample"):
     state = RequestPacket()
     state.chromosome = chromosome
     state.specimen = specimen
@@ -44,7 +44,7 @@ def graph(request, specimen="hg18",chromosome="chrY-sample"):
     # image_data = open("/Users/marshallds/Sites/Skittle/master/SkittleCore/UI/assets/n-display.png", "rb").read()
     return HttpResponse(image_data, content_type="image/png")
 
-def annotation(request, specimen="hg18",chromosome="chrY-sample"):
+def annotation(request, genus="homo",species="sapiens", specimen="hg18",chromosome="chrY-sample"):
     start = max(1,int(request.GET.get('start',1)))
     json = GetAnnotationsChunk(specimen,chromosome,start)
     # json = '{"' + str(start) + '":{"rs855785":["A","G",4829],"rs855745":["A","G",5482],"rs855781":["A","G",1045],"rs855784":["T","G",10454],"rs855788":["A","T",145429],"rs855780":["C","C",104582],"rs855783":["A","C",145429],"rs855787":["T","G",104829]}}'

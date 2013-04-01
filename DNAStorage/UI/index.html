@@ -188,15 +188,8 @@
 			<h4>Chromosomes:</h4>
 			<ul class="chromosomeList">
 				{% for chromosome in chromosomes %}
-				<li><a href="/browse/{{ chromosome.Specimen.Name }}/{{ chromosome.Chromosome }}">{{ chromosome.Chromosome|capfirst }}</a></li>
+				<li><a href="/browse/{{ chromosome.Specimen.Genus }}/{{ chromosome.Specimen.Species }}/{{ chromosome.Specimen.Name }}/{{ chromosome.Chromosome }}">{{ chromosome.Chromosome|capfirst }}</a></li>
 				{% endfor %}
-				<li><a href="">Chromosome X</a></li>
-				<li><a href="">Chromosome 1</a></li>
-				<li><a href="">Chromosome 2</a></li>
-				<li><a href="">Chromosome 3</a></li>
-				<li><a href="">Chromosome 4</a></li>
-				<li><a href="">Chromosome 5</a></li>
-				<li><a href="">Chromosome 6</a></li>
 			</ul>
 		</div>
 		{% for specimen in specimens %}
@@ -211,7 +204,7 @@
 			<ul class="chromosomeList">
 				{% for chromosome in chromosomes %}
 				{% if chromosome.Specimen == specimen %}
-				<li><a href="/browse/{{ chromosome.Specimen.Name }}/{{ chromosome.Chromosome }}">{{ chromosome.Chromosome|capfirst }}</a></li>
+				<li><a href="/browse/{{ chromosome.Specimen.Genus }}/{{ chromosome.Specimen.Species }}/{{ chromosome.Specimen.Name }}/{{ chromosome.Chromosome }}">{{ chromosome.Chromosome|capfirst }}</a></li>
 				{% endif %}
 				{% endfor %}
 			</ul>
