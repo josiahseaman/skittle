@@ -122,8 +122,8 @@ if __name__ == "__main__":
     print "Specimen: ", specimen, "Processors: ", str(nProcessors)
     
     
-    startThreemer(specimen, nProcessors)
-#    startRepeatMap(specimen, nProcessors)
+#    startThreemer(specimen, nProcessors)
+    startRepeatMap(specimen, nProcessors)
 #    allGraphs(specimen, nProcessors)
     
     
