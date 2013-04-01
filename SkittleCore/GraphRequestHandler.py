@@ -32,6 +32,7 @@ import Graphs.RepeatOverview
 from Graphs.SkittleGraphTransforms import countDepth
 from PngConversionHelper import convertToPng
 import DNAStorage.StorageRequestHandler as StorageRequestHandler
+from django.db import transaction
 '''Finally, X = __import__('X') works like import X, with the difference that you 
 1) pass the module name as a string, and 2) explicitly assign it to a variable in your current namespace.'''
 
@@ -69,10 +70,13 @@ def handleRequest(state):
         png = convertToPng(state, pixels, isRasterGraph(state))
         finishProcess(state)
     elif isBeingProcessed(state):
+        print "I'm waiting..."
         sleepTime = 2
         sleep(sleepTime) #This extra sleep command is here to prevent hammering the IsBeingProcessed database
         while isBeingProcessed(state):
+            print "still waiting..."
             sleep(sleepTime)
+        print "WAITING IS DONE!"
         return handleRequest(state)
     print 'Done'
     return png
@@ -98,13 +102,20 @@ def tryGetGraphPNG(state):
         return None
         
 def isBeingProcessed(request):
+    #print "Checking if in process queue..."
     specimen, chromosome, graph, start, scale, charsPerLine = request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.width
         
-    process = ProcessQueue.objects.filter(Specimen = specimen, Chromosome = chromosome, Graph = graph, Start = start, Scale = scale, CharsPerLine = charsPerLine)[:1]
+    process = ProcessQueue.objects.filter(Specimen = specimen, Chromosome = chromosome, Graph = graph, Start = start, Scale = scale, CharsPerLine = charsPerLine)
+    
+    transaction.enter_transaction_management()
+    transaction.commit()
         
     if process:
+        #print "We are still processing..."
+        print process[0].Specimen
         return True
     else:
+        #print "Processing is done!"
         return False
             
 def beginProcess(request):
