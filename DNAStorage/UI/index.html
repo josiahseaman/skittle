@@ -164,73 +164,12 @@
 			{% for specimen in specimens %}
 			<section data-target="preview-{{ specimen.Name }}">
 				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
-				<h2>{% firstof specimen.ExtendedName " Genome" %}</h2>
+				<h2>{% firstof specimen.ExtendedName  specimen.Genus|add:" "|add:specimen.Species|add:" Genome" %}</h2>
 				<p class="source"><span>Source:</span>{{ specimen.Source }}</p>
 				<p class="info"><span class="seqNum">Feb. 2009 ({{ specimen.Name }})</span> Length: {{ specimen.GenomeLength|toSI }}bp</p>
 			</section>
 			{% endfor %}
-<!-- 			<section>
-				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
-				<p class="source"><span>Source:</span>UCSC</p>
-				<h2>Human Genome</h2>
-				<p class="source">more...</p>
-				<p class="info"><span class="seqNum">Feb. 2009 (hg19, GRCh37)</span> Length:109kbp</p>
-			</section>
-			<section>
-				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
-				<h2>Human Genome</h2>
-				<p class="source"><span>Source:</span>UCSC</p>
-				<p class="seqNum">Mar. 2006 (hg18)</p>
-			</section>
-			<section>
-				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
-				<h2>Cat Genome</h2>
-				<p class="source"><span>Source:</span>UCSC</p>
-				<p class="seqNum">Dec. 2008 (felCat4)</p>
-			</section>
-			<section>
-				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
-				<h2>Cat Genome</h2>
-				<p class="source"><span>Source:</span>UCSC</p>
-				<p class="seqNum">Mar. 2006 (felCat3)</p>
-			</section>
-			<section>
-				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
-				<h2>Chicken Genome</h2>
-				<p class="source"><span>Source:</span>UCSC</p>
-				<p class="seqNum">Nov. 2011 (galGal4)</p>
-			</section>
-			<section>
-				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
-				<h2>Chimpanzee Genome</h2>
-				<p class="source"><span>Source:</span>UCSC</p>
-				<p class="seqNum">Oct. 2010 (panTro3)</p>
-			</section>
-			<section>
-				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
-				<h2>Chimpanzee Genome</h2>
-				<p class="source"><span>Source:</span>UCSC</p>
-				<p class="seqNum">Mar. 2006 (panTro2)</p>
-			</section>
-			<section>
-				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
-				<h2>Chimpanzee Genome</h2>
-				<p class="source"><span>Source:</span>UCSC</p>
-				<p class="seqNum">Nov. 2003 (panTro1)</p>
-			</section>
-			<section>
-				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
-				<h2>Cat Genome</h2>
-				<p class="source"><span>Source:</span>UCSC</p>
-				<p class="seqNum">Oct. 2011 (bosTau7)</p>
-			</section>
-			<section>
-				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
-				<h2>Cow Genome</h2>
-				<p class="source"><span>Source:</span>UCSC</p>
-				<p class="seqNum">Nov. 2009 (bosTau6)</p>
-			</section>
- -->		</div>
+		</div>
 	</div>
 
 	<div id="previewPane">&nbsp;
@@ -249,15 +188,8 @@
 			<h4>Chromosomes:</h4>
 			<ul class="chromosomeList">
 				{% for chromosome in chromosomes %}
-				<li><a href="/browse/{{ chromosome.Specimen.Name }}/{{ chromosome.Chromosome }}">{{ chromosome.Chromosome|capfirst }}</a></li>
+				<li><a href="/browse/{{ chromosome.Specimen.Genus }}/{{ chromosome.Specimen.Species }}/{{ chromosome.Specimen.Name }}/{{ chromosome.Chromosome }}">{{ chromosome.Chromosome|capfirst }}</a></li>
 				{% endfor %}
-				<li><a href="">Chromosome X</a></li>
-				<li><a href="">Chromosome 1</a></li>
-				<li><a href="">Chromosome 2</a></li>
-				<li><a href="">Chromosome 3</a></li>
-				<li><a href="">Chromosome 4</a></li>
-				<li><a href="">Chromosome 5</a></li>
-				<li><a href="">Chromosome 6</a></li>
 			</ul>
 		</div>
 		{% for specimen in specimens %}
@@ -272,7 +204,7 @@
 			<ul class="chromosomeList">
 				{% for chromosome in chromosomes %}
 				{% if chromosome.Specimen == specimen %}
-				<li><a href="/browse/{{ chromosome.Specimen.Name }}/{{ chromosome.Chromosome }}">{{ chromosome.Chromosome|capfirst }}</a></li>
+				<li><a href="/browse/{{ chromosome.Specimen.Genus }}/{{ chromosome.Specimen.Species }}/{{ chromosome.Specimen.Name }}/{{ chromosome.Chromosome }}">{{ chromosome.Chromosome|capfirst }}</a></li>
 				{% endif %}
 				{% endfor %}
 			</ul>
@@ -281,13 +213,15 @@
 	</div>
 
 	<script type="text/javascript">
-
+ function jQsafeID(myid) { 
+   return myid.replace(/(:|\.)/g,'\\$1');
+ }
 
 	$(document).ready(function() {
 
 		$('#genomes section').click(function(){
 			$('.previewSpecimen:visible').hide()
-			$('#'+$(this).attr('data-target')).show();
+			$(jQsafeID('#' + $(this).attr('data-target') ) ).show();
 		})
 
 	})

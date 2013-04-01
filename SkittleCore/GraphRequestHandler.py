@@ -6,6 +6,7 @@ import io
 import sys
 import png
 from collections import namedtuple
+from time import sleep
 
 '''The set of availableGraphs is populated by the individual graph modules who are responsible for 
 registering with the request Handler using the 'registerGraph' function below. '''
@@ -16,7 +17,7 @@ def registerGraph(symbol, name, moduleName, rasterGraph = False, colorPalletteDe
     moduleReference = sys.modules[moduleName]
     availableGraphs.add(GraphDescription(symbol, name, moduleReference, rasterGraph, colorPalletteDependant, widthTolerance))
     
-from SkittleCore.models import RequestPacket, chunkSize
+from SkittleCore.models import RequestPacket, ProcessQueue
 import SkittleCore.FastaFiles as FastaFiles
 import Graphs.AnnotationDisplay
 import Graphs.NucleotideDisplay
@@ -31,6 +32,7 @@ import Graphs.RepeatOverview
 from Graphs.SkittleGraphTransforms import countDepth
 from PngConversionHelper import convertToPng
 import DNAStorage.StorageRequestHandler as StorageRequestHandler
+from django.db import transaction
 '''Finally, X = __import__('X') works like import X, with the difference that you 
 1) pass the module name as a string, and 2) explicitly assign it to a variable in your current namespace.'''
 
@@ -59,11 +61,23 @@ def handleRequest(state):
     if state.requestedGraph not in ['h', ]:
         png = tryGetGraphPNG(state)
     #If it doesn't: grab pixel calculations
-    if png is None:
+    if png is None and not isBeingProcessed(state):
+        #TODO: Handle beginProcess and finishProcess possible return of False
+        beginProcess(state)
         pixels = calculatePixels(state)
 #        print pixels[:10]
         print "Saving to width =", state.width
         png = convertToPng(state, pixels, isRasterGraph(state))
+        finishProcess(state)
+    elif isBeingProcessed(state):
+        print "I'm waiting..."
+        sleepTime = 2
+        sleep(sleepTime) #This extra sleep command is here to prevent hammering the IsBeingProcessed database
+        while isBeingProcessed(state):
+            print "still waiting..."
+            sleep(sleepTime)
+        print "WAITING IS DONE!"
+        return handleRequest(state)
     print 'Done'
     return png
 
@@ -86,6 +100,46 @@ def tryGetGraphPNG(state):
         return data
     except:
         return None
+        
+def isBeingProcessed(request):
+    #print "Checking if in process queue..."
+    specimen, chromosome, graph, start, scale, charsPerLine = request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.width
+        
+    process = ProcessQueue.objects.filter(Specimen = specimen, Chromosome = chromosome, Graph = graph, Start = start, Scale = scale, CharsPerLine = charsPerLine)
+    
+    transaction.enter_transaction_management()
+    transaction.commit()
+        
+    if process:
+        #print "We are still processing..."
+        print process[0].Specimen
+        return True
+    else:
+        #print "Processing is done!"
+        return False
+            
+def beginProcess(request):
+    if not isBeingProcessed(request):
+        process = ProcessQueue()
+        process.Specimen = request.specimen
+        process.Chromosome = request.chromosome
+        process.Graph = request.requestedGraph
+        process.Start = request.start
+        process.Scale = request.scale
+        process.CharsPerLine = request.width
+        process.save()
+        return True
+    else:
+        return False
+        
+def finishProcess(request):
+    if isBeingProcessed(request):
+        specimen, chromosome, graph, start, scale, charsPerLine = request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.width
+        
+        process = ProcessQueue.objects.filter(Specimen = specimen, Chromosome = chromosome, Graph = graph, Start = start, Scale = scale, CharsPerLine = charsPerLine).delete()
+        return True
+    else:
+        return False
 
 class ServerSideGraphDescription():
     def __init__(self, Name, IsRaster, colorSensitive, widthTolerance):
@@ -98,8 +152,5 @@ def generateGraphListForServer():
     graphs = {}
     for description in availableGraphs:
         graphs[description[0]] = ServerSideGraphDescription(description[1], description[3], description[4], description[5]).__dict__
-    return graphs
-        
-        
-        
+    return graphs       
     

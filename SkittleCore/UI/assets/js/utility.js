@@ -8,7 +8,7 @@ var toPixels = function(skixels) {
     return Math.round(skixels*3*zoom);
 }
 var calcSkixelsOnScreen = function() {
-    skixelsOnScreen = toSkixels($('#canvasContainer').height())*width;
+    return skixelsOnScreen = toSkixels($('#canvasContainer').height())*width;
 }
 var calcDeltaFromScrollEvent = function(e) {
 	var delta = 0
@@ -39,17 +39,6 @@ var expRound = function(value,stretchFactor) { // stretchFactor is between 0 to 
 	stretchFactor = 1/stretchFactor;
 	var round = Math.pow(2,(Math.round(Math.log(Math.pow(value,stretchFactor))/Math.LN2)/stretchFactor))
 	return Math.max(12,Math.round(round)); 
-}
-
-String.prototype.hashCode = function(){ // from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
-	var hash = 0;
-	if (this.length == 0) return hash;
-	for (i = 0; i < this.length; i++) {
-		char = this.charCodeAt(i);
-		hash = ((hash<<5)-hash)+char;
-		hash = hash & hash; // Convert to 32bit integer
-	}
-	return hash;
 }
 
 var getGoodDeterministicColor = function(input) {
@@ -95,7 +84,6 @@ var formatGffDescription = function(annotation){
 	if (descriptionArray.length>0) {
 		$.each(descriptionArray,function(i,v){
 			var keyValue = v.match(/([A-Za-z][A-Za-z0-9_]*)(=| )"?([^\s"]*)"?/)
-			console.log(keyValue)
 			if (keyValue) {
 				keyValue[1] = keyValue[1][0].toUpperCase() + keyValue[1].slice(1).replace(/_/g," ")
 				table.append($('<tr><th>'+keyValue[1]+':</th><td>'+keyValue[3] + '</td></tr>'))

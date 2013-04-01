@@ -382,6 +382,9 @@ var updateDials = function() {
 
     // window.history.replaceState(null,null,getCurrentPageURL())
 }
+
+
+
 var UIwidthChange = function(newWidth) {
     if (newWidth.match(/(\d+)/)) { // check if this is really just a number
         setWidthTo(newWidth.match(/(\d+)/)[0]);

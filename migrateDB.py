@@ -83,3 +83,11 @@ def RunMigration6():
     for specimen in specimens:
         specimen.Public = True
         specimen.save()
+        
+#####_____MIGRATION 7_____#####
+def RunMigration7():
+    cur = setupDB()
+    
+    part1 = "CREATE TABLE `SkittleCore_processqueue` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `Specimen` varchar(200) NOT NULL, `Chromosome` varchar(200) NOT NULL, `Graph` varchar(1) NOT NULL, `Start` integer NOT NULL, `Scale` integer, `CharsPerLine` integer)"
+    
+    cur.execute(part1)
