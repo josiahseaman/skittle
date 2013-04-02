@@ -8,6 +8,9 @@ from numbers import Number
 from models import RepeatMapState
 from SkittleCore.models import RequestPacket
 from PixelLogic import colorPalettes
+import ctypes
+
+skittleUtils = ctypes.CDLL('D:/bryan/Documents/Projects/SkittleTree/SkittleCore/Graphs/libSkittleGraphUtils.so.1.0.0')
 
 def countDepth(listLike):
     count = 0
@@ -207,22 +210,14 @@ def pearsonCorrelation(x, y):
     n = len(x)
     assert n > 0, "Array is empty"
     assert isinstance(x[0], Number), x[0]
-    avg_x = average(x)
-    avg_y = average(y)
-    diffprod = 0.0
-    xdiff2 = 0.0
-    ydiff2 = 0.0
-    for idx in range(n):
-        xdiff = float(x[idx]) - avg_x
-        ydiff = float(y[idx]) - avg_y
-        diffprod += xdiff * ydiff
-        xdiff2 += xdiff * xdiff
-        ydiff2 += ydiff * ydiff
-    backup = math.sqrt(1 - (1/n)) #if we have 0 instances of a color it will be / 0  div0
-    if(xdiff2 == 0.0): xdiff2 = backup
-    if(ydiff2 == 0.0): ydiff2 = backup
-    base = math.sqrt(xdiff2 * ydiff2)
-    return diffprod / base
+    
+    arrX = (ctypes.c_double * len(x))(*x)
+    arrY = (ctypes.c_double * len(y))(*y)
+    
+    skittleUtils.Correlate.restype = ctypes.c_double
+    temp = skittleUtils.Correlate(arrX, arrY, n)
+    
+    return temp
 
 '''Pearson correlation coefficient between signals x and y.
 Thanks to http://stackoverflow.com/users/34935/dfrankow for the definition'''

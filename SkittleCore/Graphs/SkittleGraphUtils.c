@@ -1,17 +1,9 @@
 #include <math.h>
 
-#define ARRAYSIZE(x)  (sizeof(x) / sizeof(x[0]))
-
-
-double Correlate(double apples[], double oranges[])
+double Correlate(double apples[], double oranges[], int arraySize)
 {
     double valueForN = 0.0;
-    if (sizeof(apples) == 0 || sizeof(oranges)==0)
-        return valueForN;
-    int sizeA = ARRAYSIZE(apples);
-    int sizeB = ARRAYSIZE(oranges);
-    int pixelsPerSample = sizeA < sizeB ? sizeA : sizeB;
-    double N = pixelsPerSample;
+    double N = arraySize;
     double AVal;
 
     double BVal;
@@ -24,20 +16,20 @@ double Correlate(double apples[], double oranges[])
     //this is A[]*B[]
 
     int k;
-    for (k = 0; k < pixelsPerSample; k++)
+    for (k = 0; k < arraySize; k++)
     {
         AVal = apples [k];
         BVal = oranges[k];
-        if(AVal == valueForN || BVal == valueForN)
-        {
-            --N;
-        }
-        else
-        {
+        // if(AVal == valueForN || BVal == valueForN)
+        // {
+            // --N;
+        // }
+        // else
+        // {
             Asum += AVal;                   Bsum += BVal;
             ASquared += (AVal*AVal);        BSquared += (BVal*BVal);
             AB += (AVal * BVal);
-        }
+        //}
     }
     if( N <= 0)
         return valueForN;//no data to report on
