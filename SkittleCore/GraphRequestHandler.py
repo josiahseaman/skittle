@@ -11,11 +11,11 @@ from time import sleep
 '''The set of availableGraphs is populated by the individual graph modules who are responsible for 
 registering with the request Handler using the 'registerGraph' function below. '''
 availableGraphs = set()
-GraphDescription = namedtuple('GraphDescription', ['symbol', 'name', 'moduleReference', 'rasterGraph','colorPalletteDependant', 'widthTolerance'])
+GraphDescription = namedtuple('GraphDescription', ['symbol', 'name','moduleReference','rasterGraph','colorPalletteDependant','widthTolerance','isGrayScale'])
 
-def registerGraph(symbol, name, moduleName, rasterGraph = False, colorPalletteDependant = False, widthTolerance=0.15):
+def registerGraph(symbol, name, moduleName, rasterGraph = False, colorPalletteDependant = False, widthTolerance=0.15, isGrayScale=False):
     moduleReference = sys.modules[moduleName]
-    availableGraphs.add(GraphDescription(symbol, name, moduleReference, rasterGraph, colorPalletteDependant, widthTolerance))
+    availableGraphs.add(GraphDescription(symbol, name, moduleReference, rasterGraph, colorPalletteDependant, widthTolerance, isGrayScale))
     
 from SkittleCore.models import RequestPacket, ProcessQueue
 import SkittleCore.FastaFiles as FastaFiles

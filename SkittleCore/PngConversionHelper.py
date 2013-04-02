@@ -5,11 +5,13 @@ Created on Jan 17, 2013
 '''
 import png, tempfile
 from DNAStorage.StorageRequestHandler import GetPngFilePath, StorePng
+from GraphRequestHandler import getGraphDescription, GraphDescription
 import copy
 
 def checkForGreyscale(state):
-    grayGraph = ['m', 'o', 'f']
-    return state.requestedGraph in grayGraph
+    desc = getGraphDescription(state)
+    assert isinstance(desc, GraphDescription)
+    return desc.isGrayScale
 
 def convertToPng(state, pixels, isRaster = False):
     targetWidth = 1024

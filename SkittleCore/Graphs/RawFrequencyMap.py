@@ -8,7 +8,7 @@ from SkittleGraphTransforms import oldRepeatMap
 from models import ThreeMerDetectorState
 
 
-registerGraph('f', "Raw Frequency Map", __name__, False)
+registerGraph('f', "Raw Frequency Map", __name__, False, isGrayScale=True)
 
 
 def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
