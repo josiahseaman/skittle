@@ -8,7 +8,7 @@ from DNAStorage.StorageRequestHandler import GetPngFilePath, StorePng
 import copy
 
 def checkForGreyscale(state):
-    grayGraph = ['m', 'o']
+    grayGraph = ['m', 'o', 'f']
     return state.requestedGraph in grayGraph
 
 def convertToPng(state, pixels, isRaster = False):

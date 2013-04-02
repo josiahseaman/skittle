@@ -27,6 +27,7 @@ import Graphs.OligomerUsage
 import Graphs.SequenceHighlighter
 import Graphs.SimilarityHeatMap
 import Graphs.ThreeMerDetector
+import Graphs.RawFrequencyMap
 import Graphs.SNPdisplay
 import Graphs.RepeatOverview
 from Graphs.SkittleGraphTransforms import countDepth
