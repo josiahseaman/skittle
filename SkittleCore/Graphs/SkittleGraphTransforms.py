@@ -5,9 +5,10 @@ Created on Nov 29, 2012
 #import numpy
 import math
 from numbers import Number
-from models import RepeatMapState
+from models import RepeatMapState, ThreeMerDetectorState
 from SkittleCore.models import RequestPacket
 from PixelLogic import colorPalettes
+
 
 def countDepth(listLike):
     count = 0
@@ -294,6 +295,25 @@ def correlationMap( state, repeatMapState, coloredPixels):
             resultSum /= 3
             freq[h][w] = .5 * (1.0 + resultSum)
     return freq
+          
+
+def countMatches(sequence, beginA, beginB, lineSize):
+    matches = 0
+    for index in range(lineSize):
+        if sequence[beginA + index] == sequence[beginB + index]:
+            matches += 1
+    return float(matches) / lineSize
+
+def oldRepeatMap(state, threeMerState):
+    assert isinstance(threeMerState, ThreeMerDetectorState)
+    freq = []
+    lineSize = state.nucleotidesPerLine()
+    for h in range(threeMerState.height(state, state.seq)):
+        freq.append([0.0]*(threeMerState.samples*3+1))
+        offset = h * lineSize
+        for w in range(1, len(freq[h])):
+            freq[h][w] = countMatches(state.seq, offset, offset + w , lineSize)
+    return freq          
           
 '''This method takes a series of floating point numbers.  It checks each multiple of "frequency" and determines
 if the sum of samples at frequency are greater than the background level.  It then returns the frequency score.
