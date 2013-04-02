@@ -100,7 +100,9 @@ var formatGffDescription = function(annotation){
 var formatSNPDescription = function(annotationArray){
 	var html =$('<div class="annotationDetail" />')
 	var table = $('<table />')
-	table.append($('<tr><th>SNP Code:</th><td>'+annotationArray.snp_name + '</td></tr>'))
+	if (annotationArray.snp_name.match(/rs\d+/)) table.append($('<tr><th>SNP Code:</th><td><a href="http://www.ncbi.nlm.nih.gov/projects/SNP/snp_ref.cgi?rs='+annotationArray.snp_name.match(/rs(\d+)/)[1]+'" target="_blank" title="NCBI Report">'+annotationArray.snp_name + '</a></td></tr>'))
+	else if (annotationArray.snp_name.match(/i\d+/)) table.append($('<tr><th>SNP Code:</th><td><a href="http://opensnp.org/snps/'+annotationArray.snp_name+'" target="_blank" title="openSNP information">'+annotationArray.snp_name + '</a></td></tr>'))
+	else table.append($('<tr><th>SNP Code:</th><td>'+annotationArray.snp_name + '</td></tr>'))
 	table.append($('<tr><th>Index:</th><td>'+annotationArray["Start"] + '</td></tr>'))
 	table.append($('<tr><th>Details:</th><td><a href="https://www.23andme.com/you/explorer/snp/?snp_name='+annotationArray.snp_name + '" target="_blank">23andMe</a></td></tr>'))
 	html.append(table)
