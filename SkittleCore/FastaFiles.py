@@ -19,7 +19,7 @@ def readFile(state):
     try:
         filePath = StorageRequestHandler.GetFastaFilePath(state.specimen, state.chromosome, state.start)
         if state.scale < 10:
-            print "opening file " , filePath
+            print "opening file " , filePath, " for ", state.specimen, state.chromosome, str(state.start)
         if not filePath:
             return None
         rawFile = open(filePath, 'r')

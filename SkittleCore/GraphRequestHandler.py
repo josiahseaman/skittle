@@ -7,6 +7,7 @@ import sys
 import png
 from collections import namedtuple
 from time import sleep
+from PngConversionHelper import convertToPng
 
 '''The set of availableGraphs is populated by the individual graph modules who are responsible for 
 registering with the request Handler using the 'registerGraph' function below. '''
@@ -31,7 +32,6 @@ import Graphs.RawFrequencyMap
 import Graphs.SNPdisplay
 import Graphs.RepeatOverview
 from Graphs.SkittleGraphTransforms import countDepth
-from PngConversionHelper import convertToPng
 import DNAStorage.StorageRequestHandler as StorageRequestHandler
 from django.db import transaction
 '''Finally, X = __import__('X') works like import X, with the difference that you 
