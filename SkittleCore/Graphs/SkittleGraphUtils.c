@@ -1,3 +1,4 @@
+#include <math.h>
 
 #define ARRAYSIZE(x)  (sizeof(x) / sizeof(x[0]))
 
@@ -22,7 +23,8 @@ double Correlate(double apples[], double oranges[])
     double AB = 0;
     //this is A[]*B[]
 
-    for (int k = 0; k < pixelsPerSample; k++)
+    int k;
+    for (k = 0; k < pixelsPerSample; k++)
     {
         AVal = apples [k];
         BVal = oranges[k];
