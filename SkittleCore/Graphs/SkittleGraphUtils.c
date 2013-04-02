@@ -1,11 +1,15 @@
-#include <math.h>
-#include <stdlib.h>
 
-double Correlate(double *apples, double *oranges);
+#define ARRAYSIZE(x)  (sizeof(x) / sizeof(x[0]))
 
-double Correlate(double *apples, double *oranges)
+
+double Correlate(double apples[], double oranges[])
 {
-    int pixelsPerSample = (int) min(apples.size(), oranges.size());
+    double valueForN = 0.0;
+    if (sizeof(apples) == 0 || sizeof(oranges)==0)
+        return valueForN;
+    int sizeA = ARRAYSIZE(apples);
+    int sizeB = ARRAYSIZE(oranges);
+    int pixelsPerSample = sizeA < sizeB ? sizeA : sizeB;
     double N = pixelsPerSample;
     double AVal;
 
