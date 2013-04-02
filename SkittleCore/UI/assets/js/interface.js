@@ -72,7 +72,8 @@ function getMouseLocation(e) {
 
 function mouseDown(e) {
     getMouseLocation(e);
-    $('#annotationDetail').remove()
+    clearSelectedAnnotation()
+
     if(graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
         if(mx < toPixels(graphStatus["a"].skixelOffset +graphStatus["a"].skixelWidth) && mx > toPixels(graphStatus["a"].skixelOffset) ) {
             var column = calcAnnotationColumn(mx)
@@ -95,9 +96,6 @@ function mouseDown(e) {
                         return false; //aka break
                     }
                 }
-                if(annotations[activeAnnotation]) annotations[activeAnnotation].active = false
-                activeAnnotation = annotationSelectedStart = annotationSelectedEnd = 0;
-                isInvalidDisplay = true;
             })
         }
     }
@@ -354,6 +352,12 @@ var showAnnotationDetail = function (annotation) {
     }
 
     $('#canvasContainer').append(popup)
+}
+var clearSelectedAnnotation = function() {
+    $('#annotationDetail').remove()
+    if(annotations[activeAnnotation]) annotations[activeAnnotation].active = false
+    activeAnnotation = annotationSelectedStart = annotationSelectedEnd = 0;
+    isInvalidDisplay = true;
 }
 
 // UI Dials interaction
