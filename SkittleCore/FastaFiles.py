@@ -2,11 +2,11 @@
 Created on Dec 21, 2012
 @author: Josiah
 '''
-#from SkittleCore.models import RequestPacket
+# from SkittleCore.models import RequestPacket
 import DNAStorage.StorageRequestHandler as StorageRequestHandler
 
 class FastaFile(str):
-    def __init__(self, sequence = ''):
+    def __init__(self, sequence=''):
         if sequence is None:
             sequence = ''
         super(FastaFile, self).__init__(sequence)
@@ -18,12 +18,12 @@ def readFile(state):
 #    assert isinstance(state, RequestPacket)
     try:
         filePath = StorageRequestHandler.GetFastaFilePath(state.specimen, state.chromosome, state.start)
-        print "opening file " , filePath, 
+        if state.scale < 10:
+            print "opening file " , filePath
         if not filePath:
             return None
         rawFile = open(filePath, 'r')
         result = rawFile.read()
-        print "length=", len(result)
         return result
     
 #        print 'Opened File'
