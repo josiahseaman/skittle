@@ -447,6 +447,9 @@ var setXoffsetTo = function(newX) {
 }
 
 var setStartTo = function(newStart) {
+    if (newStart == "random") {
+        newStart = Math.round(Math.random()*fileLength)
+    }
     if (newStart < 1) {
         if (start ==1) return;
         start = 1;

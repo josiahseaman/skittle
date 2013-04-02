@@ -319,9 +319,9 @@
 		height:30px;
 	}
 	#startBubble {
-		left:50px;
+		left:14px;
 		bottom:40px;
-		width:77px;
+		width:142px;
 		height:30px;
 	}
 	li:hover #widthBubble,li:hover #scaleBubble,li:hover #startBubble, .popover:hover {
