@@ -165,7 +165,7 @@
 			<section data-target="preview-{{ specimen.Name }}">
 				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
 				<h2>{% firstof specimen.ExtendedName  specimen.Genus|add:" "|add:specimen.Species|add:" Genome" %}</h2>
-				<p class="source"><span>Source:</span>{{ specimen.Source }}</p>
+				<!-- <p class="source"><span>Source:</span>{{ specimen.Source }}</p> -->
 				<p class="info"><span class="seqNum">Feb. 2009 ({{ specimen.Name }})</span> Length: {{ specimen.GenomeLength|toSI }}bp</p>
 			</section>
 			{% endfor %}
