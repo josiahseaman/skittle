@@ -5,11 +5,13 @@ Created on Jan 17, 2013
 '''
 import png, tempfile
 from DNAStorage.StorageRequestHandler import GetPngFilePath, StorePng
+import SkittleCore.GraphRequestHandler #import getGraphDescription, GraphDescription
 import copy
 
 def checkForGreyscale(state):
-    grayGraph = ['m', 'o']
-    return state.requestedGraph in grayGraph
+    desc = SkittleCore.GraphRequestHandler.getGraphDescription(state)
+    assert isinstance(desc, SkittleCore.GraphRequestHandler.GraphDescription)
+    return desc.isGrayScale
 
 def convertToPng(state, pixels, isRaster = False):
     targetWidth = 1024

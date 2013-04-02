@@ -15,7 +15,7 @@ from SkittleCore.png import Reader
 from SkittleCore.PngConversionHelper import convertToPng
 import copy
 
-registerGraph('m', "Repeat Map", __name__, False, False, 0.4)
+registerGraph('m', "Repeat Map", __name__, False, False, 0.4, isGrayScale=True)
 '''
 These are the functions that are specific to the use of RepeatMap and not generally applicable.  
 These functions use RepeatMapState to emulate an object with state.

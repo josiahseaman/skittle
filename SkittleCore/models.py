@@ -66,7 +66,7 @@ class RequestPacket(models.Model):
             self.seq = '' #ensure that seq is at least a string object
         self.start = self.start + self.length # jump to the end of the current sequence  (+ chunkSize)
         
-        print "Requesting",self.specimen, self.chromosome, self.start 
+        #print "Requesting",self.specimen, self.chromosome, self.start 
         sequence = readFile(self)# see if there's a file that begins where you end, this will stop on a partial file
         if sequence is not None:
             self.seq = self.seq + sequence #append two sequences together

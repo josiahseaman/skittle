@@ -7,15 +7,16 @@ import sys
 import png
 from collections import namedtuple
 from time import sleep
+from PngConversionHelper import convertToPng
 
 '''The set of availableGraphs is populated by the individual graph modules who are responsible for 
 registering with the request Handler using the 'registerGraph' function below. '''
 availableGraphs = set()
-GraphDescription = namedtuple('GraphDescription', ['symbol', 'name', 'moduleReference', 'rasterGraph','colorPalletteDependant', 'widthTolerance'])
+GraphDescription = namedtuple('GraphDescription', ['symbol', 'name','moduleReference','rasterGraph','colorPalletteDependant','widthTolerance','isGrayScale'])
 
-def registerGraph(symbol, name, moduleName, rasterGraph = False, colorPalletteDependant = False, widthTolerance=0.15):
+def registerGraph(symbol, name, moduleName, rasterGraph = False, colorPalletteDependant = False, widthTolerance=0.15, isGrayScale=False):
     moduleReference = sys.modules[moduleName]
-    availableGraphs.add(GraphDescription(symbol, name, moduleReference, rasterGraph, colorPalletteDependant, widthTolerance))
+    availableGraphs.add(GraphDescription(symbol, name, moduleReference, rasterGraph, colorPalletteDependant, widthTolerance, isGrayScale))
     
 from SkittleCore.models import RequestPacket, ProcessQueue
 import SkittleCore.FastaFiles as FastaFiles
@@ -27,10 +28,10 @@ import Graphs.OligomerUsage
 import Graphs.SequenceHighlighter
 import Graphs.SimilarityHeatMap
 import Graphs.ThreeMerDetector
+import Graphs.RawFrequencyMap
 import Graphs.SNPdisplay
 import Graphs.RepeatOverview
 from Graphs.SkittleGraphTransforms import countDepth
-from PngConversionHelper import convertToPng
 import DNAStorage.StorageRequestHandler as StorageRequestHandler
 from django.db import transaction
 '''Finally, X = __import__('X') works like import X, with the difference that you 
