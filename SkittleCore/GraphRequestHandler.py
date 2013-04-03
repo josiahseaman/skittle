@@ -70,13 +70,10 @@ def handleRequest(state):
         png = convertToPng(state, pixels, isRasterGraph(state))
         finishProcess(state)
     elif isBeingProcessed(state):
-        print "I'm waiting..."
         sleepTime = 2
         sleep(sleepTime) #This extra sleep command is here to prevent hammering the IsBeingProcessed database
         while isBeingProcessed(state):
-            print "still waiting on...", state.specimen, state.chromosome, state.requestedGraph, state.start
             sleep(sleepTime)
-        print "WAITING IS DONE!"
         return handleRequest(state)
     print 'Done'
     return png
