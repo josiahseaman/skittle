@@ -3,8 +3,7 @@ Created on Nov 29, 2012
 @author: Josiah Seaman
 '''
 from Utilities.debug import startDebug
-import NucleotideDisplay
-from SkittleGraphTransforms import correlationMap, countDepth, chunkUpList, countNucleotides, normalizeDictionary, countListToColorSpace, pearsonCorrelation, average, composedOfNs
+from SkittleGraphTransforms import  chunkUpList, countNucleotides, normalizeDictionary, countListToColorSpace, pearsonCorrelation, average, composedOfNs
 from models import RepeatMapState
 from SkittleCore.models import RequestPacket, chunkSize
 from SkittleCore.GraphRequestHandler import registerGraph
@@ -15,7 +14,7 @@ from SkittleCore.png import Reader
 from SkittleCore.PngConversionHelper import convertToPng
 import copy
 
-registerGraph('m', "Repeat Map", __name__, False, False, 0.4)
+registerGraph('m', "Repeat Map", __name__, False, False, 0.4, isGrayScale=True)
 '''
 These are the functions that are specific to the use of RepeatMap and not generally applicable.  
 These functions use RepeatMapState to emulate an object with state.
@@ -197,21 +196,10 @@ def calculateOutputPixels(state, repeatMapState = RepeatMapState()):
     if state.nucleotidesPerLine() != skixelsPerSample:
         return squishStoredMaps(state, repeatMapState)
 
-
-#    state.seq = generateRepeatDebugSequence(53, 400, 1)
-    state.readFastaChunks()
+    state.readFastaChunks()#    state.seq = generateRepeatDebugSequence(53, 400, 1)
     scores = logRepeatMap(state, repeatMapState)
     return scores
     
-#    pixels = NucleotideDisplay.calculateOutputPixels(state)
-#    if countDepth(pixels) > 1:
-#        singleLine = []
-#        for x in pixels: #this can't be a list comprehension because we need the += operator instead of .append()
-#            singleLine += x
-#    else:
-#        singleLine = pixels
-#    scores = correlationMap(state, repeatMapState, singleLine) #2D array
-#    return scores
     
     
     

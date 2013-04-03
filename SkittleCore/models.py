@@ -45,6 +45,22 @@ class RequestPacket(models.Model):
     searchStart = models.IntegerField(default=10)
     searchStop  = models.IntegerField(default=20)
     
+    def copy(self):
+        c = RequestPacket()
+        #copy everything except the sequence
+        c.specimen = self.specimen
+        c.chromosome = self.chromosome
+        c.seq = ''
+        c.colorPalette = self.colorPalette
+        c.width = self.width
+        c.scale = self.scale
+        c.start = self.start
+        c.length = self.length
+        c.requestedGraph = self.requestedGraph
+        c.searchStart = self.searchStart
+        c.searchStop = self.searchStop
+        return c
+        
     def getFastaFilePath(self):
         return StorageRequestHandler.GetFastaFilePath(self.specimen, self.chromosome, self.start)
 
@@ -66,7 +82,7 @@ class RequestPacket(models.Model):
             self.seq = '' #ensure that seq is at least a string object
         self.start = self.start + self.length # jump to the end of the current sequence  (+ chunkSize)
         
-        print "Requesting",self.specimen, self.chromosome, self.start 
+        #print "Requesting",self.specimen, self.chromosome, self.start 
         sequence = readFile(self)# see if there's a file that begins where you end, this will stop on a partial file
         if sequence is not None:
             self.seq = self.seq + sequence #append two sequences together
@@ -78,12 +94,21 @@ class RequestPacket(models.Model):
    
     def readFastaChunks(self):
         numChunks = self.scale or 1 
-        if self.seq is not None and len(self.seq) >= numChunks * chunkSize:
+        if self.seq is not None and len(self.seq) >= ((numChunks-1) * chunkSize) + 1: #at least on character in the last chunk
             return
         self.seq = ''
         self.length = len(self.seq)
-        for chunk in range(numChunks):
-            self.readAndAppendNextChunk()
+        partialSequences = [None]*numChunks
+        for index, chunkStart in enumerate(range(self.start, self.start + numChunks*chunkSize, chunkSize)):
+            tempState = self.copy()
+            tempState.start = chunkStart
+            partialSequences[index] = readFile(tempState)
+            if partialSequences[index] is None:
+                partialSequences[index]  = ''
+        self.seq = ''.join(partialSequences)
+        if self.scale >= 10:
+            print "Done reading files"
+
         
 class StatePacket(RequestPacket): 
     specimen = 'hg18'

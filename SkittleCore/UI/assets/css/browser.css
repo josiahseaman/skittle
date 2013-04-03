@@ -270,6 +270,8 @@
 	#graphList {
 		left:160px;
 		top:60px;
+		font-size: 0.9em;
+		line-height:1.6;
 	}
 	#graphList ul {
 		list-style: none;
@@ -284,7 +286,8 @@
 	}
 	#graph-labels li.helpLabel {
 		display:list-item;
-		width:200px
+		width:170px;
+		padding-right: 30px;
 	}
 	.graphHelp {
 		position: absolute;
@@ -319,9 +322,9 @@
 		height:30px;
 	}
 	#startBubble {
-		left:50px;
+		left:14px;
 		bottom:40px;
-		width:77px;
+		width:142px;
 		height:30px;
 	}
 	li:hover #widthBubble,li:hover #scaleBubble,li:hover #startBubble, .popover:hover {

@@ -94,6 +94,7 @@
 			<li>Start Index: <span id="startDisplay" data-fn="UIstartChange">{{ start }}</span>
 				<div id="startBubble" class="popover arrow-bottom-center">
 					<div class="button" onClick="setStartTo(1)">Top</div>
+					<div class="button" onClick="setStartTo('random')">Random</div>
 					<div class="button" onClick="goToEnd()">End</div>
 				</div>
 			</li>
@@ -105,7 +106,7 @@
 	<div class="popover arrow-left-top" id="graphList">
 		<ul>
 			{% for graph in availableGraphs %}
-			<li><input type="checkbox" id="showGraph-{{ graph.symbol }}" name="showGraph{{ graph.symbol }}"><label for="showGraph{{ graph.symbol }}">{{ graph.name }}</label></li>
+			<li><input type="checkbox" id="showGraph-{{ graph.symbol }}" name="showGraph-{{ graph.symbol }}"><label for="showGraph-{{ graph.symbol }}">{{ graph.name }}</label></li>
 			{% endfor %}
 		</ul>
 	</div>
@@ -158,7 +159,7 @@
     }
 	var annotations = {}
 	var visibleAnnotations = {}
-	var helpLabel = $('<li class="helpLabel">Help<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeHelpButton"></li>')
+	var helpLabel = $('<li class="helpLabel">Graph Information<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeHelpButton"></li>')
 	var graphHelpContents = {
 		'a':'Annotation Display is linked to an annotation file with start and stop positions for tracks.  It aligns these start and stop positions along with the rest of the graphs, expanding to accommodate overlapping annotations as necessary.  The user can select individual annotations and see the full text associated with that annotation.',
 		'n':'The four nucleotides of DNA are represented by four colors.  The pixels are arranged across the screen like text, reading from left to right, the jumping to the beginning of the next line when it reaches the width.  If width is set at a multiple of a tandem repeat, the repeat will appear as vertical bars.', 

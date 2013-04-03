@@ -29,8 +29,6 @@ def calculateBiasBarSizes(state):
         barLengthsPerLine.append(bar_sizes)
     return barLengthsPerLine
 
-
-
 def calculateOutputPixels(state):
     state.readFastaChunks()
     barSizesPerLine = calculateBiasBarSizes(state)
@@ -39,7 +37,7 @@ def calculateOutputPixels(state):
         barSizes  = map(lambda entry : entry[1], barSizesPerLine[line])
 #        print barSizes
         colorSeries = map(lambda entry : getColor(state, entry[0]), barSizesPerLine[line])
-        bar = drawJustifiedBar(barSizes, colorSeries, max_bar_width)
+        bar = drawJustifiedBar(barSizes, colorSeries, max_bar_width, drawBackgroundGray=False)
 #        print bar
         outputPixels.append( bar )
     return outputPixels

@@ -5,9 +5,16 @@ Created on Nov 29, 2012
 #import numpy
 import math
 from numbers import Number
-from models import RepeatMapState
+from models import RepeatMapState, ThreeMerDetectorState
 from SkittleCore.models import RequestPacket
 from PixelLogic import colorPalettes
+import ctypes
+
+try:
+    skittleUtils = ctypes.CDLL('D:/bryan/Documents/Projects/SkittleTree/SkittleCore/Graphs/libSkittleGraphUtils.so.1.0.0')
+    usingCcode = True
+except: 
+    usingCcode = False
 
 def countDepth(listLike):
     count = 0
@@ -92,6 +99,8 @@ def countListToColorSpace(countList, colorPalette):
         return []
     colorMapping = colorPalettes[colorPalette]
     colorContributions = []
+    #$20-25\cdot \space \frac{1}{\sqrt{\left(\frac{x+9}{10}\right)}}$
+#   basePercentage = 20 - (20 * (1 / (sqrt((state.scale + 9)/10.0)))) 
     for character, magnitude in countList.items():#per entry in dictionary
         colorContributions.append(map(lambda c: c * magnitude, colorMapping[character])) #scales color amount by magnitude for each channel
     resultingColor =  map(sum, zip(*colorContributions))
@@ -200,13 +209,9 @@ def average(values, start = 0, length = -1):
         totalSum += values[index]
     return float(totalSum) / length
 
-'''Pearson correlation coefficient between signals x and y.
-Thanks to http://stackoverflow.com/users/34935/dfrankow for the definition'''
-def pearsonCorrelation(x, y):
-    assert len(x) == len(y), (len(x) , " vs. " , len(y)) 
+'''Slower correlate, but runs on all systems'''
+def pythonCorrelate(x,y):
     n = len(x)
-    assert n > 0, "Array is empty"
-    assert isinstance(x[0], Number), x[0]
     avg_x = average(x)
     avg_y = average(y)
     diffprod = 0.0
@@ -223,6 +228,23 @@ def pearsonCorrelation(x, y):
     if(ydiff2 == 0.0): ydiff2 = backup
     base = math.sqrt(xdiff2 * ydiff2)
     return diffprod / base
+
+'''Pearson correlation coefficient between signals x and y.'''
+def pearsonCorrelation(x, y):
+    assert len(x) == len(y), (len(x) , " vs. " , len(y)) 
+    n = len(x)
+    assert n > 0, "Array is empty"
+    assert isinstance(x[0], Number), x[0]
+    
+    if usingCcode:
+        arrX = (ctypes.c_double * len(x))(*x)
+        arrY = (ctypes.c_double * len(y))(*y)
+        
+        skittleUtils.Correlate.restype = ctypes.c_double
+        temp = skittleUtils.Correlate(arrX, arrY, n)
+        return temp
+    else:
+        return pythonCorrelate(x,y)
 
 '''Pearson correlation coefficient between signals x and y.
 Thanks to http://stackoverflow.com/users/34935/dfrankow for the definition'''
@@ -272,28 +294,24 @@ def slowCorrelate(floatList, beginA, beginB, comparisonLength):
             return 0
     else:
         return None        
-'''Creates a grey scale map of floating point correlation values.  Used by Repeat Map.
-Y axis is each display line of the sequence.  X axis is the frequency space starting at offset 0
-and proceeding to RepeatMapState.F_width.  When used in Repeat Map, ColoredPixels is 
-the color compressed sequence from the Nucleotide Display.'''
-def correlationMap( state, repeatMapState, coloredPixels):
-    assert isinstance(repeatMapState, RepeatMapState)
-    assert isinstance(state, RequestPacket)
-    rgbChannels = zip(*coloredPixels)
+
+def countMatches(sequence, beginA, beginB, lineSize):
+    matches = 0
+    for index in range(lineSize):
+        if sequence[beginA + index] == sequence[beginB + index]:
+            matches += 1
+    return float(matches) / lineSize
+
+def oldRepeatMap(state, threeMerState):
+    assert isinstance(threeMerState, ThreeMerDetectorState)
     freq = []
-    for h in range(repeatMapState.height(state, coloredPixels)):
-        freq.append([0.0]*(repeatMapState.F_width+1))
-        offset = h * state.nucleotidesPerLine()
-        for w in range(1, len(freq[h])):#calculate across widths 1:F_width
-            
-            resultSum = 0.0
-            for currentChannel in rgbChannels:
-                correlation = correlate(currentChannel, offset, offset + w + repeatMapState.F_start, state.nucleotidesPerLine())
-                if correlation is not None:
-                    resultSum += correlation
-            resultSum /= 3
-            freq[h][w] = .5 * (1.0 + resultSum)
-    return freq
+    lineSize = state.nucleotidesPerLine()
+    for h in range(threeMerState.height(state, state.seq)):
+        freq.append([0.0]*(threeMerState.samples*3+1))
+        offset = h * lineSize
+        for w in range(1, len(freq[h])):
+            freq[h][w] = countMatches(state.seq, offset, offset + w , lineSize)
+    return freq          
           
 '''This method takes a series of floating point numbers.  It checks each multiple of "frequency" and determines
 if the sum of samples at frequency are greater than the background level.  It then returns the frequency score.

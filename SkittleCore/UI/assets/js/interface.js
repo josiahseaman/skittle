@@ -72,8 +72,9 @@ function getMouseLocation(e) {
 
 function mouseDown(e) {
     getMouseLocation(e);
-    $('#annotationDetail').remove()
-    if(graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
+    clearSelectedAnnotation()
+
+    if(graphStatus["a"] && graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
         if(mx < toPixels(graphStatus["a"].skixelOffset +graphStatus["a"].skixelWidth) && mx > toPixels(graphStatus["a"].skixelOffset) ) {
             var column = calcAnnotationColumn(mx)
             var row = toSkixels(my)
@@ -95,9 +96,6 @@ function mouseDown(e) {
                         return false; //aka break
                     }
                 }
-                if(annotations[activeAnnotation]) annotations[activeAnnotation].active = false
-                activeAnnotation = annotationSelectedStart = annotationSelectedEnd = 0;
-                isInvalidDisplay = true;
             })
         }
     }
@@ -132,7 +130,7 @@ function mouseDown(e) {
 }
 function mouseMove(e) {
     getMouseLocation(e)
-    if(activeAnnotation==0 && graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
+    if(activeAnnotation==0 && graphStatus["a"] && graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
         if(mx < toPixels(graphStatus["a"].skixelOffset +graphStatus["a"].skixelWidth) && mx > toPixels(graphStatus["a"].skixelOffset) ) {
             var column = calcAnnotationColumn(mx)
             var row = toSkixels(my)
@@ -355,6 +353,12 @@ var showAnnotationDetail = function (annotation) {
 
     $('#canvasContainer').append(popup)
 }
+var clearSelectedAnnotation = function() {
+    $('#annotationDetail').remove()
+    if(annotations[activeAnnotation]) annotations[activeAnnotation].active = false
+    activeAnnotation = annotationSelectedStart = annotationSelectedEnd = 0;
+    isInvalidDisplay = true;
+}
 
 // UI Dials interaction
 var hideGraph = function(graph) {
@@ -447,6 +451,9 @@ var setXoffsetTo = function(newX) {
 }
 
 var setStartTo = function(newStart) {
+    if (newStart == "random") {
+        newStart = Math.round(Math.random()*fileLength)
+    }
     if (newStart < 1) {
         if (start ==1) return;
         start = 1;
@@ -506,5 +513,6 @@ var goToEnd = function() {
 }
 var scaleToFile = function() {
     setStartTo(1)
+    setWidthTo(200)
     setScaleTo(fileLength/(skixelsOnScreen-20*width))
 }

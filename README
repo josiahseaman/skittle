@@ -47,6 +47,19 @@ Put mysql_pool into /usr/lib/python2.7
 
 #
 
+====================COMPILE C FUNCTIONS====================
+1) Create your .c file
+2) Convert it to an object file `gcc -c -fPIC yourFile.c -o yourFile.o`
+3) Create Shared Library from object file `gcc -shared -Wl,-soname,libYourLib.so.1 -o libYourLib.so.1.0.1 yourFile.o`
+4) import ctypes
+5) yourLib = ctypes.CDLL('/path/to/libYourLib.so.1.0.1')
+6) yourLib.MyFunction()
+
+If the function returns a string do this) returnedString = ctypes.c_char_p(yourLib.MyFunction()); print returnedString.value
+NOTE: Python C Data Types: http://docs.python.org/2/library/ctypes.html#fundamental-data-types
+
+To convert a list to C array) arr = (ctypes.c_int * len(yourlist))(*yourlist)
+
 ====================DATABASE EVOLUTIONS====================   
 DROP DATABASE `SkittleTree`;
 CREATE DATABASE SkittleTree;

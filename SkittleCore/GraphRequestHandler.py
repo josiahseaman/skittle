@@ -7,15 +7,16 @@ import sys
 import png
 from collections import namedtuple
 from time import sleep
+from PngConversionHelper import convertToPng
 
 '''The set of availableGraphs is populated by the individual graph modules who are responsible for 
 registering with the request Handler using the 'registerGraph' function below. '''
 availableGraphs = set()
-GraphDescription = namedtuple('GraphDescription', ['symbol', 'name', 'moduleReference', 'rasterGraph','colorPalletteDependant', 'widthTolerance'])
+GraphDescription = namedtuple('GraphDescription', ['symbol', 'name','moduleReference','rasterGraph','colorPalletteDependant','widthTolerance','isGrayScale'])
 
-def registerGraph(symbol, name, moduleName, rasterGraph = False, colorPalletteDependant = False, widthTolerance=0.15):
+def registerGraph(symbol, name, moduleName, rasterGraph = False, colorPalletteDependant = False, widthTolerance=0.15, isGrayScale=False):
     moduleReference = sys.modules[moduleName]
-    availableGraphs.add(GraphDescription(symbol, name, moduleReference, rasterGraph, colorPalletteDependant, widthTolerance))
+    availableGraphs.add(GraphDescription(symbol, name, moduleReference, rasterGraph, colorPalletteDependant, widthTolerance, isGrayScale))
     
 from SkittleCore.models import RequestPacket, ProcessQueue
 import SkittleCore.FastaFiles as FastaFiles
@@ -27,10 +28,9 @@ import Graphs.OligomerUsage
 import Graphs.SequenceHighlighter
 import Graphs.SimilarityHeatMap
 import Graphs.ThreeMerDetector
-import Graphs.SNPdisplay
+import Graphs.RawFrequencyMap
 import Graphs.RepeatOverview
 from Graphs.SkittleGraphTransforms import countDepth
-from PngConversionHelper import convertToPng
 import DNAStorage.StorageRequestHandler as StorageRequestHandler
 from django.db import transaction
 '''Finally, X = __import__('X') works like import X, with the difference that you 
@@ -70,13 +70,10 @@ def handleRequest(state):
         png = convertToPng(state, pixels, isRasterGraph(state))
         finishProcess(state)
     elif isBeingProcessed(state):
-        print "I'm waiting..."
         sleepTime = 2
         sleep(sleepTime) #This extra sleep command is here to prevent hammering the IsBeingProcessed database
         while isBeingProcessed(state):
-            print "still waiting..."
             sleep(sleepTime)
-        print "WAITING IS DONE!"
         return handleRequest(state)
     print 'Done'
     return png
@@ -112,7 +109,7 @@ def isBeingProcessed(request):
         
     if process:
         #print "We are still processing..."
-        print process[0].Specimen
+#        print process[0].Specimen
         return True
     else:
         #print "Processing is done!"

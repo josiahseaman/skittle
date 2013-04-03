@@ -79,8 +79,11 @@ def randomColor():#only changes one channel right now
     colorT[randomChannel] = randint(0,255)
     return tuple(colorT)
 
-def drawBar(size, filler_size, barColor, rightJustified):
-    filler = [ None ] * max(0,filler_size)
+def drawBar(size, filler_size, barColor, rightJustified, drawBackgroundGray=False):
+    if drawBackgroundGray:
+        filler = [ (51,51,51) ] * max(0,filler_size)
+    else:
+        filler = [ None ] * max(0,filler_size)
     bar = [barColor] * size
     line = []
     if rightJustified :
@@ -91,7 +94,7 @@ def drawBar(size, filler_size, barColor, rightJustified):
         line += filler
     return line   
 
-def drawJustifiedBar(barSizes, colorSeries, max_bar_width ):
+def drawJustifiedBar(barSizes, colorSeries, max_bar_width, drawBackgroundGray=False ):
     assert len(barSizes) == len(colorSeries)
     line = []
     for position in range(len(barSizes)):
@@ -112,7 +115,7 @@ def drawJustifiedBar(barSizes, colorSeries, max_bar_width ):
                 filler_size -= barSizes[position+1] #overflow from the next letter
             
         barColor = colorSeries[position]
-        line += drawBar(size, filler_size, barColor, rightJustified)
+        line += drawBar(size, filler_size, barColor, rightJustified, drawBackgroundGray)
     assert len(line) == max_bar_width * math.ceil( len(barSizes)/2.0), "Result %i shoulld be %i." % (len(line), max_bar_width * math.ceil( len(barSizes)/2.0))
     return line
 

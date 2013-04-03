@@ -8,9 +8,7 @@ from PixelLogic import interpolate, spectrum
 from models import RepeatMapState
 from SkittleCore.models import RequestPacket, chunkSize
 from SkittleCore.GraphRequestHandler import registerGraph
-from DNAStorage.StorageRequestHandler import GetPngFilePath
-from SkittleCore.png import Reader
-from SkittleCore.Graphs.MathLogic import ceil, floor
+from SkittleCore.Graphs.MathLogic import ceil
 import copy
 
 registerGraph('r', "Repeat Overview", __name__, True, False)

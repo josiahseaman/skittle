@@ -61,9 +61,3 @@ def calculateOutputPixels(state, annotationState = AnnotationTrackState()):
     pixels = layoutParallelTracks(state, annotations)
     
     return pixels
-
-if __name__ == '__main__':
-    print 'Annotation Display Test case'
-    state = RequestPacket()
-    annotationState = AnnotationTrackState()  
-    print calculateOutputPixels(state, annotationState)
