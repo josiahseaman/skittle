@@ -3,8 +3,7 @@ Created on Nov 29, 2012
 @author: Josiah Seaman
 '''
 from Utilities.debug import startDebug
-import NucleotideDisplay
-from SkittleGraphTransforms import correlationMap, countDepth, chunkUpList, countNucleotides, normalizeDictionary, countListToColorSpace, pearsonCorrelation, average, composedOfNs
+from SkittleGraphTransforms import  chunkUpList, countNucleotides, normalizeDictionary, countListToColorSpace, pearsonCorrelation, average, composedOfNs
 from models import RepeatMapState
 from SkittleCore.models import RequestPacket, chunkSize
 from SkittleCore.GraphRequestHandler import registerGraph
