@@ -12,7 +12,9 @@ import ctypes
 
 try:
     skittleUtils = ctypes.CDLL('D:/bryan/Documents/Projects/SkittleTree/SkittleCore/Graphs/libSkittleGraphUtils.so.1.0.0')
-except: pass
+    usingCcode = True
+except: 
+    usingCcode = False
 
 def countDepth(listLike):
     count = 0
@@ -205,6 +207,26 @@ def average(values, start = 0, length = -1):
         totalSum += values[index]
     return float(totalSum) / length
 
+'''Slower correlate, but runs on all systems'''
+def pythonCorrelate(x,y):
+    n = len(x)
+    avg_x = average(x)
+    avg_y = average(y)
+    diffprod = 0.0
+    xdiff2 = 0.0
+    ydiff2 = 0.0
+    for idx in range(n):
+        xdiff = float(x[idx]) - avg_x
+        ydiff = float(y[idx]) - avg_y
+        diffprod += xdiff * ydiff
+        xdiff2 += xdiff * xdiff
+        ydiff2 += ydiff * ydiff
+    backup = math.sqrt(1 - (1/n)) #if we have 0 instances of a color it will be / 0  div0
+    if(xdiff2 == 0.0): xdiff2 = backup
+    if(ydiff2 == 0.0): ydiff2 = backup
+    base = math.sqrt(xdiff2 * ydiff2)
+    return diffprod / base
+
 '''Pearson correlation coefficient between signals x and y.'''
 def pearsonCorrelation(x, y):
     assert len(x) == len(y), (len(x) , " vs. " , len(y)) 
@@ -212,13 +234,15 @@ def pearsonCorrelation(x, y):
     assert n > 0, "Array is empty"
     assert isinstance(x[0], Number), x[0]
     
-    arrX = (ctypes.c_double * len(x))(*x)
-    arrY = (ctypes.c_double * len(y))(*y)
-    
-    skittleUtils.Correlate.restype = ctypes.c_double
-    temp = skittleUtils.Correlate(arrX, arrY, n)
-    
-    return temp
+    if usingCcode:
+        arrX = (ctypes.c_double * len(x))(*x)
+        arrY = (ctypes.c_double * len(y))(*y)
+        
+        skittleUtils.Correlate.restype = ctypes.c_double
+        temp = skittleUtils.Correlate(arrX, arrY, n)
+        return temp
+    else:
+        return pythonCorrelate(x,y)
 
 '''Pearson correlation coefficient between signals x and y.
 Thanks to http://stackoverflow.com/users/34935/dfrankow for the definition'''
