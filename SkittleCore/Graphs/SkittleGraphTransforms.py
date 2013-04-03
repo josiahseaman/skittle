@@ -10,8 +10,9 @@ from SkittleCore.models import RequestPacket
 from PixelLogic import colorPalettes
 import ctypes
 
-skittleUtils = ctypes.CDLL('D:/bryan/Documents/Projects/SkittleTree/SkittleCore/Graphs/libSkittleGraphUtils.so.1.0.0')
-
+try:
+    skittleUtils = ctypes.CDLL('D:/bryan/Documents/Projects/SkittleTree/SkittleCore/Graphs/libSkittleGraphUtils.so.1.0.0')
+except: pass
 
 def countDepth(listLike):
     count = 0
