@@ -98,15 +98,16 @@ class RequestPacket(models.Model):
             return
         self.seq = ''
         self.length = len(self.seq)
-        partialSequences = []
-        for chunkStart in range(1, numChunks*chunkSize, chunkSize):
+        partialSequences = [None]*numChunks
+        for index, chunkStart in enumerate(range(1, numChunks*chunkSize, chunkSize)):
             tempState = self.copy()
             tempState.start = chunkStart
-            tempState.scale = 1
-            partialSequences.append(readFile(self))
-            if partialSequences[-1] is None:
-                partialSequences[-1]  = ''
+            partialSequences[index] = readFile(tempState)
+            if partialSequences[index] is None:
+                partialSequences[index]  = ''
         self.seq = ''.join(partialSequences)
+        if self.scale >= 10:
+            print "Done reading files"
 
         
 class StatePacket(RequestPacket): 
