@@ -292,29 +292,6 @@ def slowCorrelate(floatList, beginA, beginB, comparisonLength):
             return 0
     else:
         return None        
-'''Creates a grey scale map of floating point correlation values.  Used by Repeat Map.
-Y axis is each display line of the sequence.  X axis is the frequency space starting at offset 0
-and proceeding to RepeatMapState.F_width.  When used in Repeat Map, ColoredPixels is 
-the color compressed sequence from the Nucleotide Display.'''
-def correlationMap( state, repeatMapState, coloredPixels):
-    assert isinstance(repeatMapState, RepeatMapState)
-    assert isinstance(state, RequestPacket)
-    rgbChannels = zip(*coloredPixels)
-    freq = []
-    for h in range(repeatMapState.height(state, coloredPixels)):
-        freq.append([0.0]*(repeatMapState.F_width+1))
-        offset = h * state.nucleotidesPerLine()
-        for w in range(1, len(freq[h])):#calculate across widths 1:F_width
-            
-            resultSum = 0.0
-            for currentChannel in rgbChannels:
-                correlation = correlate(currentChannel, offset, offset + w + repeatMapState.F_start, state.nucleotidesPerLine())
-                if correlation is not None:
-                    resultSum += correlation
-            resultSum /= 3
-            freq[h][w] = .5 * (1.0 + resultSum)
-    return freq
-          
 
 def countMatches(sequence, beginA, beginB, lineSize):
     matches = 0
