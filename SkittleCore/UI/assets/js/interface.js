@@ -513,5 +513,6 @@ var goToEnd = function() {
 }
 var scaleToFile = function() {
     setStartTo(1)
+    setWidthTo(200)
     setScaleTo(fileLength/(skixelsOnScreen-20*width))
 }
