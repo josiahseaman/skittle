@@ -74,7 +74,7 @@ def handleRequest(state):
         sleepTime = 2
         sleep(sleepTime) #This extra sleep command is here to prevent hammering the IsBeingProcessed database
         while isBeingProcessed(state):
-            print "still waiting..."
+            print "still waiting on...", state.specimen, state.chromosome, state.requestedGraph, state.start
             sleep(sleepTime)
         print "WAITING IS DONE!"
         return handleRequest(state)
@@ -112,7 +112,7 @@ def isBeingProcessed(request):
         
     if process:
         #print "We are still processing..."
-        print process[0].Specimen
+#        print process[0].Specimen
         return True
     else:
         #print "Processing is done!"

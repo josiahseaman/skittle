@@ -99,6 +99,8 @@ def countListToColorSpace(countList, colorPalette):
         return []
     colorMapping = colorPalettes[colorPalette]
     colorContributions = []
+    #$20-25\cdot \space \frac{1}{\sqrt{\left(\frac{x+9}{10}\right)}}$
+#   basePercentage = 20 - (20 * (1 / (sqrt((state.scale + 9)/10.0)))) 
     for character, magnitude in countList.items():#per entry in dictionary
         colorContributions.append(map(lambda c: c * magnitude, colorMapping[character])) #scales color amount by magnitude for each channel
     resultingColor =  map(sum, zip(*colorContributions))
