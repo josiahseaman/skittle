@@ -45,6 +45,22 @@ class RequestPacket(models.Model):
     searchStart = models.IntegerField(default=10)
     searchStop  = models.IntegerField(default=20)
     
+    def copy(self):
+        c = RequestPacket()
+        #copy everything except the sequence
+        c.specimen = self.specimen
+        c.chromosome = self.chromosome
+        c.seq = ''
+        c.colorPalette = self.colorPalette
+        c.width = self.width
+        c.scale = self.scale
+        c.start = self.start
+        c.length = self.length
+        c.requestedGraph = self.requestedGraph
+        c.searchStart = self.searchStart
+        c.searchStop = self.searchStop
+        return c
+        
     def getFastaFilePath(self):
         return StorageRequestHandler.GetFastaFilePath(self.specimen, self.chromosome, self.start)
 
@@ -78,12 +94,20 @@ class RequestPacket(models.Model):
    
     def readFastaChunks(self):
         numChunks = self.scale or 1 
-        if self.seq is not None and len(self.seq) >= numChunks * chunkSize:
+        if self.seq is not None and len(self.seq) >= ((numChunks-1) * chunkSize) + 1: #at least on character in the last chunk
             return
         self.seq = ''
         self.length = len(self.seq)
-        for chunk in range(numChunks):
-            self.readAndAppendNextChunk()
+        partialSequences = []
+        for chunkStart in range(1, numChunks*chunkSize, chunkSize):
+            tempState = self.copy()
+            tempState.start = chunkStart
+            tempState.scale = 1
+            partialSequences.append(readFile(self))
+            if partialSequences[-1] is None:
+                partialSequences[-1]  = ''
+        self.seq = ''.join(partialSequences)
+
         
 class StatePacket(RequestPacket): 
     specimen = 'hg18'
