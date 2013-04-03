@@ -109,7 +109,7 @@ var drawGraphs = function() {
     var chunks = Math.min( Math.ceil(skixelsOnScreen/65536 + 1),(Math.ceil(fileLength/(65536*scale))-Math.floor((start-8*width*scale)/(65536*scale))),Math.ceil(fileLength/(65536*scale)) )
     // for (key in graphStatus) {
     $.each(graphOrder,function(i,key){
-        if (graphStatus[key].visible) {
+        if (graphStatus[key] && graphStatus[key].visible) {
             graphStatus[key].skixelOffset = offset;
             var skixelWidthofGraph = graphStatus[key].skixelWidth = drawGraph(key,offset,chunks);
             skixelWidthofGraph = Math.max(skixelWidthofGraph,toSkixels(minimumWidth))

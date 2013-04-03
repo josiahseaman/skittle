@@ -74,7 +74,7 @@ function mouseDown(e) {
     getMouseLocation(e);
     clearSelectedAnnotation()
 
-    if(graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
+    if(graphStatus["a"] && graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
         if(mx < toPixels(graphStatus["a"].skixelOffset +graphStatus["a"].skixelWidth) && mx > toPixels(graphStatus["a"].skixelOffset) ) {
             var column = calcAnnotationColumn(mx)
             var row = toSkixels(my)
@@ -130,7 +130,7 @@ function mouseDown(e) {
 }
 function mouseMove(e) {
     getMouseLocation(e)
-    if(activeAnnotation==0 && graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
+    if(activeAnnotation==0 && graphStatus["a"] && graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
         if(mx < toPixels(graphStatus["a"].skixelOffset +graphStatus["a"].skixelWidth) && mx > toPixels(graphStatus["a"].skixelOffset) ) {
             var column = calcAnnotationColumn(mx)
             var row = toSkixels(my)
