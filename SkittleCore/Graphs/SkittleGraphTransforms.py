@@ -204,8 +204,7 @@ def average(values, start = 0, length = -1):
         totalSum += values[index]
     return float(totalSum) / length
 
-'''Pearson correlation coefficient between signals x and y.
-Thanks to http://stackoverflow.com/users/34935/dfrankow for the definition'''
+'''Pearson correlation coefficient between signals x and y.'''
 def pearsonCorrelation(x, y):
     assert len(x) == len(y), (len(x) , " vs. " , len(y)) 
     n = len(x)

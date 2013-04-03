@@ -5,7 +5,6 @@ double Correlate(double apples[], double oranges[], int arraySize)
     double valueForN = 0.0;
     double N = arraySize;
     double AVal;
-
     double BVal;
 
     double Asum = 0;
@@ -13,23 +12,15 @@ double Correlate(double apples[], double oranges[], int arraySize)
     double ASquared = 0;  //this is Aij^2
     double BSquared = 0;  //this is Bij^2
     double AB = 0;
-    //this is A[]*B[]
 
     int k;
     for (k = 0; k < arraySize; k++)
     {
         AVal = apples [k];
         BVal = oranges[k];
-        // if(AVal == valueForN || BVal == valueForN)
-        // {
-            // --N;
-        // }
-        // else
-        // {
-            Asum += AVal;                   Bsum += BVal;
-            ASquared += (AVal*AVal);        BSquared += (BVal*BVal);
-            AB += (AVal * BVal);
-        //}
+        Asum += AVal;                   Bsum += BVal;
+        ASquared += (AVal*AVal);        BSquared += (BVal*BVal);
+        AB += (AVal * BVal);
     }
     if( N <= 0)
         return valueForN;//no data to report on
