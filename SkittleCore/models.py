@@ -99,7 +99,7 @@ class RequestPacket(models.Model):
         self.seq = ''
         self.length = len(self.seq)
         partialSequences = [None]*numChunks
-        for index, chunkStart in enumerate(range(1, numChunks*chunkSize, chunkSize)):
+        for index, chunkStart in enumerate(range(self.start, self.start + numChunks*chunkSize, chunkSize)):
             tempState = self.copy()
             tempState.start = chunkStart
             partialSequences[index] = readFile(tempState)

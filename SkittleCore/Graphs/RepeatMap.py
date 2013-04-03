@@ -197,21 +197,10 @@ def calculateOutputPixels(state, repeatMapState = RepeatMapState()):
     if state.nucleotidesPerLine() != skixelsPerSample:
         return squishStoredMaps(state, repeatMapState)
 
-
-#    state.seq = generateRepeatDebugSequence(53, 400, 1)
-    state.readFastaChunks()
+    state.readFastaChunks()#    state.seq = generateRepeatDebugSequence(53, 400, 1)
     scores = logRepeatMap(state, repeatMapState)
     return scores
     
-#    pixels = NucleotideDisplay.calculateOutputPixels(state)
-#    if countDepth(pixels) > 1:
-#        singleLine = []
-#        for x in pixels: #this can't be a list comprehension because we need the += operator instead of .append()
-#            singleLine += x
-#    else:
-#        singleLine = pixels
-#    scores = correlationMap(state, repeatMapState, singleLine) #2D array
-#    return scores
     
     
     
