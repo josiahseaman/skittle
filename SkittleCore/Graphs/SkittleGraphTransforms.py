@@ -4,6 +4,7 @@ Created on Nov 29, 2012
 '''
 #import numpy
 import math
+from math import sqrt
 from numbers import Number
 from models import RepeatMapState, ThreeMerDetectorState
 from SkittleCore.models import RequestPacket
@@ -92,17 +93,23 @@ def reverseComplement(originalSequence):
     return rc
 
 '''Final step for Nucleotide Display that transforms normalized counts into a list of colors'''
-def countListToColorSpace(countList, colorPalette):
+def countListToColorSpace(countList, colorPalette, scale):
     if hasDepth(countList):#this recurses until we're left with a single dictionary
-        return [countListToColorSpace(x, colorPalette) for x in countList if x != []]
+        return [countListToColorSpace(x, colorPalette, scale) for x in countList if x != []]
     if not isinstance( countList, dict):
         return []
     colorMapping = colorPalettes[colorPalette]
     colorContributions = []
-    #$20-25\cdot \space \frac{1}{\sqrt{\left(\frac{x+9}{10}\right)}}$
-#   basePercentage = 20 - (20 * (1 / (sqrt((state.scale + 9)/10.0)))) 
-    for character, magnitude in countList.items():#per entry in dictionary
-        colorContributions.append(map(lambda c: c * magnitude, colorMapping[character])) #scales color amount by magnitude for each channel
+    basePercentage = 20 - (20 * (1 / (sqrt((scale + 9)/10.0)))) 
+    '''basePercentage is the percentage share considered not statistically significant which approaches 20% as scale approaches infinity.
+    This equation was determined by eyeing different graphs on a graphing calculator and looking for one with the desired properties.'''
+    expectedValue = basePercentage / 100.0 #this should work out to be the number of hits that are expected given the scale
+    for key in countList:
+        countList[key] = max(0, countList[key] - expectedValue)
+#    normalizedMax = sum(countList.values())
+    for character, Magnitude in countList.items():#per entry in dictionary
+        multiplier = Magnitude / (1.0-expectedValue)
+        colorContributions.append(map(lambda c: c * multiplier, colorMapping[character])) #scales color amount by magnitude for each channel
     resultingColor =  map(sum, zip(*colorContributions))
     return tuple(resultingColor)
 

@@ -17,7 +17,7 @@ def calculateOutputPixels(state):
         chunks = chunkUpList(state.seq, state.scale)
         counts = countNucleotides(chunks)
         counts = normalizeDictionary(counts)
-        pixels = countListToColorSpace(counts, state.colorPalette)
+        pixels = countListToColorSpace(counts, state.colorPalette, state.scale)
     else:
         pixels = sequenceToColors(state.seq, state.colorPalette)
     return pixels
