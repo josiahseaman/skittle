@@ -42,7 +42,7 @@ case "$1" in
                 list="${list} '$2'"
             done
             
-            delete_cache $list
+            delete_cache "$list"
         else
             delete_cache $2
         fi
