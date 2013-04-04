@@ -32,10 +32,28 @@ case "$1" in
         wipe_all_cache
         ;;
     deletecache)
-        delete_cache $2
+            delete_cache "$var"
+        if [ $# -ge 2 ];
+        then
+            list="$2"
+            
+            while shift && [ -n "$2" ]
+            do
+                list="${list},$2"
+            done
+            
+            delete_cache $list
+        else
+            delete_cache $2
+        fi
         ;;
     help|--help|-h)
-        echo "BLAH BLAH"
+        echo "This script will help you interact with the Skittle Server."
+        echo "Normally you would need to be the www-data user to interact with the files properly, but this script will execute commands as that user for you."
+        echo ""
+        echo "To wipe the whole cache: wipeall"
+        echo "To wipe the cache of a specific graph: deletecache # # # ..."
+        echo ""
         ;;
     *)
         echo "No such command, see $0 help"
