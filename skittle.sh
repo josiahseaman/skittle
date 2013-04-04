@@ -1,7 +1,7 @@
 #!/bin/bash
 
-host=echo `hostname`
-
+host=`hostname`
+echo $host
 if [[ "$host" == *nyx* ]]
 then
     SKITTLE="/var/www/skittle-development"
@@ -23,16 +23,16 @@ wipe_all_cache() {
     as_user "python $SKITTLE/manage.py deletecache all"
 }
 
-deletecache() {
+delete_cache() {
     as_user "python $SKITTLE/manage.py deletecache $1"
 }
 
 case "$1" in
     wipeall)
-        wipe_all_cache()
+        wipe_all_cache
         ;;
     deletecache)
-        wipe_graph($2)
+        delete_cache $2
         ;;
     help|--help|-h)
         echo "BLAH BLAH"
