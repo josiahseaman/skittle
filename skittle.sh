@@ -39,7 +39,7 @@ case "$1" in
             
             while shift && [ -n "$2" ]
             do
-                list="${list} $2"
+                list="${list} '$2'"
             done
             
             delete_cache $list
