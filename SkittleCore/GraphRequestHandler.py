@@ -20,16 +20,6 @@ def registerGraph(symbol, name, moduleName, rasterGraph = False, colorPalletteDe
     
 from SkittleCore.models import RequestPacket, ProcessQueue
 import SkittleCore.FastaFiles as FastaFiles
-import Graphs.AnnotationDisplay
-import Graphs.NucleotideDisplay
-import Graphs.NucleotideBias
-import Graphs.RepeatMap
-import Graphs.OligomerUsage
-import Graphs.SequenceHighlighter
-import Graphs.SimilarityHeatMap
-import Graphs.ThreeMerDetector
-import Graphs.RawFrequencyMap
-import Graphs.RepeatOverview
 from Graphs.SkittleGraphTransforms import countDepth
 import DNAStorage.StorageRequestHandler as StorageRequestHandler
 from django.db import transaction
@@ -65,8 +55,6 @@ def handleRequest(state):
         #TODO: Handle beginProcess and finishProcess possible return of False
         beginProcess(state)
         pixels = calculatePixels(state)
-#        print pixels[:10]
-        print "Saving to width =", state.width
         png = convertToPng(state, pixels, isRasterGraph(state))
         finishProcess(state)
     elif isBeingProcessed(state):
@@ -151,3 +139,14 @@ def generateGraphListForServer():
         graphs[description[0]] = ServerSideGraphDescription(description[1], description[3], description[4], description[5]).__dict__
     return graphs       
     
+'''These are here for the purposes of invoking the registerGraph call at the beginning of every graph definition file'''
+import Graphs.AnnotationDisplay
+import Graphs.NucleotideDisplay
+import Graphs.NucleotideBias
+import Graphs.RepeatMap
+import Graphs.OligomerUsage
+import Graphs.SequenceHighlighter
+import Graphs.SimilarityHeatMap
+import Graphs.ThreeMerDetector
+import Graphs.RawFrequencyMap
+import Graphs.RepeatOverview
