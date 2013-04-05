@@ -100,7 +100,7 @@ def countListToColorSpace(countList, colorPalette, scale):
         return []
     colorMapping = colorPalettes[colorPalette]
     colorContributions = []
-    basePercentage = 20 - (20 * (1 / (sqrt((scale + 9)/10.0)))) 
+    basePercentage = 17 - (17 * (1 / (sqrt((scale + 7)/8.0)))) 
     '''basePercentage is the percentage share considered not statistically significant which approaches 20% as scale approaches infinity.
     This equation was determined by eyeing different graphs on a graphing calculator and looking for one with the desired properties.'''
     expectedValue = basePercentage / 100.0 #this should work out to be the number of hits that are expected given the scale
