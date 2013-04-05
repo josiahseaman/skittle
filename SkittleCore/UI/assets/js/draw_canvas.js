@@ -40,11 +40,17 @@ var init = function() {
         $("#showGraph-" + graphOrder[i]).parent().appendTo("#graphList ul")
     }
 
+    var loopCount = 0
+    var updateURL = true
     var mainLoop = window.setInterval(function(){
         if(isInvalidDisplay) {
             isInvalidDisplay = false
+            loopCount = 0
             drawGraphs();
             updateDials();
+        }
+        if (updateURL && loopCount++ == 100) {
+            window.history.pushState(null,null,getCurrentPageURL())
         }
     },50)
 }
@@ -188,11 +194,6 @@ var drawVerticalGraph = function(graph,offset,chunks) {
         (i == chunks - 1) ? graphHeight = imageObj.height*stretchFactor : graphHeight = Math.ceil(65536/width) // don't stretch last chunk
         // graphHeight = Math.ceil(imageObj.height*stretchFactor)
         b.drawImage(imageObj,offset,vOffset,graphWidth,graphHeight) // render data on hidden canvas
-        // b.beginPath();
-        // b.moveTo(offset,vOffset-0.5)
-        // b.lineTo(offset + graphWidth,vOffset-0.5)
-        // b.strokeStyle = "#f0f"
-        // b.stroke();
     }
     return calculateOffsetWidth(graphWidth)
 }
@@ -261,6 +262,8 @@ var drawAnnotations = function(offset,chunks) {
 var drawNucBias = function(offset,chunks) {
 
     drawPixelStuff['pre'].push(function() { 
+        c.shadowColor   = 'rgba(0, 0, 0, 0)'; // 'cause when repeat overview sets shadow color to (0,0,0,1) it breaks nuc bias
+
         c.beginPath()
         c.rect(offset,0,60,500)
         c.fillStyle="#333";
