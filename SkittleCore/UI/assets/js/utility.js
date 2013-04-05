@@ -8,7 +8,7 @@ var toPixels = function(skixels) {
     return Math.round(skixels*3*zoom);
 }
 var calcSkixelsOnScreen = function() {
-    return skixelsOnScreen = toSkixels($('#canvasContainer').height())*width;
+    return skixelsOnScreen = toSkixels($('#canvasContainer').height())*state.width();
 }
 var calcDeltaFromScrollEvent = function(e) {
 	var delta = 0

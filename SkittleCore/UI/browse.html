@@ -79,26 +79,26 @@
 	</div>
 	<div id="dials">
 		<ul>
-			<li>Width: <span id="widthDisplay" data-fn="UIwidthChange">{{ width }} bp</span>
+			<li>Width: <span id="widthDisplay" data-fn="width">{{ width }} bp</span>
 				<div id="widthBubble" class="popover arrow-bottom-center">
-					<div class="button" onClick="doubleWidth()">x2</div>
-					<div class="button" onClick="halfWidth()">/2</div>
+					<div class="button" onClick="state.width(double)">x2</div>
+					<div class="button" onClick="state.width(half)">/2</div>
 				</div>
 			</li>
-			<li>Scale: <span id="scaleDisplay" data-fn="UIscaleChange">{{ scale }} bp/skixel</span>
+			<li>Scale: <span id="scaleDisplay" data-fn="scale">{{ scale }} bp/skixel</span>
 				<div id="scaleBubble" class="popover arrow-bottom-center">
-					<div class="button" onClick="setScaleTo(1)">1:1</div>
-					<div class="button" onClick="scaleToFile()">Whole File</div>
+					<div class="button" onClick="state.scale(1)">1:1</div>
+					<div class="button" onClick="state.scaleToFile()">Whole File</div>
 				</div>
 			</li>
-			<li>Start Index: <span id="startDisplay" data-fn="UIstartChange">{{ start }}</span>
+			<li>Start Index: <span id="startDisplay" data-fn="start">{{ start }}</span>
 				<div id="startBubble" class="popover arrow-bottom-center">
-					<div class="button" onClick="setStartTo(1)">Top</div>
-					<div class="button" onClick="setStartTo('random')">Random</div>
-					<div class="button" onClick="goToEnd()">End</div>
+					<div class="button" onClick="state.start(1)">Top</div>
+					<div class="button" onClick="state.start(random())">Random</div>
+					<div class="button" onClick="state.goToEnd()">End</div>
 				</div>
 			</li>
-			<li>End Index: <span id="endDisplay" data-fn="UIendChange">23865</span></li>
+			<li>End Index: <span id="endDisplay" data-fn="end">23865</span></li>
 		</ul>
 	</div>
 
@@ -141,12 +141,12 @@
     specimen = "{{ specimen }}"
     chromosome = "{{ chromosome }}"
     colorPalette = "{{ colorPalette }}"
-    start = {{ start }};
-    width = {{ width }};
-    scale = {{ scale }};
     zoom  = {{ zoom }};
     fileLength = {{ fileLength }};
-    skixelsOnScreen = toSkixels($('#canvasContainer').height())*width;
+    skixelsOnScreen = toSkixels($('#canvasContainer').height())*state.width();
+    state.start({{ start }});
+    state.width({{ width }});
+    state.scale({{ scale }});
     selectionStart = {{ selectionStart }}
     selectionEnd = {{ selectionEnd }}
     var annotationSelectedStart,annotationSelectedEnd,activeAnnotation = 0
