@@ -13,7 +13,6 @@ registerGraph('f', "Raw Frequency Map", __name__, False, isGrayScale=True)
 
 def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
     assert isinstance(state, RequestPacket)
-    state.scale = 1 #these calculations are only meaningful at scale 1
     
     state.readFastaChunks()#read in next chunk
     scores = oldRepeatMap(state, threeMerState)
