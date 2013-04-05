@@ -8,6 +8,7 @@ import png
 from collections import namedtuple
 from time import sleep
 from PngConversionHelper import convertToPng
+from models import chunkSize
 
 '''The set of availableGraphs is populated by the individual graph modules who are responsible for 
 registering with the request Handler using the 'registerGraph' function below. '''
@@ -43,9 +44,18 @@ def calculatePixels(state):
         results = graphModule.calculateOutputPixels(state)
     return results
 
+def roundStartPosition(state):
+    if (state.start -1) % chunkSize == 0:
+        return
+    if (state.start) % chunkSize == 0:
+        state.start += 1
+        return
+    state.start = int(state.start / chunkSize) * chunkSize +1
+
 '''The main entry point for the whole Python logic SkittleCore module and Graphs.'''
 def handleRequest(state):
     assert isinstance(state, RequestPacket)
+    roundStartPosition(state)
     #Check to see if PNG exists
     png = None
     if state.requestedGraph not in ['h', ]:
