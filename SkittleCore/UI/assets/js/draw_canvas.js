@@ -281,6 +281,20 @@ var drawNucBias = function(offset,chunks) {
         c.lineWidth = 0.33333
         c.stroke()
         c.beginPath()
+        c.moveTo(offset+5.16161,0)
+        c.lineTo(offset+5.16161,500)
+        c.moveTo(offset+10.16161,0)
+        c.lineTo(offset+10.16161,500)
+        c.moveTo(offset+30.16161,0)
+        c.lineTo(offset+30.16161,500)
+        c.moveTo(offset+50.16161,0)
+        c.lineTo(offset+50.16161,500)
+        c.moveTo(offset+55.16161,0)
+        c.lineTo(offset+55.16161,500)
+        c.strokeStyle = '#555'
+        c.lineWidth = 0.33333
+        c.stroke()
+        c.beginPath()
         c.moveTo(offset+20,0)
         c.lineTo(offset+20,500)
         c.moveTo(offset+40,0)
