@@ -76,10 +76,10 @@ var imageRequestor = function(graph,chunkOffset) {
     return imageObj[graph][chunkOffset]
 }
 var graphURL = function(graph,chunkOffset) {
-    var startTopOfScreen = (start-8*width*scale) >  0 ? (start-8*width*scale) : 1
-    var startChunk = ( ( Math.floor(startTopOfScreen/(65536*scale) ) + chunkOffset )*65536*scale + 1 );
-    var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + scale;
-    if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + expRound(width,graphStatus[graph].widthTolerance)
+    var startTopOfScreen = (state.start()-8*state.bpPerLine()) >  0 ? (state.start()-8*state.bpPerLine()) : 1
+    var startChunk = ( ( Math.floor(startTopOfScreen/(65536*state.scale()) ) + chunkOffset )*65536*state.scale() + 1 );
+    var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + state.scale();
+    if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + expRound(state.width(),graphStatus[graph].widthTolerance)
     if (graph == 'h') graphPath += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd
     if (graphStatus[graph].colorPaletteSensitive) graphPath += "&colorPalette="+colorPalette
     return graphPath
@@ -112,7 +112,7 @@ var drawGraphs = function() {
     drawPixelStuff = {'pre':[],'post':[]};
     b.clearRect(0,0,1024,1000)
     var offset = xOffset + gutterWidth
-    var chunks = Math.min( Math.ceil(skixelsOnScreen/65536 + 1),(Math.ceil(fileLength/(65536*scale))-Math.floor((start-8*width*scale)/(65536*scale))),Math.ceil(fileLength/(65536*scale)) )
+    var chunks = Math.min( Math.ceil(skixelsOnScreen/65536 + 1),(Math.ceil(fileLength/(65536*state.scale()))-Math.floor((state.start()-8*state.bpPerLine())/(65536*state.scale()))),Math.ceil(fileLength/(65536*state.scale())) )
     // for (key in graphStatus) {
     $.each(graphOrder,function(i,key){
         if (graphStatus[key] && graphStatus[key].visible) {
@@ -161,17 +161,17 @@ var drawRasterGraph = function(graph,offset,chunks) {
 
     var imageData = a.getImageData(0, 0, 1024, chunks*64);
     var data = imageData.data;
-    var newImageData = b.createImageData(width,toSkixels(1000)) //create new image data with desired dimentions (width)
+    var newImageData = b.createImageData(state.width(),toSkixels(1000)) //create new image data with desired dimentions (width)
     var newData = newImageData.data;
 
     var fadePercent = 1
     if (annotationSelectedStart > 0) {
         fadePercent = 0.35
     }
-    var chunkStartOffset = Math.max( Math.floor((start/scale-width*8)/(65536) ), 0 )*65536
-    var startOffset = ( Math.round(start/scale) - 1 - width*8 - chunkStartOffset )*4;
-    var selectedStart = (((annotationSelectedStart-1)/scale) - chunkStartOffset)*4;
-    var selectedEnd = (((annotationSelectedEnd-1)/scale) - chunkStartOffset)*4;
+    var chunkStartOffset = Math.max( Math.floor((state.start()/state.scale()-state.width()*8)/(65536) ), 0 )*65536
+    var startOffset = ( Math.round(state.start()/state.scale()) - 1 - state.width()*8 - chunkStartOffset )*4;
+    var selectedStart = (((annotationSelectedStart-1)/state.scale()) - chunkStartOffset)*4;
+    var selectedEnd = (((annotationSelectedEnd-1)/state.scale()) - chunkStartOffset)*4;
     for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
         var y = x + startOffset
         newData[x] = data[y] || 0;
@@ -181,17 +181,17 @@ var drawRasterGraph = function(graph,offset,chunks) {
     }
     b.putImageData(newImageData, offset, 0);
 
-    return calculateOffsetWidth(width)
+    return calculateOffsetWidth(state.width())
 }
 var drawVerticalGraph = function(graph,offset,chunks) {
     var graphWidth = 0, graphHeight = 0;
-    var stretchFactor = expRound(width,graphStatus[graph].widthTolerance)/width 
+    var stretchFactor = expRound(state.width(),graphStatus[graph].widthTolerance)/state.width() 
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor(graph,i)
         if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
         else var graphWidth = imageObj.width
-        var vOffset = -Math.round(((Math.round(start/scale)-8*width)%(65536))/(width) - i*(65536/width));
-        (i == chunks - 1) ? graphHeight = imageObj.height*stretchFactor : graphHeight = Math.ceil(65536/width) // don't stretch last chunk
+        var vOffset = -Math.round(((Math.round(state.start()/state.scale())-8*state.width())%(65536))/(state.width()) - i*(65536/state.width()));
+        (i == chunks - 1) ? graphHeight = imageObj.height*stretchFactor : graphHeight = Math.ceil(65536/state.width()) // don't stretch last chunk
         // graphHeight = Math.ceil(imageObj.height*stretchFactor)
         b.drawImage(imageObj,offset,vOffset,graphWidth,graphHeight) // render data on hidden canvas
     }
@@ -203,16 +203,16 @@ var drawAnnotations = function(offset,chunks) {
 
 
     for (var i = 0; i < chunks; i++) {
-        annotationRequestor((Math.floor(start/65536)+i)*65536+1)
+        annotationRequestor((Math.floor(state.start()/65536)+i)*65536+1)
     };
 
     visibleAnnotations = []
     
     $.each(annotations,function(i,annotation){ 
             annotation["End"] = annotation["End"] || annotation["Start"]
-            if (   (annotation["Start"] < ( start + (skixelsOnScreen + 37*width - 1)*scale ) && annotation["End"] > ( start + (skixelsOnScreen + 37*width - 1)*scale ) )
-                || (annotation["Start"] < (start - 8*width*scale) && annotation["End"] > (start - 8*width*scale) )
-                || (annotation["Start"] > (start - 8*width*scale) && annotation["End"] < ( start + (skixelsOnScreen + 37*width - 1)*scale ) ) ) {
+            if (   (annotation["Start"] < ( state.start() + (skixelsOnScreen + 37*state.width() - 1)*state.scale() ) && annotation["End"] > ( state.start() + (skixelsOnScreen + 37*state.width() - 1)*state.scale() ) )
+                || (annotation["Start"] < (state.start() - 8*state.bpPerLine()) && annotation["End"] > (state.start() - 8*state.bpPerLine()) )
+                || (annotation["Start"] > (state.start() - 8*state.bpPerLine()) && annotation["End"] < ( state.start() + (skixelsOnScreen + 37*state.width() - 1)*state.scale() ) ) ) {
                     // annotation[0] = annotation[0] || i
                     visibleAnnotations.push(i)
             }
@@ -221,8 +221,8 @@ var drawAnnotations = function(offset,chunks) {
 
     $.each(visibleAnnotations,function(i,v){
         var currentColumn = 0
-        var startRow = Math.floor((annotations[v]["Start"]-start)/(width*scale)+8)
-        var rowHeight = Math.ceil((annotations[v]["End"]-annotations[v]["Start"])/(width*scale))
+        var startRow = Math.floor((annotations[v]["Start"]-state.start())/(state.bpPerLine())+8)
+        var rowHeight = Math.ceil((annotations[v]["End"]-annotations[v]["Start"])/(state.bpPerLine()))
 
         for (currentColumn=0;currentColumn<=columnFilledTilRow.length;currentColumn++) {
             if (!columnFilledTilRow[currentColumn] || startRow > columnFilledTilRow[currentColumn]) {
@@ -297,7 +297,7 @@ var drawRMap = function(offset,chunks) {
     var offsetWidth = drawVerticalGraph("m",offset,chunks)
     
     drawPixelStuff['post'].push(function() { 
-        bpPerLine = width*scale
+        bpPerLine = state.bpPerLine()
         if ( bpPerLine >= 1 && bpPerLine < 26000 ) { //draw the red lines
             var cumulativeWidth = 0, megaColumn=0, subColumn=0;
 
@@ -310,7 +310,7 @@ var drawRMap = function(offset,chunks) {
                 } 
             }
             var widthPosition = offset + 11 + megaColumn*12+subColumn -(cumulativeWidth-bpPerLine+12)/Math.pow(2,megaColumn)
-            // var widthPosition = offset + 17.315*Math.log(width*scale) - 42.85 - Math.min(0.9,(width*scale)/36);
+            // var widthPosition = offset + 17.315*Math.log(state.bpPerLine()) - 42.85 - Math.min(0.9,(state.bpPerLine())/36);
             widthPosition = Math.round(widthPosition*3)/3
             c.beginPath();
             c.moveTo(widthPosition-0.18181818,0)
@@ -327,8 +327,8 @@ var drawRMap = function(offset,chunks) {
 var drawSimHeat = function(offset,chunks) {
     a.clearRect(0,0,350,10000)
     var displayWidth = 300
-    var stretchFactor = expRound(width,graphStatus['s'].widthTolerance)/width
-    var lineHeight = Math.round(65536/width) //Math.round((Math.round(width/10)*10)/width*Math.ceil(65536/width));
+    var stretchFactor = expRound(state.width(),graphStatus['s'].widthTolerance)/state.width()
+    var lineHeight = Math.round(65536/state.width()) //Math.round((Math.round(state.width()/10)*10)/state.width()*Math.ceil(65536/state.width()));
     var displayWidth = Math.round(stretchFactor*displayWidth)
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor("s",i)
@@ -346,11 +346,11 @@ var drawSimHeat = function(offset,chunks) {
     var newData = newImageData.data;
 
     var lineLength = displayWidth*4;
-    var bpPerLine = width*scale
-    var offsetStart = start - bpPerLine*8
+    var bpPerLine = state.bpPerLine()
+    var offsetStart = state.start() - bpPerLine*8
     var linesFromTop = offsetStart/bpPerLine
-    var chunksFromTop = Math.max(Math.floor(offsetStart/(scale*65536)),0)
-    var bpFromLastChunk = offsetStart - chunksFromTop*(65536*scale)
+    var chunksFromTop = Math.max(Math.floor(offsetStart/(state.scale()*65536)),0)
+    var bpFromLastChunk = offsetStart - chunksFromTop*(65536*state.scale())
     var linesFromLastChunk = Math.floor(bpFromLastChunk/bpPerLine)
     var startOffset = linesFromLastChunk*lineLength
 
@@ -371,7 +371,7 @@ var drawSimHeat = function(offset,chunks) {
     }
 
     b.putImageData(newImageData, offset, 0);
-        var vOffset = -Math.round(((start-8*width)%65536)/(width*scale));
+        var vOffset = -Math.round(((state.start()-8*state.width())%65536)/(state.bpPerLine()));
         // b.putImageData(imageData, offset+320, vOffset);
     return calculateOffsetWidth(displayWidth)
     
