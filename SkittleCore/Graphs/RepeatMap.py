@@ -6,7 +6,7 @@ from Utilities.debug import startDebug
 from SkittleGraphTransforms import  chunkUpList, countNucleotides, normalizeDictionary, countListToColorSpace, pearsonCorrelation, average, composedOfNs
 from models import RepeatMapState
 from SkittleCore.models import RequestPacket, chunkSize
-from SkittleCore.GraphRequestHandler import registerGraph
+from SkittleCore.GraphRequestHandler import registerGraph, handleRequest
 import math
 from random import choice
 from DNAStorage.StorageRequestHandler import GetPngFilePath, GetFastaFilePath
@@ -45,9 +45,9 @@ def sequenceCount(seq, start, scale, end ):
     counts = countNucleotides(chunks)
     return counts
 
-def colorizeSequence(counts):
+def colorizeSequence(counts, scale):
     counts = normalizeDictionary(counts)
-    pixels = countListToColorSpace(counts, 'Classic')
+    pixels = countListToColorSpace(counts, 'Classic', scale)
     return pixels
 
 def addDictionaries(jim, larry):
@@ -111,7 +111,7 @@ def logRepeatMap(state, repeatMapState):
             except:
                 scaledSequence = starterSequence + [sequenceCount(state.seq, necessaryStart, scale, end)]
             oldScaledSequence = scaledSequence
-            scaledSequence = colorizeSequence(scaledSequence)
+            scaledSequence = colorizeSequence(scaledSequence, scale)
 
 #            scaledSequence = colorizeSequence(sequenceCount(state.seq, start, scale, end))
 
@@ -163,14 +163,17 @@ def getBaseRepeatMapData(state, repeatMapState = RepeatMapState()):
     fullData = []
     for s in range(state.scale):
         filepath = GetPngFilePath(tempState)
-        if filepath:
-            decoder = Reader(filename=filepath)
-            fullData += list(decoder.asFloat(1.0)[2])
-        else:
+        if not filepath:
             if GetFastaFilePath(tempState.specimen, tempState.chromosome, tempState.start) is not None:
-                data = calculateOutputPixels(tempState, repeatMapState)
-                convertToPng(tempState, data )#store the newly created data to file
-                fullData += data
+                handleRequest(tempState) #disregard the png data returned here since I'd rather read the file consistently
+                filepath = GetPngFilePath(tempState)
+        if not filepath:
+            msg = "The request was for an invalid fasta file:" + tempState.specimen+ tempState.chromosome+ str(tempState.start)
+            open("errors.log",'a').write(msg)
+            raise IOError(msg)
+        decoder = Reader(filename=filepath)
+        fullData += list(decoder.asFloat(1.0)[2])
+        
         tempState.start += chunkSize
     return fullData 
     
@@ -186,7 +189,6 @@ def squishStoredMaps(state, repeatMapState = RepeatMapState()):
         sample = zip(*fullData[startLine:stopLine])
         finalLine = [average(x) for x in sample]
         newData.append(finalLine)
-    print "Repeat Map: scale", state.scale, "length", len(newData)
     return newData
 
 def calculateOutputPixels(state, repeatMapState = RepeatMapState()):
