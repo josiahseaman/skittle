@@ -16,7 +16,6 @@ def checkForGreyscale(state):
 def convertToPng(state, pixels, isRaster = False):
     targetWidth = 1024
     greyscale = checkForGreyscale(state)
-    print "GreyScale: ", greyscale
     f = tempfile.mktemp()
     #open up tempFile
     f = open(f, 'wb')

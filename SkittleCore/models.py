@@ -116,7 +116,6 @@ class StatePacket(RequestPacket):
     width =  200
     scale = 1
     start = 1
-#    length = 65536
     requestedGraph = 'n'
     
 class ProcessQueue(models.Model):
