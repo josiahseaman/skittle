@@ -10,7 +10,10 @@ from SkittleGraphTransforms import sensitiveTestForSpecificFrequency, normalize,
 from models import ThreeMerDetectorState
 from MathLogic import lowPassFilter
 
-registerGraph('t', "Threemer Detector", __name__, False, helpText='Threemer detector was designed to detect the weak 3 periodicity signature associated with codons inside protein coding regions.  It is much more sensitive than Repeat Map, but only detects a single periodicity.  Exon annotations are generally marked by a 3-mer spike.  Strong 3-mer signals outside of exon annotation that are not simple repeats merit further research.')
+registerGraph('t', "Threemer Detector", __name__, False, helpText='''Threemer detector was designed to detect the 
+weak 3 periodicity signature associated with codons inside protein coding regions.  It is much more sensitive than 
+Repeat Map, but only detects a single periodicity. Exon annotations are generally marked by a 3-mer spike. 
+Strong 3-mer signals outside of exon annotation that are not simple repeats merit further research.''')
 
 def testInformation(state, threemer_scores):
     threemer_scores.sort()
