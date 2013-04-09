@@ -8,7 +8,10 @@ from SkittleGraphTransforms import oldRepeatMap
 from models import ThreeMerDetectorState
 
 
-registerGraph('f', "Raw Frequency Map", __name__, False, isGrayScale=True)
+registerGraph('f', "Raw Frequency Map", __name__, False, isGrayScale=True, helpText='''This graph is the raw data used to calculate
+the Threemer Detector graph. The x-axis of Frequency Map represents offsets +1 to +60. The grey value of each pixel is the 
+number of matching characters in the line compared with the sequence shifted to the offset.  Threemer patterns show up as faint
+dark-dark-light dark-dark-light pixel patterns. These patterns are often associated with exons. ''')
 
 
 def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
