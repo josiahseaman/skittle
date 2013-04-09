@@ -160,3 +160,4 @@ import Graphs.SimilarityHeatMap
 import Graphs.ThreeMerDetector
 import Graphs.RawFrequencyMap
 import Graphs.RepeatOverview
+import Graphs.MoireGraph
