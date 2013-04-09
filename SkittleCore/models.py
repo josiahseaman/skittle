@@ -80,7 +80,7 @@ class RequestPacket(models.Model):
         startBackup = self.start
         if not self.seq: 
             self.seq = '' #ensure that seq is at least a string object
-        self.start = self.start + self.length # jump to the end of the current sequence  (+ chunkSize)
+        self.start = self.start + len(self.seq) # jump to the end of the current sequence  (+ chunkSize)
         
         #print "Requesting",self.specimen, self.chromosome, self.start 
         sequence = readFile(self)# see if there's a file that begins where you end, this will stop on a partial file
@@ -108,6 +108,7 @@ class RequestPacket(models.Model):
         self.seq = ''.join(partialSequences)
         if self.scale >= 10:
             print "Done reading files"
+        self.length = len(self.seq)
 
         
 class StatePacket(RequestPacket): 
