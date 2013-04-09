@@ -297,7 +297,7 @@ function mouseWheelDials(e) {
 
 var helpGraph = function(graph) {
     graphStatus[graph].help = true;
-    if (graphHelpContents[graph]) $('#graphLabel-'+graph+" .graphHelp").html(graphHelpContents[graph])
+    if (graphStatus[graph] && graphStatus[graph].helpText) $('#graphLabel-'+graph+" .graphHelp").html(graphStatus[graph].helpText)
     $('#graphLabel-'+graph+" .graphHelp").addClass('active');
     isInvalidDisplay = true;
 }
