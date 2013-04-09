@@ -8,7 +8,7 @@ from PixelLogic import randomColor, blankColor
 from SkittleCore.GraphRequestHandler import registerGraph
 from models import AnnotationDisplayState
 
-registerGraph('a',"Annotation Display", __name__, False)
+registerGraph('a',"Annotation Display", __name__, False, helpText='Annotation Display is linked to an annotation file with start and stop positions for tracks.  It aligns these start and stop positions along with the rest of the graphs, expanding to accommodate overlapping annotations as necessary.  The user can select individual annotations and see the full text associated with that annotation.')
 
 class Annotation():
     def getStartingLine(self, state):

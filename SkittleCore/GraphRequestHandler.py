@@ -13,11 +13,11 @@ from models import chunkSize
 '''The set of availableGraphs is populated by the individual graph modules who are responsible for 
 registering with the request Handler using the 'registerGraph' function below. '''
 availableGraphs = set()
-GraphDescription = namedtuple('GraphDescription', ['symbol', 'name','moduleReference','rasterGraph','colorPalletteDependant','widthTolerance','isGrayScale'])
+GraphDescription = namedtuple('GraphDescription', ['symbol', 'name','moduleReference','rasterGraph','colorPalletteDependant','widthTolerance','isGrayScale','helpText'])
 
-def registerGraph(symbol, name, moduleName, rasterGraph = False, colorPalletteDependant = False, widthTolerance=0.15, isGrayScale=False):
+def registerGraph(symbol, name, moduleName, rasterGraph = False, colorPalletteDependant = False, widthTolerance=0.15, isGrayScale=False, helpText=None):
     moduleReference = sys.modules[moduleName]
-    availableGraphs.add(GraphDescription(symbol, name, moduleReference, rasterGraph, colorPalletteDependant, widthTolerance, isGrayScale))
+    availableGraphs.add(GraphDescription(symbol, name, moduleReference, rasterGraph, colorPalletteDependant, widthTolerance, isGrayScale, helpText))
     
 from SkittleCore.models import RequestPacket, ProcessQueue
 import SkittleCore.FastaFiles as FastaFiles
@@ -136,17 +136,18 @@ def finishProcess(request):
     else:
         return False
 
-class ServerSideGraphDescription():
-    def __init__(self, Name, IsRaster, colorSensitive, widthTolerance):
+class ServerSideGraphDescription():#TODO: I think this could be replaced with a dictionary
+    def __init__(self, Name, IsRaster, colorSensitive, widthTolerance, helpText):
         self.name = Name
         self.rasterGraph = IsRaster
         self.colorPaletteSensitive = colorSensitive
         self.widthTolerance = widthTolerance
+        self.helpText = helpText
     
 def generateGraphListForServer():
     graphs = {}
     for description in availableGraphs:
-        graphs[description[0]] = ServerSideGraphDescription(description[1], description[3], description[4], description[5]).__dict__
+        graphs[description[0]] = ServerSideGraphDescription(description[1], description[3], description[4], description[5], description[7]).__dict__
     return graphs       
     
 '''These are here for the purposes of invoking the registerGraph call at the beginning of every graph definition file'''

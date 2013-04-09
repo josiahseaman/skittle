@@ -9,7 +9,7 @@ from SkittleGraphTransforms import chunkUpList, countNucleotides,\
     normalizeDictionary, generateExhaustiveOligomerList, oligCountToColorSpace
 from SkittleCore.GraphRequestHandler import registerGraph
 
-registerGraph('o', "Oligomer Usage", __name__, False, isGrayScale=True)
+registerGraph('o', "Oligomer Usage", __name__, False, isGrayScale=True, helpText='Each row is one display line equal to width.  Each column matches one oligomer of fixed size, arranged in alphabetical order (i.e. AA, AC, AG...).  The brightness of the pixel indicates how often that oligomer occurred compared to all the others.')
 
 def calculateOutputPixels(state, oligState = OligomerUsageState()):
     assert isinstance(state, RequestPacket)

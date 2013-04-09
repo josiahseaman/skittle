@@ -14,7 +14,7 @@ from SkittleCore.png import Reader
 from SkittleCore.PngConversionHelper import convertToPng
 import copy
 
-registerGraph('m', "Repeat Map", __name__, False, False, 0.4, isGrayScale=True)
+registerGraph('m', "Repeat Map", __name__, False, False, 0.4, isGrayScale=True, helpText='Repeat Map is used for identifying tandem repeats without the need for continually adjusting the width in Nucleotide Display.  It identifies periodicity of repeated sequences by checking all possible offsets and scoring 0-100% similarity displayed in grayscale.  The x-axis of the graph represents periodicity, starting at offset 1 on the left and increasing geometrically to offset 6,144 on the right.  This growth curve means that Repeat Map can accurately detect 2bp periodicities simultaneously with segmental duplications.  Vertical white lines show regions that contain tandem repeats.  Most of the graph will be 25-30% gray from random chance.  Black spots are created when two regions with opposite biases are compared as in the case of a CG repeat being compared with an AT repeat region.')
 '''
 These are the functions that are specific to the use of RepeatMap and not generally applicable.  
 These functions use RepeatMapState to emulate an object with state.

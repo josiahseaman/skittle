@@ -13,7 +13,7 @@ from PixelLogic import twoSidedSpectrumColoring
 import copy
 import math
 
-registerGraph('s', "Similarity Heatmap", __name__, False, False, 0.4)
+registerGraph('s', "Similarity Heatmap", __name__, False, False, 0.4, helpText='This graph is a heatmap that shows how similar each row is to every other row on the screen.  Red represents positive correlation, blue is negative, with black being neutral.  The red blue spectrum is normalized to account for baseline correlation from genome wide patterns.  The structure of a heatmap is diagonally symmetrical.  The upper right half is mirrored in the bottom left half.  The diagonal red line is self compared with self.  Each pixel represents a comparison between two other lines.  To see which rows are involved in a comparison trace one line straight down and another line to the left.  Where the lines intersect the diagonal indicates the rows being compared.  The Similarity Heatmap is useful to visualize the blocks of similar code found in the genome, such as large tandem repeats, and isochores at all scales.  The patterns in Similarity Heatmap correlate strongly with those generated from Hi-C experiments to map chromosome territories.')
 
 def prettyPrint(heatMap):
     for line in heatMap:

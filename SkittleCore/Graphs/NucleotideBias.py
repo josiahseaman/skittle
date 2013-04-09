@@ -7,7 +7,7 @@ from SkittleGraphTransforms import *
 from PixelLogic import *
 from SkittleCore.GraphRequestHandler import registerGraph
 
-registerGraph('b', "Nucleotide Bias", __name__, False, True, 0.05)
+registerGraph('b', "Nucleotide Bias", __name__, False, True, 0.05, helpText='This bar graph shows how often each nucleotide occurs per line.  It uses the same color palette as Nucleotide Display.')
 max_bar_width = 20
 
 def calculateBiasBarSizes(state):
