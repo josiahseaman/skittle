@@ -11,7 +11,10 @@ from SkittleCore.GraphRequestHandler import registerGraph
 from SkittleCore.Graphs.MathLogic import ceil
 import copy
 
-registerGraph('r', "Repeat Overview", __name__, True, False)
+registerGraph('r', "Repeat Overview", __name__, True, False, helpText='''Repeat Overview is a color based overview of the Repeat Map.
+Each pixel in the overview is built from one full line of Repeat Map at width 24.  It looks for the maximum score anywhere on a Repeat Map line.
+The brightness of the pixel represents the highest score.  Dark areas of the overview mean there are no repeats.  The color in bright areas
+represents the length (frequency) of a tandem repeat that is detected.''')
 
 def findMaxScore(line):
     valueToBeat = 0.0

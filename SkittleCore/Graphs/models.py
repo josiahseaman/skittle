@@ -63,7 +63,7 @@ class SimilarityHeatMapState(OligomerUsageState):
     useRowColumnCorrelation = False
 
 class ThreeMerDetectorState(ParentState):
-    barWidth = models.IntegerField(default=20)    #used for display size calculations
+    barWidth = models.IntegerField(default=40)    #used for display size calculations
     samples = models.IntegerField(default=20)
     
     def height(self, state, seq):

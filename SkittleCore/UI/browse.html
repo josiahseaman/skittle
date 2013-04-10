@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block pageTitle %}{{ specimen }} WebSkittle Mockup{% endblock %}
+{% block pageTitle %}{{ specimen }} | DNASkittle{% endblock %}
 {% block styles %}
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/popover.css">
@@ -79,26 +79,26 @@
 	</div>
 	<div id="dials">
 		<ul>
-			<li>Width: <span id="widthDisplay" data-fn="UIwidthChange">{{ width }} bp</span>
+			<li>Width: <span id="widthDisplay" data-fn="width">{{ width }} bp</span>
 				<div id="widthBubble" class="popover arrow-bottom-center">
-					<div class="button" onClick="doubleWidth()">x2</div>
-					<div class="button" onClick="halfWidth()">/2</div>
+					<div class="button" onClick="state.width(double)">x2</div>
+					<div class="button" onClick="state.width(half)">/2</div>
 				</div>
 			</li>
-			<li>Scale: <span id="scaleDisplay" data-fn="UIscaleChange">{{ scale }} bp/skixel</span>
+			<li>Scale: <span id="scaleDisplay" data-fn="scale">{{ scale }} bp/skixel</span>
 				<div id="scaleBubble" class="popover arrow-bottom-center">
-					<div class="button" onClick="setScaleTo(1)">1:1</div>
-					<div class="button" onClick="scaleToFile()">Whole File</div>
+					<div class="button" onClick="state.scale(1)">1:1</div>
+					<div class="button" onClick="state.scaleToFile()">Whole File</div>
 				</div>
 			</li>
-			<li>Start Index: <span id="startDisplay" data-fn="UIstartChange">{{ start }}</span>
+			<li>Start Index: <span id="startDisplay" data-fn="start">{{ start }}</span>
 				<div id="startBubble" class="popover arrow-bottom-center">
-					<div class="button" onClick="setStartTo(1)">Top</div>
-					<div class="button" onClick="setStartTo('random')">Random</div>
-					<div class="button" onClick="goToEnd()">End</div>
+					<div class="button" onClick="state.start(1)">Top</div>
+					<div class="button" onClick="state.start(random())">Random</div>
+					<div class="button" onClick="state.goToEnd()">End</div>
 				</div>
 			</li>
-			<li>End Index: <span id="endDisplay" data-fn="UIendChange">23865</span></li>
+			<li>End Index: <span id="endDisplay" data-fn="end">23865</span></li>
 		</ul>
 	</div>
 
@@ -141,12 +141,12 @@
     specimen = "{{ specimen }}"
     chromosome = "{{ chromosome }}"
     colorPalette = "{{ colorPalette }}"
-    start = {{ start }};
-    width = {{ width }};
-    scale = {{ scale }};
     zoom  = {{ zoom }};
     fileLength = {{ fileLength }};
-    skixelsOnScreen = toSkixels($('#canvasContainer').height())*width;
+    skixelsOnScreen = toSkixels($('#canvasContainer').height())*state.width();
+    state.start({{ start }});
+    state.width({{ width }});
+    state.scale({{ scale }});
     selectionStart = {{ selectionStart }}
     selectionEnd = {{ selectionEnd }}
     var annotationSelectedStart,annotationSelectedEnd,activeAnnotation = 0
@@ -160,16 +160,7 @@
 	var annotations = {}
 	var visibleAnnotations = {}
 	var helpLabel = $('<li class="helpLabel">Graph Information<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeHelpButton"></li>')
-	var graphHelpContents = {
-		'a':'Annotation Display is linked to an annotation file with start and stop positions for tracks.  It aligns these start and stop positions along with the rest of the graphs, expanding to accommodate overlapping annotations as necessary.  The user can select individual annotations and see the full text associated with that annotation.',
-		'n':'The four nucleotides of DNA are represented by four colors.  The pixels are arranged across the screen like text, reading from left to right, the jumping to the beginning of the next line when it reaches the width.  If width is set at a multiple of a tandem repeat, the repeat will appear as vertical bars.', 
-		'b':'This bar graph shows how often each nucleotide occurs per line.  It uses the same color palette as Nucleotide Display.',
-		's':'Use the “Select” tool and click on a line you would like to search for.  You can either click on Nucleotide Display or Sequence Highlighter to pick a sequence.  Given a search sequence, the Highlighter checks every start position on the screen.  The grayscale pixels are start positions that didn’t make the cut.  Light pixels are near misses.  When the Highlighter finds another sequence that is at least 70% the same, it highlights each of the matching nucleotides in bright green. ',
-		'm':'Repeat Map is used for identifying tandem repeats without the need for continually adjusting the width in Nucleotide Display.  It identifies periodicity of repeated sequences by checking all possible offsets and scoring 0-100% similarity displayed in grayscale.  The x-axis of the graph represents periodicity, starting at offset 1 on the left and increasing geometrically to offset 6,144 on the right.  This growth curve means that Repeat Map can accurately detect 2bp periodicities simultaneously with segmental duplications.  Vertical white lines show regions that contain tandem repeats.  Most of the graph will be 25-30% gray from random chance.  Black spots are created when two regions with opposite biases are compared as in the case of a CG repeat being compared with an AT repeat region.',
-		'o':'Each row is one display line equal to width.  Each column matches one oligomer of fixed size, arranged in alphabetical order (i.e. AA, AC, AG...).  The brightness of the pixel indicates how often that oligomer occurred compared to all the others.',
-		'h':'This graph is a heatmap that shows how similar each row is to every other row on the screen.  Red represents positive correlation, blue is negative, with black being neutral.  The red blue spectrum is normalized to account for baseline correlation from genome wide patterns.  The structure of a heatmap is diagonally symmetrical.  The upper right half is mirrored in the bottom left half.  The diagonal red line is self compared with self.  Each pixel represents a comparison between two other lines.  To see which rows are involved in a comparison trace one line straight down and another line to the left.  Where the lines intersect the diagonal indicates the rows being compared.  The Similarity Heatmap is useful to visualize the blocks of similar code found in the genome, such as large tandem repeats, and isochores at all scales.  The patterns in Similarity Heatmap correlate strongly with those generated from Hi-C experiments to map chromosome territories.',
-		't':'Threemer detector was designed to detect the weak 3 periodicity signature associated with codons inside protein coding regions.  It is much more sensitive than Repeat Map, but only detects a single periodicity.  Exon annotations are generally marked by a 3-mer spike.  Strong 3-mer signals outside of exon annotation that are not simple repeats merit further research.'
-	}
+
 
     imageUnrendered = new Image()
     imageUnrendered.src = "{{STATIC_URL}}gfx/checkers.png"

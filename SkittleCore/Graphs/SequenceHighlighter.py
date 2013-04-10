@@ -10,7 +10,13 @@ import SkittleCore.FastaFiles as FastaFiles
 import copy
 from SkittleCore.GraphRequestHandler import registerGraph
 
-registerGraph('h', "Sequence Highlighter", __name__, True)
+registerGraph('h', "Sequence Highlighter", __name__, True, helpText='''Use the Select Tool and click on a line you would like to search for. 
+ You can either click on Nucleotide Display or Sequence Highlighter to pick a sequence.  
+ Given a search sequence, the Highlighter checks every start position on the screen.  
+ The grayscale pixels are start positions that didn't make the cut.  
+ Light pixels are near misses.  
+ When the Highlighter finds another sequence that is at least 70\% the same, 
+ it highlights each of the matching nucleotides in bright green.''')
 
 def measureSequenceMatches(state, sequenceEntry):
     assert isinstance(sequenceEntry, SequenceEntry)

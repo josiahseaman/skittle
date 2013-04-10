@@ -6,7 +6,7 @@ from Utilities.debug import startDebug
 from SkittleGraphTransforms import  chunkUpList, countNucleotides, normalizeDictionary, countListToColorSpace, pearsonCorrelation, average, composedOfNs
 from models import RepeatMapState
 from SkittleCore.models import RequestPacket, chunkSize
-from SkittleCore.GraphRequestHandler import registerGraph
+from SkittleCore.GraphRequestHandler import registerGraph, handleRequest
 import math
 from random import choice
 from DNAStorage.StorageRequestHandler import GetPngFilePath, GetFastaFilePath
@@ -14,11 +14,16 @@ from SkittleCore.png import Reader
 from SkittleCore.PngConversionHelper import convertToPng
 import copy
 
-registerGraph('m', "Repeat Map", __name__, False, False, 0.4, isGrayScale=True)
-'''
-These are the functions that are specific to the use of RepeatMap and not generally applicable.  
-These functions use RepeatMapState to emulate an object with state.
-'''
+registerGraph('m', "Repeat Map", __name__, False, False, 0.4, isGrayScale=True, helpText='''Repeat Map is used for identifying tandem repeats without
+ the need for continually adjusting the width in Nucleotide Display.  
+ It identifies periodicity of repeated sequences by checking all possible offsets scored by Pearson Correlation displayed in grayscale.  
+ The x-axis of the graph represents periodicity, starting at offset 1 on the left and increasing geometrically to offset 6,144 on the right.  
+ This growth curve means that Repeat Map can accurately detect 2bp periodicities simultaneously with segmental duplications.  
+ Vertical white lines show regions that contain tandem repeats.  Most of the graph will be 25-30% gray from random chance.  
+ Black spots are created when two regions with opposite biases are compared as in the case of a CG repeat being compared with an AT repeat region.''')
+
+'''These are the functions that are specific to the use of RepeatMap and not generally applicable.  
+These functions use RepeatMapState to emulate an object with state.'''
 skixelsPerSample = 24
 
 def generateRepeatDebugSequence(maxFrequency, bpPerFrequency, startFrequency = 1):
@@ -45,9 +50,9 @@ def sequenceCount(seq, start, scale, end ):
     counts = countNucleotides(chunks)
     return counts
 
-def colorizeSequence(counts):
+def colorizeSequence(counts, scale):
     counts = normalizeDictionary(counts)
-    pixels = countListToColorSpace(counts, 'Classic')
+    pixels = countListToColorSpace(counts, 'Classic', scale)
     return pixels
 
 def addDictionaries(jim, larry):
@@ -111,7 +116,7 @@ def logRepeatMap(state, repeatMapState):
             except:
                 scaledSequence = starterSequence + [sequenceCount(state.seq, necessaryStart, scale, end)]
             oldScaledSequence = scaledSequence
-            scaledSequence = colorizeSequence(scaledSequence)
+            scaledSequence = colorizeSequence(scaledSequence, scale)
 
 #            scaledSequence = colorizeSequence(sequenceCount(state.seq, start, scale, end))
 
@@ -163,14 +168,17 @@ def getBaseRepeatMapData(state, repeatMapState = RepeatMapState()):
     fullData = []
     for s in range(state.scale):
         filepath = GetPngFilePath(tempState)
-        if filepath:
-            decoder = Reader(filename=filepath)
-            fullData += list(decoder.asFloat(1.0)[2])
-        else:
+        if not filepath:
             if GetFastaFilePath(tempState.specimen, tempState.chromosome, tempState.start) is not None:
-                data = calculateOutputPixels(tempState, repeatMapState)
-                convertToPng(tempState, data )#store the newly created data to file
-                fullData += data
+                handleRequest(tempState) #disregard the png data returned here since I'd rather read the file consistently
+                filepath = GetPngFilePath(tempState)
+        if not filepath:
+            msg = "The request was for an invalid fasta file:" + tempState.specimen+ tempState.chromosome+ str(tempState.start)
+            open("errors.log",'a').write(msg)
+            raise IOError(msg)
+        decoder = Reader(filename=filepath)
+        fullData += list(decoder.asFloat(1.0)[2])
+        
         tempState.start += chunkSize
     return fullData 
     
@@ -186,7 +194,6 @@ def squishStoredMaps(state, repeatMapState = RepeatMapState()):
         sample = zip(*fullData[startLine:stopLine])
         finalLine = [average(x) for x in sample]
         newData.append(finalLine)
-    print "Repeat Map: scale", state.scale, "length", len(newData)
     return newData
 
 def calculateOutputPixels(state, repeatMapState = RepeatMapState()):

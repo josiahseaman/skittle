@@ -1,6 +1,9 @@
 Number.prototype.mod = function(n) {
 	return ((this%n)+n)%n;
 }
+var round = function(val,precision) {
+	return Math.round(val/precision)*precision;
+}
 var toSkixels = function(pixels) {
     return Math.round(pixels/(3*zoom));
 }
@@ -8,7 +11,7 @@ var toPixels = function(skixels) {
     return Math.round(skixels*3*zoom);
 }
 var calcSkixelsOnScreen = function() {
-    return skixelsOnScreen = toSkixels($('#canvasContainer').height())*width;
+    return skixelsOnScreen = toSkixels($('#canvasContainer').height())*state.width();
 }
 var calcDeltaFromScrollEvent = function(e) {
 	var delta = 0

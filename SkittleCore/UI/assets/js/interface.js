@@ -6,35 +6,35 @@ var keyListener = function(e) {
            e = window.event;
         }
         if(e.keyCode==37){ //left arrow
-            changeWidthBy(-1)
+            state.width(by(-1))
         }
         if(e.keyCode==39){ //right arrow
-            changeWidthBy(1)
+            state.width(by(1))
         }
         if(e.keyCode==38){ //up arrow
             e.preventDefault()
-            changeStartByLines(-10)
+            state.start(by(lines(-10)))
         }
         if(e.keyCode==40){ //down arrow
             e.preventDefault() //don't scroll the page
-            changeStartByLines(10)
+            state.start(by(lines(10)))
         }
         if(e.keyCode==191){ // /(slash)
             e.preventDefault() /
-            halfWidth()
+            state.width(half)
         }
         if(e.keyCode==88 || e.keyCode==190) { // x or .
             e.preventDefault() 
-            doubleWidth()
+            state.width(double)
         }
         if(e.keyCode==219){ // [
             e.preventDefault() 
-            setStartTo(1);
+            state.start(1);
         }
 
         if(e.keyCode==221){ // ]
             e.preventDefault() 
-            goToEnd()
+            state.goToEnd()
         }
 
     }
@@ -101,7 +101,7 @@ function mouseDown(e) {
     }
     if(activeTool == "Move") {
         if (graphStatus["n"].visible) {
-            var leftSideOfClickZone = toPixels(graphStatus["n"].skixelOffset + width)
+            var leftSideOfClickZone = toPixels(graphStatus["n"].skixelOffset + state.width())
                 if (mx > leftSideOfClickZone && mx < (leftSideOfClickZone + toPixels(gutterWidth)) ) { //change width
                     dragWidth = true
                     edgeOffset = mx - leftSideOfClickZone
@@ -112,16 +112,16 @@ function mouseDown(e) {
     //else { // scroll
         isDrag = true;
         topOffset = my;
-        startOffset = start;
+        startOffset = state.start();
         leftOffset = mx;
         sideOffset = xOffset
         this.style.cursor = 'move'
     //}
     }
     else if (activeTool == "Select") {
-        var x = Math.max(0,Math.min(width,(toSkixels(mx)-graphStatus["n"].skixelOffset+1)))
-        selectionStart = start + (toSkixels(my-25))*width*scale + x*scale
-        selectionEnd = selectionStart + width*scale - 1;
+        var x = Math.max(0,Math.min(state.width(),(toSkixels(mx)-graphStatus["n"].skixelOffset+1)))
+        selectionStart = state.start() + (toSkixels(my-25))*state.bpPerLine() + x*state.scale()
+        selectionEnd = selectionStart + state.bpPerLine() - 1;
         console.log('selection start:' + selectionStart + " selection end:" + selectionEnd)
         showGraph('h');
         if (graphStatus['h'].visible) isInvalidDisplay = true
@@ -153,7 +153,7 @@ function mouseMove(e) {
     }
     if(activeTool == "Move") {
         if (graphStatus["n"].visible) { //dragging width only applies to Nuc Display
-            var leftSideOfClickZone = toPixels(graphStatus["n"].skixelOffset + width)
+            var leftSideOfClickZone = toPixels(graphStatus["n"].skixelOffset + state.width())
 
             // var widthInPixels = toPixels(width)
                 if (dragWidth){
@@ -161,7 +161,7 @@ function mouseMove(e) {
                         mouseUp(e)
                         return;
                     }
-                    setWidthTo( toSkixels(mx - edgeOffset) - graphStatus["n"].skixelOffset )
+                    state.width( toSkixels(mx - edgeOffset) - graphStatus["n"].skixelOffset )
                     this.style.cursor = 'col-resize'
                 }
                 else if(mx > leftSideOfClickZone && mx < (leftSideOfClickZone + toPixels(gutterWidth)) ) {
@@ -174,7 +174,7 @@ function mouseMove(e) {
 
         if (isDrag) {
 
-            setStartTo( toSkixels(topOffset-my) * width*scale + startOffset )
+            state.start( toSkixels(topOffset-my) * state.bpPerLine() + startOffset )
             if(!dragWidth) {
                 setXoffsetTo(sideOffset - toSkixels(leftOffset-mx))
                 this.style.cursor = 'move'
@@ -194,7 +194,7 @@ function mouseWheel(e) {
     var delta = calcDeltaFromScrollEvent(event)
 
     if (delta > 0.05 || delta < -0.05) {
-        changeStartByLines(Math.round(-delta*10));
+        state.start(by(lines(-delta*10)));
     }
 }
 function mouseWheelDials(e) {
@@ -203,9 +203,9 @@ function mouseWheelDials(e) {
 
     if (delta > 0.05 || delta < -0.05) {
         switch($(this).children('span').attr('id')) {
-            case "widthDisplay": changeWidthBy(Math.round(-delta*10)); return;
-            case "scaleDisplay": changeScaleBy(Math.round(-delta*5)); return;
-            default: changeStartBy(Math.round(-delta*10)*scale); return;
+            case "widthDisplay": state.width(by(-delta*10)); return;
+            case "scaleDisplay": state.scale(by(-delta*5)); return;
+            default: state.start(by(-delta*10*state.scale())); return;
         }
     }
 }
@@ -284,11 +284,11 @@ function mouseWheelDials(e) {
         var inputBox = $('<input type="text">');
         $(this).parent().append(inputBox.css('position','absolute').offset(offset).val($(this).html()));
         inputBox.select();
-        // inputBox.val().split(' ')[0].select();
         inputBox.blur(function() {
-            if(typeof window[targetFunction] != 'undefined' && window[targetFunction] instanceof Function) {
-                window[targetFunction](this.value)
+            if(typeof state[targetFunction] != 'undefined' && state[targetFunction] instanceof Function) {
+                state[targetFunction](this.value)
             } 
+            updateDials();
             $(this).remove();
         })
     })
@@ -297,7 +297,7 @@ function mouseWheelDials(e) {
 
 var helpGraph = function(graph) {
     graphStatus[graph].help = true;
-    if (graphHelpContents[graph]) $('#graphLabel-'+graph+" .graphHelp").html(graphHelpContents[graph])
+    if (graphStatus[graph] && graphStatus[graph].helpText) $('#graphLabel-'+graph+" .graphHelp").html(graphStatus[graph].helpText)
     $('#graphLabel-'+graph+" .graphHelp").addClass('active');
     isInvalidDisplay = true;
 }
@@ -313,7 +313,7 @@ var getCurrentPageURL = function(fullURL) {
         if (graphStatus[key].visible == true) graphString += key;
     }
     var baseURL = (window.location.origin) ? window.location.origin : window.location.protocol + window.location.host;
-    var currentURL = window.location.pathname + "?graphs=" + graphString + "&start=" + start + "&scale=" + scale + "&width=" + width 
+    var currentURL = window.location.pathname + "?graphs=" + graphString + "&start=" + state.start() + "&scale=" + state.scale() + "&width=" + state.width() 
     if (graphStatus['h'].visible) currentURL += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd;
     if (colorPalette !="Classic") graphPath += "&colorPalette="+colorPalette
     return fullURL ? baseURL + currentURL : currentURL;
@@ -330,13 +330,13 @@ var showAnnotationDetail = function (annotation) {
     if( annotation.startRow < 100 && rowsBelowSelection < 100 ) {
         popup.addClass('arrow-left-top') 
         popup.css({ 'top':'30px',
-                    'left': toPixels(graphStatus['n'].skixelOffset+width+12)+'px'
+                    'left': toPixels(graphStatus['n'].skixelOffset+state.width()+12)+'px'
                     })
     } 
     else if( annotation.startRow > rowsBelowSelection ) {
         popup.addClass('arrow-bottom-center') 
         popup.css({ 'bottom':($('#canvasContainer').height()-toPixels(Math.ceil(annotation.startRow))+16)+'px',
-                    'left':(toPixels(graphStatus['n'].skixelOffset+width/2)-150)+'px'
+                    'left':(toPixels(graphStatus['n'].skixelOffset+state.width()/2)-150)+'px'
                     })
     } 
     else if (annotation.startRow < 0) {
@@ -344,11 +344,11 @@ var showAnnotationDetail = function (annotation) {
     else {
         popup.addClass('arrow-top-center')
         popup.css({ 'top':toPixels(Math.ceil(annotation.startRow)+annotation.rowHeight+6.3)+'px',
-                    'left':(toPixels(graphStatus['n'].skixelOffset+width/2)-150)+'px'
+                    'left':(toPixels(graphStatus['n'].skixelOffset+state.width()/2)-150)+'px'
                     })
     }
-    if(annotation["End"]-annotation["Start"] < width*scale && annotation["Start"]-start > 0) { //if selection is smaller than width
-        popup.css({ 'left':(toPixels(graphStatus['n'].skixelOffset+((annotation["Start"]-start)/scale)%width)-150)+'px'})
+    if(annotation["End"]-annotation["Start"] < state.bpPerLine() && annotation["Start"]-state.start() > 0) { //if selection is smaller than width
+        popup.css({ 'left':(toPixels(graphStatus['n'].skixelOffset+((annotation["Start"]-state.start())/state.scale())%state.width())-150)+'px'})
     }
 
     $('#canvasContainer').append(popup)
@@ -387,59 +387,24 @@ var updateDials = function() {
     // window.history.replaceState(null,null,getCurrentPageURL())
 }
 
-
-
-var UIwidthChange = function(newWidth) {
-    if (newWidth.match(/(\d+)/)) { // check if this is really just a number
-        setWidthTo(newWidth.match(/(\d+)/)[0]);
-    }
-    else {
-        console.log('Width input is not a valid number')
-    }
-}
 var updateWidth = function() {
-    $('#widthDisplay').text(width + " skixels")
+    $('#widthDisplay').text(state.width() + " skixels")
     updateEnd();
-}
-var UIscaleChange = function(newScale) {
-    if (newScale.match(/(\d+)/)) { // check if this is really just a number
-        setScaleTo(newScale.match(/(\d+)/)[0])
-    }
-    else {
-        console.log('Scale input is not a valid number')
-    }
 }
 var updateScale = function() {
-    $('#scaleDisplay').text(scale + " bp/skixel")
+    $('#scaleDisplay').text(state.scale() + " bp/skixel")
     updateEnd();
-}
-var UIstartChange = function(newStart) {
-    if (newStart.match(/(\d+)/)) { // check if this is really just a number
-        setStartTo(newStart.match(/(\d+)/)[0])
-    }
-    else {
-        console.log('Start index input is not a valid number')
-    }
 }
 var updateStart = function() {
-    $('#startDisplay').text(start)
+    $('#startDisplay').text(state.start())
     updateEnd();
 }
-var UIendChange = function(newEnd) {
-    if (newEnd.match(/(\d+)/)) { // check if this is really just a number
-        setStartTo(newEnd.match(/(\d+)/)[0] - ( skixelsOnScreen - (25+37)*width - 1 )*scale)
-    }
-    else {
-        console.log('End index input is not a valid number')
-    }
-}
 var updateEnd = function() {
-    newEnd = Math.round( start + (skixelsOnScreen - (25+37)*width - 1)*scale )
+    newEnd = Math.round( state.start() + (skixelsOnScreen - (25+37)*state.width() - 1)*state.scale() )
     if (newEnd > fileLength) $('#endDisplay').text(fileLength);
     else $('#endDisplay').text(newEnd)
 }
 
-// setters and setter utilities
 var setXoffsetTo = function(newX) {
     newX = Math.round(newX)
     if (newX > 0) {
@@ -450,69 +415,55 @@ var setXoffsetTo = function(newX) {
     $('#graph-labels').css('margin-left', toPixels(newX) + "px")
 }
 
-var setStartTo = function(newStart) {
-    if (newStart == "random") {
-        newStart = Math.round(Math.random()*fileLength)
+
+var getterSetter = (function(){ //don't work in the global scope
+    var process_validation = function(validation_params){
+        if (validation_params) return function(val){ // do magjiks
+            if (validation_params.filter && typeof val == 'string') val = val.match(validation_params.filter)[0]
+            val = Math.round(val);
+            if (validation_params.min) val = Math.max(val,validation_params.min);// || Math.max(val,validation_params.min())
+            if (typeof validation_params.max == 'number') val = Math.min(val,validation_params.max)
+            else if (typeof validation_params.max == 'function') val = Math.min(val,validation_params.max())
+            return val;
+        }
+        return function(val){ return val; } //don't do any magic
     }
-    if (newStart < 1) {
-        if (start ==1) return;
-        start = 1;
+    var getterSetter = function(validation_params){
+        var _val = (validation_params && validation_params.defaultVal) || undefined;
+        var process = process_validation(validation_params);
+        return function(val){
+            if (val === undefined) return _val;
+
+            if (typeof val == 'function'){ val = val(_val); }
+            val = process(val);
+
+            isInvalidDisplay = true;
+            calcSkixelsOnScreen();
+
+            return _val = val || _val;
+        }
     }
-    else if (newStart > fileLength/2 && newStart > (fileLength - (skixelsOnScreen - (25+37)*width)*scale/2)) {
-        start = fileLength - (skixelsOnScreen - (25+37)*width)*scale/2 + 1;
-    }
-    else {
-        start = Math.round(newStart); // don't allow non-integer starts
-    }
-    isInvalidDisplay = true;
+    return getterSetter;
+})();
+
+var StateObject = function() {}
+state = new StateObject();
+StateObject.prototype.width = getterSetter({defaultVal:100, filter:/(\d+)/, min:1, max:1024})
+StateObject.prototype.start = getterSetter({defaultVal:1, filter:/(\d+)/, min:1, max:function(){return fileLength - (skixelsOnScreen - (25+37)*state.width())*state.scale()/2 + 1}})
+StateObject.prototype.scale = getterSetter({defaultVal:1, filter:/(\d+)/, min:1, max:5000})
+StateObject.prototype.end = function(a){ return state.start(a.match(/(\d+)/)[0] - ( skixelsOnScreen - (25+37)*state.width() - 1 )*state.scale())}
+StateObject.prototype.bpPerLine = function(){ return this.width() * this.scale()}
+StateObject.prototype.goToEnd = function(){ return this.start(fileLength); }
+StateObject.prototype.scaleToFile = function(){ 
+    this.start(1);
+    this.width(200);
+    calcSkixelsOnScreen()
+    var newScale = fileLength/(skixelsOnScreen-20*this.width())
+    return newScale < 50 ? this.scale(newScale) : this.scale(round(newScale,50));
 }
-var setWidthTo = function(newWidth) {
-    if (newWidth < 1) {
-        width = 1;
-    }
-    else if (newWidth >1024) {
-        width = 1024;
-    }
-    else {
-        width = Math.round(newWidth); // don't allow non-integer widths
-    }
-    calcSkixelsOnScreen();
-    isInvalidDisplay = true;
-}
-var setScaleTo = function(newScale) {
-    if(newScale <1) {
-        if (scale==1) return;
-        scale = 1;
-    }
-    else if (newScale > 5000) scale = 5000;
-    else scale = Math.round(newScale)
-        
-    calcSkixelsOnScreen();
-    isInvalidDisplay = true;
-}
-var changeWidthBy = function(delta) {
-    setWidthTo(width + delta)
-}
-var doubleWidth = function() {
-    setWidthTo(width*2)
-}
-var halfWidth = function() {
-    setWidthTo(Math.round(width/2))
-}
-var changeScaleBy = function(delta) {
-    setScaleTo(scale + delta)
-}
-var changeStartBy = function(delta) {
-    setStartTo(start + delta)
-}
-var changeStartByLines = function(deltaLines) {
-    setStartTo(start + deltaLines*width*scale)
-}
-var goToEnd = function() {
-    setStartTo(fileLength)
-}
-var scaleToFile = function() {
-    setStartTo(1)
-    setWidthTo(200)
-    setScaleTo(fileLength/(skixelsOnScreen-20*width))
-}
+var double = function(a){ return a * 2; }
+var half = function(a){ return a / 2; }
+var lines = function(a){ return a * state.bpPerLine(); }
+var by = function(d){ return function(a){ return a + d; }}
+var random = function(a){ return Math.random()*fileLength;}
+
