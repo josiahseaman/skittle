@@ -454,7 +454,13 @@ StateObject.prototype.scale = getterSetter({defaultVal:1, filter:/(\d+)/, min:1,
 StateObject.prototype.end = function(a){ return state.start(a.match(/(\d+)/)[0] - ( skixelsOnScreen - (25+37)*state.width() - 1 )*state.scale())}
 StateObject.prototype.bpPerLine = function(){ return this.width() * this.scale()}
 StateObject.prototype.goToEnd = function(){ return this.start(fileLength); }
-StateObject.prototype.scaleToFile = function(){ this.start(1);this.width(200);return this.scale(fileLength/(skixelsOnScreen-20*this.width())) }
+StateObject.prototype.scaleToFile = function(){ 
+    this.start(1);
+    this.width(200);
+    calcSkixelsOnScreen()
+    var newScale = fileLength/(skixelsOnScreen-20*this.width())
+    return newScale < 50 ? this.scale(newScale) : this.scale(round(newScale,50));
+}
 var double = function(a){ return a * 2; }
 var half = function(a){ return a / 2; }
 var lines = function(a){ return a * state.bpPerLine(); }

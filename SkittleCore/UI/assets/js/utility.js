@@ -1,6 +1,9 @@
 Number.prototype.mod = function(n) {
 	return ((this%n)+n)%n;
 }
+var round = function(val,precision) {
+	return Math.round(val/precision)*precision;
+}
 var toSkixels = function(pixels) {
     return Math.round(pixels/(3*zoom));
 }
