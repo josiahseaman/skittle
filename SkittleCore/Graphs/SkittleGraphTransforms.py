@@ -331,25 +331,6 @@ to find the 3-periodicity bias found in most protein coding sequences.'''
 def sensitiveTestForSpecificFrequency(floatList, frequency = 3, numberOfSamples = 20.0):
     if hasDepth(floatList):
         return map(lambda x: sensitiveTestForSpecificFrequency(x, frequency, numberOfSamples), floatList)
-    reach = numberOfSamples * frequency
-    mask = [] #float
-    for i in range(reach+1):#create mask:
-        if (i % frequency == 0):
-            mask.append(1.0)
-        else:
-            mask.append(-1 * (1/float(frequency-1)))
-    mask[0] = 0.0
-    triplets = [None] * numberOfSamples
-    for x in range(len(triplets) ):#start at index 1 because repeatMap at offset 0 is undefined
-            triplets[x] = (mask[x*3+1] * floatList[x*3+1]) + (mask[x*3+2] * floatList[x*3+2]) + (mask[x*3+3] * floatList[x*3+3]) 
-#            score += min(0.3, mask[x] * floatList[x]) #the amount that any position can affect is capped because of tandem repeats with 100% similarity
-    triplets.sort()
-    return triplets[numberOfSamples/2] * numberOfSamples/4
-
-
-def sensitiveTestForSpecificFrequency2(floatList, frequency = 3, numberOfSamples = 20.0):
-    if hasDepth(floatList):
-        return map(lambda x: sensitiveTestForSpecificFrequency(x, frequency, numberOfSamples), floatList)
     assert isinstance(frequency, int), "Please use an integer offset frequency."
     reach = numberOfSamples * frequency
     mask = [] #float
@@ -359,14 +340,10 @@ def sensitiveTestForSpecificFrequency2(floatList, frequency = 3, numberOfSamples
         else:
             mask.append(-1 * (1/float(frequency-1)))
     mask[0] = 0.0
-#    assert sum(mask) == 0.0
-#    assert len(mask) == len(floatList) 
-#    assert len(mask) == 61
     score = 0.0
     for x in range(1, len(mask) ):#start at index 1 because repeatMap at offset 0 is undefined
         if floatList[x] is not None:
             score += (mask[x] * floatList[x]) #/ float(numberOfSamples)
-#            score += min(0.3, mask[x] * floatList[x]) #the amount that any position can affect is capped because of tandem repeats with 100% similarity
     return score
 
 if __name__ == '__main__':
