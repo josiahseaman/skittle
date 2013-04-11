@@ -23,6 +23,9 @@ make && make install
 
 sudo make-ssl-cert generate-default-snakeoil --force-overwrite
 
+Don't forget to edit the /etc/logrotate.d/apache2 file so it saves logs as 665 root www-data
+Also check file chain /var/log/apache2 to make sure that www-data can get in a rw
+
 ====================PHP COMPILE SETTINGS====================
 ./configure --enable-bcmath --enable-calendar --enable-dba --enable-exif --enable-ftp --enable-mbstring --enable-shmop --enable-sigchild --enable-soap --enable-sockets --enable-sqlite-utf8 --enable-sysvmsg --enable-wddx --enable-zip --with-apxs2=/etc/apache2/bin/apxs --with-bz2 --with-config-file-path=/etc/apache2/conf --with-curl --with-gd --with-gettext --with-mcrypt --with-mysql --with-mysqli --with-openssl --with-pdo-mysql --with-pdo-pgsql --with-pgsql --with-xmlrpc --with-zlib
 make && make test && make install
