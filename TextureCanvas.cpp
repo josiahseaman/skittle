@@ -139,9 +139,7 @@ void TextureCanvas::display()
 }
 
 void TextureCanvas::drawTextureSquare()//draws from canvas
-{	
-    int max_size;
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_size);
+{
     glPushMatrix();
     //glTranslated(-1.0, 0.0, 0);
     for(unsigned int x =0; x < canvas.size(); ++x)

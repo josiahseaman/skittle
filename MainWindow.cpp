@@ -495,9 +495,6 @@ void MainWindow::writeSettings()
 
 void MainWindow::helpDialog()
 {
-    /*QMessageBox help(this);
-    help.setText("Up to date help information can be found at http://dnaskittle.com/faq.");
-    help.exec();*/
 
     QMessageBox mb(this);
 
@@ -506,10 +503,10 @@ void MainWindow::helpDialog()
     mb.setText(QString(
                    "<h3>About Skittle</h3>"
                    "<p>Skittle is an Open Source program for browsing genome sequences.</p>"
-                   "<p>Up to date help information is available online at "
-                   "<a href=\"http://dnaskittle.com/faq/\">http://DNASkittle.com/faq/</a> </p>"
+                   "<p>You can get help directly from the creator of Skittle at "
+                   "<a href=\"mailto:josiah@dnaskittle.com\">Josiah@DNASkittle.com</a> </p>"
                    "<p>For those new to the program, there is a tutorial at "
-                   "<a href=\"http://dnaskittle.com/getting-started/\">http://DNASkittle.com/getting-started/</a>"
+                   "<a href=\"http://genomeskittle.org/tutorials/\">http://genomeskittle.org/tutorials/</a>"
                    " that walks through the basic tools of Skittle and some real world"
                    " genome patterns that can be identified with Skittle.</p>"
                    ));
