@@ -28,5 +28,3 @@ QTGL.framework
 #7. After building the project, you can statically link for distribution with:
 
 macdeployqt SkittleToo.app -dmg
-
-Please look into mac branch
