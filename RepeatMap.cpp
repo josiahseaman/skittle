@@ -252,8 +252,8 @@ vector<float> RepeatMap::convolution_3mer()
 {
     int reach = 20 * 3;
     vector<float> mask;
-    for(int i = 0; i < reach; ++i)//create mask
-    {
+    for(int i = 0; i < reach+1; ++i)//create mask
+    {/*reach +1 is important to get the last multiple at +6- offset, otherwise the mask does not truly sum to 0 */
         if(i % 3 == 0)
             mask.push_back(1.0);
         else
@@ -263,7 +263,7 @@ vector<float> RepeatMap::convolution_3mer()
     for(int y = 0; y < (int)freq.size(); ++y)
     {
         float lineScore = 0.0;
-        for(int x = 0; x < (int)mask.size() && x < (int)freq[y].size(); ++x)
+        for(int x = 1; x < (int)mask.size() && x < (int)freq[y].size(); ++x)//we start at 1 to skip self vs. self comparison
         {
             lineScore += mask[x] * freq[y][x];
             //            lineScore += min((float)0.5, mask[x] * freq[y][x]);//the amount that any position can affect is capped because of tandem repeats with 100% similarity
