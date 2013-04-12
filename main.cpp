@@ -4,8 +4,12 @@
 #include <stdio.h>
 //#include <windows.h>
 #include "MainWindow.h"
-
 using std::string;
+
+/** GLOBAL VARIABLES **/
+bool global_usingTextures = true;
+//bool global_debugMode = false;
+
 
 bool checkForSkittleTemp()
 {

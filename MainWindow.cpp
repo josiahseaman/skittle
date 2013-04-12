@@ -263,6 +263,7 @@ void MainWindow::createMenus()
     toolActionGroup->addAction(addAnnotationAction);
 
     colorSettingsMenu = menuBar()->addMenu("Color &Settings");
+
     colorGroup = new QActionGroup( this );
     QSignalMapper* signalMapper = new QSignalMapper(this);
     connect(signalMapper, SIGNAL(mapped(int)), this, SIGNAL(colorSelected(int)));
@@ -275,6 +276,11 @@ void MainWindow::createMenus()
     createColorPalleteAction(QString("DRuMS"), UiVariables::DRUMS, QIcon(":/icons/drums.png"), colorGroup, signalMapper );
     createColorPalleteAction(QString("Blues"), UiVariables::BLUES, QIcon(":/icons/blues.png"), colorGroup, signalMapper );
     createColorPalleteAction(QString("Reds"), UiVariables::REDS, QIcon(":/icons/reds.png"), colorGroup, signalMapper );
+
+    textureToggleAction = new QAction(QString("Fix: I just see a White Box"), this );
+    textureToggleAction->setCheckable(true);
+    textureToggleAction->setChecked(false);
+    colorSettingsMenu->addAction(textureToggleAction);
 
     QMenu* helpMenu = menuBar()->addMenu("&Help");
     helpMenu->addAction(helpAction);
@@ -387,6 +393,7 @@ void MainWindow::createStatusBar()
 }
 void MainWindow::createUiConnections()
 {	/******Internal UI Logic*********/
+    connect(textureToggleAction, SIGNAL(triggered(bool)), this, SLOT(setGlobalTexture(bool)));
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
     connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
     connect(helpAction, SIGNAL(triggered()), this, SLOT(helpDialog()));
@@ -490,6 +497,7 @@ void MainWindow::writeSettings()
     settings.setValue("geometry", saveGeometry());
     settings.setValue("state", saveState());
     settings.setValue("nucleotideColors", ui->getColorSetting() );
+    //TODO: write out texture checkbox textureToggleAction
     settings.endGroup();
 }
 
@@ -541,6 +549,18 @@ void MainWindow::helpDialog()
 #endif
     mb.exec();
 }
+
+void MainWindow::setGlobalTexture(bool checked)
+{
+    extern int global_usingTextures;
+    global_usingTextures = !checked;
+    if (checked)
+        print("Using driver independent drawing.");
+    else
+        print("Using graphics acceleration.");
+    ui->setWidth( 1 + ui->getWidth() );//this changes the width in order to invalidate and cause a redraw
+}
+
 
 /**********Print Functions**********/
 void MainWindow::print(const char* str)

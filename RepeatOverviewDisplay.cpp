@@ -143,7 +143,7 @@ void RepeatOverviewDisplay::displayLegend(float canvasWidth, float canvasHeight)
 
 
     glPopMatrix();
-    /*/
+    /* /
     glPushMatrix();
     glTranslated(0,-canvasHeight,1);//
     for(int i = 0; i < 250; i++)
@@ -151,7 +151,7 @@ void RepeatOverviewDisplay::displayLegend(float canvasWidth, float canvasHeight)
         glPushMatrix();
         glTranslated(i,4,0);
         color c = alignment_color(internalScale, i);//spectrum(i/255.0);
-        glScaled(1,10,1);//*(c.b / 125.0)
+        glScaled(1,10,1);// *(c.b / 125.0)
         glColor3d(c.r /255.0, c.g /255.0, c.b /255.0);
         glBegin(GL_QUADS);
         glVertex3d(0, .5, 0);
@@ -167,7 +167,7 @@ void RepeatOverviewDisplay::displayLegend(float canvasWidth, float canvasHeight)
     glColor3d(1,1,1);
     //textOutput.range_labels(1, 250, point(0,1.5,.5), point(250,1.5,.5), 16);
     glPopMatrix();
-    /**/
+    */
 }
 
 

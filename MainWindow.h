@@ -55,6 +55,7 @@ public slots:
     void addDisplayActions(AbstractGraph*);
     void addDisplayDivider();
     void helpDialog();
+    void setGlobalTexture(bool);
 
     //testing:
     void reportFinished();
@@ -133,6 +134,7 @@ private:
     QAction *nextAnnotationAction;
     QAction *prevAnnotationAction;
 
+    QAction* textureToggleAction;
     QAction *exitAction;
     QAction *helpAction;
     QAction *aboutQtAct;

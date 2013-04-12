@@ -29,8 +29,10 @@ TextureCanvas::TextureCanvas(vector<color>& pixels, int w, bool raggedEdge)
 {
     init(w, raggedEdge);
 
-    if(!useTextures)
+    if(!useTextures){
         colors = vector<color>(pixels);
+        cout << "Loading new set of pixels." << endl;
+    }
 
     //pad the end with white pixels, background color
     for(int i = 0; i <= w; ++i)
@@ -64,6 +66,10 @@ int TextureCanvas::checkForDisplayDriver()
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_size);
 
     if(max_size > 0) useTextures = true;
+
+    extern bool global_usingTextures;
+    if(global_usingTextures == false)
+        useTextures = false;
     return max_size;
 }
 
@@ -131,7 +137,8 @@ void TextureCanvas::display()
         return;//somehow, a graph called ->display() on a null pointer
     else
     {
-        if(	!useTextures  )
+        extern bool global_usingTextures;
+        if(	!useTextures || !global_usingTextures )
             textureFreeRender();
         else
             drawTextureSquare();
@@ -142,6 +149,7 @@ void TextureCanvas::drawTextureSquare()//draws from canvas
 {
     glPushMatrix();
     //glTranslated(-1.0, 0.0, 0);
+    cout << "Drawing Texture: " << canvas.size() * canvas[0].size() << endl;
     for(unsigned int x =0; x < canvas.size(); ++x)
     {
         for(unsigned int y = 0; y < canvas[x].size(); ++y)
@@ -214,7 +222,7 @@ void TextureCanvas::textureFreeRender()
 {
     glPushMatrix();
     glTranslated(0,1,0);
-
+    cout << "Manually drawing pixels: " << colors.size() << endl;
     for(int i = 0; i < (int)colors.size(); i++)
     {
         point p1 = get_position( i );
