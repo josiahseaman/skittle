@@ -555,7 +555,7 @@ void MainWindow::setGlobalTexture(bool checked)
     extern int global_usingTextures;
     global_usingTextures = !checked;
     if (checked)
-        print("Using driver independent drawing.");
+        print("Using slow and robust drawing.");
     else
         print("Using graphics acceleration.");
     ui->setWidth( 1 + ui->getWidth() );//this changes the width in order to invalidate and cause a redraw

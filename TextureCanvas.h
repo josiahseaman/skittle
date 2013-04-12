@@ -40,6 +40,7 @@ private:
     int checkForDisplayDriver();
     void loadPixelsToCard(vector<color>& pixels, int w);
     void createEmptyTiles(int canvas_width, int canvas_height, int max_size);
+    void createDisplayList();
     void drawTextureSquare();
     point2D grid_position(int i, int width, int height, int max_size );
     GLuint loadTexture(textureTile& tile);

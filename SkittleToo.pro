@@ -10,6 +10,7 @@ DEPENDPATH += .
 LIBS += 
 INCLUDEPATH += .
 QT           += opengl
+QMAKE_CXXFLAGS += -O3
 
 
 macx:ICON = skittle.icns

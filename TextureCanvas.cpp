@@ -31,7 +31,7 @@ TextureCanvas::TextureCanvas(vector<color>& pixels, int w, bool raggedEdge)
 
     if(!useTextures){
         colors = vector<color>(pixels);
-        cout << "Loading new set of pixels." << endl;
+        createDisplayList();
     }
 
     //pad the end with white pixels, background color
@@ -49,6 +49,7 @@ TextureCanvas::~TextureCanvas()
     for(unsigned int i = 0; i < canvas.size(); ++i)
         for(unsigned int k = 0; k < canvas[i].size(); ++k)
             glDeleteTextures(1, &canvas[i][k].tex_id );
+    glDeleteLists(displayList, 1);
 }
 
 void TextureCanvas::init(int w, bool raggedEdge)
@@ -137,19 +138,26 @@ void TextureCanvas::display()
         return;//somehow, a graph called ->display() on a null pointer
     else
     {
-        extern bool global_usingTextures;
-        if(	!useTextures || !global_usingTextures )
-            textureFreeRender();
+        if(	!useTextures )
+            glCallList(displayList);
         else
             drawTextureSquare();
     }
+}
+
+void TextureCanvas::createDisplayList()
+{
+    displayList = glGenLists(1);
+    glNewList(displayList, GL_COMPILE);
+    textureFreeRender();
+    glEndList();
 }
 
 void TextureCanvas::drawTextureSquare()//draws from canvas
 {
     glPushMatrix();
     //glTranslated(-1.0, 0.0, 0);
-    cout << "Drawing Texture: " << canvas.size() * canvas[0].size() << endl;
+//    cout << "Drawing Texture: " << canvas.size() * canvas[0].size() << endl;
     for(unsigned int x =0; x < canvas.size(); ++x)
     {
         for(unsigned int y = 0; y < canvas[x].size(); ++y)
@@ -222,7 +230,8 @@ void TextureCanvas::textureFreeRender()
 {
     glPushMatrix();
     glTranslated(0,1,0);
-    cout << "Manually drawing pixels: " << colors.size() << endl;
+    cout << "Loading new set of pixels." << endl;
+//    cout << "Manually drawing pixels: " << colors.size() << endl;
     for(int i = 0; i < (int)colors.size(); i++)
     {
         point p1 = get_position( i );
