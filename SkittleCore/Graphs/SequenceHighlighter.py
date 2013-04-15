@@ -1,8 +1,6 @@
-'''
-Created on Dec 6, 2012
+'''Created on Dec 6, 2012
+@author: Josiah'''
 
-@author: Josiah
-'''
 from SkittleCore.models import RequestPacket, chunkSize
 from models import HighlighterState, SequenceEntry
 from SkittleGraphTransforms import reverseComplement, calculatePerCharacterMatch
@@ -57,8 +55,8 @@ def colorCombinedResults(state, highlighterState, results, entries = None ):
     if entries is None:
         entries = highlighterState.getTargetSequenceEntries()
     for sequenceEntryIndex, searchPageResults in enumerate(results):
-        if highlighterState.searchReverseComplement:
-            sequenceEntryIndex /= 2
+#        if highlighterState.searchReverseComplement:
+#            sequenceEntryIndex /= 2
         searchSeq = entries[sequenceEntryIndex].seq
         for index, startScore in enumerate(searchPageResults):
             hitCanvas[index] = max(startScore, hitCanvas[index])#sets the grey pixels
@@ -107,13 +105,17 @@ def calculateOutputPixels(state, highlighterState = HighlighterState()):
      
     #TODO: temporary workaround of settings  #targetSequenceEntries = highlighterState.getTargetSequenceEntries()
     targetSequenceEntries = getSearchSequenceFromRequestPacket(state)
+    if highlighterState.searchReverseComplement:
+        startingSize = len(targetSequenceEntries)
+        for i in range(startingSize):
+            original = targetSequenceEntries[i]
+            newEntry = copy.deepcopy(original)
+            newEntry.seq = reverseComplement(original.seq)
+            targetSequenceEntries.append(newEntry)
+
     for i in range(len( targetSequenceEntries )):
         if len( targetSequenceEntries[i].seq) != 0 :
             results.append( measureSequenceMatches(state, targetSequenceEntries[i] ) )
-            if highlighterState.searchReverseComplement:
-                current = copy.deepcopy(targetSequenceEntries[i]) #TODO: this will need work with the new django architecture
-                reverseSettings = SequenceEntry(seq=reverseComplement(current.seq), minimumPercentage=current.minimumPercentage, color=current.color)
-                results.append( measureSequenceMatches(state, reverseSettings ) )
     synthesis = colorCombinedResults(state, highlighterState, results, targetSequenceEntries )
     return synthesis
 
