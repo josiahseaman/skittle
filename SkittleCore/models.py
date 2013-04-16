@@ -64,9 +64,6 @@ class RequestPacket(models.Model):
     def getFastaFilePath(self):
         return StorageRequestHandler.GetFastaFilePath(self.specimen, self.chromosome, self.start)
 
-    def getActiveGraphSettings(self):
-        return Graphs.models.ParentState.objects.filter(session = self, visible = True)
-    
     '''Derived value height may need to be further reduced for functions that must scan ahead.'''
     def height(self):
         return self.length / self.nucleotidesPerLine()
