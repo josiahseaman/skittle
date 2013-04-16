@@ -2,9 +2,7 @@
 Created on Dec 21, 2012
 @author: Josiah
 '''
-import io
 import sys
-import png
 from collections import namedtuple
 from time import sleep
 from PngConversionHelper import convertToPng
@@ -20,8 +18,6 @@ def registerGraph(symbol, name, moduleName, rasterGraph = False, colorPalletteDe
     availableGraphs.add(GraphDescription(symbol, name, moduleReference, rasterGraph, colorPalletteDependant, widthTolerance, isGrayScale, helpText))
     
 from SkittleCore.models import RequestPacket, ProcessQueue
-import SkittleCore.FastaFiles as FastaFiles
-from Graphs.SkittleGraphTransforms import countDepth
 import DNAStorage.StorageRequestHandler as StorageRequestHandler
 from django.db import transaction
 '''Finally, X = __import__('X') works like import X, with the difference that you 
@@ -131,7 +127,7 @@ def finishProcess(request):
     if isBeingProcessed(request):
         specimen, chromosome, graph, start, scale, charsPerLine = request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.width
         
-        process = ProcessQueue.objects.filter(Specimen = specimen, Chromosome = chromosome, Graph = graph, Start = start, Scale = scale, CharsPerLine = charsPerLine).delete()
+        ProcessQueue.objects.filter(Specimen = specimen, Chromosome = chromosome, Graph = graph, Start = start, Scale = scale, CharsPerLine = charsPerLine).delete()
         return True
     else:
         return False
