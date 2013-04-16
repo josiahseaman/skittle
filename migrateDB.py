@@ -113,3 +113,27 @@ def RunMigration8():
     cur.execute(part5)
     cur.execute(part6)
     cur.execute(part7)    
+    
+#####_____MIGRATION 9_____#####
+def RunMigration9():
+    cur = setupDB()
+    
+    part1 = "DROP TABLE `Graphs_annotationdisplaystate`"
+    part2 = "DROP TABLE `Graphs_highlighterstate`"
+    part3 = "DROP TABLE `Graphs_nucleotidebiasstate`"
+    part4 = "DROP TABLE `Graphs_nucleotidedisplaystate`"
+    part5 = "DROP TABLE `Graphs_oligomerusagestate`"
+    part6 = "DROP TABLE `Graphs_repeatmapstate`"
+    part7 = "DROP TABLE `Graphs_threemerdetectorstate`"
+    part8 = "DROP TABLE `Graphs_similarityheatmapstate`"
+    part9 = "DROP TABLE `Graphs_oligomerusagestate`"
+    
+    cur.execute(part1)
+    cur.execute(part2)
+    cur.execute(part3)
+    cur.execute(part4)
+    cur.execute(part5)
+    cur.execute(part6)
+    cur.execute(part7)
+    cur.execute(part8)
+    cur.execute(part9)
