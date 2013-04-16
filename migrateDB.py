@@ -94,6 +94,7 @@ def RunMigration7():
     
 #####_____MIGRATION 8_____#####
 #Migration to remove session and visible from all graph states
+#     WARNING!!!!!!!      YOU MUST DO THIS MIGRATION MANUALLY FOR NOW!!!
 def RunMigration8():
     cur = setupDB()
     
