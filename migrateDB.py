@@ -116,24 +116,37 @@ def RunMigration8():
     
 #####_____MIGRATION 9_____#####
 def RunMigration9():
+    from django.db import transaction
     cur = setupDB()
     
-    part1 = "DROP TABLE `Graphs_annotationdisplaystate`"
-    part2 = "DROP TABLE `Graphs_highlighterstate`"
-    part3 = "DROP TABLE `Graphs_nucleotidebiasstate`"
-    part4 = "DROP TABLE `Graphs_nucleotidedisplaystate`"
-    part5 = "DROP TABLE `Graphs_oligomerusagestate`"
-    part6 = "DROP TABLE `Graphs_repeatmapstate`"
-    part7 = "DROP TABLE `Graphs_threemerdetectorstate`"
-    part8 = "DROP TABLE `Graphs_similarityheatmapstate`"
-    part9 = "DROP TABLE `Graphs_oligomerusagestate`"
+    part1 = "DROP TABLE IF EXISTS `Graphs_annotationdisplaystate`"
+    part2 = "DROP TABLE IF EXISTS `Graphs_highlighterstate`"
+    part3 = "DROP TABLE IF EXISTS `Graphs_nucleotidebiasstate`"
+    part4 = "DROP TABLE IF EXISTS `Graphs_nucleotidedisplaystate`"
+    part5 = "DROP TABLE IF EXISTS `Graphs_oligomerusagestate`"
+    part6 = "DROP TABLE IF EXISTS `Graphs_repeatmapstate`"
+    part7 = "DROP TABLE IF EXISTS `Graphs_threemerdetectorstate`"
+    part8 = "DROP TABLE IF EXISTS `Graphs_similarityheatmapstate`"
+    part9 = "DROP TABLE IF EXISTS `Graphs_oligomerusagestate`"
     
     cur.execute(part1)
+    commitTrans()
     cur.execute(part2)
+    commitTrans()
     cur.execute(part3)
+    commitTrans()
     cur.execute(part4)
+    commitTrans()
     cur.execute(part5)
+    commitTrans()
     cur.execute(part6)
+    commitTrans()
     cur.execute(part7)
+    commitTrans()
     cur.execute(part8)
+    commitTrans()
     cur.execute(part9)
+    
+def commitTrans():
+    transaction.enter_transaction_management()
+    transaction.commit()
