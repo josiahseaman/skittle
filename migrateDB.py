@@ -119,6 +119,7 @@ def RunMigration9():
     cur = setupDB()
     
     part1 = "DROP TABLE IF EXISTS `Graphs_annotationdisplaystate`"
+    partX = "DROP TABLE IF EXISTS `Graphs_sequenceentry`"
     part2 = "DROP TABLE IF EXISTS `Graphs_highlighterstate`"
     part3 = "DROP TABLE IF EXISTS `Graphs_nucleotidebiasstate`"
     part4 = "DROP TABLE IF EXISTS `Graphs_nucleotidedisplaystate`"
@@ -129,6 +130,8 @@ def RunMigration9():
     part9 = "DROP TABLE IF EXISTS `Graphs_oligomerusagestate`"
     
     cur.execute(part1)
+    commitTrans()
+    cur.execute(partX)
     commitTrans()
     cur.execute(part3)
     commitTrans()
