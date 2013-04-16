@@ -91,3 +91,24 @@ def RunMigration7():
     part1 = "CREATE TABLE `SkittleCore_processqueue` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `Specimen` varchar(200) NOT NULL, `Chromosome` varchar(200) NOT NULL, `Graph` varchar(1) NOT NULL, `Start` integer NOT NULL, `Scale` integer, `CharsPerLine` integer)"
     
     cur.execute(part1)
+    
+#####_____MIGRATION 8_____#####
+#Migration to remove session and visible from all graph states
+def RunMigration8():
+    cur = setupDB()
+    
+    part1 = "ALTER TABLE `Graphs_annotationdisplaystate` DROP FOREIGN KEY `session_id_refs_id_65c151b6`, DROP COLUMN `session_id`, DROP COLUMN `visible`"
+    part2 = "ALTER TABLE `Graphs_highlighterstate` DROP FOREIGN KEY `session_id_refs_id_14ba4aba`, DROP COLUMN `session_id`, DROP COLUMN `visible`"
+    part3 = "ALTER TABLE `Graphs_nucleotidebiasstate` DROP FOREIGN KEY `session_id_refs_id_6c4b128d`, DROP COLUMN `session_id`, DROP COLUMN `visible`"
+    part4 = "ALTER TABLE `Graphs_nucleotidedisplaystate` DROP FOREIGN KEY `session_id_refs_id_452e3e19`, DROP COLUMN `session_id`, DROP COLUMN `visible`"
+    part5 = "ALTER TABLE `Graphs_oligomerusagestate` DROP FOREIGN KEY `session_id_refs_id_77954940`, DROP COLUMN `session_id`, DROP COLUMN `visible`"
+    part6 = "ALTER TABLE `Graphs_repeatmapstate` DROP FOREIGN KEY `session_id_refs_id_3dc95670`, DROP COLUMN `session_id`, DROP COLUMN `visible`"
+    part7 = "ALTER TABLE `Graphs_threemerdetectorstate` DROP FOREIGN KEY `session_id_refs_id_3e50a710`, DROP COLUMN `session_id`, DROP COLUMN `visible`"
+    
+    cur.execute(part1)
+    cur.execute(part2)
+    cur.execute(part3)
+    cur.execute(part4)
+    cur.execute(part5)
+    cur.execute(part6)
+    cur.execute(part7)    
