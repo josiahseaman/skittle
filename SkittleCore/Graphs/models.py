@@ -5,8 +5,8 @@ import math
 # Create your models here.
 
 class ParentState(models.Model):
-    session = models.ForeignKey('SkittleCore.RequestPacket')
-    visible = models.BooleanField(default=False)
+#    session = models.ForeignKey('SkittleCore.RequestPacket')
+#    visible = models.BooleanField(default=False)
     class Meta:
         abstract = True
     
@@ -22,10 +22,11 @@ class HighlighterState(ParentState):
         if not children:
             default = SequenceEntry()
             default.ownerGraph = self
-        return SequenceEntry.objects.filter(ownerGraph = self)
+            return [default]
+        return children
     
     def __str__(self):
-        return "Search other strand: "+ str(self.searchReverseComplement) + "   Sequences: "+ str(self.targetSequenceEntries)
+        return "Search other strand: "+ str(self.searchReverseComplement) + "   Sequences: "+ str(self.getTargetSequenceEntries()[0].seq)
     
     
 '''This class contains all the state information specific exclusively to Repeat Map. 

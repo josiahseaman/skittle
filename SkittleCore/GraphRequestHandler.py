@@ -28,6 +28,7 @@ from django.db import transaction
 #    print graph 
 
 def calculatePixels(state, settings = None):    
+    print settings
     graphData = getGraphDescription(state)
     name, graphModule = graphData[1], graphData[2]
 #    settings = state.getActiveGraphs()[0]
@@ -50,6 +51,7 @@ def roundStartPosition(state):
 
 '''The main entry point for the whole Python logic SkittleCore module and Graphs.'''
 def handleRequest(state, settings=None):
+    print settings
     assert isinstance(state, RequestPacket)
     roundStartPosition(state)
     #Check to see if PNG exists

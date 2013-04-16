@@ -103,8 +103,9 @@ def calculateOutputPixels(state, highlighterState = HighlighterState()):
     state.readFastaChunks()
     results = [] #2D array containing a screen full of scores per targetSequence
      
-    #TODO: temporary workaround of settings  #targetSequenceEntries = highlighterState.getTargetSequenceEntries()
-    targetSequenceEntries = getSearchSequenceFromRequestPacket(state)
+    #TODO: temporary workaround of settings  
+    targetSequenceEntries = highlighterState.getTargetSequenceEntries()
+    print targetSequenceEntries
     if highlighterState.searchReverseComplement:
         startingSize = len(targetSequenceEntries)
         for i in range(startingSize):
