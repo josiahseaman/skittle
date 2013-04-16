@@ -34,20 +34,23 @@ def graph(request, genus="homo",species="sapiens", specimen="hg18",chromosome="c
     state.start = max(1,int(request.GET.get('start',1)))
     state.width = max(12,int(request.GET.get('width',100)))
     state.scale = max(1,int(request.GET.get('scale',1)))
-    state.requestedGraph = request.GET.get('graph','an')
+    state.requestedGraph = request.GET.get('graph','n')
     state.colorPalette = request.GET.get('colorPalette','Classic')
+    
+    settings = None
     if state.requestedGraph == 'h':
     	state.searchStart = int(request.GET.get('searchStart',1))
     	state.searchStop = int(request.GET.get('searchStop',1))
+        searchSequence1 = request.GET.get('searchSequence1', None)
+        if searchSequence1 is not None:
+            settings = None#'Somethings'#TODO: 
 
-    image_data = handleRequest(state)
-    # image_data = open("/Users/marshallds/Sites/Skittle/master/SkittleCore/UI/assets/n-display.png", "rb").read()
+    image_data = handleRequest(state, settings)
     return HttpResponse(image_data, content_type="image/png")
 
 def annotation(request, genus="homo",species="sapiens", specimen="hg18",chromosome="chrY-sample"):
     start = max(1,int(request.GET.get('start',1)))
     json = GetAnnotationsChunk(specimen,chromosome,start)
-    # json = '{"' + str(start) + '":{"rs855785":["A","G",4829],"rs855745":["A","G",5482],"rs855781":["A","G",1045],"rs855784":["T","G",10454],"rs855788":["A","T",145429],"rs855780":["C","C",104582],"rs855783":["A","C",145429],"rs855787":["T","G",104829]}}'
     return HttpResponse(json,content_type="application/json")
 
 def state(request):

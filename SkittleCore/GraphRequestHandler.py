@@ -27,11 +27,11 @@ from django.db import transaction
 #for graph in availableGraphs:
 #    print graph 
 
-def calculatePixels(state):    
+def calculatePixels(state, settings = None):    
     graphData = getGraphDescription(state)
     name, graphModule = graphData[1], graphData[2]
-#    activeSet = state.getActiveGraphs()
-    settings = None #activeSet[name]
+#    settings = state.getActiveGraphs()[0]
+    
     results = []
     print "Calling ", name
     if settings is not None:
@@ -49,7 +49,7 @@ def roundStartPosition(state):
     state.start = int(state.start / chunkSize) * chunkSize +1
 
 '''The main entry point for the whole Python logic SkittleCore module and Graphs.'''
-def handleRequest(state):
+def handleRequest(state, settings=None):
     assert isinstance(state, RequestPacket)
     roundStartPosition(state)
     #Check to see if PNG exists
@@ -57,10 +57,10 @@ def handleRequest(state):
     if state.requestedGraph not in ['h', ]:
         png = tryGetGraphPNG(state)
     #If it doesn't: grab pixel calculations
-    if png is None and not isBeingProcessed(state):
+    if png is None and not isBeingProcessed(state):#TODO: handle same state different "settings" being separate computation
         #TODO: Handle beginProcess and finishProcess possible return of False
         beginProcess(state)
-        pixels = calculatePixels(state)
+        pixels = calculatePixels(state, settings)
         png = convertToPng(state, pixels, isRasterGraph(state))
         finishProcess(state)
     elif isBeingProcessed(state):
@@ -151,9 +151,9 @@ import Graphs.AnnotationDisplay
 import Graphs.NucleotideDisplay
 import Graphs.NucleotideBias
 import Graphs.RepeatMap
+import Graphs.RawFrequencyMap
+import Graphs.RepeatOverview
 import Graphs.OligomerUsage
 import Graphs.SequenceHighlighter
 import Graphs.SimilarityHeatMap
 import Graphs.ThreeMerDetector
-import Graphs.RawFrequencyMap
-import Graphs.RepeatOverview
