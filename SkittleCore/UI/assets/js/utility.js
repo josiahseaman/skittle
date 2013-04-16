@@ -1,7 +1,9 @@
 Number.prototype.mod = function(n) {
 	return ((this%n)+n)%n;
 }
-var round = function(val,precision) {
+var round = function(val,precision,direction) {
+	if (direction && direction == "down") return Math.floor(val/precision)*precision;
+	else if (direction && direction == "up") return Math.ceil(val/precision)*precision;
 	return Math.round(val/precision)*precision;
 }
 var toSkixels = function(pixels) {

@@ -457,9 +457,9 @@ StateObject.prototype.goToEnd = function(){ return this.start(fileLength); }
 StateObject.prototype.scaleToFile = function(){ 
     this.start(1);
     this.width(200);
-    calcSkixelsOnScreen()
-    var newScale = fileLength/(skixelsOnScreen-20*this.width())
-    return newScale < 50 ? this.scale(newScale) : this.scale(round(newScale,50));
+    calcSkixelsOnScreen();
+    var newScale = fileLength/(skixelsOnScreen-20*this.width());
+    return newScale < 50 ? this.scale(newScale) : this.scale(round(newScale,50,"up"));
 }
 var double = function(a){ return a * 2; }
 var half = function(a){ return a / 2; }
