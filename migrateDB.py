@@ -116,7 +116,6 @@ def RunMigration8():
     
 #####_____MIGRATION 9_____#####
 def RunMigration9():
-    from django.db import transaction
     cur = setupDB()
     
     part1 = "DROP TABLE IF EXISTS `Graphs_annotationdisplaystate`"
@@ -148,5 +147,6 @@ def RunMigration9():
     cur.execute(part9)
     
 def commitTrans():
+    from django.db import transaction
     transaction.enter_transaction_management()
     transaction.commit()
