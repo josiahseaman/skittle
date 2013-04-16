@@ -4,9 +4,7 @@ import math
 
 # Create your models here.
 
-class ParentState(models.Model):
-#    session = models.ForeignKey('SkittleCore.RequestPacket')
-#    visible = models.BooleanField(default=False)
+class ParentState():
     class Meta:
         abstract = True
     
@@ -14,16 +12,16 @@ class AnnotationDisplayState(ParentState):
     annotationPath = models.URLField()
     
 class HighlighterState(ParentState):
-    searchReverseComplement = models.BooleanField(default=True)
+    searchReverseComplement = True
+    targetSequenceEntries = []
     
     def getTargetSequenceEntries(self):
         '''targetSequenceEntries contains a series of SequenceEntries.'''
-        children = SequenceEntry.objects.filter(ownerGraph = self)
-        if not children:
+        if not self.targetSequenceEntries:
             default = SequenceEntry()
             default.ownerGraph = self
             return [default]
-        return children
+        return self.targetSequenceEntries
     
     def __str__(self):
         return "Search other strand: "+ str(self.searchReverseComplement) + "   Sequences: "+ str(self.getTargetSequenceEntries()[0].seq)
@@ -71,10 +69,9 @@ class ThreeMerDetectorState(ParentState):
         F_height = int(math.ceil( ((len(seq)) - (self.samples*3)*state.scale ) / state.nucleotidesPerLine() ))
         return F_height
 
-class SequenceEntry(models.Model):
-    ownerGraph = models.ForeignKey(HighlighterState)
-    seq = models.CharField(max_length=1000, default='AAAAAAAAAA')
-    minimumPercentage = models.FloatField(default = .6) 
-    color = models.CommaSeparatedIntegerField(max_length=3, default=None, null=True)
+class SequenceEntry():
+    seq = 'AAAAAAAAAA'
+    minimumPercentage = .6 
+    color = (0, 255, 0)
     
             

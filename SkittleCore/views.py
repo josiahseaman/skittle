@@ -37,17 +37,20 @@ def graph(request, genus="homo",species="sapiens", specimen="hg18",chromosome="c
     state.requestedGraph = request.GET.get('graph','n')
     state.colorPalette = request.GET.get('colorPalette','Classic')
     
-    settings = None
+    graphSettings = None
     if state.requestedGraph == 'h':
 #    	state.searchStart = int(request.GET.get('searchStart',1))
 #    	state.searchStop = int(request.GET.get('searchStop',1))
         searchSequence1 = request.GET.get('searchSequence1', None)
         print searchSequence1
         if searchSequence1 is not None:
-            settings = HighlighterState.objects.get_or_create(searchReverseComplement=True, session=request.session.session_key )#state)
-            SequenceEntry.objects.get_or_create(seq=searchSequence1, ownerGraph=settings) 
+            graphSettings = HighlighterState()
+            tmp = SequenceEntry()
+            tmp.seq = searchSequence1
+            graphSettings.targetSequenceEntries.append(tmp)
+            print graphSettings.targetSequenceEntries
 
-    image_data = handleRequest(state, settings)
+    image_data = handleRequest(state, graphSettings)
     return HttpResponse(image_data, content_type="image/png")
 
 def annotation(request, genus="homo",species="sapiens", specimen="hg18",chromosome="chrY-sample"):
