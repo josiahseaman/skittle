@@ -2,9 +2,7 @@
 Created on Dec 21, 2012
 @author: Josiah
 '''
-import io
 import sys
-import png
 from collections import namedtuple
 from time import sleep
 from PngConversionHelper import convertToPng
@@ -20,8 +18,6 @@ def registerGraph(symbol, name, moduleName, rasterGraph = False, colorPalletteDe
     availableGraphs.add(GraphDescription(symbol, name, moduleReference, rasterGraph, colorPalletteDependant, widthTolerance, isGrayScale, helpText))
     
 from SkittleCore.models import RequestPacket, ProcessQueue
-import SkittleCore.FastaFiles as FastaFiles
-from Graphs.SkittleGraphTransforms import countDepth
 import DNAStorage.StorageRequestHandler as StorageRequestHandler
 from django.db import transaction
 '''Finally, X = __import__('X') works like import X, with the difference that you 
@@ -31,11 +27,11 @@ from django.db import transaction
 #for graph in availableGraphs:
 #    print graph 
 
-def calculatePixels(state):    
+def calculatePixels(state, settings = None):    
     graphData = getGraphDescription(state)
     name, graphModule = graphData[1], graphData[2]
-#    activeSet = state.getActiveGraphs()
-    settings = None #activeSet[name]
+#    settings = state.getActiveGraphs()[0]
+    
     results = []
     print "Calling ", name
     if settings is not None:
@@ -53,7 +49,7 @@ def roundStartPosition(state):
     state.start = int(state.start / chunkSize) * chunkSize +1
 
 '''The main entry point for the whole Python logic SkittleCore module and Graphs.'''
-def handleRequest(state):
+def handleRequest(state, settings=None):
     assert isinstance(state, RequestPacket)
     roundStartPosition(state)
     #Check to see if PNG exists
@@ -61,10 +57,10 @@ def handleRequest(state):
     if state.requestedGraph not in ['h', ]:
         png = tryGetGraphPNG(state)
     #If it doesn't: grab pixel calculations
-    if png is None and not isBeingProcessed(state):
+    if png is None and not isBeingProcessed(state):#TODO: handle same state different "settings" being separate computation
         #TODO: Handle beginProcess and finishProcess possible return of False
         beginProcess(state)
-        pixels = calculatePixels(state)
+        pixels = calculatePixels(state, settings)
         png = convertToPng(state, pixels, isRasterGraph(state))
         finishProcess(state)
     elif isBeingProcessed(state):
@@ -131,7 +127,7 @@ def finishProcess(request):
     if isBeingProcessed(request):
         specimen, chromosome, graph, start, scale, charsPerLine = request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.width
         
-        process = ProcessQueue.objects.filter(Specimen = specimen, Chromosome = chromosome, Graph = graph, Start = start, Scale = scale, CharsPerLine = charsPerLine).delete()
+        ProcessQueue.objects.filter(Specimen = specimen, Chromosome = chromosome, Graph = graph, Start = start, Scale = scale, CharsPerLine = charsPerLine).delete()
         return True
     else:
         return False
@@ -155,9 +151,9 @@ import Graphs.AnnotationDisplay
 import Graphs.NucleotideDisplay
 import Graphs.NucleotideBias
 import Graphs.RepeatMap
+import Graphs.RawFrequencyMap
+import Graphs.RepeatOverview
 import Graphs.OligomerUsage
 import Graphs.SequenceHighlighter
 import Graphs.SimilarityHeatMap
 import Graphs.ThreeMerDetector
-import Graphs.RawFrequencyMap
-import Graphs.RepeatOverview
