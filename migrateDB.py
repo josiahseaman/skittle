@@ -130,8 +130,6 @@ def RunMigration9():
     
     cur.execute(part1)
     commitTrans()
-    cur.execute(part2)
-    commitTrans()
     cur.execute(part3)
     commitTrans()
     cur.execute(part4)
@@ -145,6 +143,8 @@ def RunMigration9():
     cur.execute(part8)
     commitTrans()
     cur.execute(part9)
+    commitTrans()
+    cur.execute(part2)
     
 def commitTrans():
     from django.db import transaction
