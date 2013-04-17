@@ -68,14 +68,25 @@ class ThreeMerDetectorState(ParentState):
         F_height = int(math.ceil( ((len(seq)) - (self.samples*3)*state.scale ) / state.nucleotidesPerLine() ))
         return F_height
 
+
+class Color(tuple):
+    def __init__(self, c):
+        pass
+    def __repr__(self):
+        s = ''
+        for i in self:
+            s += ('0'+hex(i)[2:])[-2:] #Don't blame me, it was Marshall's idea
+        return s
+
+
 class SequenceEntry():
     def __init__(self):
         self.seq = 'AAAAAAAAAA'
-        self.color = (0, 255, 0)
+        self.color = Color(0, 255, 0)
     def __repr__(self):
         return str(self.__dict__)
-    
-            
+
+
 #h = HighlighterState()
 #h.targetSequenceEntries.append(SequenceEntry())
 #h.__repr__()

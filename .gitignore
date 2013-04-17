@@ -8,6 +8,8 @@ SkittleToo.pro.user
 testFiles/
 static/*
 media/*
+.idea/*
+.idea
 DNAStorage/fasta/*
 DNAStorage/png/*
 bryan.todo
