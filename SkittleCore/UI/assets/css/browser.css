@@ -335,6 +335,11 @@
 	#graph-labels .highlighterSettings {
 		display: block;
 	}
+	.removeSeq {
+		float: right;
+		color:#ddd;
+		font-size: 2em;
+	}
 
 	#widthBubble {
 		left:32px;

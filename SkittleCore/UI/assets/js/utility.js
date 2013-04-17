@@ -166,5 +166,8 @@ var getNucleotideValues = function(findStart,findEnd) {
     }
 
 	return seq()
+}
 
+var getRawSequence = function(start,end,callback) {
+	$.get('sequence.fa',{'queryStart':start,'queryStop':end},function(data){callback(data)})
 }

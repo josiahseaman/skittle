@@ -120,9 +120,17 @@ function mouseDown(e) {
     }
     else if (activeTool == "Select") {
         var x = Math.max(0,Math.min(state.width(),(toSkixels(mx)-graphStatus["n"].skixelOffset+1)))
-        selectionStart = state.start() + (toSkixels(my-25))*state.bpPerLine() + x*state.scale()
-        selectionEnd = selectionStart + state.bpPerLine() - 1;
-        console.log('selection start:' + selectionStart + " selection end:" + selectionEnd)
+
+        var selectionStart = state.start() + (toSkixels(my-25))*state.bpPerLine() + x*state.scale()
+        var selectionEnd = selectionStart + state.bpPerLine() - 1;
+        getRawSequence(selectionStart,selectionEnd,function(seq){
+            var newSeq = $('#highlighterSequence').clone().removeAttr('id').addClass('highlighterSequence').insertBefore('.addSeq')
+            newSeq.find('.sequenceInput').val(seq)
+            newSeq.find('.sequenceColor').val(getGoodDeterministicColor(seq).slice(1))
+            newSeq.find('.showSeq').prop('checked', true);
+            graphStatus['h'].controls = true;
+        })
+        // console.log('selection start:' + selectionStart + " selection end:" + selectionEnd)
         showGraph('h');
         if (graphStatus['h'].visible) isInvalidDisplay = true
     }
@@ -288,13 +296,19 @@ $(function() {
             settingsGraph(graph);
         }
     })
+
     $('#graphLabel-h .graphSettings').empty().append($('.highlighterSettings').detach())
-    $('.highlighterSettings input,#searchSeq').on('change blur click',function(){
+    $('.highlighterSettings').on('change blur click','input,#searchSeq',function(){
         graphStatus['h'].settings = hSettingsFromUI();
         isInvalidDisplay = true;
     })
     $('.highlighterSettings .addSeq').on('click',function(){
         $('#highlighterSequence').clone().removeAttr('id').addClass('highlighterSequence').insertBefore($(this))
+    })
+    $('.highlighterSettings').on('click','.removeSeq',function(){
+        $(this).parent().remove();
+        graphStatus['h'].settings = hSettingsFromUI();
+        isInvalidDisplay = true;
     })
     $("#dials li").on('mouseleave touchstart',function(){
         var target = $(this).children('div').addClass('active')
@@ -334,12 +348,12 @@ var closeHelp = function(graph) {
     isInvalidDisplay = true;
 }
 var settingsGraph = function(graph) {
-    graphStatus[graph].settings = true;
+    graphStatus[graph].controls = true;
     $('#graphLabel-'+graph+" .graphSettings").addClass('active');
     isInvalidDisplay = true;
 }
 var closeSettings = function(graph) {
-    graphStatus[graph].settings = false;
+    graphStatus[graph].controls = false;
     $('#graphLabel-'+graph+" .graphSettings").removeClass('active');
     $('#settingsLabel-'+graph).remove()
     isInvalidDisplay = true;
@@ -360,7 +374,7 @@ var hSettingsFromUI = function(){  // TODO: Validate
     return hState;
 }
 var highlighterEncodeURL = function(hState) {
-    if (typeof hState != 'object') return "";
+    if (typeof hState != 'object' || !hState.sequences) return "";
     var s = ""
     if (hState.revComplement) s += "&rev";
     s += "&sim=" + hState.similarityPercent
@@ -373,6 +387,8 @@ var highlighterEncodeURL = function(hState) {
     return s
 }
 var loadHighlighterSettings = function(hState) {
+    console.log(typeof hState)
+    if (typeof hState != 'object') return false;
     $('#revComplement').prop('checked', hState.revComplement);
     $('#similarityPercent').val(hState.similarityPercent);
     $('.highlighterSequence').remove()

@@ -46,17 +46,19 @@
 		<input type="text" id="similarityPercent" name="similarityPercent" value="80" style="width:2em" maxlength="3">
 		<hr>
 		<div id="highlighterSequence">
+			<a class="removeSeq">&times;</a>
 			<input type="text" class="sequenceInput">
 			<label>Show <input type="checkbox" class="showSeq"></label> 
 			<label>Color: <input type="text" class="sequenceColor"></label>
 		</div>
 		<div class="highlighterSequence">
+			<a class="removeSeq">&times;</a>
 			<input type="text" class="sequenceInput">
 			<label>Show <input type="checkbox" class="showSeq"></label> 
 			<label>Color: <input type="text" class="sequenceColor"></label>
 		</div>
-		<div class="addSeq button left"><img src="{{STATIC_URL}}gfx/icons/plus_button.png"> Add Search Sequence</div>
-		<div id="searchSeq" class="button" >Start Search</div>
+		<div class="addSeq button"><img src="{{STATIC_URL}}gfx/icons/plus_button.png"> Add Search Sequence</div>
+		<div id="searchSeq" class="button">Start Search</div>
 	</div>
 
 	<div id="learn" class="">
@@ -162,6 +164,7 @@
     xOffset = 0
     specimen = "{{ specimen }}"
     chromosome = "{{ chromosome }}"
+    // var getParams = JSON.parse('{"' + decodeURI(window.location.search.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}')
     colorPalette = "{{ colorPalette }}"
     zoom  = {{ zoom }};
     fileLength = {{ fileLength }};
@@ -169,16 +172,14 @@
     state.start({{ start }});
     state.width({{ width }});
     state.scale({{ scale }});
-    selectionStart = {{ selectionStart }}
-    selectionEnd = {{ selectionEnd }}
+    selectionStart = 0
+    selectionEnd = 0
+
     var annotationSelectedStart,annotationSelectedEnd,activeAnnotation = 0
 
-    // if graphs are specified in the url set their visibility
-    var initialGraphs = "{{ graphs }}".split('')
-    for (var key in graphStatus) {
-    	if ($.inArray(key,initialGraphs)>=0) showGraph(key)
-    	else hideGraph(key)
-    }
+
+
+
 	var annotations = {}
 	var visibleAnnotations = {}
 	var helpLabel = $('<li class="helpLabel">Graph Information<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeHelpButton"></li>')
@@ -202,6 +203,17 @@
 	    aa.width = 1050
 	    a = aa.getContext("2d");
 
+	    // if graphs are specified in the url set their visibility
+	    var initialGraphs = "{{ graphs }}".split('')
+	    for (var key in graphStatus) {
+	    	if ($.inArray(key,initialGraphs)>=0) showGraph(key)
+	    	else hideGraph(key)
+	    }
+	    if (graphStatus['h']) {
+		    graphStatus['h'].settings = {{ highlighterState|safe }}
+	    	loadHighlighterSettings(graphStatus['h'].settings);
+	    }
+
 
 	    init();
 
@@ -215,6 +227,8 @@
 	    $('#dials li').on('mousewheel',mouseWheelDials)
 
 	contactForm();
+
+
 
 
 	})

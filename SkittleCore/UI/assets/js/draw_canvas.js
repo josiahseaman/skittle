@@ -122,7 +122,7 @@ var drawGraphs = function() {
             skixelWidthofGraph = Math.max(skixelWidthofGraph,toSkixels(minimumWidth))
             offset = offset + skixelWidthofGraph;
             if (graphStatus[key].help) offset += toSkixels(200);
-            if (graphStatus[key].settings) offset += toSkixels(325);
+            if (graphStatus[key].controls) offset += toSkixels(325);
             $('#graphLabel-' + key).width(toPixels(skixelWidthofGraph));
         }
     })

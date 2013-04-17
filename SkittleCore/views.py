@@ -20,9 +20,12 @@ def browse(request, genus="homo",species="sapiens", specimen="hg18",chromosome="
     colorPalette = request.GET.get('colorPalette','Classic')
     selectionStart = request.GET.get('searchStart',1)
     selectionEnd = request.GET.get('searchStop',1)
+    if 'h' in graphs:
+        highlighterState = simplejson.dumps(createHighlighterState(request,genus,species,specimen,chromosome).__dict__)
+    else: highlighterState = "undefined"
 
     fileLength = GetChromosomeLength(specimen,chromosome) 
-    context = {'availableGraphs':GraphRequestHandler.availableGraphs,'specimen':specimen,'chromosome':chromosome,'colorPalette':colorPalette,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength,'selectionStart':selectionStart,'selectionEnd':selectionEnd}
+    context = {'availableGraphs':GraphRequestHandler.availableGraphs,'specimen':specimen,'chromosome':chromosome,'colorPalette':colorPalette,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength,"highlighterState":highlighterState}
     return render(request, 'browse.html',context)
 
 @cache_control(must_revalidate=False, max_age=3600)
