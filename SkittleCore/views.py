@@ -58,7 +58,7 @@ def graph(request, genus="homo",species="sapiens", specimen="hg18",chromosome="c
             if searchSequence1 is not None:
                 print searchSequence1
                 tmp = SequenceEntry()
-                tmp.seq = searchSequence1
+                tmp.seq = searchSequence1.upper()
                 color = request.GET.get('s'+str(i)+'c', None)
                 if color is not None:
                     tmp.color = parseHexColor(color)
