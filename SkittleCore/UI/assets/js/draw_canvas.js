@@ -76,25 +76,11 @@ var imageRequestor = function(graph,chunkOffset) {
     return imageObj[graph][chunkOffset]
 }
 var graphURL = function(graph,chunkOffset) {
-
-    var highlighterParams = function() {
-        var s = ""
-        if ($('#revComplement').is(':checked')) s += "&rev";
-        s += "&sim=" + $('#similarityPercent').val()
-        $('.highlighterSequence').each(function(i){
-            if ($(this).find('.showSeq').is(':checked')) {
-                s += "&s" + i + "=" + $(this).find('.sequenceInput').val()
-                s += "&s" + i + "c=" + $(this).find('.sequenceColor').val()
-            }
-        })
-        return s
-    }
-
     var startTopOfScreen = (state.start()-8*state.bpPerLine()) >  0 ? (state.start()-8*state.bpPerLine()) : 1
     var startChunk = ( ( Math.floor(startTopOfScreen/(65536*state.scale()) ) + chunkOffset )*65536*state.scale() + 1 );
     var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + state.scale();
     if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + expRound(state.width(),graphStatus[graph].widthTolerance)
-    if (graph == 'h') graphPath += highlighterParams()
+    if (graph == 'h' && graphStatus['h'].settings) graphPath += highlighterEncodeURL(graphStatus['h'].settings)
     if (graphStatus[graph].colorPaletteSensitive) graphPath += "&colorPalette="+colorPalette
     return graphPath
 

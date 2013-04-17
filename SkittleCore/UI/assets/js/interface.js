@@ -289,10 +289,11 @@ $(function() {
         }
     })
     $('#graphLabel-h .graphSettings').empty().append($('.highlighterSettings').detach())
-    $('.highlighterSettings input,#searchSeq').on('blur',function(){
+    $('.highlighterSettings input,#searchSeq').on('change',function(){
+        graphStatus['h'].settings = hSettingsFromUI();
         isInvalidDisplay = true;
     })
-    $('.highlighterSettings .addSeq').on('click',function(){
+    $('.highlighterSettings .addSeq').on('click blur',function(){
         $('#highlighterSequence').clone().removeAttr('id').addClass('highlighterSequence').insertBefore($(this))
     })
     $("#dials li").on('mouseleave touchstart',function(){
@@ -344,6 +345,34 @@ var closeSettings = function(graph) {
     isInvalidDisplay = true;
 }
 
+var hSettingsFromUI = function(){  // TODO: Validate
+    var hState = {};
+    hState.revComplement = $('#revComplement').is(':checked')? true : false;
+    hState.similarityPercent = $('#similarityPercent').val();
+    hState.sequences = [];
+    $('.highlighterSequence').each(function(i){
+        hState.sequences[i] = {
+            'show':$(this).find('.showSeq').is(':checked'),
+            'sequence':$(this).find('.sequenceInput').val(),
+            'color':$(this).find('.sequenceColor').val()
+        };
+    })
+    return hState;
+}
+var highlighterEncodeURL = function(hState) {
+    if (typeof hState != 'object') return "";
+    var s = ""
+    if (hState.revComplement) s += "&rev";
+    s += "&sim=" + hState.similarityPercent
+    $.each(hState.sequences,function(i,v){
+        if (v.show) {
+            if(v.sequence) s += "&s" + i + "=" + v.sequence
+            if(v.color) s += "&s" + i + "c=" + v.color
+        }
+    })
+    return s
+}
+
 var getCurrentPageURL = function(fullURL) {
     var graphString = ""
     for (var key in graphStatus) {
@@ -351,7 +380,8 @@ var getCurrentPageURL = function(fullURL) {
     }
     var baseURL = (window.location.origin) ? window.location.origin : window.location.protocol + window.location.host;
     var currentURL = window.location.pathname + "?graphs=" + graphString + "&start=" + state.start() + "&scale=" + state.scale() + "&width=" + state.width() 
-    if (graphStatus['h'].visible) currentURL += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd;
+    if (graphStatus['h'].visible && graphStatus['h'].settings) currentURL += highlighterEncodeURL(graphStatus['h'].settings)
+    // if (graphStatus['h'].visible) currentURL += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd;
     if (colorPalette !="Classic") graphPath += "&colorPalette="+colorPalette
     return fullURL ? baseURL + currentURL : currentURL;
 }
