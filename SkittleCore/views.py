@@ -25,6 +25,12 @@ def browse(request, genus="homo",species="sapiens", specimen="hg18",chromosome="
     context = {'availableGraphs':GraphRequestHandler.availableGraphs,'specimen':specimen,'chromosome':chromosome,'colorPalette':colorPalette,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength,'selectionStart':selectionStart,'selectionEnd':selectionEnd}
     return render(request, 'browse.html',context)
 
+def parseHexColor(colorString):
+    r = int(colorString[:2], 16)
+    g = int(colorString[2:4], 16)
+    b = int(colorString[4:6], 16)
+    return (r, g, b)
+
 @cache_control(must_revalidate=False, max_age=3600)
 def graph(request, genus="homo",species="sapiens", specimen="hg18",chromosome="chrY-sample"):
     state = RequestPacket()
@@ -43,11 +49,15 @@ def graph(request, genus="homo",species="sapiens", specimen="hg18",chromosome="c
 #    	state.searchStop = int(request.GET.get('searchStop',1))
         graphSettings = HighlighterState()
         for i in range(50):#TODO: are there going to be gaps in the numbering after the user removes a sequence?
-            searchSequence1 = request.GET.get('searchSequence'+str(i), None)
+            searchSequence1 = request.GET.get('s'+str(i), None)
             if searchSequence1 is not None:
                 print searchSequence1
                 tmp = SequenceEntry()
                 tmp.seq = searchSequence1
+                color = request.GET.get('s'+str(i)+'c', None)
+                if color is not None:
+                    tmp.color = parseHexColor(color)
+                    
                 graphSettings.targetSequenceEntries.append(tmp)
         print map(lambda x: x.seq, graphSettings.targetSequenceEntries)
 
