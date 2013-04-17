@@ -15,6 +15,7 @@ class HighlighterState(ParentState):
     def __init__(self):
         self.targetSequenceEntries = []
         self.searchReverseComplement = True
+        self.minimumPercentage = .6 
     
     def getTargetSequenceEntries(self):
         '''targetSequenceEntries contains a series of SequenceEntries.'''
@@ -73,7 +74,6 @@ class ThreeMerDetectorState(ParentState):
 class SequenceEntry():
     def __init__(self):
         self.seq = 'AAAAAAAAAA'
-        self.minimumPercentage = .6 
         self.color = (0, 255, 0)
     
             

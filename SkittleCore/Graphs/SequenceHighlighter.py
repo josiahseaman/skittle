@@ -16,12 +16,12 @@ registerGraph('h', "Sequence Highlighter", __name__, True, helpText='''Use the S
  When the Highlighter finds another sequence that is at least 70\% the same, 
  it highlights each of the matching nucleotides in bright green.''')
 
-def measureSequenceMatches(state, sequenceEntry):
+def measureSequenceMatches(state, highlighterState, sequenceEntry):
     assert isinstance(sequenceEntry, SequenceEntry)
     scores = []
     findSize = len(sequenceEntry.seq)
     searchSeq = sequenceEntry.seq
-    maxMismatches = int(findSize - float(findSize) * sequenceEntry.minimumPercentage + .999)
+    maxMismatches = int(findSize - float(findSize) * highlighterState.minimumPercentage + .999)
     #at 50%   1 = 0,  2 = 1, 3 = 1
     for start_i in range(min( chunkSize, len(state.seq)  - (findSize-1))) :
         mismatches = 0
@@ -60,7 +60,7 @@ def colorCombinedResults(state, highlighterState, results, entries = None ):
         searchSeq = entries[sequenceEntryIndex].seq
         for index, startScore in enumerate(searchPageResults):
             hitCanvas[index] = max(startScore, hitCanvas[index])#sets the grey pixels
-            if startScore >= entries[sequenceEntryIndex].minimumPercentage:
+            if startScore >= highlighterState.minimumPercentage:
                 splatter = calculatePerCharacterMatch(state.seq[index:index+len(searchSeq)], searchSeq)
                 splatter = map(lambda x: x*(sequenceEntryIndex+2), splatter)#this tags each character hit with WHICH search sequence it came from, +1 because of 0*0
                 for localIndex, hit in enumerate(splatter):
@@ -80,6 +80,10 @@ def calculateOutputPixels(state, highlighterState = HighlighterState()):
     targetSequenceEntries = highlighterState.getTargetSequenceEntries()
     if state.searchStop != 1:
         print "WARNING: SearchStop is still being defined"
+        
+        
+        
+        
     print "Searching for", len(targetSequenceEntries), "unique entries"
     if highlighterState.searchReverseComplement:
         startingSize = len(targetSequenceEntries)
@@ -91,7 +95,7 @@ def calculateOutputPixels(state, highlighterState = HighlighterState()):
 
     for i in range(len( targetSequenceEntries )):
         if len( targetSequenceEntries[i].seq) != 0 :
-            results.append( measureSequenceMatches(state, targetSequenceEntries[i] ) )
+            results.append( measureSequenceMatches(state, highlighterState, targetSequenceEntries[i] ) )
     synthesis = colorCombinedResults(state, highlighterState, results, targetSequenceEntries )
     return synthesis
 

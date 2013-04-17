@@ -31,8 +31,8 @@ def graph(request, genus="homo",species="sapiens", specimen="hg18",chromosome="c
     graphSettings = None
     if state.requestedGraph == 'h':
         graphSettings = createHighlighterState(request,genus,species,specimen,chromosome)
-#    	state.searchStart = int(request.GET.get('searchStart',1))
-#    	state.searchStop = int(request.GET.get('searchStop',1))
+        state.searchStart = int(request.GET.get('searchStart',1))
+        state.searchStop = int(request.GET.get('searchStop',1))
 
     image_data = handleRequest(state, graphSettings)
     return HttpResponse(image_data, content_type="image/png")
@@ -43,12 +43,6 @@ def annotation(request, genus="homo",species="sapiens", specimen="hg18",chromoso
     return HttpResponse(json,content_type="application/json")
 
 def state(request):
-    json = '''graphStatus = {
-        "a":{name:"Annotations",visible:false,isRasterable:true},
-        "n":{name:"Nucleotide Display",visible:true,isRasterable:true},
-        "b":{name:"Nucleotide Bias",visible:false,isRasterable:false},
-        "m":{name:"Repeat Map",visible:false,isRasterable:false}
-    }''' 
     json = "graphStatus = " + simplejson.dumps(GraphRequestHandler.generateGraphListForServer())
     # json = "annotationSources = " + simplejson.dumps(StorageRequestHandler.getAnnotations())
     json += ";graphOrder = ['a','n','h','b','t','o','m','s'];"
