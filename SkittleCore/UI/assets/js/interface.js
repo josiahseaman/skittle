@@ -210,7 +210,7 @@ function mouseWheelDials(e) {
     }
 }
 // html widgets
-  $(function() {
+$(function() {
 
     $('#tools .radio-tools').click(function() {
         $('#tools .radio-tools').removeClass('active');
@@ -256,6 +256,7 @@ function mouseWheelDials(e) {
         var graph = this.parentNode.id.slice(-1);
         hideGraph(graph)
         closeHelp(graph)
+        closeSettings(graph)
     })
     $('#graph-labels .helpGraphButton').click(function() {
         var graph = this.parentNode.id.slice(-1);
@@ -271,6 +272,28 @@ function mouseWheelDials(e) {
                 })
             helpGraph(graph);
         }
+    })
+    $('#graph-labels .settingsGraphButton').click(function() {
+        var graph = this.parentNode.id.slice(-1);
+        if ( $('#settingsLabel-'+graph).length > 0 ) closeSettings(graph)
+        else {
+            settingsLabel
+                .clone()
+                .attr('id', 'settingsLabel-'+graph)
+                .insertAfter($(this).parent())
+                .children('.closeSettingsButton').click(function() {
+                    var graph = this.parentNode.id.slice(-1);
+                    closeSettings(graph);
+                })
+            settingsGraph(graph);
+        }
+    })
+    $('#graphLabel-h .graphSettings').empty().append($('.highlighterSettings').detach())
+    $('.highlighterSettings input,#searchSeq').on('blur',function(){
+        isInvalidDisplay = true;
+    })
+    $('.highlighterSettings .addSeq').on('click',function(){
+        $('#highlighterSequence').clone().removeAttr('id').addClass('highlighterSequence').insertBefore($(this))
     })
     $("#dials li").on('mouseleave touchstart',function(){
         var target = $(this).children('div').addClass('active')
@@ -293,11 +316,13 @@ function mouseWheelDials(e) {
         })
     })
 
-  });
+});
+
+
+
 
 var helpGraph = function(graph) {
     graphStatus[graph].help = true;
-    if (graphStatus[graph] && graphStatus[graph].helpText) $('#graphLabel-'+graph+" .graphHelp").html(graphStatus[graph].helpText)
     $('#graphLabel-'+graph+" .graphHelp").addClass('active');
     isInvalidDisplay = true;
 }
@@ -307,6 +332,18 @@ var closeHelp = function(graph) {
     $('#helpLabel-'+graph).remove()
     isInvalidDisplay = true;
 }
+var settingsGraph = function(graph) {
+    graphStatus[graph].settings = true;
+    $('#graphLabel-'+graph+" .graphSettings").addClass('active');
+    isInvalidDisplay = true;
+}
+var closeSettings = function(graph) {
+    graphStatus[graph].settings = false;
+    $('#graphLabel-'+graph+" .graphSettings").removeClass('active');
+    $('#settingsLabel-'+graph).remove()
+    isInvalidDisplay = true;
+}
+
 var getCurrentPageURL = function(fullURL) {
     var graphString = ""
     for (var key in graphStatus) {

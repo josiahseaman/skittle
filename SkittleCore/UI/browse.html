@@ -30,11 +30,33 @@
 		<div id="graph-labels">
 			<ul>
 			{% for graph in availableGraphs %}
-				<li id="graphLabel-{{ graph.symbol }}" style="width:159px;">{{ graph.name }} <img src="{{STATIC_URL}}gfx/icons/help_green.png" class="helpGraphButton"><img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton">
-					<div class="graphHelp"><p>This is a graph.</p></div></li>
+				<li id="graphLabel-{{ graph.symbol }}" style="width:159px;">
+					{% if graph.symbol == "h" %}<img src="{{STATIC_URL}}gfx/icons/cog_button.png" class="settingsGraphButton"> {% endif %}
+					{{ graph.name }} <img src="{{STATIC_URL}}gfx/icons/help_green.png" class="helpGraphButton"><img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton">
+					<div class="graphHelp"><p>{{ graph.helpText }}</p></div>
+					<div class="graphSettings"><p>There are no settings for this graph</p></div>
+				</li>
 			{% endfor %}
 			</ul>
 		</div>
+	</div>
+	<div class="highlighterSettings">
+		<label><input type="checkbox" id="revComplement"> Search Reverse Complement</label><br>
+		<label for="similarityPercent">% Similarity:</label>
+		<input type="text" id="similarityPercent" value="80" style="width:2em" maxlength="3">
+		<hr>
+		<div id="highlighterSequence">
+			<input type="text" class="sequenceInput">
+			<label>Show <input type="checkbox" class="showSeq"></label> 
+			<label>Color: <input type="text" class="sequenceColor"></label>
+		</div>
+		<div class="highlighterSequence">
+			<input type="text" class="sequenceInput">
+			<label>Show <input type="checkbox" class="showSeq"></label> 
+			<label>Color: <input type="text" class="sequenceColor"></label>
+		</div>
+		<div class="addSeq button"><img src="{{STATIC_URL}}gfx/icons/plus_button.png"> Add Search Sequence</div>
+		<!-- <div id="searchSeq" class="button">Start Search</div> -->
 	</div>
 
 	<div id="learn" class="">
@@ -160,6 +182,7 @@
 	var annotations = {}
 	var visibleAnnotations = {}
 	var helpLabel = $('<li class="helpLabel">Graph Information<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeHelpButton"></li>')
+	var settingsLabel = $('<li class="settingsLabel">Graph Settings<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeSettingsButton"></li>')
 
 
     imageUnrendered = new Image()

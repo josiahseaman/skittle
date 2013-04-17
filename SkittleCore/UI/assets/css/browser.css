@@ -284,12 +284,12 @@
 	#graphList.active, .popover.active {
 		display: block;
 	}
-	#graph-labels li.helpLabel {
+	#graph-labels li.helpLabel,#graph-labels li.settingsLabel {
 		display:list-item;
 		width:170px;
 		padding-right: 30px;
 	}
-	.graphHelp {
+	.graphHelp, .graphSettings {
 		position: absolute;
 		display: none;
 		top:40px;
@@ -304,10 +304,37 @@
 		line-height: 1.5;
 		color: #ddd;
 	}
-	.graphHelp.active {
+	.graphHelp.active,.graphSettings.active {
 		display: block;
 	}
-
+	.graphSettings {
+		right:-305px;
+	}
+	#graph-labels li.settingsLabel,.graphSettings {
+		width:300px;
+	}
+	.addSeq {
+		display: block;
+	}
+	.highlighterSequence {
+		background: #222;
+		border: 1px solid #444;
+		border-radius: 4px;
+		padding: 3%;
+		margin: 2% 0;
+	}
+	#highlighterSequence {
+		display:none;
+	}
+	.highlighterSequence .sequenceInput {
+		display:block;
+	}
+	.highlighterSettings {
+		display: none;
+	}
+	#graph-labels .highlighterSettings {
+		display: block;
+	}
 
 	#widthBubble {
 		left:32px;
