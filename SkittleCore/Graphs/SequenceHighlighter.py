@@ -105,7 +105,7 @@ def calculateOutputPixels(state, highlighterState = HighlighterState()):
      
     #TODO: temporary workaround of settings  
     targetSequenceEntries = highlighterState.getTargetSequenceEntries()
-    print targetSequenceEntries
+    print "Searching for", len(targetSequenceEntries), "unique entries"
     if highlighterState.searchReverseComplement:
         startingSize = len(targetSequenceEntries)
         for i in range(startingSize):

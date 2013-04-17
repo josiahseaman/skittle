@@ -12,8 +12,9 @@ class AnnotationDisplayState(ParentState):
     annotationPath = ''
     
 class HighlighterState(ParentState):
-    searchReverseComplement = True
-    targetSequenceEntries = []
+    def __init__(self):
+        self.targetSequenceEntries = []
+        self.searchReverseComplement = True
     
     def getTargetSequenceEntries(self):
         '''targetSequenceEntries contains a series of SequenceEntries.'''
@@ -70,8 +71,9 @@ class ThreeMerDetectorState(ParentState):
         return F_height
 
 class SequenceEntry():
-    seq = 'AAAAAAAAAA'
-    minimumPercentage = .6 
-    color = (0, 255, 0)
+    def __init__(self):
+        self.seq = 'AAAAAAAAAA'
+        self.minimumPercentage = .6 
+        self.color = (0, 255, 0)
     
             
