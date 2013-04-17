@@ -5,9 +5,8 @@ import math
 # Create your models here.
 
 class ParentState():
-    class Meta:
-        abstract = True
-    
+    pass
+
 class AnnotationDisplayState(ParentState):
     annotationPath = ''
     
@@ -16,17 +15,17 @@ class HighlighterState(ParentState):
         self.targetSequenceEntries = []
         self.searchReverseComplement = True
         self.minimumPercentage = .6 
-    
     def getTargetSequenceEntries(self):
         '''targetSequenceEntries contains a series of SequenceEntries.'''
         if not self.targetSequenceEntries:
             default = SequenceEntry()
-            default.ownerGraph = self
             return [default]
         return self.targetSequenceEntries
-    
     def __str__(self):
         return "Search other strand: "+ str(self.searchReverseComplement) + "   Sequences: "+ str(self.getTargetSequenceEntries()[0].seq)
+    def __repr__(self):
+        dCopy = self.__dict__
+        return str(dCopy)
     
     
 '''This class contains all the state information specific exclusively to Repeat Map. 
@@ -75,5 +74,10 @@ class SequenceEntry():
     def __init__(self):
         self.seq = 'AAAAAAAAAA'
         self.color = (0, 255, 0)
+    def __repr__(self):
+        return str(self.__dict__)
     
             
+#h = HighlighterState()
+#h.targetSequenceEntries.append(SequenceEntry())
+#h.__repr__()
