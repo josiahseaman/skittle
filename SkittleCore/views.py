@@ -31,8 +31,7 @@ def parseHexColor(colorString):
     b = int(colorString[4:6], 16)
     return (r, g, b)
 
-@cache_control(must_revalidate=False, max_age=3600)
-def graph(request, genus="homo",species="sapiens", specimen="hg18",chromosome="chrY-sample"):
+def createRequestPacket(request, specimen, chromosome):
     state = RequestPacket()
     state.chromosome = chromosome
     state.specimen = specimen
@@ -42,7 +41,19 @@ def graph(request, genus="homo",species="sapiens", specimen="hg18",chromosome="c
     state.scale = max(1,int(request.GET.get('scale',1)))
     state.requestedGraph = request.GET.get('graph','n')
     state.colorPalette = request.GET.get('colorPalette','Classic')
-    
+    return state
+
+def sequence(request, genus="homo",species="sapiens", specimen="hg18",chromosome="chrY-sample"):
+    state = createRequestPacket(request, specimen, chromosome)
+    import SequenceLogic
+    searchStart = int(request.GET.get('queryStart',10000))
+    searchStop  =  int(request.GET.get('queryStop',10010))
+    seq = SequenceLogic.getSearchSequenceFromRequestPacket(state, searchStart, searchStop)
+    return HttpResponse(seq)
+
+@cache_control(must_revalidate=False, max_age=3600)
+def graph(request, genus="homo",species="sapiens", specimen="hg18",chromosome="chrY-sample"):
+    state = createRequestPacket(request, specimen, chromosome)
     graphSettings = None
     if state.requestedGraph == 'h':
 #    	state.searchStart = int(request.GET.get('searchStart',1))

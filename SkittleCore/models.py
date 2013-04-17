@@ -42,8 +42,8 @@ class RequestPacket(models.Model):
     length = models.IntegerField(default=0)
     requestedGraph = models.CharField(max_length=1, default=None, null=True)
     
-    searchStart = models.IntegerField(default=10)
-    searchStop  = models.IntegerField(default=20)
+    searchStart = models.IntegerField(default=1)
+    searchStop  = models.IntegerField(default=1)
     
     def copy(self):
         c = RequestPacket()
