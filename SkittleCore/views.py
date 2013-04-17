@@ -48,6 +48,11 @@ def graph(request, genus="homo",species="sapiens", specimen="hg18",chromosome="c
 #    	state.searchStart = int(request.GET.get('searchStart',1))
 #    	state.searchStop = int(request.GET.get('searchStop',1))
         graphSettings = HighlighterState()
+        useRevComp = True if request.GET.get('rev') else False
+        graphSettings.searchReverseComplement = useRevComp
+        similarity = request.GET.get('sim', None)
+        if similarity:
+            graphSettings.minimumPercentage = float(similarity)
         for i in range(50):#TODO: are there going to be gaps in the numbering after the user removes a sequence?
             searchSequence1 = request.GET.get('s'+str(i), None)
             if searchSequence1 is not None:
