@@ -89,6 +89,7 @@ var formatGffDescription = function(annotation){
 			var keyValue = v.match(/([A-Za-z][A-Za-z0-9_]*)(=| )"?([^\s"]*)"?/)
 			if (keyValue) {
 				keyValue[1] = keyValue[1][0].toUpperCase() + keyValue[1].slice(1).replace(/_/g," ")
+				if (keyValue[1] == "Gene name") keyValue[3] = '<a href="https://www.google.com/search?q='+keyValue[3]+'">'+keyValue[3]+"</a>"
 				table.append($('<tr><th>'+keyValue[1]+':</th><td>'+keyValue[3] + '</td></tr>'))
 			}
 		})
