@@ -25,57 +25,14 @@ def browse(request, genus="homo",species="sapiens", specimen="hg18",chromosome="
     context = {'availableGraphs':GraphRequestHandler.availableGraphs,'specimen':specimen,'chromosome':chromosome,'colorPalette':colorPalette,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength,'selectionStart':selectionStart,'selectionEnd':selectionEnd}
     return render(request, 'browse.html',context)
 
-def parseHexColor(colorString):
-    r = int(colorString[:2], 16)
-    g = int(colorString[2:4], 16)
-    b = int(colorString[4:6], 16)
-    return (r, g, b)
-
-def createRequestPacket(request, specimen, chromosome):
-    state = RequestPacket()
-    state.chromosome = chromosome
-    state.specimen = specimen
-
-    state.start = max(1,int(request.GET.get('start',1)))
-    state.width = max(12,int(request.GET.get('width',100)))
-    state.scale = max(1,int(request.GET.get('scale',1)))
-    state.requestedGraph = request.GET.get('graph','n')
-    state.colorPalette = request.GET.get('colorPalette','Classic')
-    return state
-
-def sequence(request, genus="homo",species="sapiens", specimen="hg18",chromosome="chrY-sample"):
-    state = createRequestPacket(request, specimen, chromosome)
-    import SequenceLogic
-    searchStart = int(request.GET.get('queryStart',10000))
-    searchStop  =  int(request.GET.get('queryStop',10010))
-    seq = SequenceLogic.getSearchSequenceFromRequestPacket(state, searchStart, searchStop)
-    return HttpResponse(seq)
-
 @cache_control(must_revalidate=False, max_age=3600)
 def graph(request, genus="homo",species="sapiens", specimen="hg18",chromosome="chrY-sample"):
     state = createRequestPacket(request, specimen, chromosome)
     graphSettings = None
     if state.requestedGraph == 'h':
+        graphSettings = createHighlighterState(request,genus,species,specimen,chromosome)
 #    	state.searchStart = int(request.GET.get('searchStart',1))
 #    	state.searchStop = int(request.GET.get('searchStop',1))
-        graphSettings = HighlighterState()
-        useRevComp = True if request.GET.get('rev') else False
-        graphSettings.searchReverseComplement = useRevComp
-        similarity = request.GET.get('sim', None)
-        if similarity:
-            graphSettings.minimumPercentage = float(similarity)
-        for i in range(50):#TODO: are there going to be gaps in the numbering after the user removes a sequence?
-            searchSequence1 = request.GET.get('s'+str(i), None)
-            if searchSequence1 is not None:
-                print searchSequence1
-                tmp = SequenceEntry()
-                tmp.seq = searchSequence1.upper()
-                color = request.GET.get('s'+str(i)+'c', None)
-                if color is not None:
-                    tmp.color = parseHexColor(color)
-                    
-                graphSettings.targetSequenceEntries.append(tmp)
-        print map(lambda x: x.seq, graphSettings.targetSequenceEntries)
 
     image_data = handleRequest(state, graphSettings)
     return HttpResponse(image_data, content_type="image/png")
@@ -97,3 +54,49 @@ def state(request):
     json += ";graphOrder = ['a','n','h','b','t','o','m','s'];"
     return HttpResponse(json,content_type="application/json")
 
+def sequence(request, genus="homo",species="sapiens", specimen="hg18",chromosome="chrY-sample"):
+    state = createRequestPacket(request, specimen, chromosome)
+    import SequenceLogic
+    searchStart = int(request.GET.get('queryStart',10000))
+    searchStop  =  int(request.GET.get('queryStop',10010))
+    seq = SequenceLogic.getSearchSequenceFromRequestPacket(state, searchStart, searchStop)
+    return HttpResponse(seq)
+
+def createRequestPacket(request, specimen, chromosome):
+    state = RequestPacket()
+    state.chromosome = chromosome
+    state.specimen = specimen
+
+    state.start = max(1,int(request.GET.get('start',1)))
+    state.width = max(12,int(request.GET.get('width',100)))
+    state.scale = max(1,int(request.GET.get('scale',1)))
+    state.requestedGraph = request.GET.get('graph','n')
+    state.colorPalette = request.GET.get('colorPalette','Classic')
+    return state
+
+def createHighlighterState(request,genus,species,specimen,chromosome):
+    graphSettings = HighlighterState()
+    useRevComp = True if request.GET.get('rev') else False
+    graphSettings.searchReverseComplement = useRevComp
+    similarity = request.GET.get('sim', None)
+    if similarity:
+        graphSettings.minimumPercentage = float(similarity)/100
+    for i in range(50):
+        searchSequence1 = request.GET.get('s'+str(i), None)
+        if searchSequence1 is not None:
+            print searchSequence1
+            tmp = SequenceEntry()
+            tmp.seq = searchSequence1.upper()
+            color = request.GET.get('s'+str(i)+'c', None)
+            if color is not None:
+                tmp.color = parseHexColor(color)
+                
+            graphSettings.targetSequenceEntries.append(tmp)
+    print map(lambda x: x.seq, graphSettings.targetSequenceEntries)
+    return graphSettings
+
+def parseHexColor(colorString):
+    r = int(colorString[:2], 16)
+    g = int(colorString[2:4], 16)
+    b = int(colorString[4:6], 16)
+    return (r, g, b)

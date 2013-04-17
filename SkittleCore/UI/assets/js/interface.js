@@ -289,11 +289,11 @@ $(function() {
         }
     })
     $('#graphLabel-h .graphSettings').empty().append($('.highlighterSettings').detach())
-    $('.highlighterSettings input,#searchSeq').on('change',function(){
+    $('.highlighterSettings input,#searchSeq').on('change blur click',function(){
         graphStatus['h'].settings = hSettingsFromUI();
         isInvalidDisplay = true;
     })
-    $('.highlighterSettings .addSeq').on('click blur',function(){
+    $('.highlighterSettings .addSeq').on('click',function(){
         $('#highlighterSequence').clone().removeAttr('id').addClass('highlighterSequence').insertBefore($(this))
     })
     $("#dials li").on('mouseleave touchstart',function(){
@@ -371,6 +371,18 @@ var highlighterEncodeURL = function(hState) {
         }
     })
     return s
+}
+var loadHighlighterSettings = function(hState) {
+    $('#revComplement').prop('checked', hState.revComplement);
+    $('#similarityPercent').val(hState.similarityPercent);
+    $('.highlighterSequence').remove()
+    $.each(hState.sequences,function(i,v){
+        var seq = $('#highlighterSequence').clone().removeAttr('id').addClass('highlighterSequence')
+        seq.find('.showSeq').prop('checked', v.show);
+        seq.find('.sequenceInput').val(v.sequence);
+        seq.find('.sequenceColor').val(v.color)
+        seq.insertBefore('.addSeq')
+    })
 }
 
 var getCurrentPageURL = function(fullURL) {
