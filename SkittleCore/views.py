@@ -41,14 +41,15 @@ def graph(request, genus="homo",species="sapiens", specimen="hg18",chromosome="c
     if state.requestedGraph == 'h':
 #    	state.searchStart = int(request.GET.get('searchStart',1))
 #    	state.searchStop = int(request.GET.get('searchStop',1))
-        searchSequence1 = request.GET.get('searchSequence1', None)
-        print searchSequence1
-        if searchSequence1 is not None:
-            graphSettings = HighlighterState()
-            tmp = SequenceEntry()
-            tmp.seq = searchSequence1
-            graphSettings.targetSequenceEntries.append(tmp)
-            print graphSettings.targetSequenceEntries
+        graphSettings = HighlighterState()
+        for i in range(50):#TODO: are there going to be gaps in the numbering after the user removes a sequence?
+            searchSequence1 = request.GET.get('searchSequence'+str(i), None)
+            if searchSequence1 is not None:
+                print searchSequence1
+                tmp = SequenceEntry()
+                tmp.seq = searchSequence1
+                graphSettings.targetSequenceEntries.append(tmp)
+        print map(lambda x: x.seq, graphSettings.targetSequenceEntries)
 
     image_data = handleRequest(state, graphSettings)
     return HttpResponse(image_data, content_type="image/png")
