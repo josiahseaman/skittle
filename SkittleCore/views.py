@@ -95,4 +95,4 @@ def parseHexColor(colorString):
     r = int(colorString[:2], 16)
     g = int(colorString[2:4], 16)
     b = int(colorString[4:6], 16)
-    return unicode(Color([r, g, b]))
+    return Color([r, g, b])

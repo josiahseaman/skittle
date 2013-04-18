@@ -81,7 +81,7 @@ class Color(tuple):
 class SequenceEntry():
     def __init__(self):
         self.seq = 'AAAAAAAAAA'
-        self.color = unicode(Color([0, 255, 0]))
+        self.color = Color([0, 255, 0])
     def __repr__(self):
         return str(self.__dict__)
 
