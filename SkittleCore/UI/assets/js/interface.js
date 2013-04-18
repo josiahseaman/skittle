@@ -303,7 +303,10 @@ $(function() {
         isInvalidDisplay = true;
     })
     $('.highlighterSettings .addSeq').on('click',function(){
-        $('#highlighterSequence').clone().removeAttr('id').addClass('highlighterSequence').insertBefore($(this))
+        var newSequenceEntry = $('#highlighterSequence').clone().removeAttr('id').addClass('highlighterSequence');
+        newSequenceEntry.find('.sequenceColor').val(getGoodDeterministicColor(Math.random()).slice(1))
+        newSequenceEntry.insertBefore($(this))
+
     })
     $('.highlighterSettings').on('click','.removeSeq',function(){
         $(this).parent().remove();

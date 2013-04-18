@@ -45,10 +45,10 @@ def annotation(request, genus="homo",species="sapiens", specimen="hg18",chromoso
     return HttpResponse(json,content_type="application/json")
 
 def state(request):
-    json = "graphStatus = " + json.dumps(GraphRequestHandler.generateGraphListForServer())
+    j = "graphStatus = " + json.dumps(GraphRequestHandler.generateGraphListForServer())
     # json = "annotationSources = " + simplejson.dumps(StorageRequestHandler.getAnnotations())
-    json += ";graphOrder = ['a','n','h','b','t','o','m','s'];"
-    return HttpResponse(json,content_type="application/json")
+    j += ";graphOrder = ['a','n','h','b','t','o','m','s'];"
+    return HttpResponse(j,content_type="application/json")
 
 def sequence(request, genus="homo",species="sapiens", specimen="hg18",chromosome="chrY-sample"):
     state = createRequestPacket(request, specimen, chromosome)
