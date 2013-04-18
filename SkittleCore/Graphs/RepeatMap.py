@@ -172,10 +172,8 @@ def getBaseRepeatMapData(state, repeatMapState = RepeatMapState()):
             if GetFastaFilePath(tempState.specimen, tempState.chromosome, tempState.start) is not None:
                 handleRequest(tempState) #disregard the png data returned here since I'd rather read the file consistently
                 filepath = GetPngFilePath(tempState)
-            else: #ran out of chunks
-                return fullData
         if not filepath:
-            msg = "The request did not create a valid PNG:" + tempState.specimen+ tempState.chromosome+ str(tempState.start)
+            msg = "The request was for an invalid fasta file:" + tempState.specimen+ tempState.chromosome+ str(tempState.start)
             open("errors.log",'a').write(msg)
             raise IOError(msg)
         decoder = Reader(filename=filepath)
