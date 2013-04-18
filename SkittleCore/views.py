@@ -2,14 +2,13 @@ from django.shortcuts import render_to_response,render
 from django.conf import settings 
 from django.http import HttpResponseRedirect, HttpResponse, HttpRequest, QueryDict
 from django.views.decorators.cache import cache_control
-from django.utils import simplejson
 from SkittleCore import GraphRequestHandler
 from SkittleCore.GraphRequestHandler import handleRequest
 from SkittleCore.models import RequestPacket
 from SkittleCore.Graphs.models import *
 from DNAStorage.StorageRequestHandler import GetChromosomeLength
 from Annotations.StorageRequestHandler import GetAnnotationsChunk
-# import json
+import json
 
 def browse(request, genus="homo",species="sapiens", specimen="hg18",chromosome="chrY-sample"):
     width = request.GET.get('width',100)
@@ -21,7 +20,7 @@ def browse(request, genus="homo",species="sapiens", specimen="hg18",chromosome="
     selectionStart = request.GET.get('searchStart',1)
     selectionEnd = request.GET.get('searchStop',1)
     if 'h' in graphs:
-        highlighterState = simplejson.dumps(createHighlighterState(request,genus,species,specimen,chromosome).__dict__)
+        highlighterState = json.dumps(createHighlighterState(request,genus,species,specimen,chromosome).__dict__)
     else: highlighterState = "undefined"
 
     fileLength = GetChromosomeLength(specimen,chromosome) 
@@ -46,7 +45,7 @@ def annotation(request, genus="homo",species="sapiens", specimen="hg18",chromoso
     return HttpResponse(json,content_type="application/json")
 
 def state(request):
-    json = "graphStatus = " + simplejson.dumps(GraphRequestHandler.generateGraphListForServer())
+    json = "graphStatus = " + json.dumps(GraphRequestHandler.generateGraphListForServer())
     # json = "annotationSources = " + simplejson.dumps(StorageRequestHandler.getAnnotations())
     json += ";graphOrder = ['a','n','h','b','t','o','m','s'];"
     return HttpResponse(json,content_type="application/json")
@@ -96,4 +95,4 @@ def parseHexColor(colorString):
     r = int(colorString[:2], 16)
     g = int(colorString[2:4], 16)
     b = int(colorString[4:6], 16)
-    return Color([r, g, b])
+    return unicode(Color([r, g, b]))
