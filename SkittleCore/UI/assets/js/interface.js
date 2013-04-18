@@ -558,7 +558,7 @@ StateObject.prototype.scaleToFile = function(){
 }
 var double = function(a){ return a * 2; }
 var half = function(a){ return a / 2; }
-var lines = function(a){ return a * state.bpPerLine(); }
+var lines = function(a){ return Math.round(a) * state.bpPerLine(); }
 var by = function(d){ return function(a){ return a + d; }}
 var random = function(a){ return Math.random()*fileLength;}
 
