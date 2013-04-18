@@ -314,13 +314,13 @@
 		width:300px;
 	}
 	.addSeq {
-		display: block;
+		/*display: block;*/
 	}
 	.highlighterSequence {
 		background: #222;
 		border: 1px solid #444;
 		border-radius: 4px;
-		padding: 3%;
+		padding: 2%;
 		margin: 2% 0;
 	}
 	#highlighterSequence {
@@ -335,10 +335,26 @@
 	#graph-labels .highlighterSettings {
 		display: block;
 	}
-	.removeSeq {
-		float: right;
+	.removeSeq span {
+		color:#f22;
+		font-size: 1.6em;
+		line-height: 1em;
+		vertical-align: bottom;
+	}
+	.highlighterSequence .sequenceInput,.highlighterSequence .sequenceColor {
+		width:99%;
+		line-height:1.8em;
+		font-size: 1.2em;
+		border-radius: 4px;
+		border: 1px solid #888;
+		background: #222;
 		color:#ddd;
-		font-size: 2em;
+	}
+	.highlighterSequence .sequenceColor {
+		width: 4em;
+		height: 2.3em;
+		margin-bottom: -0.9em;
+		border: 0;
 	}
 
 	#widthBubble {
