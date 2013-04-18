@@ -160,7 +160,7 @@ def checkForCachedMap(state):
 
 def getBaseRepeatMapData(state, repeatMapState = RepeatMapState()):
     #read in the one png at fixed width= skixelsPerSample
-    tempState = copy.deepcopy(state)
+    tempState = state.copy() #only preserves specimen and chromosome
     tempState.width = skixelsPerSample
     tempState.scale = 1
     tempState.requestedGraph = 'm'
@@ -178,8 +178,9 @@ def getBaseRepeatMapData(state, repeatMapState = RepeatMapState()):
             msg = "The request did not create a valid PNG:" + tempState.specimen+ tempState.chromosome+ str(tempState.start)
             open("errors.log",'a').write(msg)
             raise IOError(msg)
-        decoder = Reader(filename=filepath)
-        fullData += list(decoder.asFloat(1.0)[2])
+        else:
+            decoder = Reader(filename=filepath)
+            fullData += list(decoder.asFloat(1.0)[2])
         
         tempState.start += chunkSize
     return fullData 
