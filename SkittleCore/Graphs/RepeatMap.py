@@ -164,25 +164,27 @@ def getBaseRepeatMapData(state, repeatMapState = RepeatMapState()):
     tempState.width = skixelsPerSample
     tempState.scale = 1
     tempState.requestedGraph = 'm'
-    
+
+     #before
     fullData = []
     for s in range(state.scale):
-        filepath = GetPngFilePath(tempState)
-        if not filepath:
+        pngPath = GetPngFilePath(tempState)
+        if not pngPath:
             if GetFastaFilePath(tempState.specimen, tempState.chromosome, tempState.start) is not None:
                 handleRequest(tempState) #disregard the png data returned here since I'd rather read the file consistently
-                filepath = GetPngFilePath(tempState)
+                pngPath = GetPngFilePath(tempState)
             else: #ran out of chunks
                 return fullData
-        if not filepath:
+        if not pngPath:
             msg = "The request did not create a valid PNG:" + tempState.specimen+ tempState.chromosome+ str(tempState.start)
             open("errors.log",'a').write(msg)
             raise IOError(msg)
         else:
-            decoder = Reader(filename=filepath)
+            decoder = Reader(filename=pngPath)
             fullData += list(decoder.asFloat(1.0)[2])
         
         tempState.start += chunkSize
+    #after
     return fullData 
     
 
