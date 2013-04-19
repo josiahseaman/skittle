@@ -49,13 +49,13 @@
 		<hr>
 		<div id="highlighterSequence">
 			<input type="text" class="sequenceInput seq">
-			<label class="button"><input type="checkbox" class="showSeq"> Show</label>
+			<label class="button"><input type="checkbox" class="showSeq"> Highlight</label>
 			<label class="button removeSeq"><span>&times;</span> Remove</label>
 			<label style="float:right">Color:<input type="color" class="sequenceColor"></label>
 		</div>
 
 		<div class="addSeq button"><img src="{{STATIC_URL}}gfx/icons/plus_button.png"> Add Search Sequence</div>
-		<div id="searchSeq" class="button">Start Search</div>
+		<div id="searchSeq" class="button"><img src="{{STATIC_URL}}gfx/icons/search_white.png"> Start Search</div>
 	</div>
 
 	<div id="learn" class="">
@@ -207,8 +207,21 @@
 	    	else hideGraph(key)
 	    }
 	    if (graphStatus['h']) {
-		    graphStatus['h'].settings = {{ highlighterState|safe }}
-	    	loadHighlighterSettings(graphStatus['h'].settings);
+	    	var uGet = window.location.getParameter
+		    var urlHighlighterState = {}
+		    urlHighlighterState.similarityPercent = uGet('sim')
+		    urlHighlighterState.revComplement = (typeof uGet('rev') != 'undefined') ? true : false;
+		    urlHighlighterState.sequences = []
+		    for (var i=0;i<50;++i) {
+		    	if (!uGet('s'+i)) break;
+		    	var sequence = {};
+		    	sequence.show = "true";
+		    	sequence.sequence = uGet('s'+i);
+		    	sequence.color = uGet('s'+i+'c') || getGoodDeterministicColor(Math.random);
+		    	urlHighlighterState.sequences.push(sequence);
+		    }
+	    	loadHighlighterSettings(urlHighlighterState);
+	    	graphStatus['h'].settings = urlHighlighterState;
 	    }
 
 

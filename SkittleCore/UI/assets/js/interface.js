@@ -279,6 +279,7 @@ $(function() {
                     closeHelp(graph);
                 })
             helpGraph(graph);
+            closeSettings(graph);
         }
     })
     $('#graph-labels .settingsGraphButton').click(function() {
@@ -294,6 +295,7 @@ $(function() {
                     closeSettings(graph);
                 })
             settingsGraph(graph);
+            closeHelp(graph);
         }
     })
 
@@ -301,6 +303,9 @@ $(function() {
     $('.highlighterSettings').on('change blur click','input,#searchSeq',function(){
         graphStatus['h'].settings = hSettingsFromUI();
         isInvalidDisplay = true;
+    })
+    $('.highlighterSettings').on('change','#similarityPercent',function(){ 
+        if ($(this).simpleSlider) { $('#similarityPercent').simpleSlider("setValue", $(this).val()); }
     })
     $('.highlighterSettings .addSeq').on('click',function(){
         var newSequenceEntry = $('#highlighterSequence').clone().removeAttr('id').addClass('highlighterSequence');
@@ -393,18 +398,14 @@ var highlighterEncodeURL = function(hState) {
 }
 var loadHighlighterSettings = function(hState) {
     if (typeof hState != 'object') return false;
-    hState.revComplement = hState.revComplement || hState.searchReverseComplement;
     $('#revComplement').prop('checked', hState.revComplement);
-    hState.similarityPercent = hState.similarityPercent || hState.minimumPercentage*100;
-    $('#similarityPercent').val(hState.similarityPercent);
-    if (hState.targetSequenceEntries) hState.sequences = hState.targetSequenceEntries
+    try { $('#similarityPercent').simpleSlider("setValue", hState.similarityPercent); }
+    catch (e) { $('#similarityPercent').val(hState.similarityPercent); }
     $('.highlighterSequence').remove()
     $.each(hState.sequences,function(i,v){
         var seq = $('#highlighterSequence').clone().removeAttr('id').addClass('highlighterSequence')
-        var sequence = v.sequence || v.seq;
-        v.show = v.seq ? true : false;
         seq.find('.showSeq').prop('checked', v.show);
-        seq.find('.sequenceInput').val(sequence);
+        seq.find('.sequenceInput').val(v.sequence);
         seq.find('.sequenceColor').val('#'+v.color)
         seq.insertBefore('.addSeq')
     })

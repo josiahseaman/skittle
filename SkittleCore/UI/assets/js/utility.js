@@ -1,6 +1,28 @@
 Number.prototype.mod = function(n) {
 	return ((this%n)+n)%n;
 }
+if (!window.location.getParameter ) { //for non Chrome browsers. See http://chuvash.eu/2012/01/11/get-url-parameters-with-javascript/
+  window.location.getParameter = function(key) {
+	function parseParams() {
+		var params = {},
+			e,
+			a = /\+/g,  // Regex for replacing addition symbol with a space
+			r = /([^&=]+)=?([^&]*)/g,
+			d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+			q = window.location.search.substring(1);
+
+		while (e = r.exec(q))
+			params[d(e[1])] = d(e[2]);
+
+		return params;
+	}
+
+	if (!this.queryStringParams)
+		this.queryStringParams = parseParams(); 
+
+	return this.queryStringParams[key];
+  };
+}
 var round = function(val,precision,direction) {
 	if (direction && direction == "down") return Math.floor(val/precision)*precision;
 	else if (direction && direction == "up") return Math.ceil(val/precision)*precision;

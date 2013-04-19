@@ -341,7 +341,7 @@
 		line-height: 1em;
 		vertical-align: bottom;
 	}
-	.highlighterSequence .sequenceInput,.highlighterSequence .sequenceColor {
+	.highlighterSettings input[type^=text],.highlighterSettings .sequenceColor {
 		width:99%;
 		line-height:1.8em;
 		font-size: 1.2em;
@@ -355,6 +355,9 @@
 		height: 2.3em;
 		margin-bottom: -0.9em;
 		border: 0;
+	}
+	#similarityPercent {
+		margin-left:9px;
 	}
 
 	#widthBubble {

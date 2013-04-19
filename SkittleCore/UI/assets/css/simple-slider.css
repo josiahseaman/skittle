@@ -1,5 +1,7 @@
 .slider {
   width: 160px;
+  display: inline-block;
+  min-height: 9px !important;
 }
 
 .slider > .dragger {
