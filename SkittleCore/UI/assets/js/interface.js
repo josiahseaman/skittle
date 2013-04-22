@@ -339,16 +339,18 @@ var closeHelp = function(graph) {
 }
 var settingsGraph = function(graph) {
     graphStatus[graph].controls = true;
-    settingsLabel
-        .clone()
-        .attr('id', 'settingsLabel-'+graph)
-        .insertAfter($('#graphLabel-'+graph))
-        .children('.closeSettingsButton').click(function() {
-            var graph = this.parentNode.id.slice(-1);
-            closeSettings(graph);
-        })
+    if ($('#settingsLabel-'+graph).size()==0) {
+        settingsLabel
+            .clone()
+            .attr('id', 'settingsLabel-'+graph)
+            .insertAfter($('#graphLabel-'+graph))
+            .find('.closeSettingsButton').click(function() {
+                var graph = this.parentNode.id.slice(-1);
+                closeSettings(graph);
+            })
+    }
     $('#graphLabel-'+graph+" .graphSettings").addClass('active');
-    if ($('.highlighterSequence').size() == 0) addHighlighterSearch();
+    if ($('.highlighterSequence').size() == 0) addHighlighterSearch('AAAAAAAAAA');
 }
 var closeSettings = function(graph) {
     graphStatus[graph].controls = false;
@@ -359,13 +361,12 @@ var closeSettings = function(graph) {
 var addHighlighterSearch = function(seq){
     var newSeq = $('#highlighterSequence').clone().removeAttr('id').addClass('highlighterSequence')
     if (typeof seq == 'string') {
-        seq = seq.match(/([acgtn]+)/i)? seq.match(/([acgtn]+)/i)[0] : "AAAAAAAA"
-        newSeq.find('.sequenceInput').val(seq.toUpperCase())
+        seq = seq.match(/([acgtn]+)/i)? seq.match(/([acgtn]+)/i)[0] : "";
+        newSeq.find('.sequenceInput').val(seq.toUpperCase());
         newSeq.find('.showSeq').prop('checked', true);
     }
     else {
-        newSeq.find('.sequenceInput').val("AAAAAAAA")
-        seq = Math.random()
+        seq = Math.random();
     }
     newSeq.find('.sequenceColor').val(getGoodDeterministicColor(seq))
     newSeq.insertBefore('.addSeq')
