@@ -73,6 +73,7 @@ def getColor(state, character):
     b = a.get(character, defaultColor)
     return b
 
+
 '''Returns a color tuple with one rgb channel set to a random value'''
 def randomColor():#only changes one channel right now
     colorT = [0,0,0]
@@ -80,17 +81,20 @@ def randomColor():#only changes one channel right now
     colorT[randomChannel] = randint(0,255)
     return tuple(colorT)
 
+
 def blackSquare():
     return [(0,0,0)] * chunkSize
+
 
 def blackSquareGrayScale():
     return [0.0] * chunkSize
 
+
 def drawBar(size, filler_size, barColor, rightJustified, drawBackgroundGray=False):
     if drawBackgroundGray:
-        filler = [ (51,51,51) ] * max(0,filler_size)
+        filler = [(51, 51, 51)] * max(0,filler_size)
     else:
-        filler = [ None ] * max(0,filler_size)
+        filler = [None] * max(0,filler_size)
     bar = [barColor] * size
     line = []
     if rightJustified :
@@ -100,6 +104,7 @@ def drawBar(size, filler_size, barColor, rightJustified, drawBackgroundGray=Fals
         line += bar
         line += filler
     return line   
+
 
 def drawJustifiedBar(barSizes, colorSeries, max_bar_width, drawBackgroundGray=False ):
     assert len(barSizes) == len(colorSeries)
@@ -126,11 +131,13 @@ def drawJustifiedBar(barSizes, colorSeries, max_bar_width, drawBackgroundGray=Fa
     assert len(line) == max_bar_width * math.ceil( len(barSizes)/2.0), "Result %i shoulld be %i." % (len(line), max_bar_width * math.ceil( len(barSizes)/2.0))
     return line
 
+
 def hasDepth(listLike):
     try:
         return len(listLike) > 0 and not isinstance(listLike, (str,dict, tuple, type(u"unicode string"))) and hasattr(listLike[0], "__getitem__") 
     except:
         return False
+
 
 def interpolate(Atuple, Btuple, start, end, position):
     if start == end: return Atuple
@@ -140,6 +147,7 @@ def interpolate(Atuple, Btuple, start, end, position):
     y2 = Atuple[1] * inverse + Btuple[1] * progress;
     z2 = Atuple[2] * inverse + Btuple[2] * progress;
     return (x2, y2, z2)
+
 
 def __colorByCustomSpectrum(spectrumDict, position):
     assert isinstance(spectrumDict, dict)
@@ -152,9 +160,11 @@ def __colorByCustomSpectrum(spectrumDict, position):
     
     return interpolate(spectrumDict[below], spectrumDict[above], below, above, position)
 
+
 def spectrum(floatingPoint):
     spectrumPoints = {0.0: (0, 0, 255), 0.25: (255,0,0), 0.5:(255,255,0), 0.75:(0,255,0), 1.0:(0,255,255)}
     return __colorByCustomSpectrum(spectrumPoints, floatingPoint)
+
 
 def twoSidedSpectrumColoring(floatList, midpoint = 0.0):
     if hasDepth(floatList):
@@ -176,7 +186,5 @@ def twoSidedSpectrumColoring(floatList, midpoint = 0.0):
             pixels.append( interpolate(blue, black, lowMid, midpoint, score) )
         elif score <= lowMid:
             pixels.append( interpolate(purple, blue, minVal, lowMid, score) )
-        
-        
-        
+
     return pixels
