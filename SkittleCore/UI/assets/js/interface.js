@@ -123,13 +123,7 @@ function mouseDown(e) {
 
         var selectionStart = state.start() + (toSkixels(my-25))*state.bpPerLine() + x*state.scale()
         var selectionEnd = selectionStart + state.bpPerLine() - 1;
-        getRawSequence(selectionStart,selectionEnd,function(seq){
-            var newSeq = $('#highlighterSequence').clone().removeAttr('id').addClass('highlighterSequence').insertBefore('.addSeq')
-            newSeq.find('.sequenceInput').val(seq)
-            newSeq.find('.sequenceColor').val(getGoodDeterministicColor(seq).slice(1))
-            newSeq.find('.showSeq').prop('checked', true);
-            graphStatus['h'].controls = true;
-        })
+        getRawSequence(selectionStart,selectionEnd,addHighlighterSearch)
         // console.log('selection start:' + selectionStart + " selection end:" + selectionEnd)
         showGraph('h');
         if (graphStatus['h'].visible) isInvalidDisplay = true
@@ -286,14 +280,7 @@ $(function() {
         var graph = this.parentNode.id.slice(-1);
         if ( $('#settingsLabel-'+graph).length > 0 ) closeSettings(graph)
         else {
-            settingsLabel
-                .clone()
-                .attr('id', 'settingsLabel-'+graph)
-                .insertAfter($(this).parent())
-                .children('.closeSettingsButton').click(function() {
-                    var graph = this.parentNode.id.slice(-1);
-                    closeSettings(graph);
-                })
+
             settingsGraph(graph);
             closeHelp(graph);
         }
@@ -307,12 +294,7 @@ $(function() {
     $('.highlighterSettings').on('change','#similarityPercent',function(){ 
         if ($(this).simpleSlider) { $('#similarityPercent').simpleSlider("setValue", $(this).val()); }
     })
-    $('.highlighterSettings .addSeq').on('click',function(){
-        var newSequenceEntry = $('#highlighterSequence').clone().removeAttr('id').addClass('highlighterSequence');
-        newSequenceEntry.find('.sequenceColor').val(getGoodDeterministicColor(Math.random()))
-        newSequenceEntry.insertBefore($(this))
-
-    })
+    $('.highlighterSettings .addSeq').on('click',addHighlighterSearch)
     $('.highlighterSettings').on('click','.removeSeq',function(){
         $(this).parent().remove();
         graphStatus['h'].settings = hSettingsFromUI();
@@ -357,6 +339,14 @@ var closeHelp = function(graph) {
 }
 var settingsGraph = function(graph) {
     graphStatus[graph].controls = true;
+    settingsLabel
+        .clone()
+        .attr('id', 'settingsLabel-'+graph)
+        .insertAfter($('#graphLabel-'+graph))
+        .children('.closeSettingsButton').click(function() {
+            var graph = this.parentNode.id.slice(-1);
+            closeSettings(graph);
+        })
     $('#graphLabel-'+graph+" .graphSettings").addClass('active');
     isInvalidDisplay = true;
 }
@@ -366,15 +356,32 @@ var closeSettings = function(graph) {
     $('#settingsLabel-'+graph).remove()
     isInvalidDisplay = true;
 }
+var addHighlighterSearch = function(seq){
+    var newSeq = $('#highlighterSequence').clone().removeAttr('id').addClass('highlighterSequence')
+    if (typeof seq == 'string') {
+        seq = seq.match(/([acgtn]+)/i)? seq.match(/([acgtn]+)/i)[0] : "AAAAAAAA"
+        newSeq.find('.sequenceInput').val(seq.toUpperCase())
+        newSeq.find('.showSeq').prop('checked', true);
+    }
+    else {
+        newSeq.find('.sequenceInput').val("AAAAAAAA")
+        seq = Math.random()
+    }
+    newSeq.find('.sequenceColor').val(getGoodDeterministicColor(seq))
+    newSeq.insertBefore('.addSeq')
+    graphStatus['h'].settings = hSettingsFromUI()
+    settingsGraph('h');
+    return false;
+}
 
-var hSettingsFromUI = function(){  // TODO: Validate
+var hSettingsFromUI = function(){ 
     var hState = {};
     hState.revComplement = $('#revComplement').is(':checked')? true : false;
     hState.similarityPercent = Math.max(20,Math.min(100,$('#similarityPercent').val()));
     hState.sequences = [];
     $('.highlighterSequence').each(function(i){
-        var validSequence = $(this).find('.sequenceInput').val().match(/([acgtn]+)/i)[0] || "aaaaaaaa";
-        var validColor = $(this).find('.sequenceColor').val().match(/[0-9a-f]+/gi)[0] || "00ff00";
+        var validSequence = $(this).find('.sequenceInput').val().match(/([acgtn]+)/i)[0] || "AAAAAAAA";
+        var validColor = $(this).find('.sequenceColor').val().match(/[0-9a-f]{6}/gi)[0] || "00ff00";
         hState.sequences[i] = {
             'show':$(this).find('.showSeq').is(':checked'),
             'sequence':validSequence,
@@ -405,7 +412,7 @@ var loadHighlighterSettings = function(hState) {
     $.each(hState.sequences,function(i,v){
         var seq = $('#highlighterSequence').clone().removeAttr('id').addClass('highlighterSequence')
         seq.find('.showSeq').prop('checked', v.show);
-        seq.find('.sequenceInput').val(v.sequence);
+        seq.find('.sequenceInput').val(v.sequence.toUpperCase());
         seq.find('.sequenceColor').val('#'+v.color)
         seq.insertBefore('.addSeq')
     })
