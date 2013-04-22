@@ -348,7 +348,7 @@ var settingsGraph = function(graph) {
             closeSettings(graph);
         })
     $('#graphLabel-'+graph+" .graphSettings").addClass('active');
-    isInvalidDisplay = true;
+    if ($('.highlighterSequence').size() == 0) addHighlighterSearch();
 }
 var closeSettings = function(graph) {
     graphStatus[graph].controls = false;

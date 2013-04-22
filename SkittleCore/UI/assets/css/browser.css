@@ -249,13 +249,15 @@
 	}
 
 	.button {
+		font-family: 'Exo', Helvetica, sans-serif;
+
 		display: inline-block;
 		background:#111;
 		padding: 0.5em;
 		margin:0px;
 		border:1px solid #777;
 		border-radius: 4px;
-		font-weight: 600;
+		font-weight: 500;
 	}
 	.button:hover {
 		background: #222;
@@ -337,8 +339,8 @@
 	}
 	.removeSeq span {
 		color:#f22;
-		font-size: 1.6em;
-		line-height: 1em;
+		font-size: 2em;
+		line-height: 0.7em;
 		vertical-align: bottom;
 	}
 	.highlighterSettings input[type^=text],.highlighterSettings .sequenceColor {
@@ -352,7 +354,7 @@
 	}
 	.highlighterSequence .sequenceColor {
 		width: 4em;
-		height: 2.3em;
+		height: 2.2em;
 		margin-bottom: -0.9em;
 		border: 0;
 	}
