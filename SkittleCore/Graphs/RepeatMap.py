@@ -165,7 +165,7 @@ def getBaseRepeatMapData(state, repeatMapState = RepeatMapState()):
     tempState.scale = 1
     tempState.requestedGraph = 'm'
 
-     #before
+    #before
     fullData = []
     for s in range(state.scale):
         pngPath = GetPngFilePath(tempState)

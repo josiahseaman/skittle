@@ -5,6 +5,7 @@ Created on Dec 5, 2012
 from random import randint
 import SkittleCore.models as SkittleRequestPackets
 import math
+from SkittleCore.models import chunkSize
 
 
 blankColor = None
@@ -78,6 +79,12 @@ def randomColor():#only changes one channel right now
     randomChannel = randint(0,2)
     colorT[randomChannel] = randint(0,255)
     return tuple(colorT)
+
+def blackSquare():
+    return [(0,0,0)] * chunkSize
+
+def blackSquareGrayScale():
+    return [0.0] * chunkSize
 
 def drawBar(size, filler_size, barColor, rightJustified, drawBackgroundGray=False):
     if drawBackgroundGray:

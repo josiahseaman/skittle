@@ -4,6 +4,7 @@
 from SkittleCore.models import RequestPacket, chunkSize
 from models import HighlighterState, SequenceEntry
 from SkittleGraphTransforms import reverseComplement, calculatePerCharacterMatch
+import PixelLogic
 import SkittleCore.FastaFiles as FastaFiles 
 import copy
 from SkittleCore.GraphRequestHandler import registerGraph
@@ -13,7 +14,7 @@ registerGraph('h', "Sequence Highlighter", __name__, True, helpText='''Use the S
  Given a search sequence, the Highlighter checks every start position on the screen.  
  The grayscale pixels are start positions that didn't make the cut.  
  Light pixels are near misses.  
- When the Highlighter finds another sequence that is at least 70\% the same, 
+ Example: When the Highlighter finds another sequence that is at least 70\% the same,
  it highlights each of the matching nucleotides in bright green.''')
 
 def measureSequenceMatches(state, highlighterState, sequenceEntry):
@@ -72,6 +73,9 @@ def colorCombinedResults(state, highlighterState, results, entries = None ):
     return hitColors
 
 def calculateOutputPixels(state, highlighterState = HighlighterState()):
+    if state.scale != 1:
+        return PixelLogic.blackSquare()
+
     assert isinstance(highlighterState, HighlighterState)
     state.readFastaChunks()
     results = [] #2D array containing a screen full of scores per targetSequence
