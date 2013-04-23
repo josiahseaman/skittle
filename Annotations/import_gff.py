@@ -27,7 +27,7 @@ def ImportGFF(specimen, file):
     annotationFile = open(file, 'r')
     counter = 0
     for line in annotationFile.readlines():
-        counter = counter + 1
+        counter += 1
 
         if line.startswith("##"):
             if "gff-version" in line:
@@ -53,7 +53,7 @@ def ImportGFF(specimen, file):
         annotationFile = open(file, 'r')
         counter = 0
         for line in annotationFile.readlines():
-            counter = counter + 1
+            counter += 1
             if not line.startswith('#'):
                 elements = line.split('\t')
 
@@ -122,7 +122,7 @@ def ImportGFF(specimen, file):
 def chunkAndStoreAnnotations(gff, annotations):
     print "START CHUNKING..."
     for chromosome in annotations:
-        if chromosome == None:
+        if chromosome is None:
             continue
 
         chunkStart = 1
@@ -158,7 +158,7 @@ def chunkAndStoreAnnotations(gff, annotations):
 
                 if int(annotations[chromosome][index].End) > chunkEnd:
                     active.append(annotations[chromosome][index])
-            index = index + 1
+            index += 1
 
         StoreAnnotationChunk(gff, chromosome, chunk, chunkStart)
         parseActiveList(gff, chromosome, annotations, -1, active, chunk, chunkStart, chunkEnd)
@@ -182,7 +182,7 @@ def parseActiveList(gff, chromosome, annotations, index, active, chunk, chunkSta
     #GO THROUGH ALL ACTIVE, THEN ADD IN CURRENT!!!
     if len(active) > 0:
         chunk = {gff.FileName: {}}
-        chunkStart = chunkStart + settings.CHUNK_SIZE
+        chunkStart += settings.CHUNK_SIZE
         chunkEnd = chunkStart + settings.CHUNK_SIZE - 1
         if index != -1:
             while int(annotations[chromosome][index].Start) > int(chunkEnd):
@@ -198,7 +198,7 @@ def parseActiveList(gff, chromosome, annotations, index, active, chunk, chunkSta
                     active.remove(rem)
                 StoreAnnotationChunk(gff, chromosome, chunk, chunkStart)
                 chunk = {gff.FileName: {}}
-                chunkStart = chunkStart + settings.CHUNK_SIZE
+                chunkStart += settings.CHUNK_SIZE
                 chunkEnd = chunkStart + settings.CHUNK_SIZE - 1
         else:
             while len(active) > 0:
@@ -214,7 +214,7 @@ def parseActiveList(gff, chromosome, annotations, index, active, chunk, chunkSta
                     active.remove(rem)
                 StoreAnnotationChunk(gff, chromosome, chunk, chunkStart)
                 chunk = {gff.FileName: {}}
-                chunkStart = chunkStart + settings.CHUNK_SIZE
+                chunkStart += settings.CHUNK_SIZE
                 chunkEnd = chunkStart + settings.CHUNK_SIZE - 1
 
 

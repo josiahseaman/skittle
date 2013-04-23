@@ -58,7 +58,7 @@ class HotshotProfileMiddleware(object):
         sum = 0
 
         for s in stats_str:
-            fields = words_re.split(s);
+            fields = words_re.split(s)
             if len(fields) == 7:
                 time = float(fields[2])
                 sum += time
@@ -124,7 +124,7 @@ class cProfileMiddleware(object):
 
 #------------------------------------------------------------------------------------------
 def startDebug():
-    import pdb;
+    import pdb
 
     print "\n\nIn DEBUG mode! Type name of variable to print it, 's' steps into functions, 'n' steps over functions, 'r' continue until this function returns, 'c' continue until new breakpoint, 'b' [[filename:]lineno] set break points, 'q' quit the program...\n"
     pdb.set_trace()

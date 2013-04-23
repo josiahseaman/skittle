@@ -99,7 +99,7 @@ def GetAnnotationsChunk(specimen, chromosome, start, annotations=None):
                 chunkFile.close()
                 read = read[1:-1] + ","
 
-                contents = contents + read
+                contents += read
             else:
                 contents = contents + annotation[1:-1] + ","
 
