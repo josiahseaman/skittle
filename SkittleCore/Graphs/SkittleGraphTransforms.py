@@ -89,7 +89,9 @@ def oligCountToColorSpace(counts, orderedWords):
     pixels = []
     for word in orderedWords:
         grey = counts.get(word, 0.0)
-        pixels.append((grey))#tuple with one value, grey value need not be repeated three times for RGB
+        pixels.append(grey)
+        pixels.append(grey)
+        pixels.append(grey)
     return pixels
 
 
