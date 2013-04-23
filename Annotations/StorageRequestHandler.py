@@ -12,7 +12,7 @@ def generateAnnotationChunkName(gff, start):
 
 #Parse which chromosome the specific annotation is associated with
 def ParseChromosomeName(validChromosomes, seqname):
-    possibleMatches = list()
+    possibleMatches = []
     
     for chromosome in validChromosomes: 
         if seqname in chromosome or chromosome in seqname:
@@ -45,9 +45,21 @@ def StoreAnnotationChunk(gff, chromosome, chunk, start):
        
     chunkDB, created = AnnotationJsonChunk.objects.get_or_create(GFF = gff, Chromosome = chromosome, Start = start, IsInRamDisk = False)
     
+def GetAnnotationsList(specimen):
+    annotationsJson = []
+    
+    annotations = GFF.objects.filter(Specimen = specimen)
+    if annotations:
+        for gff in annotations:
+            temp = {"Specimen": gff.Specimen, "GFFVersion": gff.GFFVersion, "SourceVersion": gff.SourceVersion, "Date": gff.Date, "Type": gff.Type, "DNA": gff.DNA, "RNA": gff.RNA, "Protein": gff.Protein, "SequenceRegion": gff.SequenceRegion, "FileName": gff.FileName}
+            annotationsJson.append(temp)
+        return json.dumps(annotationsJson)
+    else:
+        return None
+    
 def GetAnnotationsChunk(specimen, chromosome, start, annotations = None):
     print "Requested chunk", specimen, chromosome, start, annotations
-    annotationJsonChunk = list()
+    annotationJsonChunk = []
     if annotations:
         #Go through each given gff file
         for gff in annotations:
