@@ -4,8 +4,6 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
 
-touch test.txt
-
 python ./manage.py collectstatic -v0 --noinput
 
 if [ $# -gt 0 ]
