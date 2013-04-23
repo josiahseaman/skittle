@@ -20,16 +20,11 @@ def GetFastaFilePath(specimen, chromosome, start):
         if fastaFile[0].IsInRamDisk:
             fastaFilePath = None
         else:
-            fastaFilePath = settings.SKITTLE_TREE_LOC + "DNAStorage/fasta/" + fastaFile[
-                0].FastaFile.Specimen.Kingdom + "/" + fastaFile[0].FastaFile.Specimen.Class + "/" + fastaFile[
-                                0].FastaFile.Specimen.Genus + "/" + fastaFile[0].FastaFile.Specimen.Species + "/" +
-            fastaFile[0].FastaFile.Specimen.Name + "/" + fastaFile[0].FastaFile.Chromosome + "/" + str(
-                fastaFile[0].Start) + ".fasta"
+            fastaFilePath = settings.SKITTLE_TREE_LOC + "DNAStorage/fasta/" + fastaFile[0].FastaFile.Specimen.Kingdom + "/" + fastaFile[0].FastaFile.Specimen.Class + "/" + fastaFile[0].FastaFile.Specimen.Genus + "/" + fastaFile[0].FastaFile.Specimen.Species + "/" + fastaFile[0].FastaFile.Specimen.Name + "/" + fastaFile[0].FastaFile.Chromosome + "/" + str(fastaFile[0].Start) + ".fasta"
 
-    return fastaFilePath
-
-else:
-return None
+        return fastaFilePath
+    else:
+        return None
 
 #Return the number of characters logged for a specific chromosome    
 def GetChromosomeLength(specimen, chromosome):
@@ -67,14 +62,10 @@ def GetPngFilePath(request):
         if pngFile[0].IsInRamDisk:
             pngFilePath = None
         else:
-            pngFilePath = settings.SKITTLE_TREE_LOC + "DNAStorage/png/" + pngFile[0].FastaFile.Specimen.Kingdom + "/" +
-            pngFile[0].FastaFile.Specimen.Class + "/" + pngFile[0].FastaFile.Specimen.Genus + "/" +
-            pngFile[0].FastaFile.Specimen.Species + "/" + pngFile[0].FastaFile.Specimen.Name + "/" +
-            pngFile[0].FastaFile.Chromosome + "/" + generatePngName(graph, start, scale, charsPerLine)
-    return pngFilePath
-
-else:
-return None
+            pngFilePath = settings.SKITTLE_TREE_LOC + "DNAStorage/png/" + pngFile[0].FastaFile.Specimen.Kingdom + "/" + pngFile[0].FastaFile.Specimen.Class + "/" + pngFile[0].FastaFile.Specimen.Genus + "/" + pngFile[0].FastaFile.Specimen.Species + "/" + pngFile[0].FastaFile.Specimen.Name + "/" + pngFile[0].FastaFile.Chromosome + "/" + generatePngName(graph, start, scale, charsPerLine)
+        return pngFilePath
+    else:
+        return None
 
 #Take params and write a png to the disk and create a reference to it in the DB
 def StorePng(request, fileObject):
