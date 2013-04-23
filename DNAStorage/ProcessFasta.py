@@ -48,7 +48,7 @@ def splitAndSort(file, storageLocation, workingLocation):
     fastaFile.Chromosome = taxonomic[5]
     
     #Array of fasta chunks
-    fastaChunks = list()
+    fastaChunks = []
     
     #Remove first line if needed and depending on OS
     if os.name == "posix":

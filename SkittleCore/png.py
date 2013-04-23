@@ -1902,7 +1902,7 @@ class Reader:
                        *[iter(self.deinterlace(raw))]*self.width*self.planes)
         else:
             pixels = self.iterboxed(self.iterstraight(raw))
-        meta = dict()
+        meta = {}
         for attr in 'greyscale alpha planes bitdepth interlace'.split():
             meta[attr] = getattr(self, attr)
         meta['size'] = (self.width, self.height)
@@ -3474,7 +3474,7 @@ def read_pam_header(infile):
     """
     
     # Unlike PBM, PGM, and PPM, we can read the header a line at a time.
-    header = dict()
+    header = {}
     while True:
         l = infile.readline().strip()
         if l == strtobytes('ENDHDR'):

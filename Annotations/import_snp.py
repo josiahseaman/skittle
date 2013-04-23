@@ -22,7 +22,7 @@ def createSnpIndex():
         
 import StorageRequestHandler
 def createAnnotationsFromCompact(clientName, chromosome, start):
-    chunkSnps = {'SNP_' + clientName: dict()}
+    chunkSnps = {'SNP_' + clientName: {}}
 
     validChromosomes = SnpIndexInfo.objects.values_list('Chromosome', flat=True).distinct()
     chromosome = StorageRequestHandler.ParseChromosomeName(validChromosomes, chromosome)

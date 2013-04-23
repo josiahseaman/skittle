@@ -111,7 +111,7 @@ def DeleteCache(graph):
 def GetTreeList():
     specimens = Specimen.objects.all()
     
-    tree = dict()
+    tree = {}
     
     #tree = {"Kingdom": {"Class": {"Genus": {"Species": {"Specimen": {"ExtendedName", "Source", "Description", "DatePublished", "Thumbnail", {"ChromosomeListing",}}}}}}}
     
@@ -136,7 +136,7 @@ def GetTreeList():
 def GetRelatedChromosomes(specimen):
     fastaFiles = FastaFiles.objects.filter(Specimen = specimen)
     
-    chromosomes = list()
+    chromosomes = []
     
     for fasta in fastaFiles:
         chromosomes += [fasta.Chromosome]
