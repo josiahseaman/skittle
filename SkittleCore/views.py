@@ -9,7 +9,7 @@ from SkittleCore.GraphRequestHandler import handleRequest
 from SkittleCore.models import RequestPacket
 from SkittleCore.Graphs.models import *
 from DNAStorage.StorageRequestHandler import GetChromosomeLength
-from Annotations.StorageRequestHandler import GetAnnotationsChunk
+from Annotations.StorageRequestHandler import GetAnnotationsChunk,GetAnnotationsList
 
 
 def browse(request, genus="homo", species="sapiens", specimen="hg18", chromosome="chrY-sample"):
@@ -19,18 +19,9 @@ def browse(request, genus="homo", species="sapiens", specimen="hg18", chromosome
     zoom = request.GET.get('zoom', 1)
     graphs = request.GET.get('graphs', "n")
     colorPalette = request.GET.get('colorPalette', 'Classic')
-    selectionStart = request.GET.get('searchStart', 1)
-    selectionEnd = request.GET.get('searchStop', 1)
-    # if 'h' in graphs:
-    #     highlighterState = json.dumps(createHighlighterState(request,genus,species,specimen,chromosome).__dict__)
-    # else: highlighterState = "undefined"
-
-    fileLength = GetChromosomeLength(specimen, chromosome)
-    context = {'availableGraphs': GraphRequestHandler.availableGraphs, 'specimen': specimen, 'chromosome': chromosome,
-               'colorPalette': colorPalette, 'width': width, "scale": scale, "start": start, "zoom": zoom,
-               "graphs": graphs, "fileLength": fileLength, }
-    return render(request, 'browse.html', context)
-
+    fileLength = GetChromosomeLength(specimen,chromosome) 
+    context = {'availableGraphs':GraphRequestHandler.availableGraphs, 'availableAnnotations':GetAnnotationsList(specimen) ,'specimen':specimen,'chromosome':chromosome,'colorPalette':colorPalette,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength,}
+    return render(request, 'browse.html',context)
 
 @cache_control(must_revalidate=False, max_age=3600)
 def graph(request, genus="homo", species="sapiens", specimen="hg18", chromosome="chrY-sample"):
@@ -55,8 +46,9 @@ def state(request):
     j = "graphStatus = " + json.dumps(GraphRequestHandler.generateGraphListForServer())
     # json = "annotationSources = " + simplejson.dumps(StorageRequestHandler.getAnnotations())
     j += ";graphOrder = ['a','n','h','b','t','o','m','s'];"
-    return HttpResponse(j, content_type="application/json")
 
+    j += "annotationStatus = " + json.dumps(GetAnnotationsList)
+    return HttpResponse(j,content_type="application/json")
 
 def sequence(request, genus="homo", species="sapiens", specimen="hg18", chromosome="chrY-sample"):
     state = createRequestPacket(request, specimen, chromosome)

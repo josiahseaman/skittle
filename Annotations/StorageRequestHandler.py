@@ -60,7 +60,7 @@ def GetAnnotationsList(specimen):
                     "Date": gff.Date, "Type": gff.Type, "DNA": gff.DNA, "RNA": gff.RNA, "Protein": gff.Protein,
                     "SequenceRegion": gff.SequenceRegion, "FileName": gff.FileName}
             annotationsJson.append(temp)
-        return json.dumps(annotationsJson)
+        return annotationsJson
     else:
         return None
 
