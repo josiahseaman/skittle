@@ -366,8 +366,7 @@ var addHighlighterSearch = function(seq){
         newSeq.find('.showSeq').prop('checked', true);
     }
     else {
-        newSeq.find('.sequenceInput').val("AAAAAAAA")
-        seq = Math.random()
+        seq = Math.random();
     }
     newSeq.find('.sequenceColor').val(getGoodDeterministicColor(seq))
     newSeq.insertBefore('.addSeq')

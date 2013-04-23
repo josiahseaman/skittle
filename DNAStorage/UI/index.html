@@ -3,261 +3,229 @@
 {% load nti_filters %}
 {% block pageTitle %}DNASkittle|Select a Genome{% endblock %}
 {% block styles %}
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/browser.css">
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/popover.css">
-    <style type="text/css">
-        #previewPane {
-            position: absolute;
-            top: 80px;
-            right: 0;
-            bottom: 20px;
-            left: 660px;
-            border-left: 1px solid #aaa;
-            padding: 20px;
-            color: #ccc;
-            overflow: auto;
-        }
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/popover.css">
+	<style type="text/css">
+		#previewPane {
+			position: absolute;
+			top:80px;
+			right:0;
+			bottom: 20px;
+			left:660px;
+			border-left: 1px solid #aaa;
+			padding: 20px;
+			color:#ccc;
+			overflow: auto;
+		}
+		#listPane {
+			position: absolute;
+			left:20px;
+			top:60px;
+			bottom: 0;
+			width:620px;
+			color:#ccc;
 
-        #listPane {
-            position: absolute;
-            left: 20px;
-            top: 60px;
-            bottom: 0;
-            width: 620px;
-            color: #ccc;
+		}
 
-        }
+		p {
+			font-family: trebuchet,'trebuchet ms','myriad pro','helvetica neue',helvetica, ariel, sans-serif
+		}
+		h2 {
+			font-size: 2.3em;
+			font-weight: 300;
+			margin-bottom: 0.2em
+		}
+		h3 {
+			font-size: 2em;
+			margin-bottom: 0.2em;
+			font-weight: 300;
+			color:#fda;
+		}
+		h4 {
+			font-size: 1.3em;
+			margin-bottom: 0.2em;
+			font-weight: 300;
+			color:#fda;
+		}
+		.breadcrumbs a {
+			color:#fda;
+		}
+		#searchbox {
+			padding: 0.2em 0.8em;
+			font-size: 1em;
+			width:350px;
+			background: #222;
+			color: #eee;
+			border-radius: 20px;
+			border-color: #888;
+			border-style: solid;
+		}
+		.previewSpecimen {
+			display: none;
+		}
+		.previewSpecimen>img {
+			border-radius: 12px;
+			clear:both;
+			margin-bottom: 12px;
+		}
 
-        p {
-            font-family: trebuchet, 'trebuchet ms', 'myriad pro', 'helvetica neue', helvetica, ariel, sans-serif
-        }
+		#genomes {
+			position: absolute;
+			top:160px;
+			bottom: 0;
+			width:620px;
+			overflow: auto;
+			
+		}
 
-        h2 {
-            font-size: 2.3em;
-            font-weight: 300;
-            margin-bottom: 0.2em
-        }
+		#genomes section {
+			margin:1em;
+			padding:0.5em;
+			border:2px solid #864;
+			border-radius: 6px;
+			background:#000;
+			cursor: pointer;
+		}
+		#genomes section:hover {
+			background: #111;
+			border:2px solid #db8;
+		}
+		.breadcrumbs {
+			margin: 1em;
+		}
+		section h2 {
+			font-size: 1.5em;
+			margin:0;
+			padding:0;
+			color:#fda;
+		}
+		section p {
+			margin:0;
+		}
+		section img {
+			border-radius: 6px;
+			float:left;
+			margin: -8px 10px -8px -8px;
+		}
+		.seqNum {
+			font-style: italic;
+			color:#bbb;
+		}
+		.source {
+			color:#bbb;
+			float: right;
+		}
+		.source span {
+			font-style: italic;
+			color:#bbb;
+		}
 
-        h3 {
-            font-size: 2em;
-            margin-bottom: 0.2em;
-            font-weight: 300;
-            color: #fda;
-        }
-
-        h4 {
-            font-size: 1.3em;
-            margin-bottom: 0.2em;
-            font-weight: 300;
-            color: #fda;
-        }
-
-        .breadcrumbs a {
-            color: #fda;
-        }
-
-        #searchbox {
-            padding: 0.2em 0.8em;
-            font-size: 1em;
-            width: 350px;
-            background: #222;
-            color: #eee;
-            border-radius: 20px;
-            border-color: #888;
-            border-style: solid;
-        }
-
-        .previewSpecimen {
-            display: none;
-        }
-
-        .previewSpecimen>img {
-            border-radius: 12px;
-            clear: both;
-            margin-bottom: 12px;
-        }
-
-        #genomes {
-            position: absolute;
-            top: 160px;
-            bottom: 0;
-            width: 620px;
-            overflow: auto;
-
-        }
-
-        #genomes section {
-            margin: 1em;
-            padding: 0.5em;
-            border: 2px solid #864;
-            border-radius: 6px;
-            background: #000;
-            cursor: pointer;
-        }
-
-        #genomes section:hover {
-            background: #111;
-            border: 2px solid #db8;
-        }
-
-        .breadcrumbs {
-            margin: 1em;
-        }
-
-        section h2 {
-            font-size: 1.5em;
-            margin: 0;
-            padding: 0;
-            color: #fda;
-        }
-
-        section p {
-            margin: 0;
-        }
-
-        section img {
-            border-radius: 6px;
-            float: left;
-            margin: -8px 10px -8px -8px;
-        }
-
-        .seqNum {
-            font-style: italic;
-            color: #bbb;
-        }
-
-        .source {
-            color: #bbb;
-            float: right;
-        }
-
-        .source span {
-            font-style: italic;
-            color: #bbb;
-        }
-
-        .chromosomeList {
-            list-style: none;
-        }
-
-        @media screen and (min-width:1156px) {
-            .chromosomeList {
-                -moz-column-count: 3;
-                -webkit-column-count: 3;
-                column-count: 3;
-            }
-        }
-
-        .chromosomeList li>a {
-            display: inline-block;
-            /*line-height: 1.5em;*/
-            padding: 0.5em;
-            color: #fda;
-            text-decoration: none;
-            border: 1px solid transparent;
-            border-radius: 6px;
-        }
-
-        .chromosomeList li>a:hover {
-            color: #fff;
-            border: 1px solid #fda;
-        }
-    </style>
-{% endblock %}
-{% block scripts %}
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script type="text/javascript">
+		.chromosomeList {
+			list-style: none;
+		}
+		@media screen and (min-width:1156px) {
+			.chromosomeList {
+				-moz-column-count:3;
+				-webkit-column-count:3;
+				column-count:3;
+			}
+		}
+		.chromosomeList li>a {
+			display: inline-block;
+			/*line-height: 1.5em;*/
+			padding:0.5em;
+			color:#fda;
+			text-decoration: none;
+			border:1px solid transparent;
+			border-radius: 6px;
+		}
+		.chromosomeList li>a:hover {
+			color: #fff;
+			border:1px solid #fda;
+		}
+	</style>
+	{% endblock %}
+	{% block scripts %}
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script type="text/javascript">
 
 
-    </script>
-{% endblock %}
+	</script>
+	{% endblock %}
 {% block content %}
-    <div id="listPane">
-        <h2>Genome Library</h2>
+	<div id="listPane">
+		<h2>Genome Library</h2>
+		<p>To get started, choose a genome from the list below and then select a chromosome.</p>
+<!-- 		<input type="text" placeholder="search" id="searchbox">
 
-        <p>To get started, choose a genome from the list below and then select a chromosome.</p>
-        <!-- 		<input type="text" placeholder="search" id="searchbox">
+		<nav class="breadcrumbs"><a href=#>Animals</a> > <a href=#>Vertibrates</a> > <a href=#>Mammals</a></nav> -->
 
-                <nav class="breadcrumbs"><a href=#>Animals</a> > <a href=#>Vertibrates</a> > <a href=#>Mammals</a></nav> -->
+		<div id="genomes">
+			{% for specimen in specimens %}
+			<section data-target="preview-{{ specimen.Name }}">
+				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
+				<h2>{% firstof specimen.ExtendedName  specimen.Genus|add:" "|add:specimen.Species|add:" Genome" %}</h2>
+				<!-- <p class="source"><span>Source:</span>{{ specimen.Source }}</p> -->
+				<p class="info"><span class="seqNum">{{ specimen.DatePublished }} ({{ specimen.Name }})</span> Length: {{ specimen.GenomeLength|toSI }}bp</p>
+			</section>
+			{% endfor %}
+		</div>
+	</div>
 
-        <div id="genomes">
-            {% for specimen in specimens %}
-                <section data-target="preview-{{ specimen.Name }}">
-                    <img src="{{ STATIC_URL }}gfx/skittle-logo2.png" width="68" height="68">
+	<div id="previewPane">&nbsp;
+		<div class="previewSpecimen">
+			<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="150" height="150"><br>
+			<h3>Human Genome - hg19</h3>
 
-                    <h2>{% firstof specimen.ExtendedName  specimen.Genus|add:" "|add:specimen.Species|add:" Genome" %}</h2>
-                    <!-- <p class="source"><span>Source:</span>{{ specimen.Source }}</p> -->
-                    <p class="info"><span class="seqNum">{{ specimen.DatePublished }} ({{ specimen.Name }})</span>
-                        Length: {{ specimen.GenomeLength|toSI }}bp</p>
-                </section>
-            {% endfor %}
-        </div>
-    </div>
+			<p>Source: blah blah</p>
+			<p>Length: 20349589 bp</p>
+			<p>Description: Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+			tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+			consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+			cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+			proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+			<h4>Chromosomes:</h4>
+			<ul class="chromosomeList">
+				{% for chromosome in chromosomes %}
+				<li><a href="/browse/{{ chromosome.Specimen.Genus }}/{{ chromosome.Specimen.Species }}/{{ chromosome.Specimen.Name }}/{{ chromosome.Chromosome }}">{{ chromosome.Chromosome|capfirst }}</a></li>
+				{% endfor %}
+			</ul>
+		</div>
+		{% for specimen in specimens %}
+		<div class="previewSpecimen" id="preview-{{ specimen.Name }}">
+			<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="150" height="150"><br>
+			<h3>{% firstof specimen.ExtendedName " Genome" %} ({{specimen.Name}})</h3>
 
-    <div id="previewPane">&nbsp;
-        <div class="previewSpecimen">
-            <img src="{{ STATIC_URL }}gfx/skittle-logo2.png" width="150" height="150"><br>
+			<p>Source: {{ specimen.Source }}</p>
+			<p>Length: {{ specimen.GenomeLength|intcomma }} bp</p>
+			<p>Description: {{ specimen.Description }}</p>
+			<h4>{% if specimen.Kingdom == 'Eubacteria' %}Derivatives:
+				{% else %}Chromosomes:
+				{% endif %}</h4>
+			<ul class="chromosomeList">
+				{% for chromosome in chromosomes %}
+				{% if chromosome.Specimen == specimen %}
+				<li><a href="/browse/{{ chromosome.Specimen.Genus }}/{{ chromosome.Specimen.Species }}/{{ chromosome.Specimen.Name }}/{{ chromosome.Chromosome }}">{{ chromosome.Chromosome|capfirst }}</a></li>
+				{% endif %}
+				{% endfor %}
+			</ul>
+		</div>
+		{% endfor %}
+	</div>
 
-            <h3>Human Genome - hg19</h3>
+	<script type="text/javascript">
+ function jQsafeID(myid) { 
+   return myid.replace(/(:|\.)/g,'\\$1');
+ }
 
-            <p>Source: blah blah</p>
+	$(document).ready(function() {
 
-            <p>Length: 20349589 bp</p>
+		$('#genomes section').click(function(){
+			$('.previewSpecimen:visible').hide()
+			$(jQsafeID('#' + $(this).attr('data-target') ) ).show();
+		})
 
-            <p>Description: Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-                proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-            <h4>Chromosomes:</h4>
-            <ul class="chromosomeList">
-                {% for chromosome in chromosomes %}
-                    <li>
-                        <a href="/browse/{{ chromosome.Specimen.Genus }}/{{ chromosome.Specimen.Species }}/{{ chromosome.Specimen.Name }}/{{ chromosome.Chromosome }}">{{ chromosome.Chromosome|capfirst }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-        {% for specimen in specimens %}
-            <div class="previewSpecimen" id="preview-{{ specimen.Name }}">
-                <img src="{{ STATIC_URL }}gfx/skittle-logo2.png" width="150" height="150"><br>
-
-                <h3>{% firstof specimen.ExtendedName " Genome" %} ({{ specimen.Name }})</h3>
-
-                <p>Source: {{ specimen.Source }}</p>
-
-                <p>Length: {{ specimen.GenomeLength|intcomma }} bp</p>
-
-                <p>Description: {{ specimen.Description }}</p>
-                <h4>{% if specimen.Kingdom == 'Eubacteria' %}Derivatives:
-                {% else %}Chromosomes:
-                {% endif %}</h4>
-                <ul class="chromosomeList">
-                    {% for chromosome in chromosomes %}
-                        {% if chromosome.Specimen == specimen %}
-                            <li>
-                                <a href="/browse/{{ chromosome.Specimen.Genus }}/{{ chromosome.Specimen.Species }}/{{ chromosome.Specimen.Name }}/{{ chromosome.Chromosome }}">{{ chromosome.Chromosome|capfirst }}</a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endfor %}
-    </div>
-
-    <script type="text/javascript">
-        function jQsafeID(myid) {
-            return myid.replace(/(:|\.)/g, '\\$1');
-        }
-
-        $(document).ready(function () {
-
-            $('#genomes section').click(function () {
-                $('.previewSpecimen:visible').hide()
-                $(jQsafeID('#' + $(this).attr('data-target'))).show();
-            })
-
-        })
-    </script>
+	})
+	</script>
 {% endblock %}
