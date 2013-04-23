@@ -3,9 +3,8 @@ Created on Dec 5, 2012
 @author: Josiah
 '''
 from random import randint
-import math
-
 import SkittleCore.models as SkittleRequestPackets
+import math
 from SkittleCore.models import chunkSize
 
 
@@ -134,7 +133,7 @@ def drawJustifiedBar(barSizes, colorSeries, max_bar_width, drawBackgroundGray=Fa
         barColor = colorSeries[position]
         line += drawBar(size, filler_size, barColor, rightJustified, drawBackgroundGray)
     assert len(line) == max_bar_width * math.ceil(len(barSizes) / 2.0), "Result %i shoulld be %i." % (
-        len(line), max_bar_width * math.ceil(len(barSizes) / 2.0))
+    len(line), max_bar_width * math.ceil(len(barSizes) / 2.0))
     return line
 
 
