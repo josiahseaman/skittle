@@ -62,7 +62,7 @@ def splitAndSort(file, storageLocation, workingLocation):
         bashCommand = "sed -i -e '1{/>/d;}' " + (workingLocation + file)
         os.system(bashCommand)
     else: #SLOW WINDOWS VERSION
-        skip = False;
+        skip = False
         with open(workingLocation + file) as f:
             while True:
                 character = f.read(1)
@@ -101,7 +101,7 @@ def splitAndSort(file, storageLocation, workingLocation):
                         fCount += cCount
                         cCount = 0
             else:
-                break;
+                break
         writePath = os.path.join(filePath, str(fCount) + ".fasta")
         write = open(writePath, 'wb')
         write.write(chunk.upper())
@@ -112,7 +112,7 @@ def splitAndSort(file, storageLocation, workingLocation):
 
     #Save fasta file to database then populate chunks with foreign keys and save
     fastaFile.save()
-    specimen.GenomeLength = specimen.GenomeLength + fastaFile.Length
+    specimen.GenomeLength += fastaFile.Length
     specimen.save()
 
     for fa in fastaChunks:

@@ -101,7 +101,7 @@ def StorePng(request, fileObject):
 #Delete the database entries and PNG files associated with the given graph
 def DeleteCache(graph):
     #Delete database entries first
-    oldFiles = ImageFiles.objects.filter(GraphType=graph).delete()
+    ImageFiles.objects.filter(GraphType=graph).delete()
 
     #Now remove PNG files
     #CD into the folder where this file is located as it should be the DNAStorage folder
