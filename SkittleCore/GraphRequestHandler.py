@@ -28,9 +28,6 @@ from SkittleCore.models import RequestPacket, ProcessQueue
 import DNAStorage.StorageRequestHandler as StorageRequestHandler
 from django.db import transaction
 
-'''Finally, X = __import__('X') works like import X, with the difference that you
-1) pass the module name as a string, and 2) explicitly assign it to a variable in your current namespace.'''
-
 #print __name__, " Printing Available Graphs: "
 #for graph in availableGraphs:
 #    print graph 
@@ -172,3 +169,12 @@ def generateGraphListForServer():
 
 
 '''These are here for the purposes of invoking the registerGraph call at the beginning of every graph definition file'''
+graphNames = ['AnnotationDisplay', 'NucleotideBias', 'NucleotideDisplay', 'OligomerUsage', 'RawFrequencyMap',
+              'RepeatMap', 'RepeatOverview', 'SequenceHighlighter', 'SimilarityHeatMap', 'ThreeMerDetector']
+for name in graphNames:
+    filename = 'SkittleCore.Graphs.' + name
+    __import__(filename)
+assert len(availableGraphs) == len(graphNames), "One or more of the graphs didn't import correctly" + str(len(availableGraphs))
+
+'''Finally, X = __import__('X') works like import X, with the difference that you
+1) pass the module name as a string, and 2) explicitly assign it to a variable in your current namespace.'''
