@@ -217,7 +217,7 @@
 		    	var sequence = {};
 		    	sequence.show = "true";
 		    	sequence.sequence = uGet('s'+i);
-		    	sequence.color = uGet('s'+i+'c') || getGoodDeterministicColor(Math.random);
+		    	sequence.color = uGet('s'+i+'c') || getGoodDeterministicColor(sequence.sequence).slice(1);
 		    	urlHighlighterState.sequences.push(sequence);
 		    }
 		    if (uGet('searchStart')) {

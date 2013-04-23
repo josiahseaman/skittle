@@ -69,6 +69,7 @@ var expRound = function(value,stretchFactor) { // stretchFactor is between 0 to 
 }
 
 var getGoodDeterministicColor = function(input) {
+	if (typeof input == 'undefined' || typeof input == 'string' && input.length < 1) input = Math.random()
 	input = input + "padding"
 	var hash = md5(input)
 	var red = parseInt(hash.slice(1,3),16)
