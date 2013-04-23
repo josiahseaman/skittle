@@ -1,117 +1,136 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>{% block pageTitle %}DNASkittle Alpha Preview{% endblock %}</title>
+    <title>{% block pageTitle %}DNASkittle Alpha Preview{% endblock %}</title>
 
-	{% block styles %}
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/popover.css">
-	<style type="text/css">
+    {% block styles %}
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/browser.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/popover.css">
+        <style type="text/css">
 
-	</style>
-	{% endblock %}
-	{% block scripts %}
-<!--[if lt IE 9]>
+        </style>
+    {% endblock %}
+    {% block scripts %}
+        <!--[if lt IE 9]>
 	<script src="dist/html5shiv.js"></script>
     <script src="{{STATIC_URL}}js/excanvas.js"></script>
 <![endif]-->
-	<script src="/browse/state.json"></script>
-	<script src="annotation.json"></script>
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-	<script src="{{STATIC_URL}}js/utility.js"></script>
-	<script src="{{STATIC_URL}}js/interface.js"></script>
-	<script src="{{STATIC_URL}}js/draw_canvas.js"></script>
-	<script type="text/javascript">
+        <script src="/browse/state.json"></script>
+        <script src="annotation.json"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script src="{{ STATIC_URL }}js/utility.js"></script>
+        <script src="{{ STATIC_URL }}js/interface.js"></script>
+        <script src="{{ STATIC_URL }}js/draw_canvas.js"></script>
+        <script type="text/javascript">
 
 
-	</script>
-	{% endblock %}
+        </script>
+    {% endblock %}
 </head>
 <body>
-	{% block header %}
-	<h1 id="logo"><a href="/"><img src="{{STATIC_URL}}gfx/skittle-logo3.png"><span>DNA</span>Skittle</a></h1>
-	
-	<header>
-		<ul>
-			<li><a href="/discover">Discover</a></li><!-- <li><a>Share</a></li> --><li><a href="/learn">Learn</a></li>
-		</ul>
-		<p><a href="https://twitter.com/genome_skittle" target="blank"><img src="{{STATIC_URL}}gfx/twitter-bird-dark-bgs.png" height="36" width="36"></a><a href="https://plus.google.com/u/0/113106795968395476024/about" target="blank"><img src="{{STATIC_URL}}gfx/gplus-white-26.png" height="26" width="26"></a>
-			<a href="https://github.com/josiahseaman/skittle" target="blank"><img src="{{STATIC_URL}}gfx/github-white.png" height="22"></a></p>
-	</header>
-	{% endblock %}
-	{% block content %}
-	<div id="canvasContainer">
-	    <canvas id="c" width="2000" height="1000"></canvas>
-		<div id="graph-labels">
-			<ul>
-			{% for graph in availableGraphs %}
-				<li id="graphLabel-{{ graph.symbol }}" style="width:159px;">{{ graph.name }} <img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton"></li>
-			{% endfor %}
-			</ul>
-		</div>
-	</div>
-	<div id="tools">
-		<ul>
-			<li class="" id="buttonGraphs"><img src="{{STATIC_URL}}gfx/icons/67.png" width="20" height="20">Graphs</li>
-			<li class="radio-tools active" data-tool="Move"><img src="{{STATIC_URL}}gfx/icons/41.png" width="20" height="20">Move</li>
-			<li class="radio-tools" data-tool="Select"><img src="{{STATIC_URL}}gfx/icons/dialog.png" width="20" height="20">Select</li>
-<!-- 			<li class="radio-tools" data-tool="Find"><img src="{{STATIC_URL}}gfx/icons/7.png" width="20" height="20">Find</li>
+{% block header %}
+    <h1 id="logo"><a href="/"><img src="{{ STATIC_URL }}gfx/skittle-logo3.png"><span>DNA</span>Skittle</a></h1>
+
+    <header>
+        <ul>
+            <li><a href="/discover">Discover</a></li>
+            <!-- <li><a>Share</a></li> -->
+            <li><a href="/learn">Learn</a></li>
+        </ul>
+        <p><a href="https://twitter.com/genome_skittle" target="blank"><img
+                src="{{ STATIC_URL }}gfx/twitter-bird-dark-bgs.png" height="36" width="36"></a><a
+                href="https://plus.google.com/u/0/113106795968395476024/about" target="blank"><img
+                src="{{ STATIC_URL }}gfx/gplus-white-26.png" height="26" width="26"></a>
+            <a href="https://github.com/josiahseaman/skittle" target="blank"><img
+                    src="{{ STATIC_URL }}gfx/github-white.png" height="22"></a></p>
+    </header>
+{% endblock %}
+{% block content %}
+    <div id="canvasContainer">
+        <canvas id="c" width="2000" height="1000"></canvas>
+        <div id="graph-labels">
+            <ul>
+                {% for graph in availableGraphs %}
+                    <li id="graphLabel-{{ graph.symbol }}" style="width:159px;">{{ graph.name }} <img
+                            src="{{ STATIC_URL }}gfx/icons/close.png" class="closeGraphButton"></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div id="tools">
+        <ul>
+            <li class="" id="buttonGraphs"><img src="{{ STATIC_URL }}gfx/icons/67.png" width="20" height="20">Graphs
+            </li>
+            <li class="radio-tools active" data-tool="Move"><img src="{{ STATIC_URL }}gfx/icons/41.png" width="20"
+                                                                 height="20">Move
+            </li>
+            <li class="radio-tools" data-tool="Select"><img src="{{ STATIC_URL }}gfx/icons/dialog.png" width="20"
+                                                            height="20">Select
+            </li>
+            <!-- 			<li class="radio-tools" data-tool="Find"><img src="{{STATIC_URL}}gfx/icons/7.png" width="20" height="20">Find</li>
 			<li class="radio-tools" data-tool="Annotate"><img src="{{STATIC_URL}}gfx/icons/39.png" width="20" height="20">Annotate</li> -->
-			<li id="link-here"><img src="{{STATIC_URL}}gfx/icons/flag.png" width="20" height="20">Link Here</li>
-			<!-- <li><img src="{{STATIC_URL}}gfx/icons/camera.png" width="20" height="20">Screenshot</li> -->
-			<li class="bottom"><img src="{{STATIC_URL}}gfx/icons/cog.png" width="20" height="20">Settings</li>
-		</ul>
-	</div>
-	<div id="dials">
-		<ul>
-			<li>Width: <span id="widthDisplay" data-fn="UIwidthChange">{{ width }} bp</span>
-				<div id="widthBubble" class="popover arrow-bottom-center">
-					<div class="button" onClick="doubleWidth()">x2</div>
-					<div class="button" onClick="halfWidth()">/2</div>
-				</div>
-			</li>
-			<li>Scale: <span id="scaleDisplay" data-fn="UIscaleChange">{{ scale }} bp/pixel</span>
-				<div id="scaleBubble" class="popover arrow-bottom-center">
-					<div class="button" onClick="setScaleTo(1)">1:1</div>
-					<div class="button" onClick="scaleToFile()">Whole File</div>
-				</div>
-			</li>
-			<li>Start Index: <span id="startDisplay" data-fn="UIstartChange">{{ start }}</span>
-				<div id="startBubble" class="popover arrow-bottom-center">
-					<div class="button" onClick="setStartTo(1)">Top</div>
-					<div class="button" onClick="goToEnd()">End</div>
-				</div>
-			</li>
-			<li>End Index: <span id="endDisplay" data-fn="UIendChange">23865</span></li>
-		</ul>
-	</div>
+            <li id="link-here"><img src="{{ STATIC_URL }}gfx/icons/flag.png" width="20" height="20">Link Here</li>
+            <!-- <li><img src="{{STATIC_URL}}gfx/icons/camera.png" width="20" height="20">Screenshot</li> -->
+            <li class="bottom"><img src="{{ STATIC_URL }}gfx/icons/cog.png" width="20" height="20">Settings</li>
+        </ul>
+    </div>
+    <div id="dials">
+        <ul>
+            <li>Width: <span id="widthDisplay" data-fn="UIwidthChange">{{ width }} bp</span>
+
+                <div id="widthBubble" class="popover arrow-bottom-center">
+                    <div class="button" onClick="doubleWidth()">x2</div>
+                    <div class="button" onClick="halfWidth()">/2</div>
+                </div>
+            </li>
+            <li>Scale: <span id="scaleDisplay" data-fn="UIscaleChange">{{ scale }} bp/pixel</span>
+
+                <div id="scaleBubble" class="popover arrow-bottom-center">
+                    <div class="button" onClick="setScaleTo(1)">1:1</div>
+                    <div class="button" onClick="scaleToFile()">Whole File</div>
+                </div>
+            </li>
+            <li>Start Index: <span id="startDisplay" data-fn="UIstartChange">{{ start }}</span>
+
+                <div id="startBubble" class="popover arrow-bottom-center">
+                    <div class="button" onClick="setStartTo(1)">Top</div>
+                    <div class="button" onClick="goToEnd()">End</div>
+                </div>
+            </li>
+            <li>End Index: <span id="endDisplay" data-fn="UIendChange">23865</span></li>
+        </ul>
+    </div>
 
 
-	<div class="popover arrow-left-top" id="graphList">
-		<ul>
-			{% for graph in availableGraphs %}
-			<li><input type="checkbox" id="showGraph-{{ graph.symbol }}" name="showGraph{{ graph.symbol }}"><label for="showGraph{{ graph.symbol }}">{{ graph.name }}</label></li>
-			{% endfor %}
-		</ul>
-	</div>
+    <div class="popover arrow-left-top" id="graphList">
+        <ul>
+            {% for graph in availableGraphs %}
+                <li><input type="checkbox" id="showGraph-{{ graph.symbol }}" name="showGraph{{ graph.symbol }}"><label
+                        for="showGraph{{ graph.symbol }}">{{ graph.name }}</label></li>
+            {% endfor %}
+        </ul>
+    </div>
 
 {% endblock %}
 
 {% if PRODUCTION %}
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-36361700-2']);
-	  _gaq.push(['_trackPageview']);
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-36361700-2']);
+        _gaq.push(['_trackPageview']);
 
-	  (function() {
-	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
+        (function () {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
 
-	</script>
+    </script>
 {% endif %}
 </body>
 </html>

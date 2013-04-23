@@ -17,9 +17,10 @@ class SimpleTest(TestCase):
         """
         self.assertEqual(1 + 1, 2)
 
+
 def TestPacket():
     state = RequestPacket()
-    
+
     state.specimen = 'hg18'
     state.chromosome = 'chrY-test'
     state.seq = ''#ACGTAAAACCCCGGGGTTTTACGTACGTACGTACGTACGTACGTACGTACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTACGTACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
@@ -27,55 +28,68 @@ def TestPacket():
     state.width = 24
     state.scale = 2
     state.start = 1
-#    state.requestedGraph = 'n'
+    #    state.requestedGraph = 'n'
     return state
+
 
 import SkittleGraphTransforms
 import SkittleCore.FastaFiles
 import shutil
 from DNAStorage import ProcessFasta, StorageRequestHandler
 
+
 class FastaTest(TestCase):
     fixtures = ['testDatabase_fixture.json']
+
     def testImport(self):
         filename = 'Animalia_Mammalia_Homo_Sapiens_hg18_chrY-test.fa'
-        try: shutil.move("DNAStorage/history/" + filename, "DNAStorage/to_import/" + filename)#move chrY-sample to the import folder
-        except: print "File not found.  Already moved?"
+        try:
+            shutil.move("DNAStorage/history/" + filename,
+                        "DNAStorage/to_import/" + filename)#move chrY-sample to the import folder
+        except:
+            print "File not found.  Already moved?"
         ProcessFasta.run() #run import fasta
         print "The test filename should be imported now"
-        
-    def testFilePath(self):    
+
+    def testFilePath(self):
         path = StorageRequestHandler.GetFastaFilePath('hg18', 'chrY-test', 1)
         print path
         self.assertNotEqual(None, path, "Didn't return a path")
-    
-    def testSampleFilePath(self):    
+
+    def testSampleFilePath(self):
         path = StorageRequestHandler.GetFastaFilePath('hg18', 'chrY-sample', 1)
         print path
         self.assertNotEqual(None, path, "Didn't return a path")
-        
+
+
 class TransformTest(TestCase):
     def testModelSeqDepth(self):
         state = TestPacket()
         self.assertFalse(type(state.seq) == object)
-        self.assertFalse(isinstance(['ACGTACGTAAAACCCCGGGGTTTT','AAAACGCCGTN', 'AGTGGGG'], type(state.seq)), type(state.seq))
-        self.assertTrue(SkittleGraphTransforms.hasDepth(['ACGTACGTAAAACCCCGGGGTTTT','AAAACGCCGTN', 'AGTGGGG']), type(state.seq))
+        self.assertFalse(isinstance(['ACGTACGTAAAACCCCGGGGTTTT', 'AAAACGCCGTN', 'AGTGGGG'], type(state.seq)),
+                         type(state.seq))
+        self.assertTrue(SkittleGraphTransforms.hasDepth(['ACGTACGTAAAACCCCGGGGTTTT', 'AAAACGCCGTN', 'AGTGGGG']),
+                        type(state.seq))
         self.assertFalse(SkittleGraphTransforms.hasDepth(SkittleCore.FastaFiles.FastaFile('AGCT')))
-        self.assertFalse(SkittleGraphTransforms.hasDepth(state.seq), "The Graph transforms will break with the current sequence data type:" + str(type(state.seq)))
+        self.assertFalse(SkittleGraphTransforms.hasDepth(state.seq),
+                         "The Graph transforms will break with the current sequence data type:" + str(type(state.seq)))
         print len(state.seq), " ",
         state.seq = 'ACGT'
         self.assertTrue(0 < len(state.seq))
         print len(state.seq)
+
     def testChunks(self):
         state = TestPacket()
         self.assertEqual(len(state.seq[1:5]), len(str('ACGCGCTCTATCA')[1:5]))
-        
+
     def testCountNucleotides(self):
-        counts = SkittleGraphTransforms.countNucleotides(['ACGTACGTAAAACCCCGGGGTTTT','AAAACGCCGTN', 'AGTGGGG'])
+        counts = SkittleGraphTransforms.countNucleotides(['ACGTACGTAAAACCCCGGGGTTTT', 'AAAACGCCGTN', 'AGTGGGG'])
         print counts
 
 
 import AnnotationDisplay
+
+
 class AnnotationDisplayTest(TestCase):
     def test(self):
         print 'Annotation Display Test case'
@@ -83,57 +97,78 @@ class AnnotationDisplayTest(TestCase):
         state.length = 300
         annotationState = AnnotationDisplay.AnnotationTrackState()  #this is not a model state.  This is only here because gtfReader has not been implemented
         print AnnotationDisplay.calculateOutputPixels(state, annotationState)
-        
-import NucleotideBias        
+
+
+import NucleotideBias
+
+
 class NucleotideBiasTest(TestCase):
     def test(self):
         print 'Nucleotide Bias test case'
         state = TestPacket()
-#        state.seq = 'ACGTACGTAAAACCCCGGGGTTTT'
+        #        state.seq = 'ACGTACGTAAAACCCCGGGGTTTT'
         print NucleotideBias.calculateOutputPixels(state)
-        
-import NucleotideDisplay        
+
+
+import NucleotideDisplay
+
+
 class NucleotideDisplayTest(TestCase):
     def test(self):
         print 'Nucleotide Display test case'
         state = TestPacket()
-    #    state.scale = 1
+        #    state.scale = 1
         print NucleotideDisplay.calculateOutputPixels(state)
-        
+
+
 import OligomerUsage
+
+
 class OligomerUsageTest(TestCase):
     def test(self):
         print 'OligomerUsage test case'
         state = TestPacket()
         extraState = OligomerUsageState()
         print OligomerUsage.calculateOutputPixels(state, extraState)#
-        
+
+
 import RepeatMap
+
+
 class RepeatMapTest(TestCase):
     def test(self):
         print 'RepeatMap test case'
         state = TestPacket()
         repeatMapState = RepeatMapState()
         print RepeatMap.calculateOutputPixels(state, repeatMapState)
-        
+
+
 import SequenceHighlighter
+
+
 class SequenceHighlighterTest(TestCase):#TODO: currently blank
     def test(self):
         print 'SequenceHighlighter test case'
         state = TestPacket()
-#        state.seq = 'AAAAGGGGTATATATATATATGGGATAAAGCCCCC'
+        #        state.seq = 'AAAAGGGGTATATATATATATGGGATAAAGCCCCC'
         print SequenceHighlighter.calculateOutputPixels(state, HighlighterState())
-    
+
+
 import SimilarityHeatMap
+
+
 class SimilarityHeatMapTest(TestCase):
     def test(self):
         print 'SimilarityHeatMap test case'
         state = TestPacket()
         state.width = 200
-        heatMap = SimilarityHeatMap.calculateOutputPixels(state, heatMapState = SimilarityHeatMapState())
+        heatMap = SimilarityHeatMap.calculateOutputPixels(state, heatMapState=SimilarityHeatMapState())
         SimilarityHeatMap.prettyPrint(heatMap[:5])
-        
+
+
 import ThreeMerDetector
+
+
 class ThreeMerDetectorTest(TestCase):
     def test(self):
         print 'ThreeMerDetector test case'
@@ -141,8 +176,11 @@ class ThreeMerDetectorTest(TestCase):
         extra = ThreeMerDetectorState()
         print ThreeMerDetector.calculateOutputPixels(state, extra)
 
+
 import SkittleCore.Graphs.RepeatOverview
 from PixelLogic import spectrum
+
+
 class RepeatOverviewTest(TestCase):
     def test(self):
         pixels = []
@@ -150,7 +188,7 @@ class RepeatOverviewTest(TestCase):
             for i in range(1024):
                 pixels.append(spectrum(i / 1024.0))
         return pixels
-    
+
 #import grph
 #class grphTest(TestCase):
 #    def test(self):

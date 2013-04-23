@@ -1,249 +1,280 @@
 {% extends "base.html" %}
 {% block pageTitle %}{{ specimen }} | DNASkittle{% endblock %}
 {% block styles %}
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/popover.css">
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/simple-slider.css">
-	<style type="text/css">
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/browser.css">
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/popover.css">
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/simple-slider.css">
+    <style type="text/css">
 
-	</style>
-	{% endblock %}
-	{% block scripts %}
-<!--[if lt IE 9]>
+    </style>
+{% endblock %}
+{% block scripts %}
+    <!--[if lt IE 9]>
     <script src="{{STATIC_URL}}js/excanvas.js"></script>
 <![endif]-->
-	<script src="/browse/state.json"></script>
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-	<script src="{{STATIC_URL}}js/simple-slider.min.js"></script>
-	<script src="{{STATIC_URL}}js/contactform.js"></script>
-	<script src="{{STATIC_URL}}js/md5.js"></script>
-	<script src="{{STATIC_URL}}js/utility.js"></script>
-	<script src="{{STATIC_URL}}js/interface.js"></script>
-	<script src="{{STATIC_URL}}js/draw_canvas.js"></script>
-	<script type="text/javascript">
+    <script src="/browse/state.json"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="{{ STATIC_URL }}js/simple-slider.min.js"></script>
+    <script src="{{ STATIC_URL }}js/contactform.js"></script>
+    <script src="{{ STATIC_URL }}js/md5.js"></script>
+    <script src="{{ STATIC_URL }}js/utility.js"></script>
+    <script src="{{ STATIC_URL }}js/interface.js"></script>
+    <script src="{{ STATIC_URL }}js/draw_canvas.js"></script>
+    <script type="text/javascript">
 
 
-	</script>
-	{% endblock %}
+    </script>
+{% endblock %}
 
 {% block content %}
-	<div id="canvasContainer">
-	    <canvas id="c" width="2000" height="1000"></canvas>
-		<div id="graph-labels">
-			<ul>
-			{% for graph in availableGraphs %}
-				<li id="graphLabel-{{ graph.symbol }}" style="width:159px;">
-					{% if graph.symbol == "h" %}<img src="{{STATIC_URL}}gfx/icons/cog_button.png" class="settingsGraphButton"> {% endif %}
-					{{ graph.name }} <img src="{{STATIC_URL}}gfx/icons/help_green.png" class="helpGraphButton"><img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton">
-					<div class="graphHelp"><p>{{ graph.helpText }}</p></div>
-					<div class="graphSettings"><p>There are no settings for this graph</p></div>
-				</li>
-			{% endfor %}
-			</ul>
-		</div>
-	</div>
-	<div class="highlighterSettings">
-		<label><input type="checkbox" id="revComplement" name="revComplement"> Search Reverse Complement</label><br>
-		<label for="similarityPercent">% Similarity:</label>
-		<input type="text" id="similarityPercent" name="similarityPercent" value="80" style="width:2em" maxlength="3" data-slider="true" data-slider-range="40,100" data-slider-step="1">
-		<hr>
-		<div id="highlighterSequence">
-			<input type="text" class="sequenceInput seq">
-			<label class="button"><input type="checkbox" class="showSeq"> Highlight</label>
-			<label class="button removeSeq"><span>&times;</span> Remove</label>
-			<label style="float:right">Color:<input type="color" class="sequenceColor"></label>
-		</div>
+    <div id="canvasContainer">
+        <canvas id="c" width="2000" height="1000"></canvas>
+        <div id="graph-labels">
+            <ul>
+                {% for graph in availableGraphs %}
+                    <li id="graphLabel-{{ graph.symbol }}" style="width:159px;">
+                        {% if graph.symbol == "h" %}
+                            <img src="{{ STATIC_URL }}gfx/icons/cog_button.png" class="settingsGraphButton"> {% endif %}
+                        {{ graph.name }} <img src="{{ STATIC_URL }}gfx/icons/help_green.png"
+                                              class="helpGraphButton"><img src="{{ STATIC_URL }}gfx/icons/close.png"
+                                                                           class="closeGraphButton">
 
-		<div class="addSeq button"><img src="{{STATIC_URL}}gfx/icons/plus_button.png"> Add Search Sequence</div>
-		<div id="searchSeq" class="button"><img src="{{STATIC_URL}}gfx/icons/search_white.png"> Start Search</div>
-	</div>
+                        <div class="graphHelp"><p>{{ graph.helpText }}</p></div>
+                        <div class="graphSettings"><p>There are no settings for this graph</p></div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="highlighterSettings">
+        <label><input type="checkbox" id="revComplement" name="revComplement"> Search Reverse Complement</label><br>
+        <label for="similarityPercent">% Similarity:</label>
+        <input type="text" id="similarityPercent" name="similarityPercent" value="80" style="width:2em" maxlength="3"
+               data-slider="true" data-slider-range="40,100" data-slider-step="1">
+        <hr>
+        <div id="highlighterSequence">
+            <input type="text" class="sequenceInput seq">
+            <label class="button"><input type="checkbox" class="showSeq"> Highlight</label>
+            <label class="button removeSeq"><span>&times;</span> Remove</label>
+            <label style="float:right">Color:<input type="color" class="sequenceColor"></label>
+        </div>
 
-	<div id="learn" class="">
-		<p style="top:90px;left:460px;width:190px">Select a different genome and chromosome</p>
-		<img src="{{STATIC_URL}}gfx/arrow-top-left.png" style="top:62px;left:430px"> 
-		<p style="top:55px;left:210px;width:140px">Display and hide available visualizations</p>
-		While the Move Tool is selected you can click and drag to reposition the graphs
-		<img src="{{STATIC_URL}}gfx/squigy-arrow-left-short.png" style="top:70px;left:140px"> 
-		<p style="top:210px;left:160px;width:160px">When selected, clicking nucleotide display will highlight the sequence under the cursor</p>
-		<img src="{{STATIC_URL}}gfx/arrow-top-left.png" style="top:180px;left:140px"> 
-		<p style="bottom:90px;left:190px;width:160px;text-align:center">Click on the width to enter a specific value to wrap</p>
-		<img src="{{STATIC_URL}}gfx/squigy-arrow-down-short.png" style="bottom:33px;left:250px"> 
-		<p style="bottom:90px;left:170px;margin-left:20%;width:150px;text-align:center">Scale sets the number of base pairs displayed by a single skixel via color-averaging</p>
-		<img src="{{STATIC_URL}}gfx/squigy-arrow-down-short.png" style="bottom:30px;margin-left:20%;left:230px"> 
-		<div style="top:340px;right:120px;width:438px">
-			<img src="{{STATIC_URL}}gfx/arrow_keys.png" style="top:40px;right:125px">
-			<p style="top:0px;right:120px;">scrolls up ten lines</p>
-			<p style="top:150px;right:110px;">scrolls down ten lines</p>
-			<p style="top:90px;right:0px;width:115px">increases wrap width by one</p>
-			<p style="top:90px;right:320px;width:115px;text-align:right">decreases wrap width by one</p>
-		</div>
-		<p style="bottom:200px;left:810px;width:180px">Drag the edge of nucleotide display to change the wrap width</p>
-		<img src="{{STATIC_URL}}gfx/arrow-top-left.png" style="bottom:280px;left:790px;"> 
-		<p style="top:300px;left:670px">A tandem repeat!</p>
-		<img src="{{STATIC_URL}}gfx/circle-a-tandem.png" style="top:270px;left:420px">
-		<p style="top:62px;right:20px;width:280px;"><a href="#" onClick="$('#learn').removeClass('active')">Close this help overlay <img src="{{STATIC_URL}}gfx/squigy-close-button.png" style="top:-7px"></a></p>
-	</div>
+        <div class="addSeq button"><img src="{{ STATIC_URL }}gfx/icons/plus_button.png"> Add Search Sequence</div>
+        <div id="searchSeq" class="button"><img src="{{ STATIC_URL }}gfx/icons/search_white.png"> Start Search</div>
+    </div>
+
+    <div id="learn" class="">
+        <p style="top:90px;left:460px;width:190px">Select a different genome and chromosome</p>
+        <img src="{{ STATIC_URL }}gfx/arrow-top-left.png" style="top:62px;left:430px">
+
+        <p style="top:55px;left:210px;width:140px">Display and hide available visualizations</p>
+        While the Move Tool is selected you can click and drag to reposition the graphs
+        <img src="{{ STATIC_URL }}gfx/squigy-arrow-left-short.png" style="top:70px;left:140px">
+
+        <p style="top:210px;left:160px;width:160px">When selected, clicking nucleotide display will highlight the
+            sequence under the cursor</p>
+        <img src="{{ STATIC_URL }}gfx/arrow-top-left.png" style="top:180px;left:140px">
+
+        <p style="bottom:90px;left:190px;width:160px;text-align:center">Click on the width to enter a specific value to
+            wrap</p>
+        <img src="{{ STATIC_URL }}gfx/squigy-arrow-down-short.png" style="bottom:33px;left:250px">
+
+        <p style="bottom:90px;left:170px;margin-left:20%;width:150px;text-align:center">Scale sets the number of base
+            pairs displayed by a single skixel via color-averaging</p>
+        <img src="{{ STATIC_URL }}gfx/squigy-arrow-down-short.png" style="bottom:30px;margin-left:20%;left:230px">
+
+        <div style="top:340px;right:120px;width:438px">
+            <img src="{{ STATIC_URL }}gfx/arrow_keys.png" style="top:40px;right:125px">
+
+            <p style="top:0px;right:120px;">scrolls up ten lines</p>
+
+            <p style="top:150px;right:110px;">scrolls down ten lines</p>
+
+            <p style="top:90px;right:0px;width:115px">increases wrap width by one</p>
+
+            <p style="top:90px;right:320px;width:115px;text-align:right">decreases wrap width by one</p>
+        </div>
+        <p style="bottom:200px;left:810px;width:180px">Drag the edge of nucleotide display to change the wrap width</p>
+        <img src="{{ STATIC_URL }}gfx/arrow-top-left.png" style="bottom:280px;left:790px;">
+
+        <p style="top:300px;left:670px">A tandem repeat!</p>
+        <img src="{{ STATIC_URL }}gfx/circle-a-tandem.png" style="top:270px;left:420px">
+
+        <p style="top:62px;right:20px;width:280px;"><a href="#" onClick="$('#learn').removeClass('active')">Close this
+            help overlay <img src="{{ STATIC_URL }}gfx/squigy-close-button.png" style="top:-7px"></a></p>
+    </div>
 
 
-	<div id="tools">
-		<ul>
-			<li class="" id="buttonGraphs"><img src="{{STATIC_URL}}gfx/icons/67.png" width="20" height="20">Graphs</li>
-			<li class="radio-tools active" data-tool="Move"><img src="{{STATIC_URL}}gfx/icons/41.png" width="20" height="20">Move</li>
-			<li class="radio-tools" data-tool="Select"><img src="{{STATIC_URL}}gfx/icons/dialog.png" width="20" height="20">Select</li>
-<!-- 			<li class="radio-tools" data-tool="Find"><img src="{{STATIC_URL}}gfx/icons/7.png" width="20" height="20">Find</li>
+    <div id="tools">
+        <ul>
+            <li class="" id="buttonGraphs"><img src="{{ STATIC_URL }}gfx/icons/67.png" width="20" height="20">Graphs
+            </li>
+            <li class="radio-tools active" data-tool="Move"><img src="{{ STATIC_URL }}gfx/icons/41.png" width="20"
+                                                                 height="20">Move
+            </li>
+            <li class="radio-tools" data-tool="Select"><img src="{{ STATIC_URL }}gfx/icons/dialog.png" width="20"
+                                                            height="20">Select
+            </li>
+            <!-- 			<li class="radio-tools" data-tool="Find"><img src="{{STATIC_URL}}gfx/icons/7.png" width="20" height="20">Find</li>
 			<li class="radio-tools" data-tool="Annotate"><img src="{{STATIC_URL}}gfx/icons/39.png" width="20" height="20">Annotate</li> -->
-			<li id="link-here"><img src="{{STATIC_URL}}gfx/icons/flag.png" width="20" height="20">Link Here</li>
-			<!-- <li><img src="{{STATIC_URL}}gfx/icons/camera.png" width="20" height="20">Screenshot</li> -->
-			<!-- <li class="bottom"><img src="{{STATIC_URL}}gfx/icons/cog.png" width="20" height="20">Settings</li> -->
-			<li id="bug-report" class="bottom"><img src="{{STATIC_URL}}gfx/icons/bug.png" width="20" height="20">Bug Report</li>
-		</ul>
-	</div>
-	<div id="dials">
-		<ul>
-			<li>Width: <span id="widthDisplay" data-fn="width">{{ width }} bp</span>
-				<div id="widthBubble" class="popover arrow-bottom-center">
-					<div class="button" onClick="state.width(double)">x2</div>
-					<div class="button" onClick="state.width(half)">/2</div>
-				</div>
-			</li>
-			<li>Scale: <span id="scaleDisplay" data-fn="scale">{{ scale }} bp/skixel</span>
-				<div id="scaleBubble" class="popover arrow-bottom-center">
-					<div class="button" onClick="state.scale(1)">1:1</div>
-					<div class="button" onClick="state.scaleToFile()">Whole File</div>
-				</div>
-			</li>
-			<li>Start Index: <span id="startDisplay" data-fn="start">{{ start }}</span>
-				<div id="startBubble" class="popover arrow-bottom-center">
-					<div class="button" onClick="state.start(1)">Top</div>
-					<div class="button" onClick="state.start(random())">Random</div>
-					<div class="button" onClick="state.goToEnd()">End</div>
-				</div>
-			</li>
-			<li>End Index: <span id="endDisplay" data-fn="end">23865</span></li>
-		</ul>
-	</div>
+            <li id="link-here"><img src="{{ STATIC_URL }}gfx/icons/flag.png" width="20" height="20">Link Here</li>
+            <!-- <li><img src="{{STATIC_URL}}gfx/icons/camera.png" width="20" height="20">Screenshot</li> -->
+            <!-- <li class="bottom"><img src="{{STATIC_URL}}gfx/icons/cog.png" width="20" height="20">Settings</li> -->
+            <li id="bug-report" class="bottom"><img src="{{ STATIC_URL }}gfx/icons/bug.png" width="20" height="20">Bug
+                Report
+            </li>
+        </ul>
+    </div>
+    <div id="dials">
+        <ul>
+            <li>Width: <span id="widthDisplay" data-fn="width">{{ width }} bp</span>
+
+                <div id="widthBubble" class="popover arrow-bottom-center">
+                    <div class="button" onClick="state.width(double)">x2</div>
+                    <div class="button" onClick="state.width(half)">/2</div>
+                </div>
+            </li>
+            <li>Scale: <span id="scaleDisplay" data-fn="scale">{{ scale }} bp/skixel</span>
+
+                <div id="scaleBubble" class="popover arrow-bottom-center">
+                    <div class="button" onClick="state.scale(1)">1:1</div>
+                    <div class="button" onClick="state.scaleToFile()">Whole File</div>
+                </div>
+            </li>
+            <li>Start Index: <span id="startDisplay" data-fn="start">{{ start }}</span>
+
+                <div id="startBubble" class="popover arrow-bottom-center">
+                    <div class="button" onClick="state.start(1)">Top</div>
+                    <div class="button" onClick="state.start(random())">Random</div>
+                    <div class="button" onClick="state.goToEnd()">End</div>
+                </div>
+            </li>
+            <li>End Index: <span id="endDisplay" data-fn="end">23865</span></li>
+        </ul>
+    </div>
 
 
-	<div class="popover arrow-left-top" id="graphList">
-		<ul>
-			{% for graph in availableGraphs %}
-			<li><input type="checkbox" id="showGraph-{{ graph.symbol }}" name="showGraph-{{ graph.symbol }}"><label for="showGraph-{{ graph.symbol }}">{{ graph.name }}</label></li>
-			{% endfor %}
-		</ul>
-	</div>
+    <div class="popover arrow-left-top" id="graphList">
+        <ul>
+            {% for graph in availableGraphs %}
+                <li><input type="checkbox" id="showGraph-{{ graph.symbol }}" name="showGraph-{{ graph.symbol }}"><label
+                        for="showGraph-{{ graph.symbol }}">{{ graph.name }}</label></li>
+            {% endfor %}
+        </ul>
+    </div>
 
-	<div id="feedbackForm" class="popover arrow-left-bottom active" style="position:absolute;bottom:-16px;left:145px;padding-bottom:20px">
-	<form action="/sendFeedback" method="post" accept-charset="utf-8" id="bug-report-form">
-		<select id="feedback_type" name="feedback_type">
-			<option>Bug Report</option>
-			<option>Feature Request</option>
-			<option>Comment</option>
-		</select>
-		<input type="text" id="feedback_sender_email" name="feedback_sender_email" placeholder="email (optional)">
-		<input type="checkbox" name="feedback_contact_sender">I wish to be contacted about this
-		<h4>Description:</h4>
-		<textarea rows="5" name="feedback_content"></textarea>
-		<p>(your current view settings will automatically be sent with this report)</p>
-		<input type="hidden" name="feedback_current_view" id="feedback_current_view">
-		{% csrf_token %}
-		<input type="submit" value="Send Feedback">
-	</form>
-	</div>
-	<script type="text/javascript">
-    var cc, c, b, a;
-    var isDrag = false;
-    var dragWidth = false;
-    var activeTool = 'Move';
+    <div id="feedbackForm" class="popover arrow-left-bottom active"
+         style="position:absolute;bottom:-16px;left:145px;padding-bottom:20px">
+        <form action="/sendFeedback" method="post" accept-charset="utf-8" id="bug-report-form">
+            <select id="feedback_type" name="feedback_type">
+                <option>Bug Report</option>
+                <option>Feature Request</option>
+                <option>Comment</option>
+            </select>
+            <input type="text" id="feedback_sender_email" name="feedback_sender_email" placeholder="email (optional)">
+            <input type="checkbox" name="feedback_contact_sender">I wish to be contacted about this
+            <h4>Description:</h4>
+            <textarea rows="5" name="feedback_content"></textarea>
 
-    var isInvalidDisplay = true
-    
-    // initial values
-    xOffset = 0
-    specimen = "{{ specimen }}"
-    chromosome = "{{ chromosome }}"
-    // var getParams = JSON.parse('{"' + decodeURI(window.location.search.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}')
-    colorPalette = "{{ colorPalette }}"
-    zoom  = {{ zoom }};
-    fileLength = {{ fileLength }};
-    skixelsOnScreen = toSkixels($('#canvasContainer').height())*state.width();
-    state.start({{ start }});
-    state.width({{ width }});
-    state.scale({{ scale }});
-    selectionStart = 0
-    selectionEnd = 0
+            <p>(your current view settings will automatically be sent with this report)</p>
+            <input type="hidden" name="feedback_current_view" id="feedback_current_view">
+            {% csrf_token %}
+            <input type="submit" value="Send Feedback">
+        </form>
+    </div>
+    <script type="text/javascript">
+        var cc, c, b, a;
+        var isDrag = false;
+        var dragWidth = false;
+        var activeTool = 'Move';
 
-    var annotationSelectedStart,annotationSelectedEnd,activeAnnotation = 0
+        var isInvalidDisplay = true
 
+        // initial values
+        xOffset = 0
+        specimen = "{{ specimen }}"
+        chromosome = "{{ chromosome }}"
+        // var getParams = JSON.parse('{"' + decodeURI(window.location.search.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}')
+        colorPalette = "{{ colorPalette }}"
+        zoom = {{ zoom }};
+        fileLength = {{ fileLength }};
+        skixelsOnScreen = toSkixels($('#canvasContainer').height()) * state.width();
+        state.start({{ start }});
+        state.width({{ width }});
+        state.scale({{ scale }});
+        selectionStart = 0
+        selectionEnd = 0
 
-
-
-	var annotations = {}
-	var visibleAnnotations = {}
-	var helpLabel = $('<li class="helpLabel">Graph Information<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeHelpButton"></li>')
-	var settingsLabel = $('<li class="settingsLabel">Graph Settings<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeSettingsButton"></li>')
+        var annotationSelectedStart, annotationSelectedEnd, activeAnnotation = 0
 
 
-    imageUnrendered = new Image()
-    imageUnrendered.src = "{{STATIC_URL}}gfx/checkers.png"
-	if (window.location.hash == "#learn") $('#learn').addClass('active')
-
-	$(document).ready(function() {
-
-		cc = document.getElementById('c') //visible canvas - scale will be 3*zoom
-		c = cc.getContext("2d");
-	    var bb = document.createElement('canvas'); //scratch canvas
-	    bb.height = 1000
-	    bb.width = 5000
-	    b = bb.getContext("2d");
-	    var aa = document.createElement('canvas');
-	    aa.height = 10000
-	    aa.width = 1050
-	    a = aa.getContext("2d");
-
-	    // if graphs are specified in the url set their visibility
-	    var initialGraphs = "{{ graphs }}".split('')
-	    for (var key in graphStatus) {
-	    	if ($.inArray(key,initialGraphs)>=0) showGraph(key)
-	    	else hideGraph(key)
-	    }
-	    if (graphStatus['h'].visible) {
-	    	var uGet = window.location.getParameter
-		    var urlHighlighterState = {}
-		    urlHighlighterState.similarityPercent = uGet('sim') || $('#similarityPercent').val()
-		    urlHighlighterState.revComplement = (typeof uGet('rev') != 'undefined') ? true : false;
-		    urlHighlighterState.sequences = []
-		    for (var i=0;i<50;++i) {
-		    	if (!uGet('s'+i)) break;
-		    	var sequence = {};
-		    	sequence.show = "true";
-		    	sequence.sequence = uGet('s'+i);
-		    	sequence.color = uGet('s'+i+'c') || getGoodDeterministicColor(Math.random);
-		    	urlHighlighterState.sequences.push(sequence);
-		    }
-		    if (uGet('searchStart')) {
-		    	var sequence = getRawSequence(uGet('searchStart'),uGet('searchStop'),addHighlighterSearch)
-		    }
-	    	loadHighlighterSettings(urlHighlighterState);
-	    	graphStatus['h'].settings = urlHighlighterState;
-	    }
+        var annotations = {}
+        var visibleAnnotations = {}
+        var helpLabel = $('<li class="helpLabel">Graph Information<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeHelpButton"></li>')
+        var settingsLabel = $('<li class="settingsLabel">Graph Settings<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeSettingsButton"></li>')
 
 
-	    init();
+        imageUnrendered = new Image()
+        imageUnrendered.src = "{{STATIC_URL}}gfx/checkers.png"
+        if (window.location.hash == "#learn") $('#learn').addClass('active')
 
-	    document.onkeydown = keyListener; 
-	    
-	    cc.onselectstart = function () { return false; } //fixes a problem where double clicking causes text to get selected on the canvas
-	    cc.onmousedown = mouseDown;
-	    cc.onmousemove = mouseMove;
-	    cc.onmouseup = mouseUp;
-	    cc.onmousewheel = mouseWheel;
-	    $('#dials li').on('mousewheel',mouseWheelDials)
+        $(document).ready(function () {
 
-	contactForm();
+            cc = document.getElementById('c') //visible canvas - scale will be 3*zoom
+            c = cc.getContext("2d");
+            var bb = document.createElement('canvas'); //scratch canvas
+            bb.height = 1000
+            bb.width = 5000
+            b = bb.getContext("2d");
+            var aa = document.createElement('canvas');
+            aa.height = 10000
+            aa.width = 1050
+            a = aa.getContext("2d");
+
+            // if graphs are specified in the url set their visibility
+            var initialGraphs = "{{ graphs }}".split('')
+            for (var key in graphStatus) {
+                if ($.inArray(key, initialGraphs) >= 0) showGraph(key)
+                else hideGraph(key)
+            }
+            if (graphStatus['h'].visible) {
+                var uGet = window.location.getParameter
+                var urlHighlighterState = {}
+                urlHighlighterState.similarityPercent = uGet('sim') || $('#similarityPercent').val()
+                urlHighlighterState.revComplement = (typeof uGet('rev') != 'undefined') ? true : false;
+                urlHighlighterState.sequences = []
+                for (var i = 0; i < 50; ++i) {
+                    if (!uGet('s' + i)) break;
+                    var sequence = {};
+                    sequence.show = "true";
+                    sequence.sequence = uGet('s' + i);
+                    sequence.color = uGet('s' + i + 'c') || getGoodDeterministicColor(Math.random);
+                    urlHighlighterState.sequences.push(sequence);
+                }
+                if (uGet('searchStart')) {
+                    var sequence = getRawSequence(uGet('searchStart'), uGet('searchStop'), addHighlighterSearch)
+                }
+                loadHighlighterSettings(urlHighlighterState);
+                graphStatus['h'].settings = urlHighlighterState;
+            }
 
 
+            init();
+
+            document.onkeydown = keyListener;
+
+            cc.onselectstart = function () {
+                return false;
+            } //fixes a problem where double clicking causes text to get selected on the canvas
+            cc.onmousedown = mouseDown;
+            cc.onmousemove = mouseMove;
+            cc.onmouseup = mouseUp;
+            cc.onmousewheel = mouseWheel;
+            $('#dials li').on('mousewheel', mouseWheelDials)
+
+            contactForm();
 
 
-	})
-	</script>
+        })
+    </script>
 {% endblock %}

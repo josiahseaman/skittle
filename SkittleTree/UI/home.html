@@ -1,368 +1,494 @@
 {% extends "base.html" %}
 {% block pageTitle %}DNA Skittle{% endblock %}
 {% block styles %}
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
-	<style type="text/css">
-	body {
-		background: #080808;
-		margin: 0;
-		font-size: 16px;
-		color:#ddd;
-	}
-	a {
-		color:#8f5;
-	}
-	a:visited {
-		color:#90EE68;
-	}
-	a:hover {
-		color:#E2FFD6;
-	}
-	a:active {
-		color:#fff;
-	}
-	p,dl,article {
-		font-family: trebuchet,'trebuchet ms','myriad pro',helvetica,sans-serif;
-	}
-	#header p,#webskittle p {
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/browser.css">
+    <style type="text/css">
+    body {
+        background: #080808;
+        margin: 0;
+        font-size: 16px;
+        color: #ddd;
+    }
 
-		text-shadow:#000 0 0 8px,#000 0 0 4px,#000 0 0 12px,#000 0 0 16px;
-	}
-	article p {
-		margin: 0.5em 0;
-	}
-	#container {
-		position: absolute;
-		background-color: #000;
-		background: url('{{STATIC_URL}}gfx/home-bkg.png');
-		background: -webkit-linear-gradient(bottom,#080808,transparent 250px),url('{{STATIC_URL}}gfx/home-bkg.png');
-		background: -moz-linear-gradient(bottom,#080808,transparent 250px),url('{{STATIC_URL}}gfx/home-bkg.png');
-		background: -ms-linear-gradient(bottom,#080808,transparent 250px),url('{{STATIC_URL}}gfx/home-bkg.png');
-		background: linear-gradient(bottom,#080808,transparent 250px),url('{{STATIC_URL}}gfx/home-bkg.png');
-		width:948px;
-		margin: 0;
-		margin-left: -470px;
-		left:50%;
-		top:0;
-		bottom: 0;
-	}
-	#header {
-		background: url('{{STATIC_URL}}gfx/bkg-home-logo.png') center bottom no-repeat,url('{{STATIC_URL}}gfx/home-bkg.png');
-		background: url('{{STATIC_URL}}gfx/bkg-home-logo.png') center bottom no-repeat,-webkit-linear-gradient(bottom,rgba(0,0,0,0.8),rgba(0,0,0,0.3) 150px,transparent 300px),url('{{STATIC_URL}}gfx/home-bkg.png');
-		background: url('{{STATIC_URL}}gfx/bkg-home-logo.png') center bottom no-repeat,-moz-linear-gradient(bottom,rgba(0,0,0,0.8),rgba(0,0,0,0.3) 150px,transparent 300px),url('{{STATIC_URL}}gfx/home-bkg.png');
-		background: url('{{STATIC_URL}}gfx/bkg-home-logo.png') center bottom no-repeat,-ms-linear-gradient(bottom,rgba(0,0,0,0.8),rgba(0,0,0,0.3) 150px,transparent 300px),url('{{STATIC_URL}}gfx/home-bkg.png');
-		background: url('{{STATIC_URL}}gfx/bkg-home-logo.png') center bottom no-repeat,linear-gradient(bottom,rgba(0,0,0,0.8),rgba(0,0,0,0.3s) 150px,transparent 300px),url('{{STATIC_URL}}gfx/home-bkg.png');
-		position: absolute;
-		top:0px;
-		bottom: 281px;
-		width: 100%;
-		z-index: 10;
-		border-bottom: 1px solid #fff;
-		-webkit-transition: all 1s ease;
-		-moz-transition: all 1s ease;
-		transition: all 1s ease;
-	}
-	#header.active {
-		top:-350px;
-		bottom: 631px;
-	}
-	h1 {
-		position: absolute;
-		bottom: 26px;
-		width: 100%;
-		font-weight: 500;
-		font-size: 4em;
-		/*padding: 200px 0;*/
-		/*background: url('{{STATIC_URL}}gfx/bkg-home-logo.png') center center no-repeat;*/
+    a {
+        color: #8f5;
+    }
 
-		color:#eee;
-		text-shadow:#000 0 0 8px;
-		text-align: center;
-		z-index: 0;
-	}
-	h1::before {
-		/*content: url('{{STATIC_URL}}gfx/bkg-home-logo.png');*/
-		position: absolute;
-		margin: -74px 0 0 -64px;
-		z-index: -1;
-	}
-	h1 span {
-		font-weight: 100;
-		text-shadow:#000 0 0 4px,#000 0 0 12px;
-	}
-	h1 img {
-		box-shadow: 0 0 4;
-		margin-bottom:-55px;
-		margin-left:-30px;
-		margin-right: -30px;
-	}
-	#introStatement {
-		font-size: 1.8em;
-		font-weight: 300;
-		color:#8f5;
-		text-shadow:#000 0 0 8px,#000 0 0 4px,#000 0 0 12px,#000 0 0 16px;
-		text-align: center;
-		margin: 5% 0;
-	}
-	#shortDescription {
-		font-size: 1.1em;
-		position: absolute;
-		color:#aaa;
-		text-shadow:#000 0 0 8px,#000 0 0 4px,#000 0 0 12px,#000 0 0 16px;
-		bottom: 20px;
-		margin: 0;
-		padding: 0 6em;
-		text-align: center;
-	}
-	#content {
-		background: #080808;
-		position: absolute;
-		bottom:281px;
-		height:350px;
-		width: 100%;
-		margin-top:1px;
-		overflow: hidden;
-	}
-	#content section {
-		position: absolute;
-		/*margin-bottom: -300px;*/
-		/*bottom:-300px;*/
-		height:350px;
-		overflow: hidden;
-		width: 96%;
-		padding: 0 2%;
-		opacity: 0;
-		z-index: 0;
-		-webkit-transition: all 1s ease;
-		-moz-transition: all 1s ease;
-		transition: all 1s ease;
-	}
-	#content section.active {
-		opacity: 1;
-		/*margin-bottom: 0px;*/
-		/*bottom:0;*/
-		z-index: 1;
-	}
-	#content article {
-		text-align: justify;
-		-moz-column-count:3;
-		-webkit-column-count:3;
-		column-count:3;
-		-moz-column-gap:3em;
-		-webkit-column-gap:3em;
-		column-gap:3em;
-		font-size: 0.95em;
-		line-height: 1.4em;
-	}
-	#content article p:first-child {
-		margin-top:0;
-	}
-	nav {
-		position: absolute;
-		bottom: 201px;
-		height: 80px;
-		width: 100%;
-		border-top: 1px solid #fff;
-		background: url('{{STATIC_URL}}gfx/bkg-home-menu.png');
-		color: #8f5;
-		font-size: 1.2em;
-	}
-	nav ul {
-		list-style: none;
-		padding: 0;
-		margin: 0px auto;
-		text-align: center;
-	}
-	nav li {
-		display: inline-block;
-		padding: 8px;
-		margin: 0;
-	}
-	nav a {
-		text-decoration: none;
-		padding: 5px 20px;
-		border-top: 3px solid transparent;
-	}
-	nav a:hover,nav a.active {
-		border-top: 3px solid #8f5;
+    a:visited {
+        color: #90EE68;
+    }
 
-	}
-	#webskittle {
-		position: absolute;
-		padding-top: 50px;
-		height: 170px;
-		width: 100%;
-		bottom: 0;
-		text-align: center;
-	}
-	.actionButton {
-		text-decoration: none;
-		color:#fff;
-		font-size: 1.4em;
-		width: 250px;
-		margin: 0.5em auto;
-		padding:0.4em 1em;
-		background: #040;
-		border: 1px solid #040;
-		border-radius: 8px;
-		vertical-align: middle;
-		text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-		background-color: #123D00;
-		background-image: -ms-linear-gradient(top, #061400, #185200);
-		background-image: -moz-linear-gradient(top, #061400, #185200);
-		background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#061400), to(#185200));
-		background-image: -webkit-linear-gradient(top, #061400, #185200);
-		background-image: -o-linear-gradient(top, #061400, #185200);
-		background-image: linear-gradient(to bottom, #061400, #185200);
-		background-repeat: repeat-x;
-		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff061400', endColorstr='#ff185200', GradientType=0);
-		border-color: #185200 #185200 #38592a;
-		border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-		filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
-		box-shadow: 0 0 8px #000,0 0 12px #000,0 0 16px #000;
-	}
-	.actionButton:visited {
-		color: #fff;
-	}
-	.actionButton:hover {
-		color: #fff;
-		background-color: #123D00;
-		background-image: -ms-linear-gradient(top, #185200, #061400);
-		background-image: -moz-linear-gradient(top, #185200, #061400);
-		background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#185200), to(#061400));
-		background-image: -webkit-linear-gradient(top, #185200, #061400);
-		background-image: -o-linear-gradient(top, #185200, #061400);
-		background-image: linear-gradient(to bottom, #185200, #061400);
-		background-repeat: repeat-x;
-	}
-	#social {
-		position: absolute;
-		bottom: 12px;
-		right: 12px;
-	}
-	dt {
-		font-weight: bold;
-	}
-	dd {
-		margin-left: 1em;
-	}
-	</style>
+    a:hover {
+        color: #E2FFD6;
+    }
 
-	{% endblock %}
-	{% block scripts %}
-<!--[if lt IE 9]>
+    a:active {
+        color: #fff;
+    }
+
+    p, dl, article {
+        font-family: trebuchet, 'trebuchet ms', 'myriad pro', helvetica, sans-serif;
+    }
+
+    #header p, #webskittle p {
+
+        text-shadow: #000 0 0 8px, #000 0 0 4px, #000 0 0 12px, #000 0 0 16px;
+    }
+
+    article p {
+        margin: 0.5em 0;
+    }
+
+    #container {
+        position: absolute;
+        background-color: #000;
+        background: url('{{STATIC_URL}}gfx/home-bkg.png');
+        background: -webkit-linear-gradient(bottom, #080808, transparent 250px), url('{{STATIC_URL}}gfx/home-bkg.png');
+        background: -moz-linear-gradient(bottom, #080808, transparent 250px), url('{{STATIC_URL}}gfx/home-bkg.png');
+        background: -ms-linear-gradient(bottom, #080808, transparent 250px), url('{{STATIC_URL}}gfx/home-bkg.png');
+        background: linear-gradient(bottom, #080808, transparent 250px), url('{{STATIC_URL}}gfx/home-bkg.png');
+        width: 948px;
+        margin: 0;
+        margin-left: -470px;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+    }
+
+    #header {
+        background: url('{{STATIC_URL}}gfx/bkg-home-logo.png') center bottom no-repeat, url('{{STATIC_URL}}gfx/home-bkg.png');
+        background: url('{{STATIC_URL}}gfx/bkg-home-logo.png') center bottom no-repeat, -webkit-linear-gradient(bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3) 150px, transparent 300px), url('{{STATIC_URL}}gfx/home-bkg.png');
+        background: url('{{STATIC_URL}}gfx/bkg-home-logo.png') center bottom no-repeat, -moz-linear-gradient(bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3) 150px, transparent 300px), url('{{STATIC_URL}}gfx/home-bkg.png');
+        background: url('{{STATIC_URL}}gfx/bkg-home-logo.png') center bottom no-repeat, -ms-linear-gradient(bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3) 150px, transparent 300px), url('{{STATIC_URL}}gfx/home-bkg.png');
+        background: url('{{STATIC_URL}}gfx/bkg-home-logo.png') center bottom no-repeat, linear-gradient(bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3s) 150px, transparent 300px), url('{{STATIC_URL}}gfx/home-bkg.png');
+        position: absolute;
+        top: 0px;
+        bottom: 281px;
+        width: 100%;
+        z-index: 10;
+        border-bottom: 1px solid #fff;
+        -webkit-transition: all 1s ease;
+        -moz-transition: all 1s ease;
+        transition: all 1s ease;
+    }
+
+    #header.active {
+        top: -350px;
+        bottom: 631px;
+    }
+
+    h1 {
+        position: absolute;
+        bottom: 26px;
+        width: 100%;
+        font-weight: 500;
+        font-size: 4em;
+        /*padding: 200px 0;*/
+        /*background: url('
+
+    {{STATIC_URL}}  gfx/bkg-home-logo.png') center center no-repeat;*/
+
+        color: #eee;
+        text-shadow: #000 0 0 8px;
+        text-align: center;
+        z-index: 0;
+    }
+
+    h1::before {
+        /*content: url('
+
+    {{STATIC_URL}}  gfx/bkg-home-logo.png');*/
+        position: absolute;
+        margin: -74px 0 0 -64px;
+        z-index: -1;
+    }
+
+    h1 span {
+        font-weight: 100;
+        text-shadow: #000 0 0 4px, #000 0 0 12px;
+    }
+
+    h1 img {
+        box-shadow: 0 0 4;
+        margin-bottom: -55px;
+        margin-left: -30px;
+        margin-right: -30px;
+    }
+
+    #introStatement {
+        font-size: 1.8em;
+        font-weight: 300;
+        color: #8f5;
+        text-shadow: #000 0 0 8px, #000 0 0 4px, #000 0 0 12px, #000 0 0 16px;
+        text-align: center;
+        margin: 5% 0;
+    }
+
+    #shortDescription {
+        font-size: 1.1em;
+        position: absolute;
+        color: #aaa;
+        text-shadow: #000 0 0 8px, #000 0 0 4px, #000 0 0 12px, #000 0 0 16px;
+        bottom: 20px;
+        margin: 0;
+        padding: 0 6em;
+        text-align: center;
+    }
+
+    #content {
+        background: #080808;
+        position: absolute;
+        bottom: 281px;
+        height: 350px;
+        width: 100%;
+        margin-top: 1px;
+        overflow: hidden;
+    }
+
+    #content section {
+        position: absolute;
+        /*margin-bottom: -300px;*/
+        /*bottom:-300px;*/
+        height: 350px;
+        overflow: hidden;
+        width: 96%;
+        padding: 0 2%;
+        opacity: 0;
+        z-index: 0;
+        -webkit-transition: all 1s ease;
+        -moz-transition: all 1s ease;
+        transition: all 1s ease;
+    }
+
+    #content section.active {
+        opacity: 1;
+        /*margin-bottom: 0px;*/
+        /*bottom:0;*/
+        z-index: 1;
+    }
+
+    #content article {
+        text-align: justify;
+        -moz-column-count: 3;
+        -webkit-column-count: 3;
+        column-count: 3;
+        -moz-column-gap: 3em;
+        -webkit-column-gap: 3em;
+        column-gap: 3em;
+        font-size: 0.95em;
+        line-height: 1.4em;
+    }
+
+    #content article p:first-child {
+        margin-top: 0;
+    }
+
+    nav {
+        position: absolute;
+        bottom: 201px;
+        height: 80px;
+        width: 100%;
+        border-top: 1px solid #fff;
+        background: url('{{STATIC_URL}}gfx/bkg-home-menu.png');
+        color: #8f5;
+        font-size: 1.2em;
+    }
+
+    nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0px auto;
+        text-align: center;
+    }
+
+    nav li {
+        display: inline-block;
+        padding: 8px;
+        margin: 0;
+    }
+
+    nav a {
+        text-decoration: none;
+        padding: 5px 20px;
+        border-top: 3px solid transparent;
+    }
+
+    nav a:hover, nav a.active {
+        border-top: 3px solid #8f5;
+
+    }
+
+    #webskittle {
+        position: absolute;
+        padding-top: 50px;
+        height: 170px;
+        width: 100%;
+        bottom: 0;
+        text-align: center;
+    }
+
+    .actionButton {
+        text-decoration: none;
+        color: #fff;
+        font-size: 1.4em;
+        width: 250px;
+        margin: 0.5em auto;
+        padding: 0.4em 1em;
+        background: #040;
+        border: 1px solid #040;
+        border-radius: 8px;
+        vertical-align: middle;
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+        background-color: #123D00;
+        background-image: -ms-linear-gradient(top, #061400, #185200);
+        background-image: -moz-linear-gradient(top, #061400, #185200);
+        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#061400), to(#185200));
+        background-image: -webkit-linear-gradient(top, #061400, #185200);
+        background-image: -o-linear-gradient(top, #061400, #185200);
+        background-image: linear-gradient(to bottom, #061400, #185200);
+        background-repeat: repeat-x;
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff061400', endColorstr='#ff185200', GradientType=0);
+        border-color: #185200 #185200 #38592a;
+        border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+        filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+        box-shadow: 0 0 8px #000, 0 0 12px #000, 0 0 16px #000;
+    }
+
+    .actionButton:visited {
+        color: #fff;
+    }
+
+    .actionButton:hover {
+        color: #fff;
+        background-color: #123D00;
+        background-image: -ms-linear-gradient(top, #185200, #061400);
+        background-image: -moz-linear-gradient(top, #185200, #061400);
+        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#185200), to(#061400));
+        background-image: -webkit-linear-gradient(top, #185200, #061400);
+        background-image: -o-linear-gradient(top, #185200, #061400);
+        background-image: linear-gradient(to bottom, #185200, #061400);
+        background-repeat: repeat-x;
+    }
+
+    #social {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+    }
+
+    dt {
+        font-weight: bold;
+    }
+
+    dd {
+        margin-left: 1em;
+    }
+    </style>
+
+{% endblock %}
+{% block scripts %}
+    <!--[if lt IE 9]>
 <script src="dist/html5shiv.js"></script>
 <![endif]-->
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-	<script type="text/javascript">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript">
 
 
-	</script>
-	{% endblock %}
-	{% block header %}{% endblock %}
+    </script>
+{% endblock %}
+{% block header %}{% endblock %}
 
-	{% block content %}
+{% block content %}
 
-	<div id="container">
-		<div id="content">
-			<section id="whySkittle" class="">
-				<h2>What is Skittle?</h2>
-				<article>
-					<p>The Skittle Genome Browser provides powerful data visualizations that allow humans and computers to do what they are best at, respectively. Each data visualization is a mathematical trans&shy;form that creates an image from the raw sequence data designed to make some aspect of the sequence intuitive to human pattern recognition. Skittle's unique approach presents the raw data to the user without biasing assumptions about what the sequence contains such as arbitrary thresholds or filters. </p>
+    <div id="container">
+        <div id="content">
+            <section id="whySkittle" class="">
+                <h2>What is Skittle?</h2>
+                <article>
+                    <p>The Skittle Genome Browser provides powerful data visualizations that allow humans and computers
+                        to do what they are best at, respectively. Each data visualization is a mathematical trans&shy;form
+                        that creates an image from the raw sequence data designed to make some aspect of the sequence
+                        intuitive to human pattern recognition. Skittle's unique approach presents the raw data to the
+                        user without biasing assumptions about what the sequence contains such as arbitrary thresholds
+                        or filters. </p>
 
-					<p>For example: the Nucleotide Display transforms four characters (<span class="seq">ACTG</span>) into four colors. Browsing several human chromosomes reveals abrupt changes in nucleotide usage bias (isochores) which are present at even small scales (less than one kilobase). This creates a vis&shy;ually interesting pattern that you can interactively browse. Another visualiza&shy;tion, the Repeat Map graph, shows all possible repeats in a given region--everything from <span class="seq">ATAT</span> repeats to seg&shy;mental duplications are presented on a single screen. </p>
+                    <p>For example: the Nucleotide Display transforms four characters (<span class="seq">ACTG</span>)
+                        into four colors. Browsing several human chromosomes reveals abrupt changes in nucleotide usage
+                        bias (isochores) which are present at even small scales (less than one kilobase). This creates a
+                        vis&shy;ually interesting pattern that you can interactively browse. Another visualiza&shy;tion,
+                        the Repeat Map graph, shows all possible repeats in a given region--everything from <span
+                                class="seq">ATAT</span> repeats to seg&shy;mental duplications are presented on a single
+                        screen. </p>
 
-					<p>Skittle is an entire toolset of graphs each with their own strength. Used in combination, they create a powerful re&shy;search tool that you can use to quickly characterize a genetic sequence without any previous knowledge or any assump&shy;tions that would cause you to miss important discoveries. </p>
-				</article>
-			</section>
-			<section id="visualizations" class="">
-				<h2>Visualizations</h2>
-				<article>
-				<p>It is well known that the human mind excels at pattern recognition (e.g., near-instantaneous face recognition), but the mind needs graphical help when dealing with large amounts of numerical data. There is currently a lack of tools available for general genomic visual&shy;ization. Several abstract tools do exist, but we felt a need for the introduction of a simple tool that is optimized for the visualization of genomic data specifically. The primary goal in the development of Skittle was to give the user the simplest possible way to visually examine raw genomic data.</p>
+                    <p>Skittle is an entire toolset of graphs each with their own strength. Used in combination, they
+                        create a powerful re&shy;search tool that you can use to quickly characterize a genetic sequence
+                        without any previous knowledge or any assump&shy;tions that would cause you to miss important
+                        discoveries. </p>
+                </article>
+            </section>
+            <section id="visualizations" class="">
+                <h2>Visualizations</h2>
+                <article>
+                    <p>It is well known that the human mind excels at pattern recognition (e.g., near-instantaneous face
+                        recognition), but the mind needs graphical help when dealing with large amounts of numerical
+                        data. There is currently a lack of tools available for general genomic visual&shy;ization.
+                        Several abstract tools do exist, but we felt a need for the introduction of a simple tool that
+                        is optimized for the visualization of genomic data specifically. The primary goal in the
+                        development of Skittle was to give the user the simplest possible way to visually examine raw
+                        genomic data.</p>
 
-				<p>Skittle was not designed to compete with pre-programmed single purpose algorithms already in existence. Cur&shy;rently available research tools require you to already know what you are looking for before you begin. With Skittle, you can characterize a chromo&shy;some from a more unbiased starting point. Then once you know the major features you can tailor algorithms and use other tools to fully quantify your discoveries. Using Skittle means that you can learn things you didn't know about your subject.  This approach is complementary to existing tools.</p>
-				</article>
-			</section>
+                    <p>Skittle was not designed to compete with pre-programmed single purpose algorithms already in
+                        existence. Cur&shy;rently available research tools require you to already know what you are
+                        looking for before you begin. With Skittle, you can characterize a chromo&shy;some from a more
+                        unbiased starting point. Then once you know the major features you can tailor algorithms and use
+                        other tools to fully quantify your discoveries. Using Skittle means that you can learn things
+                        you didn't know about your subject. This approach is complementary to existing tools.</p>
+                </article>
+            </section>
 
-			<section id="discoveries" class="">
-				<h2>Skittle Discoveries</h2>
-				<article>
-					<ul style="list-style:square;margin-left:-1.5em;margin-top:0;text-align:left">
-						<li>Miniature chromosome structure implanted in Human Y chromosome (<a href="http://dnaskittle.com/browse/hg19/chrY/?graphs=mn&amp;start=19570132&amp;scale=12&amp;width=172">whole structure</a>, <a href="http://dnaskittle.com/browse/hg19/chrY/?graphs=n&amp;start=19757548&amp;scale=1&amp;width=171">degraded centromere</a>, <a href="http://dnaskittle.com/browse/hg19/chrY/?graphs=hn&amp;start=19825495&amp;scale=1&amp;width=86">bottom telomere</a>, <a href="http://dnaskittle.com/browse/hg19/chrY/?graphs=hn&amp;start=19570132&amp;scale=1&amp;width=172">top telomere</a>)</li>
-						<li>Frequent Triplex binding sites can be seen everywhere in the genome (<a href="http://dnaskittle.com/browse/hg19/chrY/?graphs=n&amp;start=16166637&amp;scale=1&amp;width=172">Example 1</a>, <a href="http://dnaskittle.com/browse/hg19/chrY/?graphs=n&amp;start=16311529&amp;scale=1&amp;width=172">Example 2</a>, <a href="http://dnaskittle.com/browse/hg19/chrY/?graphs=n&amp;start=1277903&amp;scale=1&amp;width=172">Example 3</a>)</li>
-						<li><a href="http://dnaskittle.com/browse/hg19/chrY/?graphs=n&amp;start=22172213&amp;scale=8&amp;width=344">A 125bp tandem repeat with over 2,000 copies</a></li>
-						<li>Tandem repeats often have structured variation in their nucleotide substitution (<a href="http://dnaskittle.com/browse/hg19/chrY/?graphs=n&amp;start=1177278&amp;scale=1&amp;width=36">Example 1</a>, <a href="http://dnaskittle.com/browse/hg19/chrY/?graphs=n&amp;start=422332&amp;scale=1&amp;width=44">Example 2</a>, <a href="http://www.biomedcentral.com/1471-2105/10/452">paper</a>)</li>
-						<li>Computer program code also has tandem repeats with the same kind of variation patterns [in publication]</li>
-						<li><a href="http://dnaskittle.com/browse/hg19/chr1/?graphs=hn&amp;start=1143500&amp;scale=1&amp;width=135&amp;searchStart=1147145&amp;searchStop=1147279">The Alu distributed repeat not only comes in dimer but is often a monomer, trimer, or 4-mer</a></li>
-						<li>Skittle can identify assembly errors. Some large gaps in the human genome sequence are because segmental duplications make assembly difficult.  In these cases you can see that the gap is not the correct size because it is not a multiple of the duplicated sequence (<a href="http://dnaskittle.com/browse/hg19/chrY/?graphs=n&amp;start=8986557&amp;scale=25&amp;width=812">Example</a>, <a href="http://www.biomedcentral.com/1471-2105/10/452/figure/F5" title="www.biomedcentral.com - Figure">Paper</a>)</li>
-						<li><a href="http://dnaskittle.com/browse/hg19/chr8/?graphs=hn&amp;start=442933&amp;scale=1&amp;width=202&amp;searchStart=1&amp;searchStop=1">Pure Poly-A sequences are found everywhere in the genome</a></li>
-						<li><a href="http://dnaskittle.com/browse/hg19/chr14/?graphs=s&amp;start=1&amp;scale=4750&amp;width=100">Physical chromosome territories correlate strongly (0.65) with isochores defined by oligomer usage</a> (<a href="http://www.sciencemag.org/content/326/5950/289.short" title="Comprehensive Mapping of Long-Range Interactions Reveals Folding Principles of the Human Genome">Full paper</a>)</li>
-<!-- 						<h4>Other Genomes</lh4>
-						<li>Chimpanzee chromosomes are riddled with small gaps of N's</li>
-						<li>Chimpanzee Y chromosome has scattered bits of alpha satellite centromere sequence throughout the chromosome</li>
-						<li>Fruit Fly genomes contain perfect tandem repeats. Repeats with no internal variation are not found in the human genome.</li>
-						<h4>Interesting Looking Examples</h4>
-						<li><a href="http://dnaskittle.com/browse/hg19/chrY/?graphs=mn&amp;start=2137840&amp;scale=1&amp;width=89">A triplex tandem repeat</a></li>
-						<li><a href="http://dnaskittle.com/browse/hg19/chr8/?graphs=n&amp;start=963421&amp;scale=1&amp;width=32">A textured tandem repeat</a></li> -->
-					</ul>
-				</article>
-			</section>
-			<section id="contact" class="">
-				<h2>Contact Us</h2>
-				<article>
-				<p>DNA Skittle is developed by <a href="http://newlinetechnicalinnovations.com">Newline Technical Innovations</a> based on the original <a href="http://genomeskittle.org">desktop application</a> created by Josiah Seaman.  We are excited about this tool and would welcome any opportunity to enhance its capabilities, utility, and adoption.</p>
-				<p><dl>
-					<dt>Email:</dt><dd><a href="mailto:info@newlinetechnicalinnovations.com">info@newlinetechnicalinnovations.com</a></dd>
-					<dt>Phone:</dt><dd>970-599-1764</dd>
-				</dl></p><br><br>
-				<p>Though Skittle is still in a very early stage of development we are very interested in your feedback and input.  If you have encountered a bug or have trouble with any of the features please contact our support team at <a href="mailto:info@newlinetechnicalinnovations.com">support@dnaskittle.com</a>.</p>
+            <section id="discoveries" class="">
+                <h2>Skittle Discoveries</h2>
+                <article>
+                    <ul style="list-style:square;margin-left:-1.5em;margin-top:0;text-align:left">
+                        <li>Miniature chromosome structure implanted in Human Y chromosome (<a
+                                href="http://dnaskittle.com/browse/hg19/chrY/?graphs=mn&amp;start=19570132&amp;scale=12&amp;width=172">whole
+                            structure</a>, <a
+                                href="http://dnaskittle.com/browse/hg19/chrY/?graphs=n&amp;start=19757548&amp;scale=1&amp;width=171">degraded
+                            centromere</a>, <a
+                                href="http://dnaskittle.com/browse/hg19/chrY/?graphs=hn&amp;start=19825495&amp;scale=1&amp;width=86">bottom
+                            telomere</a>, <a
+                                href="http://dnaskittle.com/browse/hg19/chrY/?graphs=hn&amp;start=19570132&amp;scale=1&amp;width=172">top
+                            telomere</a>)
+                        </li>
+                        <li>Frequent Triplex binding sites can be seen everywhere in the genome (<a
+                                href="http://dnaskittle.com/browse/hg19/chrY/?graphs=n&amp;start=16166637&amp;scale=1&amp;width=172">Example
+                            1</a>, <a
+                                href="http://dnaskittle.com/browse/hg19/chrY/?graphs=n&amp;start=16311529&amp;scale=1&amp;width=172">Example
+                            2</a>, <a
+                                href="http://dnaskittle.com/browse/hg19/chrY/?graphs=n&amp;start=1277903&amp;scale=1&amp;width=172">Example
+                            3</a>)
+                        </li>
+                        <li>
+                            <a href="http://dnaskittle.com/browse/hg19/chrY/?graphs=n&amp;start=22172213&amp;scale=8&amp;width=344">A
+                                125bp tandem repeat with over 2,000 copies</a></li>
+                        <li>Tandem repeats often have structured variation in their nucleotide substitution (<a
+                                href="http://dnaskittle.com/browse/hg19/chrY/?graphs=n&amp;start=1177278&amp;scale=1&amp;width=36">Example
+                            1</a>, <a
+                                href="http://dnaskittle.com/browse/hg19/chrY/?graphs=n&amp;start=422332&amp;scale=1&amp;width=44">Example
+                            2</a>, <a href="http://www.biomedcentral.com/1471-2105/10/452">paper</a>)
+                        </li>
+                        <li>Computer program code also has tandem repeats with the same kind of variation patterns [in
+                            publication]
+                        </li>
+                        <li>
+                            <a href="http://dnaskittle.com/browse/hg19/chr1/?graphs=hn&amp;start=1143500&amp;scale=1&amp;width=135&amp;searchStart=1147145&amp;searchStop=1147279">The
+                                Alu distributed repeat not only comes in dimer but is often a monomer, trimer, or
+                                4-mer</a></li>
+                        <li>Skittle can identify assembly errors. Some large gaps in the human genome sequence are
+                            because segmental duplications make assembly difficult. In these cases you can see that the
+                            gap is not the correct size because it is not a multiple of the duplicated sequence (<a
+                                    href="http://dnaskittle.com/browse/hg19/chrY/?graphs=n&amp;start=8986557&amp;scale=25&amp;width=812">Example</a>,
+                            <a href="http://www.biomedcentral.com/1471-2105/10/452/figure/F5"
+                               title="www.biomedcentral.com - Figure">Paper</a>)
+                        </li>
+                        <li>
+                            <a href="http://dnaskittle.com/browse/hg19/chr8/?graphs=hn&amp;start=442933&amp;scale=1&amp;width=202&amp;searchStart=1&amp;searchStop=1">Pure
+                                Poly-A sequences are found everywhere in the genome</a></li>
+                        <li>
+                            <a href="http://dnaskittle.com/browse/hg19/chr14/?graphs=s&amp;start=1&amp;scale=4750&amp;width=100">Physical
+                                chromosome territories correlate strongly (0.65) with isochores defined by oligomer
+                                usage</a> (<a href="http://www.sciencemag.org/content/326/5950/289.short"
+                                              title="Comprehensive Mapping of Long-Range Interactions Reveals Folding Principles of the Human Genome">Full
+                            paper</a>)
+                        </li>
+                        <!-- 						<h4>Other Genomes</lh4>
+                                                <li>Chimpanzee chromosomes are riddled with small gaps of N's</li>
+                                                <li>Chimpanzee Y chromosome has scattered bits of alpha satellite centromere sequence throughout the chromosome</li>
+                                                <li>Fruit Fly genomes contain perfect tandem repeats. Repeats with no internal variation are not found in the human genome.</li>
+                                                <h4>Interesting Looking Examples</h4>
+                                                <li><a href="http://dnaskittle.com/browse/hg19/chrY/?graphs=mn&amp;start=2137840&amp;scale=1&amp;width=89">A triplex tandem repeat</a></li>
+                                                <li><a href="http://dnaskittle.com/browse/hg19/chr8/?graphs=n&amp;start=963421&amp;scale=1&amp;width=32">A textured tandem repeat</a></li> -->
+                    </ul>
+                </article>
+            </section>
+            <section id="contact" class="">
+                <h2>Contact Us</h2>
+                <article>
+                    <p>DNA Skittle is developed by <a href="http://newlinetechnicalinnovations.com">Newline Technical
+                        Innovations</a> based on the original <a href="http://genomeskittle.org">desktop application</a>
+                        created by Josiah Seaman. We are excited about this tool and would welcome any opportunity to
+                        enhance its capabilities, utility, and adoption.</p>
 
-				</article>
-			</section>
-		</div>
-		<div id="header" class="">
-			<div id="introStatement">The future of genome visualization is here...</div>
-			<h1><img src="{{STATIC_URL}}gfx/skittle-logo-m.png" height="150" width="150"><span>DNA</span>Skittle</h1>
-			<p id="shortDescription">DNA Skittle is an ongoing bioinformatics project aimed at finding patterns and structure through visualization of DNA sequences now available as an HTML5 web application.</p>
-		</div>
-	<nav>
-		<ul>
-			<li><a href="#whySkittle">What is Skittle?</a></li>
-			<li><a href="#visualizations">Visualizations</a></li>
-			<li><a href="#discoveries">Discoveries</a></li>
-			<!-- <li><a href="#invest">Invest</a></li> -->
-			<!-- <li><a href="#support">Support</a></li> -->
-			<li><a href="#contact">Contact Us</a></li>
-		</ul>
-	</nav>
+                    <p>
+                    <dl>
+                        <dt>Email:</dt>
+                        <dd>
+                            <a href="mailto:info@newlinetechnicalinnovations.com">info@newlinetechnicalinnovations.com</a>
+                        </dd>
+                        <dt>Phone:</dt>
+                        <dd>970-599-1764</dd>
+                    </dl>
+                    </p><br><br>
 
-	<div id="webskittle">
-		<a href="/discover" class="actionButton">Try DNA Skittle Online</a>
-		<p>This is an alpha preview release.  We recommend using <a href="http://google.com/chrome" target="_blank">Google Chrome</a>.</p><br>
-		<p>A <a href="http://genomeskittle.org">desktop version of Skittle</a> is also available for PC.</p>
-	</div>
-	<div id="social"><a href="https://plus.google.com/b/113106795968395476024/113106795968395476024/about" target="blank"><img src="{{STATIC_URL}}gfx/gplus-white-32.png" height="32" width="32"></a><a href="https://twitter.com/genome_skittle" target="blank"><img src="{{STATIC_URL}}gfx/twitter-bird-dark-bgs.png" height="36" width="36"></a></div>
+                    <p>Though Skittle is still in a very early stage of development we are very interested in your
+                        feedback and input. If you have encountered a bug or have trouble with any of the features
+                        please contact our support team at <a href="mailto:info@newlinetechnicalinnovations.com">support@dnaskittle.com</a>.
+                    </p>
 
-	</div>
+                </article>
+            </section>
+        </div>
+        <div id="header" class="">
+            <div id="introStatement">The future of genome visualization is here...</div>
+            <h1><img src="{{ STATIC_URL }}gfx/skittle-logo-m.png" height="150" width="150"><span>DNA</span>Skittle</h1>
+
+            <p id="shortDescription">DNA Skittle is an ongoing bioinformatics project aimed at finding patterns and
+                structure through visualization of DNA sequences now available as an HTML5 web application.</p>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#whySkittle">What is Skittle?</a></li>
+                <li><a href="#visualizations">Visualizations</a></li>
+                <li><a href="#discoveries">Discoveries</a></li>
+                <!-- <li><a href="#invest">Invest</a></li> -->
+                <!-- <li><a href="#support">Support</a></li> -->
+                <li><a href="#contact">Contact Us</a></li>
+            </ul>
+        </nav>
+
+        <div id="webskittle">
+            <a href="/discover" class="actionButton">Try DNA Skittle Online</a>
+
+            <p>This is an alpha preview release. We recommend using <a href="http://google.com/chrome" target="_blank">Google
+                Chrome</a>.</p><br>
+
+            <p>A <a href="http://genomeskittle.org">desktop version of Skittle</a> is also available for PC.</p>
+        </div>
+        <div id="social"><a href="https://plus.google.com/b/113106795968395476024/113106795968395476024/about"
+                            target="blank"><img src="{{ STATIC_URL }}gfx/gplus-white-32.png" height="32" width="32"></a><a
+                href="https://twitter.com/genome_skittle" target="blank"><img
+                src="{{ STATIC_URL }}gfx/twitter-bird-dark-bgs.png" height="36" width="36"></a></div>
+
+    </div>
 
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
 
-	$(document).ready(function() {
-		$('nav a').on('click',function() {
-			$('nav a').removeClass('active')
-			$(this).addClass('active')
-			$('#header').addClass('active')
-			$('#content section').removeClass('active')
-			var target = $(this).attr('href')
-			if(target && target.slice(0,1) == "#") {
-				$(target).addClass('active')
-			}
-		})
+        $(document).ready(function () {
+            $('nav a').on('click', function () {
+                $('nav a').removeClass('active')
+                $(this).addClass('active')
+                $('#header').addClass('active')
+                $('#content section').removeClass('active')
+                var target = $(this).attr('href')
+                if (target && target.slice(0, 1) == "#") {
+                    $(target).addClass('active')
+                }
+            })
 
 
-	})
-	</script>
+        })
+    </script>
 
 {% endblock %}

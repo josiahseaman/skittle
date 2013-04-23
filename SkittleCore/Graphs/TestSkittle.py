@@ -4,25 +4,30 @@ Created on Dec 7, 2012
 @author: Josiah
 '''
 
+
 def handleFloatList(floatList):
     if not isinstance(floatList, dict) and len(floatList) > 0 and hasattr(floatList[0], "__iter__"):
         return map(lambda x: handleFloatList(x), floatList)
-    return map(lambda x: x*2, floatList)
+    return map(lambda x: x * 2, floatList)
 
 
 def countNucleotides(seq):
-    if len(seq) > 0 and not isinstance(seq, (str,dict)) and hasattr(seq[0], "__getitem__"):
+    if len(seq) > 0 and not isinstance(seq, (str, dict)) and hasattr(seq[0], "__getitem__"):
         print 'recursing'
         return map(lambda x: countNucleotides(x), seq)
     counts = {}
     for c in seq:
-        counts[c] = 1 + counts.get(c,0) #defaults to 0 
+        counts[c] = 1 + counts.get(c, 0) #defaults to 0
     return counts
+
 
 def test(a='a'):
     print 'method ', a
 
-'''Recursive check for an element that matches the target'''    
+
+'''Recursive check for an element that matches the target'''
+
+
 def recursiveContains(elements, target):
     if type(elements) == type('') and target in elements:
         return True
@@ -31,18 +36,19 @@ def recursiveContains(elements, target):
     checks = map(lambda x: recursiveContains(x, target), elements)
     return checks
 
+
 def toplevelContains(elements, target):
     hits = recursiveContains(elements, target)
     print hits
     return any(hits)
 
+
 if __name__ == '__main__':
-    a = [1,2,3]
-    b = [1, ['2he', ['hello',4,5],6],7] 
+    a = [1, 2, 3]
+    b = [1, ['2he', ['hello', 4, 5], 6], 7]
     hits = toplevelContains(b, 'h')
     print hits
-    
-    
+
     '''
     a = [ 1, 2, 3]
     b = [-1,-2,-3]

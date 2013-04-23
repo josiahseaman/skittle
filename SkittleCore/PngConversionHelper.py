@@ -3,17 +3,21 @@ Functions related to PNG moved from GraphRequestHandler
 Created on Jan 17, 2013
 @author: Josiah
 '''
-import png, tempfile
-from DNAStorage.StorageRequestHandler import GetPngFilePath, StorePng
-import SkittleCore.GraphRequestHandler #import getGraphDescription, GraphDescription
+import tempfile
 import copy
+
+import png
+from DNAStorage.StorageRequestHandler import StorePng
+import SkittleCore.GraphRequestHandler #import getGraphDescription, GraphDescription
+
 
 def checkForGreyscale(state):
     desc = SkittleCore.GraphRequestHandler.getGraphDescription(state)
     assert isinstance(desc, SkittleCore.GraphRequestHandler.GraphDescription)
     return desc.isGrayScale
 
-def convertToPng(state, pixels, isRaster = False):
+
+def convertToPng(state, pixels, isRaster=False):
     targetWidth = 1024
     greyscale = checkForGreyscale(state)
     f = tempfile.mktemp()
@@ -25,7 +29,7 @@ def convertToPng(state, pixels, isRaster = False):
     else:
         if not isRaster:   #Nucleotide Bias
             p = flattenImage(pixels, len(pixels[0]), True, 4)
-            w = png.Writer(len(p[0])/4, len(p), greyscale=False, alpha=True)
+            w = png.Writer(len(p[0]) / 4, len(p), greyscale=False, alpha=True)
         else: #raster, color graphs
             p = flattenImage(pixels, targetWidth)
             w = png.Writer(targetWidth, len(p))
@@ -36,15 +40,17 @@ def convertToPng(state, pixels, isRaster = False):
     StorePng(state, f)
     return data
 
+
 def capRange(color):
     newColor = ()
     for part in color:
-        newColor +=  (int(min(255,max(0,part))),)
+        newColor += (int(min(255, max(0, part))),)
     return newColor
 
-def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3):
+
+def flattenImage(pixels, targetWidth, isColored=True, nChannels=3):
     pixels = squishImage(pixels)
-    
+
     p = []
     newline = []
     for color in pixels:
@@ -54,30 +60,32 @@ def flattenImage(pixels, targetWidth, isColored = True, nChannels = 3):
             pix = capRange(color)
             newline += pix
             newline += (255,) #alpha
-        else: 
+        else:
             pix = capRange(color)
             newline += pix
-            
-        if len(newline) >= targetWidth * nChannels: 
+
+        if len(newline) >= targetWidth * nChannels:
             p.append(newline)
             newline = []
     if newline and newline[0] != []:
-#        print newline, len(newline)
+    #        print newline, len(newline)
         while len(newline) < targetWidth * nChannels:
-            newline.append( 0 ) #pad with zeros for a partial line at the end of the chromosome
+            newline.append(0) #pad with zeros for a partial line at the end of the chromosome
         p.append(newline) #append a partial line if there is one
     return p
 
-def multiplyGreyscale(p, greyMax = 255):
+
+def multiplyGreyscale(p, greyMax=255):
     saveData = copy.deepcopy(p)
     for index, line in enumerate(saveData):
-        saveData[index] = map(lambda x: int(min(255, max(x,0) * greyMax)), line)
+        saveData[index] = map(lambda x: int(min(255, max(x, 0) * greyMax)), line)
     return saveData
+
 
 def squishImage(pixels):
     if isinstance(pixels, list) and pixels: #not empty
         if isinstance(pixels[0], list):
-            return reduce(lambda x,y: x + squishImage(y), pixels, [])
+            return reduce(lambda x, y: x + squishImage(y), pixels, [])
         else:
             return pixels
     else:

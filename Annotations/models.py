@@ -13,7 +13,7 @@ class GFF(models.Model):
     Protein = models.TextField(null=True, blank=True)
     SequenceRegion = models.CharField(max_length=255, null=True, blank=True)
     FileName = models.CharField(max_length=255)
-    
+
 # Database of all gff chunk files storing json
 class AnnotationJsonChunk(models.Model):
     GFF = models.ForeignKey(GFF)
@@ -34,15 +34,17 @@ class Annotation():
     Strand = models.CharField(max_length=1, null=True)
     Frame = models.SmallIntegerField(null=True)
     Attribute = models.TextField(null=True, blank=True)
-    
+
+
 class SnpIndexInfo(models.Model):
     SnpName = models.CharField(max_length=255) #rs also serves as unique id
     Chromosome = models.CharField(max_length=25) #chromosome
     Start = models.BigIntegerField() #start
     CompactIndex = models.BigIntegerField() #compact index
-    
+
     def __str__(self):
-        return self.SnpName + self.Chromosome + str( self.CompactIndex)
+        return self.SnpName + self.Chromosome + str(self.CompactIndex)
+
     def __repr__(self):
         return self.__str__()
     
