@@ -53,7 +53,7 @@ def StoreAnnotationChunk(gff, chromosome, chunk, start):
 def GetAnnotationsList(specimen):
     annotationsJson = []
 
-    annotations = GFF.objects.filter(Specimen=specimen)
+    annotations = GFF.objects.filter(Specimen__Name=specimen)
     if annotations:
         for gff in annotations:
             temp = {"Specimen": gff.Specimen, "GFFVersion": gff.GFFVersion, "SourceVersion": gff.SourceVersion,
