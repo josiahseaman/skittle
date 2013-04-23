@@ -5,7 +5,6 @@ from django.http import HttpResponse
 from django.views.decorators.cache import cache_control
 
 from SkittleCore import GraphRequestHandler
-from SkittleCore.GraphRequestHandler import handleRequest
 from SkittleCore.models import RequestPacket
 from SkittleCore.Graphs.models import *
 from DNAStorage.StorageRequestHandler import GetChromosomeLength
@@ -32,22 +31,20 @@ def graph(request, genus="homo", species="sapiens", specimen="hg18", chromosome=
         state.searchStart = int(request.GET.get('searchStart', 1))
         state.searchStop = int(request.GET.get('searchStop', 1))
 
-    image_data = handleRequest(state, graphSettings)
+    image_data = GraphRequestHandler.handleRequest(state, graphSettings)
     return HttpResponse(image_data, content_type="image/png")
 
 
 def annotation(request, genus="homo", species="sapiens", specimen="hg18", chromosome="chrY-sample"):
     start = max(1, int(request.GET.get('start', 1)))
-    json = GetAnnotationsChunk(specimen, chromosome, start)
-    return HttpResponse(json, content_type="application/json")
+    j = GetAnnotationsChunk(specimen, chromosome, start)
+    return HttpResponse(j, content_type="application/json")
 
 
 def state(request):
     j = "graphStatus = " + json.dumps(GraphRequestHandler.generateGraphListForServer())
-    # json = "annotationSources = " + simplejson.dumps(StorageRequestHandler.getAnnotations())
+    # j += "annotationSources = " + simplejson.dumps(StorageRequestHandler.getAnnotations())
     j += ";graphOrder = ['a','n','h','b','t','o','m','s'];"
-
-    j += "annotationStatus = " + json.dumps(GetAnnotationsList)
     return HttpResponse(j,content_type="application/json")
 
 def sequence(request, genus="homo", species="sapiens", specimen="hg18", chromosome="chrY-sample"):

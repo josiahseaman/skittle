@@ -135,7 +135,7 @@
 	<div class="popover arrow-left-top" id="annotationList">
 		<ul>
 			{% for annotation in availableAnnotations %}
-			<li><input type="checkbox" id="showAnnotation-{{ annotation.symbol }}" name="showGraph-{{ annotation.symbol }}"><label for="showAnnotation-{{ annotation.symbol }}">{{ annotation.name }}</label></li>
+			<li><input type="checkbox" id="showAnnotation-{{ annotation.FileName }}" name="showAnnotation-{{ annotation.FileName }}"><label for="showAnnotation-{{ annotation.FileName }}">{{ annotation.FileName }}</label></li>
 			{% endfor %}
 		</ul>
 	</div>

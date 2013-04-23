@@ -249,6 +249,12 @@ $(function() {
           $("#graphList").removeClass('active');
         }, 1500);
     })
+    $("#buttonAnnotations").click(function(){
+        $("#annotationList").toggleClass('active')
+        setTimeout(function() {
+          $("#annotationList").removeClass('active');
+        }, 1500);
+    })
     $('#graphList input').click(function() {
         graph = this.id.slice(-1);
         if ( $(this).is(':checked') ) showGraph(graph);
