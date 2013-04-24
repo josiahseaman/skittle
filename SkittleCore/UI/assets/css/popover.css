@@ -10,6 +10,9 @@
 		font-size: 0.8em;
 		z-index: 100;
 	}
+	.arrow-left-top, .arrow-right-top {
+		min-height: 40px;
+	}
 	.arrow-bottom-right::after, .arrow-bottom-right::before {
 	    content: ' ';
 	    display: block;

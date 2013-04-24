@@ -88,7 +88,8 @@ var graphURL = function(graph,chunkOffset) {
     var loadedAnnotations = []
 var annotationRequestor = function(chunkOffset) {
     if(!loadedAnnotations[chunkOffset] && chunkOffset <= fileLength) {
-        $.getJSON('annotation.json',{start:chunkOffset},function(data){
+        activeAnnotations = "genbank"
+        $.getJSON('annotation.json',{start:chunkOffset,annotation:activeAnnotations},function(data){
             $.each(data,function(i,v){
                 $.extend(annotations,v)
             })
@@ -114,7 +115,13 @@ var drawGraphs = function() {
     b.clearRect(0,0,1024,1000)
     var offset = xOffset + gutterWidth
     var chunks = Math.min( Math.ceil(skixelsOnScreen/65536 + 1),(Math.ceil(fileLength/(65536*state.scale()))-Math.floor((state.start()-8*state.bpPerLine())/(65536*state.scale()))),Math.ceil(fileLength/(65536*state.scale())) )
-    // for (key in graphStatus) {
+    
+    $.each(annotationStatus,function(i,v){
+        if (v.visible) {
+            v.skixelOffset = offset
+        }
+    })
+
     $.each(graphOrder,function(i,key){
         if (graphStatus[key] && graphStatus[key].visible) {
             graphStatus[key].skixelOffset = offset;

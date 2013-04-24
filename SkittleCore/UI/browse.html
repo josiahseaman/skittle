@@ -135,7 +135,7 @@
 	<div class="popover arrow-left-top" id="annotationList">
 		<ul>
 			{% for annotation in availableAnnotations %}
-			<li><input type="checkbox" id="showAnnotation-{{ annotation.symbol }}" name="showGraph-{{ annotation.symbol }}"><label for="showAnnotation-{{ annotation.symbol }}">{{ annotation.name }}</label></li>
+			<li><input type="checkbox" id="showAnnotation-{{ annotation.FileName }}" name="showAnnotation-{{ annotation.FileName }}"><label for="showAnnotation-{{ annotation.FileName }}">{{ annotation.FileName }}</label></li>
 			{% endfor %}
 		</ul>
 	</div>
@@ -173,18 +173,12 @@
     colorPalette = "{{ colorPalette }}"
     zoom  = {{ zoom }};
     fileLength = {{ fileLength }};
-    skixelsOnScreen = toSkixels($('#canvasContainer').height())*state.width();
-    state.start({{ start }});
-    state.width({{ width }});
-    state.scale({{ scale }});
-    selectionStart = 0
-    selectionEnd = 0
 
-    var annotationSelectedStart,annotationSelectedEnd,activeAnnotation = 0
+    var skixelsOnScreen,annotationSelectedStart,annotationSelectedEnd,activeAnnotation = 0
 
 
 
-
+    var annotationStatus = {{ annotationStatus|safe }}
 	var annotations = {}
 	var visibleAnnotations = {}
 	var helpLabel = $('<li class="helpLabel">Graph Information<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeHelpButton"></li>')
@@ -196,6 +190,10 @@
 	if (window.location.hash == "#learn") $('#learn').addClass('active')
 
 	$(document).ready(function() {
+	    state.start({{ start }});
+	    state.width({{ width }});
+	    state.scale({{ scale }});
+	    skixelsOnScreen = toSkixels($('#canvasContainer').height())*state.width();
 
 		cc = document.getElementById('c') //visible canvas - scale will be 3*zoom
 		c = cc.getContext("2d");
