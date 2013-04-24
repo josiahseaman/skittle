@@ -91,10 +91,11 @@ var annotationRequestor = function(chunkOffset,file) {
         var activeAnnotations = [file];
 
         $.getJSON('annotation.json',{start:chunkOffset,annotation:activeAnnotations},function(data){
-            $.extend(annotations,data)
-            // $.each(data,function(i,v){
-            //     $.extend(annotations,v)
-            // })
+            // $.extend(annotations,data)
+            $.each(data,function(i,v){
+                console.log(i,v)
+                $.extend(annotations[i],v)
+            })
             isInvalidDisplay = true
             loadedAnnotations[chunkOffset] = true
         }).error(function(jqXHR, textStatus, errorThrown){
@@ -222,7 +223,7 @@ var drawAnnotation = function(file,offset,chunks) {
         annotationRequestor((Math.floor(state.start()/65536)+i)*65536+1)
     };
 
-    visibleAnnotations = []
+    var visibleAnnotations = []
     annotations[file] = annotations[file] || {}
     
     $.each(annotations[file],function(i,annotation){ 
