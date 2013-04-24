@@ -31,6 +31,11 @@
 	    <canvas id="c" width="2000" height="1000"></canvas>
 		<div id="graph-labels">
 			<ul>
+			{% for annotation in availableAnnotations %}
+				<li id="graphLabel-{{ annotation.FileName }}" style="width:159px;">
+					{{ annotation.FileName|capfirst }} <img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton">
+				</li>
+			{% endfor %}
 			{% for graph in availableGraphs %}
 				<li id="graphLabel-{{ graph.symbol }}" style="width:159px;">
 					{% if graph.symbol == "h" %}<img src="{{STATIC_URL}}gfx/icons/cog_button.png" class="settingsGraphButton"> {% endif %}
@@ -43,7 +48,7 @@
 		</div>
 	</div>
 	<div class="highlighterSettings">
-		<label><input type="checkbox" id="revComplement" name="revComplement"> Search Reverse Complement</label><br>
+		<label><input type="checkbox" id="revComplement" name="revComplement" checked="checked"> Search Reverse Complement</label><br>
 		<label for="similarityPercent">% Similarity:</label>
 		<input type="text" id="similarityPercent" name="similarityPercent" value="80" style="width:2em" maxlength="3" data-slider="true" data-slider-range="40,100" data-slider-step="1">
 		<hr>
@@ -135,7 +140,7 @@
 	<div class="popover arrow-left-top" id="annotationList">
 		<ul>
 			{% for annotation in availableAnnotations %}
-			<li><input type="checkbox" id="showAnnotation-{{ annotation.FileName }}" name="showAnnotation-{{ annotation.FileName }}"><label for="showAnnotation-{{ annotation.FileName }}">{{ annotation.FileName }}</label></li>
+			<li><input type="checkbox" id="showAnnotation-{{ annotation.FileName }}" name="showAnnotation-{{ annotation.FileName }}"><label for="showAnnotation-{{ annotation.FileName }}">{{ annotation.FileName|capfirst }}</label></li>
 			{% endfor %}
 		</ul>
 	</div>

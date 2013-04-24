@@ -260,6 +260,11 @@ $(function() {
         if ( $(this).is(':checked') ) showGraph(graph);
         else hideGraph(graph)
     })
+    $('#annotationList input').click(function() {
+        graph = this.id.match(/showAnnotation-(.*)/)[1];
+        if ( $(this).is(':checked') ) showGraph(graph);
+        else hideGraph(graph)
+    })
     $('#graph-labels .closeGraphButton').click(function() {
         var graph = this.parentNode.id.slice(-1);
         hideGraph(graph)
@@ -482,15 +487,33 @@ var clearSelectedAnnotation = function() {
 
 // UI Dials interaction
 var hideGraph = function(graph) {
-    if (graphStatus[graph]) graphStatus[graph].visible = false;
-    $('#showGraph-' + graph).prop('checked',false)
+    if (graphStatus[graph]) {
+        g = graphStatus[graph]
+        $('#showGraph-' + graph).prop('checked',false)
+    }
+    else if ($.grep(annotationStatus, function(a){ return a.FileName == graph; }).length > 0) {
+        g = $.grep(annotationStatus, function(a){ return a.FileName == graph; })[0]
+        graph = $.grep(annotationStatus, function(a){ return a.FileName == graph; })[0].FileName
+        $('#showAnnotation-' + graph).prop('checked',false)
+    }
+    else return false
+    g.visible = false;
     $('#graphLabel-' + graph).hide();
     isInvalidDisplay = true;
 }
 var showGraph = function(graph) {
-    if (graphStatus[graph]) graphStatus[graph].visible = true;
+    if (graphStatus[graph]) {
+        g = graphStatus[graph]
+        $('#showGraph-' + graph).prop('checked',true)
+    }
+    else if ($.grep(annotationStatus, function(a){ return a.FileName == graph; }).length > 0) {
+        g = $.grep(annotationStatus, function(a){ return a.FileName == graph; })[0]
+        graph = $.grep(annotationStatus, function(a){ return a.FileName == graph; })[0].FileName
+        $('#showAnnotation-' + graph).prop('checked',true)
+    }
+    else return false
+    g.visible = true;
     $('#graphLabel-' + graph).show();
-    $('#showGraph-' + graph).prop('checked',true)
     isInvalidDisplay = true;
 }
 var updateDials = function() {
