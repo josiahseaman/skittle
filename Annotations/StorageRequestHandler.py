@@ -88,7 +88,7 @@ def GetAnnotationsChunk(specimen, chromosome, start, annotations=None):
     if specimen == "hg19":
         if "23andMe" in annotations or not annotations:
             clientName = "23andMe_demo"
-            annotationJsonChunk.append(import_snp.createAnnotationsFromCompact('SNP_' + clientName, chromosome, start))
+            annotationJsonChunk.append(import_snp.createAnnotationsFromCompact(clientName, chromosome, start))
 
     if len(annotationJsonChunk) >= 1:
         contents = "{"
