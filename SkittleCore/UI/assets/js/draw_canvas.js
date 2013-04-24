@@ -80,9 +80,10 @@ var graphURL = function(graph,chunkOffset) {
     var startChunk = ( ( Math.floor(startTopOfScreen/(65536*state.scale()) ) + chunkOffset )*65536*state.scale() + 1 );
     var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + state.scale();
     if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + expRound(state.width(),graphStatus[graph].widthTolerance)
-    if (graph == 'h') graphPath += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd
+    if (graph == 'h' && graphStatus['h'].settings) graphPath += highlighterEncodeURL(graphStatus['h'].settings)
     if (graphStatus[graph].colorPaletteSensitive) graphPath += "&colorPalette="+colorPalette
     return graphPath
+
 }
     var loadedAnnotations = []
 var annotationRequestor = function(chunkOffset) {
@@ -121,6 +122,7 @@ var drawGraphs = function() {
             skixelWidthofGraph = Math.max(skixelWidthofGraph,toSkixels(minimumWidth))
             offset = offset + skixelWidthofGraph;
             if (graphStatus[key].help) offset += toSkixels(200);
+            if (graphStatus[key].controls) offset += toSkixels(325);
             $('#graphLabel-' + key).width(toPixels(skixelWidthofGraph));
         }
     })

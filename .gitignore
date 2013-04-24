@@ -15,6 +15,12 @@ marshall.todo
 josiah.todo
 
 #################
+## PyCharm
+#################
+.idea/*
+.idea
+
+#################
 ## Eclipse
 #################
 

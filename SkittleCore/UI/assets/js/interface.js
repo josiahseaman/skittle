@@ -120,9 +120,11 @@ function mouseDown(e) {
     }
     else if (activeTool == "Select") {
         var x = Math.max(0,Math.min(state.width(),(toSkixels(mx)-graphStatus["n"].skixelOffset+1)))
-        selectionStart = state.start() + (toSkixels(my-25))*state.bpPerLine() + x*state.scale()
-        selectionEnd = selectionStart + state.bpPerLine() - 1;
-        console.log('selection start:' + selectionStart + " selection end:" + selectionEnd)
+
+        var selectionStart = state.start() + (toSkixels(my-25))*state.bpPerLine() + x*state.scale()
+        var selectionEnd = selectionStart + state.bpPerLine() - 1;
+        getRawSequence(selectionStart,selectionEnd,addHighlighterSearch)
+        // console.log('selection start:' + selectionStart + " selection end:" + selectionEnd)
         showGraph('h');
         if (graphStatus['h'].visible) isInvalidDisplay = true
     }
@@ -210,7 +212,7 @@ function mouseWheelDials(e) {
     }
 }
 // html widgets
-  $(function() {
+$(function() {
 
     $('#tools .radio-tools').click(function() {
         $('#tools .radio-tools').removeClass('active');
@@ -256,6 +258,7 @@ function mouseWheelDials(e) {
         var graph = this.parentNode.id.slice(-1);
         hideGraph(graph)
         closeHelp(graph)
+        closeSettings(graph)
     })
     $('#graph-labels .helpGraphButton').click(function() {
         var graph = this.parentNode.id.slice(-1);
@@ -270,7 +273,32 @@ function mouseWheelDials(e) {
                     closeHelp(graph);
                 })
             helpGraph(graph);
+            closeSettings(graph);
         }
+    })
+    $('#graph-labels .settingsGraphButton').click(function() {
+        var graph = this.parentNode.id.slice(-1);
+        if ( $('#settingsLabel-'+graph).length > 0 ) closeSettings(graph)
+        else {
+
+            settingsGraph(graph);
+            closeHelp(graph);
+        }
+    })
+
+    $('#graphLabel-h .graphSettings').empty().append($('.highlighterSettings').detach())
+    $('.highlighterSettings').on('change blur click','input,#searchSeq',function(){
+        graphStatus['h'].settings = hSettingsFromUI();
+        isInvalidDisplay = true;
+    })
+    $('.highlighterSettings').on('change','#similarityPercent',function(){ 
+        if ($(this).simpleSlider) { $('#similarityPercent').simpleSlider("setValue", $(this).val()); }
+    })
+    $('.highlighterSettings .addSeq').on('click',addHighlighterSearch)
+    $('.highlighterSettings').on('click','.removeSeq',function(){
+        $(this).parent().remove();
+        graphStatus['h'].settings = hSettingsFromUI();
+        isInvalidDisplay = true;
     })
     $("#dials li").on('mouseleave touchstart',function(){
         var target = $(this).children('div').addClass('active')
@@ -293,11 +321,13 @@ function mouseWheelDials(e) {
         })
     })
 
-  });
+});
+
+
+
 
 var helpGraph = function(graph) {
     graphStatus[graph].help = true;
-    if (graphStatus[graph] && graphStatus[graph].helpText) $('#graphLabel-'+graph+" .graphHelp").html(graphStatus[graph].helpText)
     $('#graphLabel-'+graph+" .graphHelp").addClass('active');
     isInvalidDisplay = true;
 }
@@ -307,6 +337,88 @@ var closeHelp = function(graph) {
     $('#helpLabel-'+graph).remove()
     isInvalidDisplay = true;
 }
+var settingsGraph = function(graph) {
+    graphStatus[graph].controls = true;
+    if ($('#settingsLabel-'+graph).size()==0) {
+        settingsLabel
+            .clone()
+            .attr('id', 'settingsLabel-'+graph)
+            .insertAfter($('#graphLabel-'+graph))
+            .find('.closeSettingsButton').click(function() {
+                var graph = this.parentNode.id.slice(-1);
+                closeSettings(graph);
+            })
+    }
+    $('#graphLabel-'+graph+" .graphSettings").addClass('active');
+    if ($('.highlighterSequence').size() == 0) addHighlighterSearch('AAAAAAAAAA');
+}
+var closeSettings = function(graph) {
+    graphStatus[graph].controls = false;
+    $('#graphLabel-'+graph+" .graphSettings").removeClass('active');
+    $('#settingsLabel-'+graph).remove()
+    isInvalidDisplay = true;
+}
+var addHighlighterSearch = function(seq){
+    var newSeq = $('#highlighterSequence').clone().removeAttr('id').addClass('highlighterSequence')
+    if (typeof seq == 'string') {
+        seq = seq.match(/([acgtn]+)/i)? seq.match(/([acgtn]+)/i)[0] : "";
+        newSeq.find('.sequenceInput').val(seq.toUpperCase());
+        newSeq.find('.showSeq').prop('checked', true);
+    }
+    else {
+        seq = Math.random();
+    }
+    newSeq.find('.sequenceColor').val(getGoodDeterministicColor(seq))
+    newSeq.insertBefore('.addSeq')
+    graphStatus['h'].settings = hSettingsFromUI()
+    settingsGraph('h');
+    return false;
+}
+
+var hSettingsFromUI = function(){ 
+    var hState = {};
+    hState.revComplement = $('#revComplement').is(':checked')? true : false;
+    hState.similarityPercent = Math.max(20,Math.min(100,$('#similarityPercent').val()));
+    hState.sequences = [];
+    $('.highlighterSequence').each(function(i){
+        var validSequence = $(this).find('.sequenceInput').val().match(/([acgtn]+)/i)[0] || "AAAAAAAA";
+        var validColor = $(this).find('.sequenceColor').val().match(/[0-9a-f]{6}/gi)[0] || "00ff00";
+        hState.sequences[i] = {
+            'show':$(this).find('.showSeq').is(':checked'),
+            'sequence':validSequence,
+            'color':validColor
+        };
+    })
+    return hState;
+}
+var highlighterEncodeURL = function(hState) {
+    if (typeof hState != 'object' || !hState.sequences) return "";
+    var s = ""
+    if (hState.revComplement) s += "&rev";
+    s += "&sim=" + hState.similarityPercent
+    $.each(hState.sequences,function(i,v){
+        if (v.show) {
+            if(v.sequence) s += "&s" + i + "=" + v.sequence
+            if(v.color) s += "&s" + i + "c=" + v.color
+        }
+    })
+    return s
+}
+var loadHighlighterSettings = function(hState) {
+    if (typeof hState != 'object') return false;
+    $('#revComplement').prop('checked', hState.revComplement);
+    try { $('#similarityPercent').simpleSlider("setValue", hState.similarityPercent); }
+    catch (e) { $('#similarityPercent').val(hState.similarityPercent); }
+    $('.highlighterSequence').remove()
+    $.each(hState.sequences,function(i,v){
+        var seq = $('#highlighterSequence').clone().removeAttr('id').addClass('highlighterSequence')
+        seq.find('.showSeq').prop('checked', v.show);
+        seq.find('.sequenceInput').val(v.sequence.toUpperCase());
+        seq.find('.sequenceColor').val('#'+v.color)
+        seq.insertBefore('.addSeq')
+    })
+}
+
 var getCurrentPageURL = function(fullURL) {
     var graphString = ""
     for (var key in graphStatus) {
@@ -314,7 +426,8 @@ var getCurrentPageURL = function(fullURL) {
     }
     var baseURL = (window.location.origin) ? window.location.origin : window.location.protocol + window.location.host;
     var currentURL = window.location.pathname + "?graphs=" + graphString + "&start=" + state.start() + "&scale=" + state.scale() + "&width=" + state.width() 
-    if (graphStatus['h'].visible) currentURL += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd;
+    if (graphStatus['h'].visible && graphStatus['h'].settings) currentURL += highlighterEncodeURL(graphStatus['h'].settings)
+    // if (graphStatus['h'].visible) currentURL += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd;
     if (colorPalette !="Classic") graphPath += "&colorPalette="+colorPalette
     return fullURL ? baseURL + currentURL : currentURL;
 }
@@ -457,13 +570,13 @@ StateObject.prototype.goToEnd = function(){ return this.start(fileLength); }
 StateObject.prototype.scaleToFile = function(){ 
     this.start(1);
     this.width(200);
-    calcSkixelsOnScreen()
-    var newScale = fileLength/(skixelsOnScreen-20*this.width())
-    return newScale < 50 ? this.scale(newScale) : this.scale(round(newScale,50));
+    calcSkixelsOnScreen();
+    var newScale = fileLength/(skixelsOnScreen-20*this.width());
+    return newScale < 50 ? this.scale(newScale) : this.scale(round(newScale,50,"up"));
 }
 var double = function(a){ return a * 2; }
 var half = function(a){ return a / 2; }
-var lines = function(a){ return a * state.bpPerLine(); }
+var lines = function(a){ return Math.round(a) * state.bpPerLine(); }
 var by = function(d){ return function(a){ return a + d; }}
 var random = function(a){ return Math.random()*fileLength;}
 

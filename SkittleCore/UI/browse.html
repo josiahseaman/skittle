@@ -3,6 +3,7 @@
 {% block styles %}
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/popover.css">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/simple-slider.css">
 	<style type="text/css">
 
 	</style>
@@ -13,6 +14,7 @@
 <![endif]-->
 	<script src="/browse/state.json"></script>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script src="{{STATIC_URL}}js/simple-slider.min.js"></script>
 	<script src="{{STATIC_URL}}js/contactform.js"></script>
 	<script src="{{STATIC_URL}}js/md5.js"></script>
 	<script src="{{STATIC_URL}}js/utility.js"></script>
@@ -30,11 +32,30 @@
 		<div id="graph-labels">
 			<ul>
 			{% for graph in availableGraphs %}
-				<li id="graphLabel-{{ graph.symbol }}" style="width:159px;">{{ graph.name }} <img src="{{STATIC_URL}}gfx/icons/help.png" class="helpGraphButton"><img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton">
-					<div class="graphHelp"><p>This is a graph.</p></div></li>
+				<li id="graphLabel-{{ graph.symbol }}" style="width:159px;">
+					{% if graph.symbol == "h" %}<img src="{{STATIC_URL}}gfx/icons/cog_button.png" class="settingsGraphButton"> {% endif %}
+					{{ graph.name }} <img src="{{STATIC_URL}}gfx/icons/help_green.png" class="helpGraphButton"><img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton">
+					<div class="graphHelp"><p>{{ graph.helpText }}</p></div>
+					<div class="graphSettings"><p>There are no settings for this graph</p></div>
+				</li>
 			{% endfor %}
 			</ul>
 		</div>
+	</div>
+	<div class="highlighterSettings">
+		<label><input type="checkbox" id="revComplement" name="revComplement"> Search Reverse Complement</label><br>
+		<label for="similarityPercent">% Similarity:</label>
+		<input type="text" id="similarityPercent" name="similarityPercent" value="80" style="width:2em" maxlength="3" data-slider="true" data-slider-range="40,100" data-slider-step="5">
+		<hr>
+		<div id="highlighterSequence">
+			<input type="text" class="sequenceInput seq">
+			<label class="button"><input type="checkbox" class="showSeq"> Highlight</label>
+			<label class="button removeSeq"><span>&times;</span> Remove</label>
+			<label style="float:right">Color:<input type="color" class="sequenceColor"></label>
+		</div>
+
+		<div class="addSeq button"><img src="{{STATIC_URL}}gfx/icons/plus_button.png"> Add Search Sequence</div>
+		<div id="searchSeq" class="button"><img src="{{STATIC_URL}}gfx/icons/search_white.png"> Start Search</div>
 	</div>
 
 	<div id="learn" class="">
@@ -140,6 +161,7 @@
     xOffset = 0
     specimen = "{{ specimen }}"
     chromosome = "{{ chromosome }}"
+    // var getParams = JSON.parse('{"' + decodeURI(window.location.search.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}')
     colorPalette = "{{ colorPalette }}"
     zoom  = {{ zoom }};
     fileLength = {{ fileLength }};
@@ -147,19 +169,18 @@
     state.start({{ start }});
     state.width({{ width }});
     state.scale({{ scale }});
-    selectionStart = {{ selectionStart }}
-    selectionEnd = {{ selectionEnd }}
+    selectionStart = 0
+    selectionEnd = 0
+
     var annotationSelectedStart,annotationSelectedEnd,activeAnnotation = 0
 
-    // if graphs are specified in the url set their visibility
-    var initialGraphs = "{{ graphs }}".split('')
-    for (var key in graphStatus) {
-    	if ($.inArray(key,initialGraphs)>=0) showGraph(key)
-    	else hideGraph(key)
-    }
+
+
+
 	var annotations = {}
 	var visibleAnnotations = {}
 	var helpLabel = $('<li class="helpLabel">Graph Information<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeHelpButton"></li>')
+	var settingsLabel = $('<li class="settingsLabel">Graph Settings<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeSettingsButton"></li>')
 
 
     imageUnrendered = new Image()
@@ -179,6 +200,33 @@
 	    aa.width = 1050
 	    a = aa.getContext("2d");
 
+	    // if graphs are specified in the url set their visibility
+	    var initialGraphs = "{{ graphs }}".split('')
+	    for (var key in graphStatus) {
+	    	if ($.inArray(key,initialGraphs)>=0) showGraph(key)
+	    	else hideGraph(key)
+	    }
+	    if (graphStatus['h'].visible) {
+	    	var uGet = window.location.getParameter
+		    var urlHighlighterState = {}
+		    urlHighlighterState.similarityPercent = uGet('sim') || $('#similarityPercent').val()
+		    urlHighlighterState.revComplement = (typeof uGet('rev') != 'undefined') ? true : false;
+		    urlHighlighterState.sequences = []
+		    for (var i=0;i<50;++i) {
+		    	if (!uGet('s'+i)) break;
+		    	var sequence = {};
+		    	sequence.show = "true";
+		    	sequence.sequence = uGet('s'+i);
+		    	sequence.color = uGet('s'+i+'c') || getGoodDeterministicColor(sequence.sequence).slice(1);
+		    	urlHighlighterState.sequences.push(sequence);
+		    }
+		    if (uGet('searchStart')) {
+		    	var sequence = getRawSequence(uGet('searchStart'),uGet('searchStop'),addHighlighterSearch)
+		    }
+	    	loadHighlighterSettings(urlHighlighterState);
+	    	graphStatus['h'].settings = urlHighlighterState;
+	    }
+
 
 	    init();
 
@@ -192,6 +240,8 @@
 	    $('#dials li').on('mousewheel',mouseWheelDials)
 
 	contactForm();
+
+
 
 
 	})

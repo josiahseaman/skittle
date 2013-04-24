@@ -5,7 +5,7 @@ Created on Dec 12, 2012
 '''
 from SkittleCore.models import RequestPacket
 from models import OligomerUsageState
-from SkittleGraphTransforms import chunkUpList, countNucleotides,\
+from SkittleGraphTransforms import chunkUpList, countNucleotides, \
     normalizeDictionary, generateExhaustiveOligomerList, oligCountToColorSpace
 from SkittleCore.GraphRequestHandler import registerGraph
 
@@ -13,16 +13,18 @@ registerGraph('o', "Oligomer Usage", __name__, False, isGrayScale=True, helpText
 Each column matches one oligomer of fixed size, arranged in alphabetical order (i.e. AA, AC, AG...). 
 The brightness of the pixel indicates how often that oligomer occurred compared to all the others.''')
 
-def calculateOutputPixels(state, oligState = OligomerUsageState()):
+
+def calculateOutputPixels(state, oligState=OligomerUsageState()):
     assert isinstance(state, RequestPacket)
     assert isinstance(oligState, OligomerUsageState)
     state.readFastaChunks()
 
-    overlap = oligState.oligomerSize-1
-    lines = chunkUpList(state.seq, state.nucleotidesPerLine(), overlap) #chunk sequence by display line #we can't do this simply by line because of the overhang of oligState.oligState
+    overlap = oligState.oligomerSize - 1
+    lines = chunkUpList(state.seq, state.nucleotidesPerLine(),
+                        overlap) #chunk sequence by display line #we can't do this simply by line because of the overhang of oligState.oligState
 
     counts = countNucleotides(lines, oligState.oligomerSize)
-    
+
     #NORMALIZATION
     values = []
     for line in counts:
@@ -36,6 +38,6 @@ def calculateOutputPixels(state, oligState = OligomerUsageState()):
     #TODO: create a sparse display for the oligomer display
     orderedWords = generateExhaustiveOligomerList(oligState.oligomerSize)
     pixels = oligCountToColorSpace(counts, orderedWords)
-    
+
     return pixels
 

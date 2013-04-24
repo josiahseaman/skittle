@@ -14,9 +14,9 @@ number of matching characters in the line compared with the sequence shifted to 
 dark-dark-light dark-dark-light pixel patterns. These patterns are often associated with exons. ''')
 
 
-def calculateOutputPixels(state, threeMerState = ThreeMerDetectorState()):
+def calculateOutputPixels(state, threeMerState=ThreeMerDetectorState()):
     assert isinstance(state, RequestPacket)
-    
+
     state.readFastaChunks()#read in next chunk
     scores = oldRepeatMap(state, threeMerState)
 

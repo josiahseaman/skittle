@@ -1,5 +1,6 @@
 # Django settings for SkittleTree project.
-import os, socket, sys
+import os
+import socket
 
 PRODUCTION = True
 DEBUG = True
@@ -11,13 +12,13 @@ CHUNK_SIZE = 65536
 
 #--------------------
 
-if PRODUCTION:
+if PRODUCTION and not socket.gethostname().startswith('nyx'):
     SKITTLE_TREE_LOC = "/var/www/skittle/"
-    
+
     SKITTLE_TREE_URL = "http://dnaskittle.com/"
 elif socket.gethostname().startswith('nyx'):
     SKITTLE_TREE_LOC = "/var/www/skittle-development/"
-    
+
     SKITTLE_TREE_URL = "http://skittle.newlinetechnicalinnovations.com/"
 else:
     SKITTLE_TREE_LOC = os.getcwd().replace("\\", "/") + "/"
@@ -31,16 +32,16 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-if PRODUCTION:
+if PRODUCTION and not socket.gethostname().startswith('nyx'):
     #TODOL mysql_pool
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-            'NAME': 'DNASkittle',                # Or path to database file if using sqlite3.
-            'USER': 'skittle',                    # Not used with sqlite3.
-            'PASSWORD': 'sk!77l3PandaDatabase%',  # Not used with sqlite3.
-            'HOST': '',                           # Set to empty string for localhost. Not used with sqlite3.
-            'PORT': '',                           # Set to empty string for default. Not used with sqlite3.
+            'NAME': 'DNASkittle', # Or path to database file if using sqlite3.
+            'USER': 'skittle', # Not used with sqlite3.
+            'PASSWORD': 'sk!77l3PandaDatabase%', # Not used with sqlite3.
+            'HOST': '', # Set to empty string for localhost. Not used with sqlite3.
+            'PORT': '', # Set to empty string for default. Not used with sqlite3.
         }
     }
 
@@ -48,14 +49,14 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-            'NAME': 'SkittleTree',                # Or path to database file if using sqlite3.
-            'USER': 'skittle',                    # Not used with sqlite3.
-            'PASSWORD': 'sk!77l3PandaDatabase%',  # Not used with sqlite3.
-            'HOST': '',                           # Set to empty string for localhost. Not used with sqlite3.
-            'PORT': '',                           # Set to empty string for default. Not used with sqlite3.
+            'NAME': 'SkittleTree', # Or path to database file if using sqlite3.
+            'USER': 'skittle', # Not used with sqlite3.
+            'PASSWORD': 'sk!77l3PandaDatabase%', # Not used with sqlite3.
+            'HOST': '', # Set to empty string for localhost. Not used with sqlite3.
+            'PORT': '', # Set to empty string for default. Not used with sqlite3.
         }
     }
-    
+
 DATABASE_WAIT_TIMEOUT = 28800
 
 # Local time zone for this installation. Choices can be found here:
@@ -115,7 +116,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -125,7 +126,7 @@ SECRET_KEY = '!#@$t98ergv0h245@$%$Y$25fdsagqw4t897yqhrwedvg!#$!#$'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    #     'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -175,6 +176,7 @@ INSTALLED_APPS = (
     'SkittleCore',
     'DNAStorage',
     'Annotations',
+    'Utilities',
 
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
@@ -182,16 +184,13 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
 )
 
-INSTALLED_APPS += (
-    'Utilities',
-)
 if DEBUG:
     MIDDLEWARE_CLASSES += (
         'Utilities.debug.HotshotProfileMiddleware',
         'Utilities.debug.cProfileMiddleware',
     )
 
-INTERNAL_IPS = ('127.0.0.1')
+INTERNAL_IPS = ('127.0.0.1',)
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
