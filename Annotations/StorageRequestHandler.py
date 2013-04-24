@@ -56,7 +56,7 @@ def GetAnnotationsList(specimen):
     annotations = GFF.objects.filter(Specimen__Name=specimen)
     if annotations:
         for gff in annotations:
-            temp = {"Specimen": gff.Specimen, "GFFVersion": gff.GFFVersion, "SourceVersion": gff.SourceVersion,
+            temp = {"Specimen": gff.Specimen.Name, "GFFVersion": gff.GFFVersion, "SourceVersion": gff.SourceVersion,
                     "Date": gff.Date, "Type": gff.Type, "DNA": gff.DNA, "RNA": gff.RNA, "Protein": gff.Protein,
                     "SequenceRegion": gff.SequenceRegion, "FileName": gff.FileName}
             annotationsJson.append(temp)

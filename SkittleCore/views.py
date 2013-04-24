@@ -19,7 +19,7 @@ def browse(request, genus="homo", species="sapiens", specimen="hg18", chromosome
     graphs = request.GET.get('graphs', "n")
     colorPalette = request.GET.get('colorPalette', 'Classic')
     fileLength = GetChromosomeLength(specimen,chromosome) 
-    context = {'availableGraphs':GraphRequestHandler.availableGraphs, 'availableAnnotations':GetAnnotationsList(specimen) ,'specimen':specimen,'chromosome':chromosome,'colorPalette':colorPalette,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength,}
+    context = {'availableGraphs':GraphRequestHandler.availableGraphs, 'availableAnnotations':GetAnnotationsList(specimen), "annotationStatus":json.dumps(GetAnnotationsList(specimen)), 'specimen':specimen,'chromosome':chromosome,'colorPalette':colorPalette,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength,}
     return render(request, 'browse.html',context)
 
 @cache_control(must_revalidate=False, max_age=3600)
@@ -36,8 +36,12 @@ def graph(request, genus="homo", species="sapiens", specimen="hg18", chromosome=
 
 
 def annotation(request, genus="homo", species="sapiens", specimen="hg18", chromosome="chrY-sample"):
-    start = max(1, int(request.GET.get('start', 1)))
-    j = GetAnnotationsChunk(specimen, chromosome, start)
+    if (request.GET.get('start')):
+        start = max(1, int(request.GET.get('start', 1)))
+        annotations = request.GET.getlist('annotation', None)
+        j = GetAnnotationsChunk(specimen, chromosome, start, annotations)
+    else:
+        j = json.dumps(GetAnnotationsList(specimen))
     return HttpResponse(j, content_type="application/json")
 
 
@@ -46,6 +50,7 @@ def state(request):
     # j += "annotationSources = " + simplejson.dumps(StorageRequestHandler.getAnnotations())
     j += ";graphOrder = ['a','n','h','b','t','o','m','s'];"
     return HttpResponse(j,content_type="application/json")
+
 
 def sequence(request, genus="homo", species="sapiens", specimen="hg18", chromosome="chrY-sample"):
     state = createRequestPacket(request, specimen, chromosome)

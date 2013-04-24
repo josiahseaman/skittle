@@ -431,9 +431,10 @@ var getCurrentPageURL = function(fullURL) {
         if (graphStatus[key].visible == true) graphString += key;
     }
     var baseURL = (window.location.origin) ? window.location.origin : window.location.protocol + window.location.host;
-    var currentURL = window.location.pathname + "?graphs=" + graphString + "&start=" + state.start() + "&scale=" + state.scale() + "&width=" + state.width() 
+    var currentURL = window.location.pathname
+    var params = {"graphs":graphString,"start":state.start(),"scale":state.scale(),"width":state.width()};
+    currentURL += "?" + $.param(params,true);
     if (graphStatus['h'].visible && graphStatus['h'].settings) currentURL += highlighterEncodeURL(graphStatus['h'].settings)
-    // if (graphStatus['h'].visible) currentURL += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd;
     if (colorPalette !="Classic") graphPath += "&colorPalette="+colorPalette
     return fullURL ? baseURL + currentURL : currentURL;
 }
