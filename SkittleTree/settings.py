@@ -12,7 +12,7 @@ CHUNK_SIZE = 65536
 
 #--------------------
 
-if PRODUCTION:
+if PRODUCTION and not socket.gethostname().startswith('nyx'):
     SKITTLE_TREE_LOC = "/var/www/skittle/"
 
     SKITTLE_TREE_URL = "http://dnaskittle.com/"
@@ -32,7 +32,7 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-if PRODUCTION:
+if PRODUCTION and not socket.gethostname().startswith('nyx'):
     #TODOL mysql_pool
     DATABASES = {
         'default': {
@@ -176,6 +176,7 @@ INSTALLED_APPS = (
     'SkittleCore',
     'DNAStorage',
     'Annotations',
+    'Utilities',
 
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
@@ -183,9 +184,6 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
 )
 
-INSTALLED_APPS += (
-    'Utilities',
-)
 if DEBUG:
     MIDDLEWARE_CLASSES += (
         'Utilities.debug.HotshotProfileMiddleware',
