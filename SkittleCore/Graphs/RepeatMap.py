@@ -89,27 +89,6 @@ def logRepeatMap(state, repeatMapState):
                 break
             end = start + scale * (skixelsPerSample * 2)
 
-
-            #check if we have changed start enough to update the score 
-            #equation = h % ceil( tolerance / (increment / (skixelsPerSample*scale)))
-            ''' 
-            needComputation = h  % int(max(1.0, math.ceil( scale * 0.05))) == 0 #precomputed value 0.2 based on 10% of 24 skixels 
-            if not needComputation: #otherwise, use previous score
-                subColumnsPerMegaColumn = skixelsPerSample - skixelsPerSample / growthPower
-                previousLine = freq[ len(freq)-2 ][powerOfX*subColumnsPerMegaColumn: ] #reference previous display line
-                freq[h] += previousLine
-#                for i in range(powerOfX * subColumnsPerMegaColumn, (powerOfX+1)* subColumnsPerMegaColumn):
-#                    freq[h].append(previousLine[i])
-                skipToNextLine = True
-                break
-            else:
-                if skipToNextLine:
-                    print "Improper Skip: Start: ", start, "  Scale: ", scale
-            if skipToNextLine:
-                skipToNextLine = False
-                break                
-           '''
-
             #created scaled sequences
             starterSequence = []
             if scale > 1:
@@ -139,6 +118,7 @@ def logRepeatMap(state, repeatMapState):
                 if validComparison: #this line is necessary to avoid array index out of bounds or referencing an unsigned variable stretchIsSequenced
                     stretchIsSequenced = not any(
                         map(composedOfNs, [offsetSequence[0], offsetSequence[-1:][0], original[0], original[-1:][0]]))
+                        #map(composedOfNs, offsetSequence + original))
                 if validComparison and stretchIsSequenced: #this line is necessary to avoid array index out of bounds or referencing an unsigned variable stretchIsSequenced
                     targetChannels = zip(*offsetSequence)
                     resultSum = 0.0
