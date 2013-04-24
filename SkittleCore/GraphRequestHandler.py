@@ -147,6 +147,13 @@ def finishProcess(request):
         return False
 
 
+def GetRegisteredGraphsSymbols():
+    symbols = []
+    for graph in availableGraphs:
+        symbols.append(graph[0])
+    return symbols
+
+
 class ServerSideGraphDescription():#TODO: I think this could be replaced with a dictionary
     def __init__(self, Name, IsRaster, colorSensitive, widthTolerance, helpText):
         self.name = Name
