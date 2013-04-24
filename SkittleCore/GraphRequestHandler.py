@@ -12,15 +12,15 @@ from models import chunkSize
 registering with the request Handler using the 'registerGraph' function below. '''
 availableGraphs = set()
 GraphDescription = namedtuple('GraphDescription',
-                              ['symbol', 'name', 'moduleReference', 'rasterGraph', 'colorPalletteDependant',
+                              ['symbol', 'name', 'moduleReference', 'rasterGraph', 'colorPaletteDependant',
                                'widthTolerance', 'isGrayScale', 'helpText'])
 
 
-def registerGraph(symbol, name, moduleName, rasterGraph=False, colorPalletteDependant=False, widthTolerance=0.15,
+def registerGraph(symbol, name, moduleName, rasterGraph=False, colorPaletteDependant=False, widthTolerance=0.15,
                   isGrayScale=False, helpText=None):
     moduleReference = sys.modules[moduleName]
     availableGraphs.add(
-        GraphDescription(symbol, name, moduleReference, rasterGraph, colorPalletteDependant, widthTolerance,
+        GraphDescription(symbol, name, moduleReference, rasterGraph, colorPaletteDependant, widthTolerance,
                          isGrayScale, helpText))
 
 
@@ -28,14 +28,10 @@ from SkittleCore.models import RequestPacket, ProcessQueue
 import DNAStorage.StorageRequestHandler as StorageRequestHandler
 from django.db import transaction
 
-#print __name__, " Printing Available Graphs: "
-#for graph in availableGraphs:
-#    print graph 
 
 def calculatePixels(state, settings=None):
     graphData = getGraphDescription(state)
     name, graphModule = graphData[1], graphData[2]
-    #    settings = state.getActiveGraphs()[0]
 
     results = []
     print "Calling ", name
