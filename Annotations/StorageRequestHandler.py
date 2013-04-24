@@ -61,7 +61,8 @@ def GetAnnotationsList(specimen):
                     "SequenceRegion": gff.SequenceRegion, "FileName": gff.FileName}
             annotationsJson.append(temp)
         if specimen == "hg19":
-            temp = {"Specimen": GetSpecimen(specimen).Name, "FileName": "23andMe_demo"}
+            clientName = "23andMe_demo"
+            temp = {"Specimen": GetSpecimen(specimen).Name, "FileName": "SNP_" + clientName}
             annotationsJson.append(temp)
         return annotationsJson
     else:
@@ -86,7 +87,8 @@ def GetAnnotationsChunk(specimen, chromosome, start, annotations=None):
                 annotationJsonChunk.append(annotation)
     if specimen == "hg19":
         if "23andMe" in annotations or not annotations:
-            annotationJsonChunk.append(import_snp.createAnnotationsFromCompact('23andMe_demo', chromosome, start))
+            clientName = "23andMe_demo"
+            annotationJsonChunk.append(import_snp.createAnnotationsFromCompact('SNP_' + clientName, chromosome, start))
 
     if len(annotationJsonChunk) >= 1:
         contents = "{"
