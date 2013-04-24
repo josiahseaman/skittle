@@ -61,7 +61,7 @@ def GetAnnotationsList(specimen):
                     "SequenceRegion": gff.SequenceRegion, "FileName": gff.FileName}
             annotationsJson.append(temp)
         if specimen == "hg19":
-            temp = {"Specimen": GetSpecimen(specimen), "FileName": "23andMe"}
+            temp = {"Specimen": GetSpecimen(specimen).Name, "FileName": "23andMe"}
             annotationsJson.append(temp)
         return annotationsJson
     else:
