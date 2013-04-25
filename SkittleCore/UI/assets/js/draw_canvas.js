@@ -188,13 +188,16 @@ var drawRasterGraph = function(graph,offset,chunks) {
 var drawVerticalGraph = function(graph,offset,chunks) {
     var graphWidth = 0, graphHeight = 0;
     var stretchFactor = 1
-    if (graphStatus[graph].stretchy == true) stretchFactor = expRound(state.width(),graphStatus[graph].widthTolerance)/state.width();
+    if (graphStatus[graph].stretchy == true) {
+        stretchFactor = expRound(state.width(),graphStatus[graph].widthTolerance)/state.width();
+    }
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor(graph,i)
         if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
         else var graphWidth = imageObj.width
         var vOffset = -Math.round(((Math.round(state.start()/state.scale())-8*state.width())%(65536))/(state.width()) - i*(65536/state.width()));
-        (i == chunks - 1) ? graphHeight = imageObj.height*stretchFactor : graphHeight = Math.ceil(65536/state.width()) // don't stretch last chunk
+        graphHeight = Math.ceil(65536/state.width());
+        if (i == chunks - 1 || !graphStatus[graph].stretchy) graphHeight = imageObj.height*stretchFactor;// don't stretch last chunk
         // graphHeight = Math.ceil(imageObj.height*stretchFactor)
         b.drawImage(imageObj,offset,vOffset,graphWidth,graphHeight) // render data on hidden canvas
     }
