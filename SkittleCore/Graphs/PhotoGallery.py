@@ -7,7 +7,7 @@ from SkittleCore.models import RequestPacket, chunkSize
 
 __author__ = 'Josiah'
 
-registerGraph('p', "Photo Gallery", __name__, False, True, helpText='''A graph to show sequence snippets that match
+registerGraph('p', "Photo Gallery", __name__, False, True, stretchy=False, helpText='''A graph to show sequence snippets that match
 a detected tandem repeat.''')
 
 class Snippet():

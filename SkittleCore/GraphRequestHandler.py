@@ -13,15 +13,15 @@ registering with the request Handler using the 'registerGraph' function below. '
 availableGraphs = set()
 GraphDescription = namedtuple('GraphDescription',
                               ['symbol', 'name', 'moduleReference', 'rasterGraph', 'colorPaletteDependant',
-                               'widthTolerance', 'isGrayScale', 'helpText'])
+                               'widthTolerance', 'isGrayScale', 'stretchy', 'helpText'])
 
 
 def registerGraph(symbol, name, moduleName, rasterGraph=False, colorPaletteDependant=False, widthTolerance=0.15,
-                  isGrayScale=False, helpText=None):
+                  isGrayScale=False, stretchy=True, helpText=None):
     moduleReference = sys.modules[moduleName]
     availableGraphs.add(
         GraphDescription(symbol, name, moduleReference, rasterGraph, colorPaletteDependant, widthTolerance,
-                         isGrayScale, helpText))
+                         isGrayScale, stretchy, helpText))
 
 
 from SkittleCore.models import RequestPacket, ProcessQueue
@@ -155,11 +155,12 @@ def GetRegisteredGraphsSymbols():
 
 
 class ServerSideGraphDescription():#TODO: I think this could be replaced with a dictionary
-    def __init__(self, Name, IsRaster, colorSensitive, widthTolerance, helpText):
+    def __init__(self, Name, IsRaster, colorSensitive, widthTolerance, stretchy, helpText):
         self.name = Name
         self.rasterGraph = IsRaster
         self.colorPaletteSensitive = colorSensitive
         self.widthTolerance = widthTolerance
+        self.stretchy = stretchy
         self.helpText = helpText
 
 
@@ -167,7 +168,7 @@ def generateGraphListForServer():
     graphs = {}
     for description in availableGraphs:
         graphs[description[0]] = ServerSideGraphDescription(description[1], description[3], description[4],
-                                                            description[5], description[7]).__dict__
+                                                            description[5], description[7], description[8]).__dict__
     return graphs
 
 
