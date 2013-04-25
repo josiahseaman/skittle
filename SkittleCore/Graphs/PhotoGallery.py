@@ -13,7 +13,7 @@ a detected tandem repeat.''')
 class Snippet():
     def __init__(self, start, stop, width):
         self.start, self.stop, self.width = start, stop, width
-        while self.width < 15:
+        while self.width < 25:
             self.width *= 2
     def __repr__(self):
         return str((self.start, self.stop, self.width))
@@ -27,14 +27,33 @@ def arrangePixels(state, snippet, maxWidth):
         line = []
         line += sequenceToColors(state.seq[lineStartIndex:lineStartIndex + snippet.width], state.colorPalette)
         line += [None] * (maxWidth - snippet.width)  # pad line
+        assert len(line) == maxWidth
         pixels.append(line)
     return pixels
 
 
-def padLinesTilStartPoint(state, pixels, start):
-    while len(pixels) < math.ceil(start / state.nucleotidesPerLine()):
-        pixels.append([None] * state.nucleotidesPerLine())
+def deleteBlankLine(pixels):
+    startSize = len(pixels)
+    for lineNumber in range(len(pixels)-1, -1, -1):  # reverse iteration without rearranging the list
+        if not any(pixels[lineNumber]):
+            pixels.pop(lineNumber)
+            return
+    raise StopIteration("There are no more blank lines to delete")
+    return
+
+
+def padForHorizontalLineSynchronization(referenceWidth, lineWidth, pixels, start):
+    while len(pixels) > math.ceil(float(start) / referenceWidth):
+        try:
+            deleteBlankLine(pixels)
+        except StopIteration:
+            break
+
+    while len(pixels) < math.ceil(float(start) / referenceWidth):
+        assert not pixels or len(pixels[-1]) == lineWidth
+        pixels.append([None] * lineWidth)
     return pixels
+
 
 def calculateOutputPixels(state):
     state.readFastaChunks()
@@ -50,8 +69,10 @@ def calculateOutputPixels(state):
     for lineIndex, line in enumerate(repeatMap):
         line = line[:len(line)/2]
         if not creatingNewSnippet and max(line) >= startSnippetThreshold:
-            creatingNewSnippet = True
             start = lineIndex * skixelsPerSample
+            if state.seq[start] == 'N':
+                continue
+            creatingNewSnippet = True
             width = decodeWidth(line.index(max(line)))
         if creatingNewSnippet and max(line) < maintainThreshold:
             creatingNewSnippet = False
@@ -59,14 +80,14 @@ def calculateOutputPixels(state):
 
     widths = map(lambda x: x.width, snippets)
     maxWidth = max(widths)
-    print "Max width is", maxWidth
+    print "Max width is", maxWidth, "over", len(snippets), "snippets"
 
     pixels = []
     for snippet in snippets:
-        padLinesTilStartPoint(state, pixels, snippet.start)
+        padForHorizontalLineSynchronization(state.nucleotidesPerLine(), maxWidth, pixels, snippet.start)
         pixels += arrangePixels(state, snippet, maxWidth)
-    padLinesTilStartPoint(state, pixels, chunkSize)
-    print "N pixels: ", len(pixels)
+        print snippets.index(snippet)
+    padForHorizontalLineSynchronization(state.nucleotidesPerLine(), maxWidth, pixels, chunkSize)
 
     return pixels
 
