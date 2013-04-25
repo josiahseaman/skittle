@@ -1,8 +1,9 @@
 from collections import namedtuple
+import math
 from SkittleCore.GraphRequestHandler import registerGraph
 from SkittleCore.Graphs.RepeatMap import skixelsPerSample, decodeWidth, getBaseRepeatMapData
 from SkittleCore.Graphs.SkittleGraphTransforms import sequenceToColors
-from SkittleCore.models import RequestPacket
+from SkittleCore.models import RequestPacket, chunkSize
 
 __author__ = 'Josiah'
 
@@ -12,6 +13,8 @@ a detected tandem repeat.''')
 class Snippet():
     def __init__(self, start, stop, width):
         self.start, self.stop, self.width = start, stop, width
+        while self.width < 15:
+            self.width *= 2
     def __repr__(self):
         return str((self.start, self.stop, self.width))
 
@@ -28,23 +31,31 @@ def arrangePixels(state, snippet, maxWidth):
     return pixels
 
 
+def padLinesTilStartPoint(state, pixels, start):
+    while len(pixels) < math.ceil(start / state.nucleotidesPerLine()):
+        pixels.append([None] * state.nucleotidesPerLine())
+    return pixels
+
 def calculateOutputPixels(state):
     state.readFastaChunks()
     assert isinstance(state, RequestPacket)
 
     repeatMap = getBaseRepeatMapData(state)
+    littleRM = repeatMap[:20]
+    littleRM = map(lambda line: line[:len(line)/2], littleRM)
     creatingNewSnippet = False
     snippets = []
-    threshold = 0.9
+    startSnippetThreshold = 0.8
+    maintainThreshold = 0.5
     for lineIndex, line in enumerate(repeatMap):
-        if max(line) >= threshold:
+        line = line[:len(line)/2]
+        if not creatingNewSnippet and max(line) >= startSnippetThreshold:
             creatingNewSnippet = True
             start = lineIndex * skixelsPerSample
-        if creatingNewSnippet and max(line) < threshold:
             width = decodeWidth(line.index(max(line)))
-            snippets.append(Snippet(start, lineIndex * skixelsPerSample, width))
+        if creatingNewSnippet and max(line) < maintainThreshold:
             creatingNewSnippet = False
-            print "Finished a snippet"
+            snippets.append(Snippet(start, (lineIndex + 1) * skixelsPerSample, width))
 
     widths = map(lambda x: x.width, snippets)
     maxWidth = max(widths)
@@ -52,10 +63,11 @@ def calculateOutputPixels(state):
 
     pixels = []
     for snippet in snippets:
+        padLinesTilStartPoint(state, pixels, snippet.start)
         pixels += arrangePixels(state, snippet, maxWidth)
+    padLinesTilStartPoint(state, pixels, chunkSize)
     print "N pixels: ", len(pixels)
-    for line in pixels:
-        print line
+
     return pixels
 
 

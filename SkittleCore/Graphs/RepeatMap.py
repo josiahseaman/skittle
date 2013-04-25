@@ -55,7 +55,7 @@ RepeatMap is point at.  This task is complicated by the duplication of the scale
         for subColumn in range(12):
             cumulativeWidth += scalesByMegaColumn[megaColumn]
             presentColumn += 1
-            if presentColumn >= columnIndex:
+            if presentColumn > columnIndex:
                 return cumulativeWidth
     return 26000  # maximum value
 
