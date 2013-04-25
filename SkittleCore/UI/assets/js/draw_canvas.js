@@ -61,8 +61,7 @@ var imageRequestor = function(graph,chunkOffset) {
     var graphPath = graphURL(graph,chunkOffset)
 
     if (!imageObj[graph][chunkOffset] 
-        || ( imageObj[graph][chunkOffset].complete 
-            && imageObj[graph][chunkOffset].source != graphPath ) ) {
+        || ( imageObj[graph][chunkOffset].complete && imageObj[graph][chunkOffset].source != graphPath ) ) {
         imageObj[graph][chunkOffset] = new Image();
         imageObj[graph][chunkOffset].source = graphPath;
         imageObj[graph][chunkOffset].src = graphPath;
@@ -76,8 +75,7 @@ var imageRequestor = function(graph,chunkOffset) {
     return imageObj[graph][chunkOffset]
 }
 var graphURL = function(graph,chunkOffset) {
-    var startTopOfScreen = (state.start()-8*state.bpPerLine()) >  0 ? (state.start()-8*state.bpPerLine()) : 1
-    var startChunk = ( ( Math.floor(startTopOfScreen/(65536*state.scale()) ) + chunkOffset )*65536*state.scale() + 1 );
+    var startChunk = ( ( Math.floor(state.startTopOfScreen()/(65536*state.scale()) ) + chunkOffset )*65536*state.scale() + 1 );
     var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + state.scale();
     if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + expRound(state.width(),graphStatus[graph].widthTolerance)
     if (graph == 'h' && graphStatus['h'].settings) graphPath += highlighterEncodeURL(graphStatus['h'].settings)
@@ -91,9 +89,8 @@ var annotationRequestor = function(chunkOffset,file) {
         var activeAnnotations = [file];
 
         $.getJSON('annotation.json',{start:chunkOffset,annotation:activeAnnotations},function(data){
-            // $.extend(annotations,data)
             $.each(data,function(i,v){
-                console.log(i,v)
+                annotations[i] = annotations[i] || {}
                 $.extend(annotations[i],v)
             })
             isInvalidDisplay = true
@@ -223,35 +220,37 @@ var drawAnnotation = function(file,offset,chunks) {
         annotationRequestor((Math.floor(state.start()/65536)+i)*65536+1)
     };
 
-    var visibleAnnotations = []
+    visibleAnnotations[file] = [];
     annotations[file] = annotations[file] || {}
     
-    $.each(annotations[file],function(i,annotation){ 
+    $.each(annotations[file],function(i,annotation){ //filter annotations that are on screen.
             annotation.End = annotation.End || annotation.Start
-            var bpOnScreen = (skixelsOnScreen + 37*state.width() - 1)*state.scale()
-            if (   (annotation["Start"] < ( state.start() + bpOnScreen )        && annotation["End"] > ( state.start() + bpOnScreen ) )
-                || (annotation["Start"] < (state.start() - 8*state.bpPerLine()) && annotation["End"] > ( state.start() - 8*state.bpPerLine()) )
-                || (annotation["Start"] > (state.start() - 8*state.bpPerLine()) && annotation["End"] < ( state.start() + bpOnScreen ) ) ) {
-                    visibleAnnotations.push(i)
+            var startBottomOfScreen = state.startTopOfScreen() + skixelsOnScreen*state.scale()
+            var startTopOfScreen = state.startTopOfScreen()-30*state.bpPerLine()
+            if (   (annotation.Start < startBottomOfScreen && annotation.End > startBottomOfScreen )
+                || (annotation.Start < startTopOfScreen    && annotation.End > startTopOfScreen )
+                || (annotation.Start > startTopOfScreen    && annotation.End < startBottomOfScreen ) ) {
+                    visibleAnnotations[file].push(i)
             }
     })
-    visibleAnnotations.sort(function(a,b){
+    visibleAnnotations[file].sort(function(a,b){
         var a = annotations[file][a]
         var b = annotations[file][b]
         return a.Start - b.Start + (b.End/b.Start - a.Start/a.Start)
     })
 
-    $.each(visibleAnnotations,function(i,v){
+    $.each(visibleAnnotations[file],function(i,v){
+        var a = annotations[file][v]
         var currentColumn = 0
-        var startRow = Math.floor((annotations[file][v]["Start"]-state.start())/(state.bpPerLine())+8)
-        var rowHeight = Math.ceil((annotations[file][v]["End"]-annotations[file][v]["Start"])/(state.bpPerLine()))
+        var startRow = Math.floor((a.Start-state.start())/(state.bpPerLine())+8)
+        var rowHeight = Math.ceil((a.End-a.Start)/(state.bpPerLine()))
 
         for (currentColumn=0;currentColumn<=columnFilledTilRow.length;currentColumn++) {
             if (!columnFilledTilRow[currentColumn] || startRow > columnFilledTilRow[currentColumn]) {
                 columnFilledTilRow[currentColumn] = startRow + rowHeight+1
-                annotations[file][v].column = currentColumn
-                annotations[file][v].startRow = startRow
-                annotations[file][v].rowHeight = rowHeight
+                a.column = currentColumn
+                a.startRow = startRow
+                a.rowHeight = rowHeight
                 break;
             }
         }
@@ -259,13 +258,13 @@ var drawAnnotation = function(file,offset,chunks) {
     
     var offsetWidth = calculateOffsetWidth(columnFilledTilRow.length*annotationWidth)
     drawPixelStuff['post'].push(function(){
-        $.each(visibleAnnotations,function(i,v){
+        $.each(visibleAnnotations[file],function(i,v){
             var a = annotations[file][v]
             if (a.End - a.Start > 3) {
                 c.beginPath()
                 c.rect(offset - gutterWidth + offsetWidth-a.column*annotationWidth+1,a.startRow,-2/(zoom*3),a.rowHeight)
                 a.color = a.color || getGoodDeterministicColor(a.Start + "" + a.End +"" + i + "")
-                a == true ? c.fillStyle='#fff' : c.fillStyle=a.color
+                a.active == true ? c.fillStyle='#fff' : c.fillStyle=a.color
                 c.fill()
             }
             else {
@@ -335,7 +334,7 @@ var drawRMap = function(offset,chunks) {
     var offsetWidth = drawVerticalGraph("m",offset,chunks)
     
     drawPixelStuff['post'].push(function() { 
-        bpPerLine = state.bpPerLine()
+        var bpPerLine = state.bpPerLine()
         if ( bpPerLine >= 1 && bpPerLine < 26000 ) { //draw the red lines
             var cumulativeWidth = 0, megaColumn=0, subColumn=0;
 

@@ -21,7 +21,14 @@
     <script src="{{ STATIC_URL }}js/interface.js"></script>
     <script src="{{ STATIC_URL }}js/draw_canvas.js"></script>
     <script type="text/javascript">
-
+	    xOffset = 0
+	    specimen = "{{ specimen }}"
+	    chromosome = "{{ chromosome }}"
+	    // var getParams = JSON.parse('{"' + decodeURI(window.location.search.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}')
+	    colorPalette = "{{ colorPalette }}"
+	    zoom  = {{ zoom }};
+	    fileLength = {{ fileLength }};
+	    skixelsOnScreen = toSkixels($('#canvasContainer').height())*{{ width }};
 
     </script>
 {% endblock %}
@@ -93,7 +100,7 @@
 	<div id="tools">
 		<ul>
 			<li class="" id="buttonGraphs"><img src="{{STATIC_URL}}gfx/icons/67.png" width="20" height="20">Graphs</li>
-			<li class="" id="buttonAnnotations"><img src="{{STATIC_URL}}gfx/icons/67.png" width="20" height="20">Annotation</li>
+			<li class="" id="buttonAnnotations"><img src="{{STATIC_URL}}gfx/icons/67.png" width="20" height="20">Annotations</li>
 			<li class="radio-tools active" data-tool="Move"><img src="{{STATIC_URL}}gfx/icons/41.png" width="20" height="20">Move</li>
 			<li class="radio-tools" data-tool="Select"><img src="{{STATIC_URL}}gfx/icons/dialog.png" width="20" height="20">Select</li>
 <!-- 			<li class="radio-tools" data-tool="Find"><img src="{{STATIC_URL}}gfx/icons/7.png" width="20" height="20">Find</li>
@@ -171,21 +178,15 @@
     var isInvalidDisplay = true
     
     // initial values
-    xOffset = 0
-    specimen = "{{ specimen }}"
-    chromosome = "{{ chromosome }}"
-    // var getParams = JSON.parse('{"' + decodeURI(window.location.search.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}')
-    colorPalette = "{{ colorPalette }}"
-    zoom  = {{ zoom }};
-    fileLength = {{ fileLength }};
 
-    var skixelsOnScreen,annotationSelectedStart,annotationSelectedEnd,activeAnnotation = 0
+
+    var skixelsOnScreen,activeAnnotation,annotationSelectedStart,annotationSelectedEnd = 0
 
 
 
     var annotationStatus = {{ annotationStatus|safe }}
-	var annotations = {}
-	var visibleAnnotations = {}
+	var annotations = {};
+	var visibleAnnotations = {};
 	var helpLabel = $('<li class="helpLabel">Graph Information<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeHelpButton"></li>')
 	var settingsLabel = $('<li class="settingsLabel">Graph Settings<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeSettingsButton"></li>')
 
@@ -198,7 +199,6 @@
 	    state.start({{ start }});
 	    state.width({{ width }});
 	    state.scale({{ scale }});
-	    skixelsOnScreen = toSkixels($('#canvasContainer').height())*state.width();
 
 		cc = document.getElementById('c') //visible canvas - scale will be 3*zoom
 		c = cc.getContext("2d");

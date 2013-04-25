@@ -142,9 +142,6 @@ var formatSNPDescription = function(annotationArray){
 
 	return html
 }
-var calcAnnotationColumn = function(mx) {
-	return Math.ceil((graphStatus["a"].skixelWidth+graphStatus["a"].skixelOffset-toSkixels(mx)-8)/3)
-}
 var benchmark = function(fn,count){
     var startTime = new Date().getTime();
     for (var i = 0; i < (count || 500); i++) {

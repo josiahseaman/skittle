@@ -172,7 +172,7 @@ header p img {
 	cursor: pointer;
 }
 #tools img {
-	margin:0px 16px -6px 0px;
+	margin:0px 12px -6px 0px;
 }
 #tools .active, #tools li:hover {
 	border: 1px solid #ccc;
