@@ -187,7 +187,8 @@ var drawRasterGraph = function(graph,offset,chunks) {
 }
 var drawVerticalGraph = function(graph,offset,chunks) {
     var graphWidth = 0, graphHeight = 0;
-    var stretchFactor = expRound(state.width(),graphStatus[graph].widthTolerance)/state.width() 
+    var stretchFactor = 1
+    if (graphStatus[graph].stretchy == true) stretchFactor = expRound(state.width(),graphStatus[graph].widthTolerance)/state.width();
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor(graph,i)
         if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
