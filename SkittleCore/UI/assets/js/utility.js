@@ -12,7 +12,9 @@ if (!window.location.getParameter ) { //for non Chrome browsers. See http://chuv
 			q = window.location.search.substring(1);
 
 		while (e = r.exec(q))
-			params[d(e[1])] = d(e[2]);
+			if (typeof params[d(e[1])] == 'array') params[d(e[1])].push(d(e[2]))
+			else if (params[d(e[1])]) params[d(e[1])] = [params[d(e[1])],d(e[2])] 
+			else params[d(e[1])] = d(e[2]);
 
 		return params;
 	}

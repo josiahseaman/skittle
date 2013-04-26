@@ -180,21 +180,21 @@ function mouseMove(e) {
             }
         })
         if (annotations[annotationFile]) {
+            activeAnnotation = annotationSelectedStart = annotationSelectedEnd = 0;
             $.each(visibleAnnotations[annotationFile],function(i,v){
                 var a = annotations[annotationFile][v]
                 if(a) a.active = false;
                 else return true;
                 if(column == a.column) {
                     if((row+1) >= a.startRow && (row-1) <= (a.startRow + a.rowHeight)) {
-                        // annotationSelectedStart = a.Start
-                        // annotationSelectedEnd = a.End
+                        annotationSelectedStart = a.Start
+                        annotationSelectedEnd = a.End
                         a.active = true;
                         isInvalidDisplay = true;
                         // return false;
                     }
                 }
 
-                // activeAnnotation = annotationSelectedStart = annotationSelectedEnd = 0;
                 isInvalidDisplay = true;
             })
         }

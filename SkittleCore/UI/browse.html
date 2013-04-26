@@ -213,10 +213,13 @@
 
 	    // if graphs are specified in the url set their visibility
 	    var initialGraphs = "{{ graphs }}".split('')
-	    for (var key in graphStatus) {
-	    	if ($.inArray(key,initialGraphs)>=0) showGraph(key)
-	    	else hideGraph(key)
-	    }
+		var activeAnnotationFiles = window.location.getParameter('annotation') //add annotations to graphs
+		if (typeof activeAnnotationFiles == 'string') activeAnnotationFiles = [activeAnnotationFiles]
+		initialGraphs = initialGraphs.concat(activeAnnotationFiles)
+	    $.each(initialGraphs,function(i,v){
+	    	showGraph(v)
+	    })
+
 	    if (graphStatus['h'].visible) {
 	    	var uGet = window.location.getParameter
 		    var urlHighlighterState = {}
