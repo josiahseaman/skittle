@@ -1,36 +1,48 @@
 {% extends "base.html" %}
 {% block pageTitle %}{{ specimen }} | DNASkittle{% endblock %}
 {% block styles %}
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/popover.css">
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/simple-slider.css">
-	<style type="text/css">
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/browser.css">
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/popover.css">
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/simple-slider.css">
+    <style type="text/css">
 
-	</style>
-	{% endblock %}
-	{% block scripts %}
-<!--[if lt IE 9]>
+    </style>
+{% endblock %}
+{% block scripts %}
+    <!--[if lt IE 9]>
     <script src="{{STATIC_URL}}js/excanvas.js"></script>
 <![endif]-->
-	<script src="/browse/state.json"></script>
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-	<script src="{{STATIC_URL}}js/simple-slider.min.js"></script>
-	<script src="{{STATIC_URL}}js/contactform.js"></script>
-	<script src="{{STATIC_URL}}js/md5.js"></script>
-	<script src="{{STATIC_URL}}js/utility.js"></script>
-	<script src="{{STATIC_URL}}js/interface.js"></script>
-	<script src="{{STATIC_URL}}js/draw_canvas.js"></script>
-	<script type="text/javascript">
+    <script src="/browse/state.json"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="{{ STATIC_URL }}js/simple-slider.min.js"></script>
+    <script src="{{ STATIC_URL }}js/contactform.js"></script>
+    <script src="{{ STATIC_URL }}js/md5.js"></script>
+    <script src="{{ STATIC_URL }}js/utility.js"></script>
+    <script src="{{ STATIC_URL }}js/interface.js"></script>
+    <script src="{{ STATIC_URL }}js/draw_canvas.js"></script>
+    <script type="text/javascript">
+	    xOffset = 0
+	    specimen = "{{ specimen }}"
+	    chromosome = "{{ chromosome }}"
+	    // var getParams = JSON.parse('{"' + decodeURI(window.location.search.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}')
+	    colorPalette = "{{ colorPalette }}"
+	    zoom  = {{ zoom }};
+	    fileLength = {{ fileLength }};
+	    skixelsOnScreen = toSkixels($('#canvasContainer').height())*{{ width }};
 
-
-	</script>
-	{% endblock %}
+    </script>
+{% endblock %}
 
 {% block content %}
 	<div id="canvasContainer">
 	    <canvas id="c" width="2000" height="1000"></canvas>
 		<div id="graph-labels">
 			<ul>
+			{% for annotation in availableAnnotations %}
+				<li id="graphLabel-{{ annotation.FileName }}" style="width:159px;">
+					{{ annotation.FileName|capfirst }} <img src="{{STATIC_URL}}gfx/icons/close.png" class="closeGraphButton">
+				</li>
+			{% endfor %}
 			{% for graph in availableGraphs %}
 				<li id="graphLabel-{{ graph.symbol }}" style="width:159px;">
 					{% if graph.symbol == "h" %}<img src="{{STATIC_URL}}gfx/icons/cog_button.png" class="settingsGraphButton"> {% endif %}
@@ -43,9 +55,9 @@
 		</div>
 	</div>
 	<div class="highlighterSettings">
-		<label><input type="checkbox" id="revComplement" name="revComplement"> Search Reverse Complement</label><br>
+		<label><input type="checkbox" id="revComplement" name="revComplement" checked="checked"> Search Reverse Complement</label><br>
 		<label for="similarityPercent">% Similarity:</label>
-		<input type="text" id="similarityPercent" name="similarityPercent" value="80" style="width:2em" maxlength="3" data-slider="true" data-slider-range="40,100" data-slider-step="5">
+		<input type="text" id="similarityPercent" name="similarityPercent" value="80" style="width:2em" maxlength="3" data-slider="true" data-slider-range="40,100" data-slider-step="1">
 		<hr>
 		<div id="highlighterSequence">
 			<input type="text" class="sequenceInput seq">
@@ -88,6 +100,7 @@
 	<div id="tools">
 		<ul>
 			<li class="" id="buttonGraphs"><img src="{{STATIC_URL}}gfx/icons/67.png" width="20" height="20">Graphs</li>
+			<li class="" id="buttonAnnotations"><img src="{{STATIC_URL}}gfx/icons/67.png" width="20" height="20">Annotations</li>
 			<li class="radio-tools active" data-tool="Move"><img src="{{STATIC_URL}}gfx/icons/41.png" width="20" height="20">Move</li>
 			<li class="radio-tools" data-tool="Select"><img src="{{STATIC_URL}}gfx/icons/dialog.png" width="20" height="20">Select</li>
 <!-- 			<li class="radio-tools" data-tool="Find"><img src="{{STATIC_URL}}gfx/icons/7.png" width="20" height="20">Find</li>
@@ -131,6 +144,13 @@
 			{% endfor %}
 		</ul>
 	</div>
+	<div class="popover arrow-left-top" id="annotationList">
+		<ul>
+			{% for annotation in availableAnnotations %}
+			<li><input type="checkbox" id="showAnnotation-{{ annotation.FileName }}" name="showAnnotation-{{ annotation.FileName }}"><label for="showAnnotation-{{ annotation.FileName }}">{{ annotation.FileName|capfirst }}</label></li>
+			{% endfor %}
+		</ul>
+	</div>
 
 	<div id="feedbackForm" class="popover arrow-left-bottom active" style="position:absolute;bottom:-16px;left:145px;padding-bottom:20px">
 	<form action="/sendFeedback" method="post" accept-charset="utf-8" id="bug-report-form">
@@ -158,27 +178,15 @@
     var isInvalidDisplay = true
     
     // initial values
-    xOffset = 0
-    specimen = "{{ specimen }}"
-    chromosome = "{{ chromosome }}"
-    // var getParams = JSON.parse('{"' + decodeURI(window.location.search.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}')
-    colorPalette = "{{ colorPalette }}"
-    zoom  = {{ zoom }};
-    fileLength = {{ fileLength }};
-    skixelsOnScreen = toSkixels($('#canvasContainer').height())*state.width();
-    state.start({{ start }});
-    state.width({{ width }});
-    state.scale({{ scale }});
-    selectionStart = 0
-    selectionEnd = 0
 
-    var annotationSelectedStart,annotationSelectedEnd,activeAnnotation = 0
+
+    var skixelsOnScreen,activeAnnotation,annotationSelectedStart,annotationSelectedEnd = 0
 
 
 
-
-	var annotations = {}
-	var visibleAnnotations = {}
+    var annotationStatus = {{ annotationStatus|safe }}
+	var annotations = {};
+	var visibleAnnotations = {};
 	var helpLabel = $('<li class="helpLabel">Graph Information<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeHelpButton"></li>')
 	var settingsLabel = $('<li class="settingsLabel">Graph Settings<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeSettingsButton"></li>')
 
@@ -188,6 +196,9 @@
 	if (window.location.hash == "#learn") $('#learn').addClass('active')
 
 	$(document).ready(function() {
+	    state.start({{ start }});
+	    state.width({{ width }});
+	    state.scale({{ scale }});
 
 		cc = document.getElementById('c') //visible canvas - scale will be 3*zoom
 		c = cc.getContext("2d");
@@ -202,10 +213,13 @@
 
 	    // if graphs are specified in the url set their visibility
 	    var initialGraphs = "{{ graphs }}".split('')
-	    for (var key in graphStatus) {
-	    	if ($.inArray(key,initialGraphs)>=0) showGraph(key)
-	    	else hideGraph(key)
-	    }
+		var activeAnnotationFiles = window.location.getParameter('annotation') //add annotations to graphs
+		if (typeof activeAnnotationFiles == 'string') activeAnnotationFiles = [activeAnnotationFiles]
+		initialGraphs = initialGraphs.concat(activeAnnotationFiles)
+	    $.each(initialGraphs,function(i,v){
+	    	showGraph(v)
+	    })
+
 	    if (graphStatus['h'].visible) {
 	    	var uGet = window.location.getParameter
 		    var urlHighlighterState = {}

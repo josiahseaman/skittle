@@ -5,7 +5,7 @@ import json
 from django.conf import settings
 
 from models import GFF, AnnotationJsonChunk
-from DNAStorage.StorageRequestHandler import GetRelatedFastaFile
+from DNAStorage.StorageRequestHandler import GetRelatedFastaFile, GetSpecimen
 import import_snp# import createAnnotationsFromCompact
 
 
@@ -53,14 +53,18 @@ def StoreAnnotationChunk(gff, chromosome, chunk, start):
 def GetAnnotationsList(specimen):
     annotationsJson = []
 
-    annotations = GFF.objects.filter(Specimen=specimen)
+    annotations = GFF.objects.filter(Specimen__Name=specimen)
     if annotations:
         for gff in annotations:
-            temp = {"Specimen": gff.Specimen, "GFFVersion": gff.GFFVersion, "SourceVersion": gff.SourceVersion,
+            temp = {"Specimen": gff.Specimen.Name, "GFFVersion": gff.GFFVersion, "SourceVersion": gff.SourceVersion,
                     "Date": gff.Date, "Type": gff.Type, "DNA": gff.DNA, "RNA": gff.RNA, "Protein": gff.Protein,
                     "SequenceRegion": gff.SequenceRegion, "FileName": gff.FileName}
             annotationsJson.append(temp)
-        return json.dumps(annotationsJson)
+        if specimen == "hg19":
+            clientName = "23andMe_demo"
+            temp = {"Specimen": GetSpecimen(specimen).Name, "FileName": "SNP_" + clientName}
+            annotationsJson.append(temp)
+        return annotationsJson
     else:
         return None
 
@@ -82,7 +86,9 @@ def GetAnnotationsChunk(specimen, chromosome, start, annotations=None):
             for annotation in temp:
                 annotationJsonChunk.append(annotation)
     if specimen == "hg19":
-        annotationJsonChunk.append(import_snp.createAnnotationsFromCompact('23andMe_demo', chromosome, start))
+        if "23andMe" in annotations or not annotations:
+            clientName = "23andMe_demo"
+            annotationJsonChunk.append(import_snp.createAnnotationsFromCompact(clientName, chromosome, start))
 
     if len(annotationJsonChunk) >= 1:
         contents = "{"

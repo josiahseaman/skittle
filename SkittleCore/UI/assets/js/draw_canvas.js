@@ -61,8 +61,7 @@ var imageRequestor = function(graph,chunkOffset) {
     var graphPath = graphURL(graph,chunkOffset)
 
     if (!imageObj[graph][chunkOffset] 
-        || ( imageObj[graph][chunkOffset].complete 
-            && imageObj[graph][chunkOffset].source != graphPath ) ) {
+        || ( imageObj[graph][chunkOffset].complete && imageObj[graph][chunkOffset].source != graphPath ) ) {
         imageObj[graph][chunkOffset] = new Image();
         imageObj[graph][chunkOffset].source = graphPath;
         imageObj[graph][chunkOffset].src = graphPath;
@@ -76,8 +75,7 @@ var imageRequestor = function(graph,chunkOffset) {
     return imageObj[graph][chunkOffset]
 }
 var graphURL = function(graph,chunkOffset) {
-    var startTopOfScreen = (state.start()-8*state.bpPerLine()) >  0 ? (state.start()-8*state.bpPerLine()) : 1
-    var startChunk = ( ( Math.floor(startTopOfScreen/(65536*state.scale()) ) + chunkOffset )*65536*state.scale() + 1 );
+    var startChunk = ( ( Math.floor(state.startTopOfScreen()/(65536*state.scale()) ) + chunkOffset )*65536*state.scale() + 1 );
     var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + state.scale();
     if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + expRound(state.width(),graphStatus[graph].widthTolerance)
     if (graph == 'h' && graphStatus['h'].settings) graphPath += highlighterEncodeURL(graphStatus['h'].settings)
@@ -86,11 +84,14 @@ var graphURL = function(graph,chunkOffset) {
 
 }
     var loadedAnnotations = []
-var annotationRequestor = function(chunkOffset) {
+var annotationRequestor = function(chunkOffset,file) {
     if(!loadedAnnotations[chunkOffset] && chunkOffset <= fileLength) {
-        $.getJSON('annotation.json',{start:chunkOffset},function(data){
+        var activeAnnotations = [file];
+
+        $.getJSON('annotation.json',{start:chunkOffset,annotation:activeAnnotations},function(data){
             $.each(data,function(i,v){
-                $.extend(annotations,v)
+                annotations[i] = annotations[i] || {}
+                $.extend(annotations[i],v)
             })
             isInvalidDisplay = true
             loadedAnnotations[chunkOffset] = true
@@ -114,7 +115,17 @@ var drawGraphs = function() {
     b.clearRect(0,0,1024,1000)
     var offset = xOffset + gutterWidth
     var chunks = Math.min( Math.ceil(skixelsOnScreen/65536 + 1),(Math.ceil(fileLength/(65536*state.scale()))-Math.floor((state.start()-8*state.bpPerLine())/(65536*state.scale()))),Math.ceil(fileLength/(65536*state.scale())) )
-    // for (key in graphStatus) {
+    
+    $.each(annotationStatus,function(i,v){
+        if (v.visible) {
+            v.skixelOffset = offset
+            var skixelWidthofGraph = v.skixelWidth = drawAnnotation(v.FileName,offset,chunks);
+            skixelWidthofGraph = Math.max(skixelWidthofGraph,toSkixels(minimumWidth))
+            offset = offset + skixelWidthofGraph;
+            $('#graphLabel-' + v.FileName).width(toPixels(skixelWidthofGraph));
+        }
+    })
+
     $.each(graphOrder,function(i,key){
         if (graphStatus[key] && graphStatus[key].visible) {
             graphStatus[key].skixelOffset = offset;
@@ -203,7 +214,8 @@ var drawVerticalGraph = function(graph,offset,chunks) {
     }
     return calculateOffsetWidth(graphWidth)
 }
-var drawAnnotations = function(offset,chunks) {
+
+var drawAnnotation = function(file,offset,chunks) {
     var annotationWidth = 3
     var columnFilledTilRow = []
 
@@ -212,30 +224,37 @@ var drawAnnotations = function(offset,chunks) {
         annotationRequestor((Math.floor(state.start()/65536)+i)*65536+1)
     };
 
-    visibleAnnotations = []
+    visibleAnnotations[file] = [];
+    annotations[file] = annotations[file] || {}
     
-    $.each(annotations,function(i,annotation){ 
-            annotation["End"] = annotation["End"] || annotation["Start"]
-            if (   (annotation["Start"] < ( state.start() + (skixelsOnScreen + 37*state.width() - 1)*state.scale() ) && annotation["End"] > ( state.start() + (skixelsOnScreen + 37*state.width() - 1)*state.scale() ) )
-                || (annotation["Start"] < (state.start() - 8*state.bpPerLine()) && annotation["End"] > (state.start() - 8*state.bpPerLine()) )
-                || (annotation["Start"] > (state.start() - 8*state.bpPerLine()) && annotation["End"] < ( state.start() + (skixelsOnScreen + 37*state.width() - 1)*state.scale() ) ) ) {
-                    // annotation[0] = annotation[0] || i
-                    visibleAnnotations.push(i)
+    $.each(annotations[file],function(i,annotation){ //filter annotations that are on screen.
+            annotation.End = annotation.End || annotation.Start
+            var startBottomOfScreen = state.startTopOfScreen() + skixelsOnScreen*state.scale()
+            var startTopOfScreen = state.startTopOfScreen()-30*state.bpPerLine()
+            if (   (annotation.Start < startBottomOfScreen && annotation.End > startBottomOfScreen )
+                || (annotation.Start < startTopOfScreen    && annotation.End > startTopOfScreen )
+                || (annotation.Start > startTopOfScreen    && annotation.End < startBottomOfScreen ) ) {
+                    visibleAnnotations[file].push(i)
             }
     })
-    visibleAnnotations.sort(function(a,b){return annotations[a]["Start"]-annotations[b]["Start"] + (annotations[b]["End"]/annotations[b]["Start"]-annotations[a]["End"]/annotations[a]["Start"])})
+    visibleAnnotations[file].sort(function(a,b){
+        var a = annotations[file][a]
+        var b = annotations[file][b]
+        return a.Start - b.Start + (b.End/b.Start - a.Start/a.Start)
+    })
 
-    $.each(visibleAnnotations,function(i,v){
+    $.each(visibleAnnotations[file],function(i,v){
+        var a = annotations[file][v]
         var currentColumn = 0
-        var startRow = Math.floor((annotations[v]["Start"]-state.start())/(state.bpPerLine())+8)
-        var rowHeight = Math.ceil((annotations[v]["End"]-annotations[v]["Start"])/(state.bpPerLine()))
+        var startRow = Math.floor((a.Start-state.start())/(state.bpPerLine())+8)
+        var rowHeight = Math.ceil((a.End-a.Start)/(state.bpPerLine()))
 
         for (currentColumn=0;currentColumn<=columnFilledTilRow.length;currentColumn++) {
             if (!columnFilledTilRow[currentColumn] || startRow > columnFilledTilRow[currentColumn]) {
                 columnFilledTilRow[currentColumn] = startRow + rowHeight+1
-                annotations[v].column = currentColumn
-                annotations[v].startRow = startRow
-                annotations[v].rowHeight = rowHeight
+                a.column = currentColumn
+                a.startRow = startRow
+                a.rowHeight = rowHeight
                 break;
             }
         }
@@ -243,19 +262,20 @@ var drawAnnotations = function(offset,chunks) {
     
     var offsetWidth = calculateOffsetWidth(columnFilledTilRow.length*annotationWidth)
     drawPixelStuff['post'].push(function(){
-        $.each(visibleAnnotations,function(i,v){
-            if (annotations[v]["End"]-annotations[v]["Start"]>3) {
+        $.each(visibleAnnotations[file],function(i,v){
+            var a = annotations[file][v]
+            if (a.End - a.Start > 3) {
                 c.beginPath()
-                c.rect(offset - gutterWidth + offsetWidth-annotations[v].column*annotationWidth+1,annotations[v].startRow,-2/(zoom*3),annotations[v].rowHeight)
-                annotations[v].color = annotations[v].color || getGoodDeterministicColor(annotations[v]["Start"] + "" + annotations[v]["End"] +"" + i + "")
-                annotations[v].active == true ? c.fillStyle='#fff' : c.fillStyle=annotations[v].color
+                c.rect(offset - gutterWidth + offsetWidth-a.column*annotationWidth+1,a.startRow,-2/(zoom*3),a.rowHeight)
+                a.color = a.color || getGoodDeterministicColor(a.Start + "" + a.End +"" + i + "")
+                a.active == true ? c.fillStyle='#fff' : c.fillStyle=a.color
                 c.fill()
             }
             else {
                 c.beginPath()
-                c.arc(offset - gutterWidth + offsetWidth-annotations[v].column*annotationWidth+0.7,annotations[v].startRow+0.5,annotationWidth/4,0,2*Math.PI,false)
-                annotations[v].color = annotations[v].color || getGoodDeterministicColor(annotations[v]["Start"] + "" + annotations[v]["End"] + "" + i + "")
-                annotations[v].active == true ? c.fillStyle='#fff' : c.fillStyle=annotations[v].color
+                c.arc(offset - gutterWidth + offsetWidth-a.column*annotationWidth+0.7,a.startRow+0.5,annotationWidth/4,0,2*Math.PI,false)
+                a.color = a.color || getGoodDeterministicColor(a.Start + "" + a.End + "" + i + "")
+                a.active == true ? c.fillStyle='#fff' : c.fillStyle=a.color
                 c.fill()
             }
         })
@@ -265,6 +285,7 @@ var drawAnnotations = function(offset,chunks) {
 
     return offsetWidth
 }
+
 var drawNucBias = function(offset,chunks) {
 
     drawPixelStuff['pre'].push(function() { 
@@ -317,7 +338,7 @@ var drawRMap = function(offset,chunks) {
     var offsetWidth = drawVerticalGraph("m",offset,chunks)
     
     drawPixelStuff['post'].push(function() { 
-        bpPerLine = state.bpPerLine()
+        var bpPerLine = state.bpPerLine()
         if ( bpPerLine >= 1 && bpPerLine < 26000 ) { //draw the red lines
             var cumulativeWidth = 0, megaColumn=0, subColumn=0;
 
