@@ -1,23 +1,10 @@
-
-
 var init = function() {
     imageObj = {};
-    imageObj["n"] = []
-    imageObj["n"][0] = new Image();
-    imageObj["n"][0].src = graphURL('n',0);
-    // imageND = new Image()
-    // imageND.src = nd_url; //graphURL("n");
-    // imageRMap = new Image();
-    // imageRMap.src = rm_url; // source data
-
 
     c.imageSmoothingEnabled = false; // so it won't be blury when it scales
     c.webkitImageSmoothingEnabled = false;
     c.mozImageSmoothingEnabled = false;
     c.scale(Math.round(3*zoom),Math.round(3*zoom))
-    imageObj["n"][0].onload = function(){
-        isInvalidDisplay = true
-    }
 
     if (document.defaultView && document.defaultView.getComputedStyle) {
       stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(cc, null)['paddingLeft'], 10)      || 0;
@@ -103,7 +90,7 @@ var annotationRequestor = function(chunkOffset,file) {
 }
 
 
-// the part that does the actual work
+// drawing functions
 var gutterWidth = 8 //skixels
 var minimumWidth = 160 //pixels
 var calculateOffsetWidth = function(skixelWidthofGraph) {
@@ -111,15 +98,14 @@ var calculateOffsetWidth = function(skixelWidthofGraph) {
 }
 
 var drawGraphs = function() {
-    drawPixelStuff = {'pre':[],'post':[]};
     b.clearRect(0,0,1024,1000)
-    var offset = xOffset + gutterWidth
+    var offset = xOffset + gutterWidth;
     var chunks = Math.min( Math.ceil(skixelsOnScreen/65536 + 1),(Math.ceil(fileLength/(65536*state.scale()))-Math.floor((state.start()-8*state.bpPerLine())/(65536*state.scale()))),Math.ceil(fileLength/(65536*state.scale())) )
     
     $.each(annotationStatus,function(i,v){
         if (v.visible) {
             v.skixelOffset = offset
-            var skixelWidthofGraph = v.skixelWidth = drawAnnotation(v.FileName,offset,chunks);
+            var skixelWidthofGraph = v.skixelWidth = drawAnnotation(v.FileName,i,offset,chunks);
             skixelWidthofGraph = Math.max(skixelWidthofGraph,toSkixels(minimumWidth))
             offset = offset + skixelWidthofGraph;
             $('#graphLabel-' + v.FileName).width(toPixels(skixelWidthofGraph));
@@ -129,8 +115,8 @@ var drawGraphs = function() {
     $.each(graphOrder,function(i,key){
         if (graphStatus[key] && graphStatus[key].visible) {
             graphStatus[key].skixelOffset = offset;
-            var skixelWidthofGraph = graphStatus[key].skixelWidth = drawGraph(key,offset,chunks);
-            skixelWidthofGraph = Math.max(skixelWidthofGraph,toSkixels(minimumWidth))
+            graphStatus[key].skixelWidth = drawGraph(key,offset,chunks);
+            skixelWidthofGraph = calculateOffsetWidth(graphStatus[key].skixelWidth)
             offset = offset + skixelWidthofGraph;
             if (graphStatus[key].help) offset += toSkixels(200);
             if (graphStatus[key].controls) offset += toSkixels(325);
@@ -139,32 +125,32 @@ var drawGraphs = function() {
     })
 
     c.clearRect(0,0,2000,1000) // render on visible canvas (which has scale applied)
-    while (drawPixelStuff['pre'].length) { // draw any pixel grid stuff
-        var fn = drawPixelStuff['pre'].shift();
-        fn();
-    }
+
+    $.each(annotationStatus,function(i,v){
+        if(v.visible && v.drawPixelPre) v.drawPixelPre()
+    })
+    $.each(graphOrder,function(i,key){
+        if(graphStatus[key].visible && graphStatus[key].drawPixelPre) graphStatus[key].drawPixelPre()
+    })
+
     c.drawImage(b.canvas, 0, 0);
 
-    while (drawPixelStuff['post'].length) { // draw any pixel grid stuff
-        var fn = drawPixelStuff['post'].shift();
-        fn();
-    }
+    $.each(graphOrder,function(i,key){
+        if(graphStatus[key].visible && graphStatus[key].drawPixelPost) graphStatus[key].drawPixelPost()
+    })
 
 }
 
 var drawGraph = function(graph,offset,chunks) {
     switch (graph) {
-        case "a": return drawAnnotations(offset,chunks)
-        case "b": return drawNucBias(offset,chunks);
-        case "m": return drawRMap(offset,chunks);
         case "s": return drawSimHeat(offset,chunks);
-        case "r": return drawRepeatOverview(offset,chunks);
         default: 
             if (graphStatus[graph].rasterGraph == true) return drawRasterGraph(graph,offset,chunks);
             else return drawVerticalGraph(graph,offset,chunks);
     }
 }
 var drawRasterGraph = function(graph,offset,chunks) {
+    if (graphStatus[graph].leftOffset) offset += graphStatus[graph].leftOffset
     a.clearRect(0,0,1024,500)
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor(graph,i)
@@ -194,7 +180,9 @@ var drawRasterGraph = function(graph,offset,chunks) {
     }
     b.putImageData(newImageData, offset, 0);
 
-    return calculateOffsetWidth(state.width())
+    graphWidth = state.width()
+    if (graphStatus[graph].leftOffset) graphWidth += graphStatus[graph].leftOffset
+    return graphWidth
 }
 var drawVerticalGraph = function(graph,offset,chunks) {
     var graphWidth = 0, graphHeight = 0;
@@ -212,10 +200,12 @@ var drawVerticalGraph = function(graph,offset,chunks) {
         // graphHeight = Math.ceil(imageObj.height*stretchFactor)
         b.drawImage(imageObj,offset,vOffset,graphWidth,graphHeight) // render data on hidden canvas
     }
-    return calculateOffsetWidth(graphWidth)
+    if (graphStatus[graph].leftOffset) graphWidth += graphStatus[graph].leftOffset
+    graphWidth = graphStatus[graph].skixelWidth? Math.max(graphStatus[graph].skixelWidth,graphWidth) : graphWidth;
+    return graphWidth
 }
 
-var drawAnnotation = function(file,offset,chunks) {
+var drawAnnotation = function(file,statusIndex,offset,chunks) {
     var annotationWidth = 3
     var columnFilledTilRow = []
 
@@ -261,7 +251,7 @@ var drawAnnotation = function(file,offset,chunks) {
     })
     
     var offsetWidth = calculateOffsetWidth(columnFilledTilRow.length*annotationWidth)
-    drawPixelStuff['post'].push(function(){
+    annotationStatus[statusIndex].drawPixelPre = function(){
         $.each(visibleAnnotations[file],function(i,v){
             var a = annotations[file][v]
             if (a.End - a.Start > 3) {
@@ -279,92 +269,86 @@ var drawAnnotation = function(file,offset,chunks) {
                 c.fill()
             }
         })
-
-    })
-
+    }
 
     return offsetWidth
 }
 
-var drawNucBias = function(offset,chunks) {
 
-    drawPixelStuff['pre'].push(function() { 
-        c.shadowColor   = 'rgba(0, 0, 0, 0)'; // 'cause when repeat overview sets shadow color to (0,0,0,1) it breaks nuc bias
+graphStatus['b'].drawPixelPre = function() { 
+    var offset = graphStatus['b'].skixelOffset
+    c.shadowColor   = 'rgba(0, 0, 0, 0)'; // 'cause when repeat overview sets shadow color to (0,0,0,1) it breaks nuc bias
 
-        c.beginPath()
-        c.rect(offset,0,60,500)
-        c.fillStyle="#333";
-        c.fill();
-        c.beginPath()
-        c.moveTo(offset+15.16161,0)
-        c.lineTo(offset+15.16161,500)
-        c.moveTo(offset+25.16161,0)
-        c.lineTo(offset+25.16161,500)
-        c.moveTo(offset+35.16161,0)
-        c.lineTo(offset+35.16161,500)
-        c.moveTo(offset+45.16161,0)
-        c.lineTo(offset+45.16161,500)
-        c.strokeStyle = '#888'
-        c.lineWidth = 0.33333
-        c.stroke()
-        c.beginPath()
-        c.moveTo(offset+5.16161,0)
-        c.lineTo(offset+5.16161,500)
-        c.moveTo(offset+10.16161,0)
-        c.lineTo(offset+10.16161,500)
-        c.moveTo(offset+30.16161,0)
-        c.lineTo(offset+30.16161,500)
-        c.moveTo(offset+50.16161,0)
-        c.lineTo(offset+50.16161,500)
-        c.moveTo(offset+55.16161,0)
-        c.lineTo(offset+55.16161,500)
-        c.strokeStyle = '#555'
-        c.lineWidth = 0.33333
-        c.stroke()
-        c.beginPath()
-        c.moveTo(offset+20,0)
-        c.lineTo(offset+20,500)
-        c.moveTo(offset+40,0)
-        c.lineTo(offset+40,500)
-        c.strokeStyle = '#000'
-        c.lineWidth = 0.33333
-        c.stroke()
-    })
-
-    drawVerticalGraph("b",offset,chunks)
-    return calculateOffsetWidth(60)
+    c.beginPath()
+    c.rect(offset,0,60,500)
+    c.fillStyle="#333";
+    c.fill();
+    c.beginPath()
+    c.moveTo(offset+15.16161,0)
+    c.lineTo(offset+15.16161,500)
+    c.moveTo(offset+25.16161,0)
+    c.lineTo(offset+25.16161,500)
+    c.moveTo(offset+35.16161,0)
+    c.lineTo(offset+35.16161,500)
+    c.moveTo(offset+45.16161,0)
+    c.lineTo(offset+45.16161,500)
+    c.strokeStyle = '#888'
+    c.lineWidth = 0.33333
+    c.stroke()
+    c.beginPath()
+    c.moveTo(offset+5.16161,0)
+    c.lineTo(offset+5.16161,500)
+    c.moveTo(offset+10.16161,0)
+    c.lineTo(offset+10.16161,500)
+    c.moveTo(offset+30.16161,0)
+    c.lineTo(offset+30.16161,500)
+    c.moveTo(offset+50.16161,0)
+    c.lineTo(offset+50.16161,500)
+    c.moveTo(offset+55.16161,0)
+    c.lineTo(offset+55.16161,500)
+    c.strokeStyle = '#555'
+    c.lineWidth = 0.33333
+    c.stroke()
+    c.beginPath()
+    c.moveTo(offset+20,0)
+    c.lineTo(offset+20,500)
+    c.moveTo(offset+40,0)
+    c.lineTo(offset+40,500)
+    c.strokeStyle = '#000'
+    c.lineWidth = 0.33333
+    c.stroke()
 }
-var drawRMap = function(offset,chunks) {
-    var offsetWidth = drawVerticalGraph("m",offset,chunks)
-    
-    drawPixelStuff['post'].push(function() { 
-        var bpPerLine = state.bpPerLine()
-        if ( bpPerLine >= 1 && bpPerLine < 26000 ) { //draw the red lines
-            var cumulativeWidth = 0, megaColumn=0, subColumn=0;
 
-            while (cumulativeWidth<(bpPerLine-12)) {
-                cumulativeWidth += Math.pow(2,megaColumn)
-                subColumn++
-                if(subColumn>=12) {
-                    subColumn=0
-                    megaColumn++
-                } 
-            }
-            var widthPosition = offset + 11 + megaColumn*12+subColumn -(cumulativeWidth-bpPerLine+12)/Math.pow(2,megaColumn)
-            // var widthPosition = offset + 17.315*Math.log(state.bpPerLine()) - 42.85 - Math.min(0.9,(state.bpPerLine())/36);
-            widthPosition = Math.round(widthPosition*3)/3
-            c.beginPath();
-            c.moveTo(widthPosition-0.18181818,0)
-            c.lineTo(widthPosition-0.18181818,500)
-            c.moveTo(widthPosition+1.18181818,0)
-            c.lineTo(widthPosition+1.18181818,500)
-            c.strokeStyle = "#f00"
-            c.lineWidth = 0.333333333
-            c.stroke();
+
+graphStatus['m'].drawPixelPost = function() { 
+    var offset = graphStatus['m'].skixelOffset
+
+    var bpPerLine = state.bpPerLine()
+    if ( bpPerLine >= 1 && bpPerLine < 26000 ) { //draw the red lines
+        var cumulativeWidth = 0, megaColumn=0, subColumn=0;
+
+        while (cumulativeWidth<(bpPerLine-12)) {
+            cumulativeWidth += Math.pow(2,megaColumn)
+            subColumn++
+            if(subColumn>=12) {
+                subColumn=0
+                megaColumn++
+            } 
         }
-    })
-    return Math.max(offsetWidth,calculateOffsetWidth(143))
+        var widthPosition = offset + 11 + megaColumn*12+subColumn -(cumulativeWidth-bpPerLine+12)/Math.pow(2,megaColumn)
+        widthPosition = round(widthPosition,(1/3))
+
+        c.beginPath();
+        c.moveTo(widthPosition-0.18181818,0)
+        c.lineTo(widthPosition-0.18181818,500)
+        c.moveTo(widthPosition+1.18181818,0)
+        c.lineTo(widthPosition+1.18181818,500)
+        c.strokeStyle = "#f00"
+        c.lineWidth = 0.333333333
+        c.stroke();
+    }
 }
+
 var drawSimHeat = function(offset,chunks) {
     a.clearRect(0,0,350,10000)
     var displayWidth = 300
@@ -414,42 +398,43 @@ var drawSimHeat = function(offset,chunks) {
     b.putImageData(newImageData, offset, 0);
         var vOffset = -Math.round(((state.start()-8*state.width())%65536)/(state.bpPerLine()));
         // b.putImageData(imageData, offset+320, vOffset);
-    return calculateOffsetWidth(displayWidth)
+    return displayWidth
     
 }
-var drawRepeatOverview = function(offset,chunks) {
-    var offsetWidth = drawRasterGraph('r',offset+11,chunks)
 
+
+graphStatus['r'].leftOffset = 11;
+graphStatus['r'].drawPixelPost = function() { 
+    var offset = graphStatus['r'].skixelOffset
     var height = toSkixels($('#canvasContainer').height()-70)
-    drawPixelStuff['post'].push(function() { 
-        var legendGradient = c.createLinearGradient(0,0,0,height)
-        legendGradient.addColorStop(0,'#00a')
-        legendGradient.addColorStop(0.25,'#a00')
-        legendGradient.addColorStop(0.5,'#aa0')
-        legendGradient.addColorStop(0.75,'#0a0')
-        legendGradient.addColorStop(1,'#0aa')
-        c.fillStyle = legendGradient
-        c.fillRect(offset,10,10,height)
+    var legendGradient = c.createLinearGradient(0,0,0,height)
+    legendGradient.addColorStop(0,'#00a')
+    legendGradient.addColorStop(0.25,'#a00')
+    legendGradient.addColorStop(0.5,'#aa0')
+    legendGradient.addColorStop(0.75,'#0a0')
+    legendGradient.addColorStop(1,'#0aa')
+    c.fillStyle = legendGradient
+    c.fillRect(offset,10,10,height)
 
 
-        c.textBaseline = "middle"
-        c.textAlign = "center"
-        c.fillStyle = '#fff'
-        c.font = "5px Exo,sans-serif"
-        c.shadowOffsetX = 1;
-        c.shadowOffsetY = 1;
-        c.shadowBlur    = 2;
-        c.shadowColor   = 'rgba(0, 0, 0, 1)';
+    c.textBaseline = "middle"
+    c.textAlign = "center"
+    c.fillStyle = '#fff'
+    c.font = "5px Exo,sans-serif"
+    c.shadowOffsetX = 1;
+    c.shadowOffsetY = 1;
+    c.shadowBlur    = 2;
+    c.shadowColor   = 'rgba(0, 0, 0, 1)';
 
-        c.fillText("1bp",offset+5,13)
-        c.fillText("36",offset+5,10+height/5*1)
-        c.fillText("180",offset+5,10+height/5*2)
-        c.fillText("1k",offset+5,10+height/5*3)
-        c.fillText("5k",offset+5,10+height/5*4)
-        c.fillText("26k",offset+5,10+height-2)
-    })
-    return offsetWidth+11
+    c.fillText("1bp",offset+5,13)
+    c.fillText("36",offset+5,10+height/5*1)
+    c.fillText("180",offset+5,10+height/5*2)
+    c.fillText("1k",offset+5,10+height/5*3)
+    c.fillText("5k",offset+5,10+height/5*4)
+    c.fillText("26k",offset+5,10+height-2)
 }
+
+
 var generatePlaceholderImage = function() {
 
 }
