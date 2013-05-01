@@ -72,44 +72,9 @@ function getMouseLocation(e) {
 
 function mouseDown(e) {
     getMouseLocation(e);
-    clearSelectedAnnotation()
 
-    if(activeAnnotation==0 && annotationStatus && (activeTool == "Move" || activeTool == "Select")) {
-        var annotationFile,column,row
-        $.each(annotationStatus,function(i,v) {
-            if (v.visible==true && mx>toPixels(v.skixelOffset) && mx<toPixels(v.skixelOffset+v.skixelWidth)) {
-                annotationFile = v.FileName;
-                column = Math.ceil((v.skixelWidth+v.skixelOffset-toSkixels(mx)-8)/3)
-                row = toSkixels(my)
-                return false
-            }
-        })
-        if (annotations[annotationFile]) {
-            $.each(visibleAnnotations[annotationFile],function(i,v){
-                var a = annotations[annotationFile][v]
-                if(a) a.active = false;
-                else return true;
-                if(column == a.column) {
-                    if((row+1) >= a.startRow && (row-1) <= (a.startRow + a.rowHeight)) {
-                        annotationSelectedStart = a.Start
-                        annotationSelectedEnd = a.End
-                        if(activeAnnotation.FileName && annotations[activeAnnotation.FileName][activeAnnotation.annotation]) {
-                            annotations[activeAnnotation].active = false;
-                        }
-                        activeAnnotation = {"FileName":annotationFile,"annotation":v}
-                        a.active = true;
-
-                        a.snp_name = v // only applies to SNPs
-
-                        showAnnotationDetail(a);
-
-                        isInvalidDisplay = true;
-                        return false; //aka break
-                    }
-                }
-            })
-        }
-    }
+    clearSelectedAnnotation();
+    annotationMouseHandling("Mouse Down");
 
     if(activeTool == "Move") {
         cc.style.cursor = 'move';
@@ -156,36 +121,8 @@ function mouseDown(e) {
 }
 function mouseMove(e) {
     getMouseLocation(e)
-    if(activeAnnotation==0 && annotationStatus && (activeTool == "Move" || activeTool == "Select")) {
-        var annotationFile,column,row
-        $.each(annotationStatus,function(i,v) {
-            if (v.visible==true && mx>toPixels(v.skixelOffset) && mx<toPixels(v.skixelOffset+v.skixelWidth)) {
-                annotationFile = v.FileName;
-                column = Math.ceil((v.skixelWidth+v.skixelOffset-toSkixels(mx)-8)/3)
-                row = toSkixels(my)
-                return false
-            }
-        })
-        if (annotations[annotationFile]) {
-            activeAnnotation = annotationSelectedStart = annotationSelectedEnd = 0;
-            $.each(visibleAnnotations[annotationFile],function(i,v){
-                var a = annotations[annotationFile][v]
-                if(a) a.active = false;
-                else return true;
-                if(column == a.column) {
-                    if((row+1) >= a.startRow && (row-1) <= (a.startRow + a.rowHeight)) {
-                        annotationSelectedStart = a.Start
-                        annotationSelectedEnd = a.End
-                        a.active = true;
-                        isInvalidDisplay = true;
-                        // return false;
-                    }
-                }
 
-                isInvalidDisplay = true;
-            })
-        }
-    }
+    annotationMouseHandling()
 
     if(activeTool == "Move") {
         if (dragWidth){
@@ -245,6 +182,47 @@ function mouseWheelDials(e) {
             default: state.start(by(-delta*10*state.scale())); return;
         }
     }
+}
+var annotationMouseHandling = function(isMouseDown) {
+    if(activeAnnotation==0 && annotationStatus && (activeTool == "Move" || activeTool == "Select")) {
+        var annotationFile,column,row
+        $.each(annotationStatus,function(i,v) {
+            if (v.visible==true && mx>toPixels(v.skixelOffset) && mx<toPixels(v.skixelOffset+v.skixelWidth)) {
+                annotationFile = v.FileName;
+                column = Math.ceil((v.skixelWidth+v.skixelOffset-toSkixels(mx)-8)/3)
+                row = toSkixels(my)
+                return false
+            }
+        })
+        if (annotations[annotationFile]) {
+            activeAnnotation = annotationSelectedStart = annotationSelectedEnd = 0;
+            $.each(visibleAnnotations[annotationFile],function(i,v){
+                var a = annotations[annotationFile][v]
+                if(a) a.active = false;
+                else return true;
+                if(column == a.column) {
+                    if((row+1) >= a.startRow && (row-1) <= (a.startRow + a.rowHeight)) {
+                        annotationSelectedStart = a.Start
+                        annotationSelectedEnd = a.End
+                        a.active = true;
+                        isInvalidDisplay = true;
+                        if (isMouseDown) {
+                            if(activeAnnotation.FileName && annotations[activeAnnotation.FileName][activeAnnotation.annotation]) {
+                                annotations[activeAnnotation].active = false;
+                            }
+                            activeAnnotation = {"FileName":annotationFile,"annotation":v}
+                            a.snp_name = v // only applies to SNPs
+
+                            showAnnotationDetail(a);
+
+                            return false; //aka break
+                        }
+                    }
+                }
+            });
+        }
+    }
+
 }
 // html widgets
 $(function() {
