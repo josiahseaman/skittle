@@ -64,7 +64,7 @@ var imageRequestor = function(graph,chunkOffset) {
     return imageObj[graph][chunkOffset]
 }
 var graphURL = function(graph,chunkOffset) {
-    var startChunk = ( ( Math.floor(state.startTopOfScreen()/(65536*state.scale()) ) + chunkOffset )*65536*state.scale() + 1 );
+    var startChunk = state.chunkStart() + chunkOffset*state.chunkSizeBP();
     var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + state.scale();
     if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + expRound(state.width(),graphStatus[graph].widthTolerance)
     if (graph == 'h' && graphStatus['h'].settings) graphPath += highlighterEncodeURL(graphStatus['h'].settings)
@@ -106,8 +106,8 @@ var drawGraphs = function() {
     var offset = xOffset + gutterWidth;
 
     var chunksOnScreenPlus1 = Math.ceil(skixelsOnScreen/65536 + 1)
-    var chunksInFile = Math.ceil(fileLength/(65536*state.scale()))
-    var chunksRemainingInFile = chunksInFile - Math.floor( state.startTopOfScreen()/(65536*state.scale()) )
+    var chunksInFile = Math.ceil(fileLength/(state.chunkSizeBP()))
+    var chunksRemainingInFile = chunksInFile - Math.floor( state.startTopOfScreen()/state.chunkSizeBP() )
     var chunks = Math.min( chunksOnScreenPlus1, chunksRemainingInFile, chunksInFile )
 
     $.each(annotationStatus,function(i,v){
@@ -175,21 +175,17 @@ var drawRasterGraph = function(graph,offset,chunks) {
     if (annotationSelectedStart > 0) {
         fadePercent = 0.35
     }
-    var chunkStartOffset = Math.max( Math.floor((state.start()/state.scale()-state.width()*8)/(65536) ), 0 )*65536
-    var startOffset = ( Math.round(state.start()/state.scale()) - 1 - state.width()*8 - chunkStartOffset )*4;
-    var selectedStart = (((annotationSelectedStart-1)/state.scale()) - chunkStartOffset)*4;
-    var selectedEnd = (((annotationSelectedEnd-1)/state.scale()) - chunkStartOffset)*4;
+    var chunkStartOffset = round(state.startTopOfScreen(1), state.chunkSizeBP(), "down");
+    var startOffset = Math.round( (state.startTopOfScreen() - chunkStartOffset - 1)/state.scale() )*4;
+    var selectedStart = Math.round( (annotationSelectedStart - chunkStartOffset - 1)/state.scale() )*4;
+    var selectedEnd = Math.round( (annotationSelectedEnd - chunkStartOffset - 1)/state.scale() )*4;
+
     for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
         var y = x + startOffset
         newData[x] = data[y] || 0;
         newData[x + 1] = data[y + 1] || 0;
         newData[x + 2] = data[y + 2] || 0;
-        if (   round(selectedEnd  ,state.scale()*4) >= y 
-            && round(selectedStart,state.scale()*4) <= y ) { //annotation highlighter
-            newData[x + 3] = data[y + 3];
-        } else {
-            newData[x + 3] = data[y + 3]*fadePercent;
-        }
+        newData[x + 3] = (selectedEnd >= y && selectedStart <= y )? data[y + 3] : data[y + 3]*fadePercent;
     }
     b.putImageData(newImageData, offset, 0);
 
@@ -207,7 +203,7 @@ var drawVerticalGraph = function(graph,offset,chunks) {
         var imageObj = imageRequestor(graph,i)
         if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
         else var graphWidth = imageObj.width
-        var vOffset = -Math.round(((Math.round(state.start()/state.scale())-8*state.width())%(65536))/(state.width()) - i*(65536/state.width()));
+        var vOffset = -Math.round( state.startTopOfScreen() % state.chunkSizeBP() / state.bpPerLine() - i*65536/state.width() );
         graphHeight = Math.ceil(65536/state.width());
         if (i == chunks - 1 || !graphStatus[graph].stretchy) graphHeight = imageObj.height*stretchFactor;// don't stretch last chunk
         // graphHeight = Math.ceil(imageObj.height*stretchFactor)
@@ -222,7 +218,7 @@ var drawAnnotation = function(file,statusIndex,offset) {
     var annotationWidth = 3
     var columnFilledTilRow = []
 
-    var chunks = skixelsOnScreen*state.scale()/state.chunkSize + 1; //ignore chunks 'cause it isn't affected by scale
+    var chunks = skixelsOnScreen*state.scale()/state.chunkSize + 1; 
 
     for (var i = 0; i < chunks; i++) {
         annotationRequestor((Math.floor(state.start()/65536)+i)*65536+1)
@@ -234,7 +230,7 @@ var drawAnnotation = function(file,statusIndex,offset) {
     $.each(annotations[file],function(i,annotation){ //filter annotations that are on screen.
             annotation.End = annotation.End || annotation.Start
             var startBottomOfScreen = state.startTopOfScreen() + skixelsOnScreen*state.scale()
-            var startTopOfScreen = state.startTopOfScreen()-30*state.bpPerLine()
+            var startTopOfScreen = state.startTopOfScreen() - 30*state.bpPerLine()
             if (   (annotation.Start < startBottomOfScreen && annotation.End > startBottomOfScreen )
                 || (annotation.Start < startTopOfScreen    && annotation.End > startTopOfScreen )
                 || (annotation.Start > startTopOfScreen    && annotation.End < startBottomOfScreen ) ) {
@@ -385,12 +381,10 @@ var drawSimHeat = function(offset,chunks) {
     var newData = newImageData.data;
 
     var lineLength = displayWidth*4;
-    var bpPerLine = state.bpPerLine()
-    var offsetStart = state.start() - bpPerLine*8
-    var linesFromTop = offsetStart/bpPerLine
-    var chunksFromTop = Math.max(Math.floor(offsetStart/(state.scale()*65536)),0)
-    var bpFromLastChunk = offsetStart - chunksFromTop*(65536*state.scale())
-    var linesFromLastChunk = Math.floor(bpFromLastChunk/bpPerLine)
+    var linesFromTop = state.startTopOfScreen()/state.bpPerLine()
+    var chunksFromTop = Math.max(Math.floor(state.startTopOfScreen()/state.chunkSizeBP()),0)
+    var bpFromLastChunk = state.startTopOfScreen() - chunksFromTop*state.chunkSizeBP()
+    var linesFromLastChunk = Math.floor(bpFromLastChunk/state.bpPerLine())
     var startOffset = linesFromLastChunk*lineLength
 
     var l = 0, i = startOffset
@@ -410,7 +404,7 @@ var drawSimHeat = function(offset,chunks) {
     }
 
     b.putImageData(newImageData, offset, 0);
-        var vOffset = -Math.round(((state.start()-8*state.width())%65536)/(state.bpPerLine()));
+        // var vOffset = -Math.round(((state.start()-8*state.width())%65536)/(state.bpPerLine()));
         // b.putImageData(imageData, offset+320, vOffset);
     return displayWidth
     

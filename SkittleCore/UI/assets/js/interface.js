@@ -500,8 +500,8 @@ var showAnnotationDetail = function (annotation) {
                     'left':(toPixels(graphStatus['n'].skixelOffset+state.width()/2)-150)+'px'
                     })
     }
-    if(annotation["End"]-annotation["Start"] < state.bpPerLine() && annotation["Start"]-state.start() > 0) { //if selection is smaller than width
-        popup.css({ 'left':(toPixels(graphStatus['n'].skixelOffset+((annotation["Start"]-state.start())/state.scale())%state.width())-150)+'px'})
+    if(annotation.End-annotation.Start < state.bpPerLine() && annotation.Start-state.start() >= 0) { //if selection is smaller than width
+        popup.css({ 'left':(toPixels(graphStatus['n'].skixelOffset+Math.round((annotation.Start-state.start())/state.scale()).mod(state.width()))-150)+'px'})
     }
 
     $('#canvasContainer').append(popup)
@@ -624,8 +624,6 @@ StateObject.prototype.width = getterSetter({defaultVal:100, filter:/(\d+)/, min:
 StateObject.prototype.start = getterSetter({defaultVal:1, filter:/(\d+)/, min:1, max:function(){return fileLength - (skixelsOnScreen - (25+37)*state.width())*state.scale()/2 + 1}})
 StateObject.prototype.scale = getterSetter({defaultVal:1, filter:/(\d+)/, min:1, max:5000});
 StateObject.prototype.end = function(a){ return state.start(a.match(/(\d+)/)[0] - ( skixelsOnScreen - (25+37)*state.width() - 1 )*state.scale())}
-StateObject.prototype.bpPerLine = function(){ return this.width() * this.scale()}
-StateObject.prototype.startTopOfScreen = function(){ return Math.max(1,(state.start()-8*state.bpPerLine())) }
 StateObject.prototype.goToEnd = function(){ return this.start(fileLength); }
 StateObject.prototype.scaleToFile = function(){ 
     this.start(1);
@@ -634,6 +632,13 @@ StateObject.prototype.scaleToFile = function(){
     var newScale = fileLength/(skixelsOnScreen-20*this.width());
     return newScale < 50 ? this.scale(newScale) : this.scale(round(newScale,50,"up"));
 }
+StateObject.prototype.chunkSizeBP = function(){ return this.chunkSize * this.scale(); }
+StateObject.prototype.chunkStart = function(start){ 
+    start = start || this.startTopOfScreen(1);
+    return Math.floor(start/state.chunkSizeBP())*state.chunkSizeBP() + 1;
+}
+StateObject.prototype.bpPerLine = function(){ return this.width() * this.scale(); }
+StateObject.prototype.startTopOfScreen = function(min1){ return min1? Math.max(1,state.start() - 8*state.bpPerLine()) : state.start() - 8*state.bpPerLine(); }
 var double = function(a){ return a * 2; }
 var half = function(a){ return a / 2; }
 var lines = function(a){ return Math.round(a) * state.bpPerLine(); }

@@ -26,6 +26,7 @@ if (!window.location.getParameter ) { //for non Chrome browsers. See http://chuv
   };
 }
 var round = function(val,precision,direction) {
+	precision = precision || 1;
 	if (direction && direction == "down") return Math.floor(val/precision)*precision;
 	else if (direction && direction == "up") return Math.ceil(val/precision)*precision;
 	return Math.round(val/precision)*precision;
