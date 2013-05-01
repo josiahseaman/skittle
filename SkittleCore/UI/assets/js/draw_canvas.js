@@ -43,6 +43,8 @@ var init = function() {
 }
 
 var imageRequestor = function(graph,chunkOffset) {
+    if (chunkOffset > fileLength) return false;
+
     imageObj[graph] = imageObj[graph] || []
 
     var graphPath = graphURL(graph,chunkOffset)
@@ -72,6 +74,8 @@ var graphURL = function(graph,chunkOffset) {
 }
     var loadedAnnotations = []
 var annotationRequestor = function(chunkOffset,file) {
+    if (chunkOffset > fileLength) return false;
+
     if(!loadedAnnotations[chunkOffset] && chunkOffset <= fileLength) {
         var activeAnnotations = [file];
 
@@ -100,8 +104,12 @@ var calculateOffsetWidth = function(skixelWidthofGraph) {
 var drawGraphs = function() {
     b.clearRect(0,0,1024,1000)
     var offset = xOffset + gutterWidth;
-    var chunks = Math.min( Math.ceil(skixelsOnScreen/65536 + 1),(Math.ceil(fileLength/(65536*state.scale()))-Math.floor((state.start()-8*state.bpPerLine())/(65536*state.scale()))),Math.ceil(fileLength/(65536*state.scale())) )
-    
+
+    var chunksOnScreenPlus1 = Math.ceil(skixelsOnScreen/65536 + 1)
+    var chunksInFile = Math.ceil(fileLength/(65536*state.scale()))
+    var chunksRemainingInFile = chunksInFile - Math.floor( state.startTopOfScreen()/(65536*state.scale()) )
+    var chunks = Math.min( chunksOnScreenPlus1, chunksRemainingInFile, chunksInFile )
+
     $.each(annotationStatus,function(i,v){
         if (v.visible) {
             v.skixelOffset = offset
@@ -176,7 +184,12 @@ var drawRasterGraph = function(graph,offset,chunks) {
         newData[x] = data[y] || 0;
         newData[x + 1] = data[y + 1] || 0;
         newData[x + 2] = data[y + 2] || 0;
-        (selectedEnd >=y && selectedStart<=y) ? newData[x + 3] = data[y + 3] : newData[x + 3] = data[y + 3]*fadePercent;
+        if (   round(selectedEnd  ,state.scale()*4) >= y 
+            && round(selectedStart,state.scale()*4) <= y ) { //annotation highlighter
+            newData[x + 3] = data[y + 3];
+        } else {
+            newData[x + 3] = data[y + 3]*fadePercent;
+        }
     }
     b.putImageData(newImageData, offset, 0);
 
@@ -205,10 +218,11 @@ var drawVerticalGraph = function(graph,offset,chunks) {
     return graphWidth
 }
 
-var drawAnnotation = function(file,statusIndex,offset,chunks) {
+var drawAnnotation = function(file,statusIndex,offset) {
     var annotationWidth = 3
     var columnFilledTilRow = []
 
+    var chunks = skixelsOnScreen*state.scale()/state.chunkSize + 1; //ignore chunks 'cause it isn't affected by scale
 
     for (var i = 0; i < chunks; i++) {
         annotationRequestor((Math.floor(state.start()/65536)+i)*65536+1)

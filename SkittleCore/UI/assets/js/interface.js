@@ -111,31 +111,6 @@ function mouseDown(e) {
         }
     }
 
-    if(false && graphStatus["a"] && graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
-        if(mx < toPixels(graphStatus["a"].skixelOffset +graphStatus["a"].skixelWidth) && mx > toPixels(graphStatus["a"].skixelOffset) ) {
-            var column = calcAnnotationColumn(mx)
-            var row = toSkixels(my)
-            $.each(visibleAnnotations,function(i,v){
-                if(column == annotations[v].column) {
-                        // console.log(column,row)
-                    if((row+1) >= annotations[v].startRow && (row-1) <= (annotations[v].startRow + annotations[v].rowHeight)) {
-                        annotationSelectedStart = annotations[v]["Start"]
-                        annotationSelectedEnd = annotations[v]["End"]
-                        if(annotations[activeAnnotation]) annotations[activeAnnotation].active = false
-                        activeAnnotation = v
-                        annotations[activeAnnotation].active = true;
-
-                        annotations[v].snp_name = v
-
-                        showAnnotationDetail(annotations[v]);
-
-                        isInvalidDisplay = true;
-                        return false; //aka break
-                    }
-                }
-            })
-        }
-    }
     if(activeTool == "Move") {
         if (graphStatus["n"].visible) {
             var leftSideOfClickZone = toPixels(graphStatus["n"].skixelOffset + state.width())
