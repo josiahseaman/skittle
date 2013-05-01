@@ -112,22 +112,34 @@ function mouseDown(e) {
     }
 
     if(activeTool == "Move") {
-        if (graphStatus["n"].visible) {
-            var leftSideOfClickZone = toPixels(graphStatus["n"].skixelOffset + state.width())
-                if (mx > leftSideOfClickZone && mx < (leftSideOfClickZone + toPixels(gutterWidth)) ) { //change width
-                    dragWidth = true
-                    edgeOffset = mx - leftSideOfClickZone
-                    this.style.cursor = 'col-resize'
-                }
+        cc.style.cursor = 'move';
+        
+        //is mx in a gutter?
+        $.each(graphStatus,function(i,v){
+            var rightEdgeOfGraph = toPixels(v.skixelOffset+v.skixelWidth);
+            if ( v.visible && mx > rightEdgeOfGraph && mx < rightEdgeOfGraph + toPixels(gutterWidth) ) {
+                dragWidth = true;
+                widthOffset = state.width();
+                cc.style.cursor = 'col-resize';
+                return false;
             }
+        });
+        // if so then save the current mx and width
+        // if (graphStatus["n"].visible) {
+        //     var leftSideOfClickZone = toPixels(graphStatus["n"].skixelOffset + state.width())
+        //     if (mx > leftSideOfClickZone && mx < (leftSideOfClickZone + toPixels(gutterWidth)) ) { //change width
+        //         dragWidth = true
+        //         edgeOffset = mx - leftSideOfClickZone
+        //         cc.style.cursor = 'col-resize'
+        //     }
+        // }
 
     //else { // scroll
         isDrag = true;
         topOffset = my;
         startOffset = state.start();
         leftOffset = mx;
-        sideOffset = xOffset
-        this.style.cursor = 'move'
+        sideOffset = xOffset;
     //}
     }
     else if (activeTool == "Select") {
@@ -176,37 +188,36 @@ function mouseMove(e) {
     }
 
     if(activeTool == "Move") {
-        if (graphStatus["n"].visible) { //dragging width only applies to Nuc Display
-            var leftSideOfClickZone = toPixels(graphStatus["n"].skixelOffset + state.width())
-
-            // var widthInPixels = toPixels(width)
-            if (dragWidth){
-                if (mx < 1) { //lose the drag if mouse goes over the edge
-                    mouseUp(e)
-                    return;
-                }
-                state.width( toSkixels(mx - edgeOffset) - graphStatus["n"].skixelOffset )
-                this.style.cursor = 'col-resize'
+        if (dragWidth){
+            if (mx < 1) { //lose the drag if mouse goes over the edge
+                mouseUp(e)
+                return false;
             }
-            else if(mx > leftSideOfClickZone && mx < (leftSideOfClickZone + toPixels(gutterWidth)) ) {
-                this.style.cursor = 'col-resize'
-            }
-            else {
-                this.style.cursor = 'default'
-            }
+            state.width( toSkixels(mx - leftOffset) + widthOffset )
+            cc.style.cursor = 'col-resize';
         }
+        else {
+            cc.style.cursor = 'default';
+        }
+        $.each(graphStatus,function(i,v){
+            var rightEdgeOfGraph = toPixels(v.skixelOffset+v.skixelWidth);
+            if ( v.visible && mx > rightEdgeOfGraph && mx < rightEdgeOfGraph + toPixels(gutterWidth) ) {
+                cc.style.cursor = 'col-resize';
+                return false;
+            }
+        });
 
         if (isDrag) {
 
             state.start( toSkixels(topOffset-my) * state.bpPerLine() + startOffset )
             if(!dragWidth) {
                 setXoffsetTo(sideOffset - toSkixels(leftOffset-mx))
-                this.style.cursor = 'move'
+                cc.style.cursor = 'move'
             }
         }
     }
     else if (activeTool == "Select") {
-        this.style.cursor = 'crosshair'
+        cc.style.cursor = 'crosshair'
     }
 }
 function mouseUp(e) {
@@ -214,6 +225,8 @@ function mouseUp(e) {
 }
 function mouseWheel(e) {
     e.preventDefault();
+
+    if (isDrag) return false;
 
     var delta = calcDeltaFromScrollEvent(event)
 
