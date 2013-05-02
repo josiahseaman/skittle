@@ -27,22 +27,20 @@ These functions use RepeatMapState to emulate an object with state.'''
 skixelsPerSample = 24
 
 
-def encodeWidth(nucleotidesPerLine):
-    bpPerLine = nucleotidesPerLine
-
+def encodeWidth(nucleotideWidth):
     cumulativeWidth = 0
     megaColumn=0
     subColumn=0
 
-    while cumulativeWidth < (bpPerLine-12):
+    while cumulativeWidth < (nucleotideWidth-12):
         cumulativeWidth += 2**megaColumn
         subColumn += 1
         if subColumn >= 12:
             subColumn = 0
             megaColumn += 1
-    widthPosition = 11 + megaColumn * 12 + subColumn - (cumulativeWidth - bpPerLine + 12) / 2**megaColumn
+    widthPosition = 11 + megaColumn * 12 + subColumn - (cumulativeWidth - nucleotideWidth + 12) / 2.0 **megaColumn
 
-    return widthPosition
+    return int(round(widthPosition))
 
 
 def decodeWidth(columnIndex):
