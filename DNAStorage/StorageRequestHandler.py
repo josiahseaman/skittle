@@ -99,15 +99,28 @@ def StorePng(request, fileObject):
     return imageFile
 
 #Delete the database entries and PNG files associated with the given graph
-def DeleteCache(graph):
+def DeleteCache(graph, specimen, chromosome, start):
     #Delete database entries first
-    ImageFiles.objects.filter(GraphType=graph).delete()
+    if start and chromosome and specimen:
+        ImageFiles.objects.filter(GraphType=graph, FastaFile__Specimen__Name=specimen, FastaFile__Chromosome=chromosome, Start=start).delete()
+    elif chromosome and specimen:
+        ImageFiles.objects.filter(GraphType=graph, FastaFile__Specimen__Name=specimen, FastaFile__Chromosome=chromosome).delete()
+    elif specimen:
+        ImageFiles.objects.filter(GraphType=graph, FastaFile__Specimen__Name=specimen).delete()
+    else:
+        ImageFiles.objects.filter(GraphType=graph).delete()
 
     #Now remove PNG files
     #CD into the folder where this file is located as it should be the DNAStorage folder
     workingDir = settings.SKITTLE_TREE_LOC + "DNAStorage/png/"
+    if specimen:
+        workingDir += specimen + "/"
+        if chromosome:
+            workingDir += chromosome + "/"
 
     graphString = graph + "_"
+    if specimen and chromosome and start:
+        graphString += "start=" + start + "_"
 
     for root, dirs, files in os.walk(workingDir):
         for f in files:
