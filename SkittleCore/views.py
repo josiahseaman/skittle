@@ -77,7 +77,7 @@ def createRequestPacket(request, specimen, chromosome):
 
 def createHighlighterState(request, genus, species, specimen, chromosome):
     graphSettings = HighlighterState()
-    useRevComp = True if request.GET.get('rev') else False
+    useRevComp = True if 'rev' in request.GET else False
     graphSettings.searchReverseComplement = useRevComp
     similarity = request.GET.get('sim', None)
     if similarity:
