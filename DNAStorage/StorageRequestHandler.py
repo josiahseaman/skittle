@@ -101,7 +101,6 @@ def StorePng(request, fileObject):
 
 #Delete the database entries and PNG files associated with the given graph
 def DeleteCache(graph, specimen, chromosome, start):
-    print "HI!"
     #Delete database entries first
     if start and chromosome and specimen:
         start = GetRoundedIndex(start)
@@ -117,22 +116,19 @@ def DeleteCache(graph, specimen, chromosome, start):
     #CD into the folder where this file is located as it should be the DNAStorage folder
     workingDir = settings.SKITTLE_TREE_LOC + "DNAStorage/png/"
     if specimen:
-        workingDir += str(specimen).strip() + "/"
+        s = GetSpecimen(specimen)
+        workingDir += s.Kingdom + "/" + s.Class + "/" + s.Genus + "/" + s.Species + "/" + str(specimen).strip() + "/"
         if chromosome:
             workingDir += str(chromosome).strip() + "/"
-    print "WorkingDir: ", workingDir
 
     graphString = graph + "_"
     if specimen and chromosome and start:
         graphString += "start=" + str(start).strip() + "_"
-    print "GraphString: ", graphString
 
     for root, dirs, files in os.walk(workingDir):
         for f in files:
             fullpath = os.path.join(root, f)
-            print "PrePath: ", fullpath
             if graphString in f:
-                print fullpath
                 os.remove(fullpath)
 
 #Get a python object containing a unique tree that travels to the specimens and contains the chromosome files of each specimen
