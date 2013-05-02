@@ -68,36 +68,6 @@ def findBestFrequency(repeatMapLine):
             break
     return frequency
 
-def _createSnippetEntries_SeedMethod(repeatMap, state):
-    snippets = []
-    startSnippetThreshold = 0.8
-    maintainThreshold = 0.5
-    repeatMap = map(lambda line: line[:len(line)/2], repeatMap)
-    seeds = [(n, max(s)) for n, s in enumerate(repeatMap) if max(s) > startSnippetThreshold]
-    print seeds
-    claimedLines = [0] * len(repeatMap)
-    scores = [max(line) for line in repeatMap]
-    for seed in seeds:
-        frequency = findBestFrequency(repeatMap[seed[0]])
-        startLine, stopLine = seed[0], seed[0]
-        #expand up
-        for i in range(seed[0], -1, -1):
-            if scores[i] < maintainThreshold or claimedLines[i]:
-                break
-            claimedLines[i] = frequency
-            startLine = i
-        #expand down
-        for i in range(seed[0], len(repeatMap), 1):
-            if scores[i] < maintainThreshold or claimedLines[i]:
-                break
-            claimedLines[i] = frequency
-            stopLine = i
-        start = startLine*skixelsPerSample
-        if (startLine != seed[0] or stopLine != seed[0]) and state.seq[start] != 'N':
-            snippets.append(Snippet(start, (stopLine + 1)*skixelsPerSample, frequency))
-
-    return snippets
-
 
 def createSnippetEntries(repeatMap, state):
     creatingNewSnippet = False
@@ -114,14 +84,6 @@ def createSnippetEntries(repeatMap, state):
             creatingNewSnippet = True
             width = findBestFrequency(line)
         if creatingNewSnippet and max(line) < maintainThreshold:
-            """approx = encodeWidth(width)
-            for prevIndex in range(lineIndex - 1, previousSnippetEnd, -1): #iterate backwards
-                if max(repeatMap[prevIndex][approx-1:approx+2]) > maintainThreshold:
-                    start = prevIndex * skixelsPerSample
-                else:
-                    break
-        if creatingNewSnippet and max(line[approx-1:approx+2]) < maintainThreshold:
-         previousSnippetEnd = lineIndex"""
             creatingNewSnippet = False
             snippets.append(Snippet(start, (lineIndex + 1) * skixelsPerSample, width))
     return snippets
