@@ -5,10 +5,14 @@ To import all .fa and .fasta files in the "DNAStorage/to_import" folder, run "ma
 ====================MANAGEMENT COMMANDS====================
 python manage.py blah
 
-deletecache [graph] -> Delete the cache of a certain graph type
+deletecache [graph_type graph_type ...] -e|--specimen=[specimen] -c|--chromosome=[chromosome] -s|--start=[start] -> Delete the cache of a certain graph type (Example: `python manage.py deletecache h --specimen=hg18 --chromosome=chrY-sample --start=65537`
+
 purgeprocessqueue -> Purges all processes in the process queue database
+
 listgraphs -> List all registered graphs on the server (just a list of symbols)
+
 importfasta -> Imports all the .fa or .fasta files that are correctly named in the DNAStorage/to_import folder
+
 createSnpIndex -> Creates the SNP index database for reading 23andMe user info (Only needs to run once in server life)
 
 ====================GRAPH TYPES====================
