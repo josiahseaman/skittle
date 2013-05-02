@@ -255,6 +255,7 @@ $(function() {
     $('#bug-report').click(function(){
         $('#feedback_current_view').val(getCurrentPageURL('fullURL'))
         $('#feedbackForm').toggle()
+        document.onkeydown = (typeof document.onkeydown == "function")? null : keyListener;
     })
     $("#buttonGraphs").click(function(){
         $("#graphList").toggleClass('active')
