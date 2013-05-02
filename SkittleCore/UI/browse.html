@@ -100,7 +100,9 @@
 	<div id="tools">
 		<ul>
 			<li class="" id="buttonGraphs"><img src="{{STATIC_URL}}gfx/icons/67.png" width="20" height="20">Graphs</li>
+			{% if availableAnnotations %}
 			<li class="" id="buttonAnnotations"><img src="{{STATIC_URL}}gfx/icons/67.png" width="20" height="20">Annotations</li>
+			{% endif %}
 			<li class="radio-tools active" data-tool="Move"><img src="{{STATIC_URL}}gfx/icons/41.png" width="20" height="20">Move</li>
 			<li class="radio-tools" data-tool="Select"><img src="{{STATIC_URL}}gfx/icons/dialog.png" width="20" height="20">Select</li>
 <!-- 			<li class="radio-tools" data-tool="Find"><img src="{{STATIC_URL}}gfx/icons/7.png" width="20" height="20">Find</li>
