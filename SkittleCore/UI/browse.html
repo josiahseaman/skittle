@@ -185,7 +185,7 @@
 
 
 
-    var annotationStatus = {{ annotationStatus|safe }}
+    var annotationStatus = {{ annotationStatus|safe }} || {};
 	var annotations = {};
 	var visibleAnnotations = {};
 	var helpLabel = $('<li class="helpLabel">Graph Information<img src="{{STATIC_URL}}gfx/icons/close.png" class="closeHelpButton"></li>')
