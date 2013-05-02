@@ -120,14 +120,17 @@ def DeleteCache(graph, specimen, chromosome, start):
         workingDir += str(specimen).strip() + "/"
         if chromosome:
             workingDir += str(chromosome).strip() + "/"
+    print "WorkingDir: ", workingDir
 
     graphString = graph + "_"
     if specimen and chromosome and start:
         graphString += "start=" + str(start).strip() + "_"
+    print "GraphString: ", graphString
 
     for root, dirs, files in os.walk(workingDir):
         for f in files:
             fullpath = os.path.join(root, f)
+            print "PrePath: ", fullpath
             if graphString in f:
                 print fullpath
                 os.remove(fullpath)
