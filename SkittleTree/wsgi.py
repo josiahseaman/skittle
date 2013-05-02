@@ -17,7 +17,7 @@ import os
 import sys
 import socket
 
-PRODUCTION = True
+PRODUCTION = False
 
 if PRODUCTION and not socket.gethostname().startswith('nyx'):
     sys.path.append('/var/www/skittle')
