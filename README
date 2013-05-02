@@ -9,6 +9,8 @@ deletecache [graph_type graph_type ...] -e|--specimen=[specimen] -c|--chromosome
 
 purgeprocessqueue -> Purges all processes in the process queue database
 
+getroundedindex [start_value] -> Tells you the actual chunk starting value for any given start index.
+
 listgraphs -> List all registered graphs on the server (just a list of symbols)
 
 importfasta -> Imports all the .fa or .fasta files that are correctly named in the DNAStorage/to_import folder
