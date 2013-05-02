@@ -4,6 +4,7 @@ import os
 from django.conf import settings
 
 from models import FastaFiles, FastaChunkFiles, ImageFiles, Specimen
+from Utilities.SkittleUtils import GetRoundedIndex
 
 
 #Returns if the system contains the requested fasta file. This does NOT return full data associated with it for speed purposes.
@@ -102,6 +103,7 @@ def StorePng(request, fileObject):
 def DeleteCache(graph, specimen, chromosome, start):
     #Delete database entries first
     if start and chromosome and specimen:
+        start = GetRoundedIndex(start)
         ImageFiles.objects.filter(GraphType=graph, FastaFile__Specimen__Name=specimen, FastaFile__Chromosome=chromosome, Start=start).delete()
     elif chromosome and specimen:
         ImageFiles.objects.filter(GraphType=graph, FastaFile__Specimen__Name=specimen, FastaFile__Chromosome=chromosome).delete()
