@@ -101,6 +101,7 @@ def StorePng(request, fileObject):
 
 #Delete the database entries and PNG files associated with the given graph
 def DeleteCache(graph, specimen, chromosome, start):
+    print "HI!"
     #Delete database entries first
     if start and chromosome and specimen:
         start = GetRoundedIndex(start)
@@ -128,6 +129,7 @@ def DeleteCache(graph, specimen, chromosome, start):
         for f in files:
             fullpath = os.path.join(root, f)
             if graphString in f:
+                print fullPath
                 os.remove(fullpath)
 
 #Get a python object containing a unique tree that travels to the specimens and contains the chromosome files of each specimen
