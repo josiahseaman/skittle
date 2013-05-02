@@ -6,6 +6,7 @@ from django.conf import settings
 from models import Annotation, GFF
 from DNAStorage.StorageRequestHandler import GetRelatedChromosomes, GetSpecimen
 from StorageRequestHandler import StoreAnnotationChunk, ParseChromosomeName
+from Utilities.SkittleUtils import GetRoundedIndex
 
 
 #Import a GFF for a specific specimen
@@ -147,7 +148,7 @@ def chunkAndStoreAnnotations(gff, annotations):
                 parseActiveList(gff, chromosome, annotations, index, active, chunk, chunkStart, chunkEnd)
 
                 chunk = {gff.FileName: {}}
-                chunkStart = getRoundedIndex(annotations[chromosome][index].Start)
+                chunkStart = GetRoundedIndex(annotations[chromosome][index].Start)
                 chunkEnd = chunkStart + settings.CHUNK_SIZE - 1
                 chunk[gff.FileName][str(gff.id) + "-" + str(annotations[chromosome][index].ID)] = {
                     "Source": annotations[chromosome][index].Source, "Feature": annotations[chromosome][index].Feature,
@@ -216,7 +217,3 @@ def parseActiveList(gff, chromosome, annotations, index, active, chunk, chunkSta
                 chunk = {gff.FileName: {}}
                 chunkStart += settings.CHUNK_SIZE
                 chunkEnd = chunkStart + settings.CHUNK_SIZE - 1
-
-
-def getRoundedIndex(index):
-    return int(math.floor(int(index) / settings.CHUNK_SIZE) * settings.CHUNK_SIZE) + 1

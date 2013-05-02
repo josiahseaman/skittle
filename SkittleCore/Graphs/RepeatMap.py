@@ -27,6 +27,37 @@ These functions use RepeatMapState to emulate an object with state.'''
 skixelsPerSample = 24
 
 
+def encodeWidth(nucleotideWidth):
+    cumulativeWidth = 0
+    megaColumn=0
+    subColumn=0
+
+    while cumulativeWidth < (nucleotideWidth-12):
+        cumulativeWidth += 2**megaColumn
+        subColumn += 1
+        if subColumn >= 12:
+            subColumn = 0
+            megaColumn += 1
+    widthPosition = 11 + megaColumn * 12 + subColumn - (cumulativeWidth - nucleotideWidth + 12) / 2.0 **megaColumn
+
+    return int(round(widthPosition))
+
+
+def decodeWidth(columnIndex):
+    """Since RepeatMap using a log scale, this method helps figure out what width (nucleotides per line) a column of the
+RepeatMap is point at.  This task is complicated by the duplication of the scale 1 mega column for widths 1-24"""
+    cumulativeWidth = 0
+    presentColumn = 0
+    scalesByMegaColumn = [1,1,2,4,8,16,32,64,128,256,512,1024,2048,4096,]
+    for megaColumn in range(len(scalesByMegaColumn)):
+        for subColumn in range(12):
+            cumulativeWidth += scalesByMegaColumn[megaColumn]
+            presentColumn += 1
+            if presentColumn > columnIndex:
+                return cumulativeWidth
+    return 26000  # maximum value
+
+
 def generateRepeatDebugSequence(maxFrequency, bpPerFrequency, startFrequency=1):
     seq = []
     alphabet = ['A', 'C', 'G', 'T']
@@ -147,27 +178,20 @@ def checkForCachedMap(state):
     return filepath is not None
 
 
-def getBaseRepeatMapData(state, repeatMapState=RepeatMapState()):
-    #read in the one png at fixed width= skixelsPerSample
-    tempState = state.copy() #only preserves specimen and chromosome
-    tempState.width = skixelsPerSample
-    tempState.scale = 1
-    tempState.requestedGraph = 'm'
-
-    #before
+def conglomeratePNGs(tempState, nChunks):
     fullData = []
-    for s in range(state.scale):
+    for s in range(nChunks):
         pngPath = GetPngFilePath(tempState)
         if not pngPath:
             if GetFastaFilePath(tempState.specimen, tempState.chromosome, tempState.start) is not None:
-                handleRequest(
-                    tempState) #disregard the png data returned here since I'd rather read the file consistently
+                handleRequest(tempState)
+                    #disregard the png data returned here since I'd rather read the file consistently
                 pngPath = GetPngFilePath(tempState)
             else: #ran out of chunks
                 return fullData
         if not pngPath:
-            msg = "The request did not create a valid PNG:" + tempState.specimen + tempState.chromosome + str(
-                tempState.start)
+            msg = ' '.join(["The request did not create a valid PNG:", tempState.specimen, tempState.chromosome, str(
+                tempState.start)])
             open("errors.log", 'a').write(msg)
             raise IOError(msg)
         else:
@@ -175,8 +199,18 @@ def getBaseRepeatMapData(state, repeatMapState=RepeatMapState()):
             fullData += list(decoder.asFloat(1.0)[2])
 
         tempState.start += chunkSize
-        #after
+
     return fullData
+
+
+def getBaseRepeatMapData(state, repeatMapState=RepeatMapState()):
+    #read in the one png at fixed width= skixelsPerSample
+    tempState = state.copy() #only preserves specimen and chromosome
+    tempState.width = skixelsPerSample
+    tempState.scale = 1
+    tempState.requestedGraph = 'm'
+
+    return conglomeratePNGs(tempState, state.scale)
 
 
 def squishStoredMaps(state, repeatMapState=RepeatMapState()):

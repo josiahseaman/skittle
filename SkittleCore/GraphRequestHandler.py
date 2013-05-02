@@ -13,15 +13,15 @@ registering with the request Handler using the 'registerGraph' function below. '
 availableGraphs = set()
 GraphDescription = namedtuple('GraphDescription',
                               ['symbol', 'name', 'moduleReference', 'rasterGraph', 'colorPaletteDependant',
-                               'widthTolerance', 'isGrayScale', 'helpText'])
+                               'widthTolerance', 'isGrayScale', 'stretchy', 'helpText'])
 
 
 def registerGraph(symbol, name, moduleName, rasterGraph=False, colorPaletteDependant=False, widthTolerance=0.15,
-                  isGrayScale=False, helpText=None):
+                  isGrayScale=False, stretchy=True, helpText=None):
     moduleReference = sys.modules[moduleName]
     availableGraphs.add(
         GraphDescription(symbol, name, moduleReference, rasterGraph, colorPaletteDependant, widthTolerance,
-                         isGrayScale, helpText))
+                         isGrayScale, stretchy, helpText))
 
 
 from SkittleCore.models import RequestPacket, ProcessQueue
@@ -147,12 +147,20 @@ def finishProcess(request):
         return False
 
 
+def GetRegisteredGraphsSymbols():
+    symbols = []
+    for graph in availableGraphs:
+        symbols.append(graph[0])
+    return symbols
+
+
 class ServerSideGraphDescription():#TODO: I think this could be replaced with a dictionary
-    def __init__(self, Name, IsRaster, colorSensitive, widthTolerance, helpText):
+    def __init__(self, Name, IsRaster, colorSensitive, widthTolerance, stretchy, helpText):
         self.name = Name
         self.rasterGraph = IsRaster
         self.colorPaletteSensitive = colorSensitive
         self.widthTolerance = widthTolerance
+        self.stretchy = stretchy
         self.helpText = helpText
 
 
@@ -160,17 +168,17 @@ def generateGraphListForServer():
     graphs = {}
     for description in availableGraphs:
         graphs[description[0]] = ServerSideGraphDescription(description[1], description[3], description[4],
-                                                            description[5], description[7]).__dict__
+                                                            description[5], description[7], description[8]).__dict__
     return graphs
 
 
 '''These are here for the purposes of invoking the registerGraph call at the beginning of every graph definition file'''
-graphNames = ['AnnotationDisplay', 'NucleotideBias', 'NucleotideDisplay', 'OligomerUsage', 'RawFrequencyMap',
-              'RepeatMap', 'RepeatOverview', 'SequenceHighlighter', 'SimilarityHeatMap', 'ThreeMerDetector']
+graphNames = ['NucleotideBias', 'NucleotideDisplay', 'OligomerUsage', 'RawFrequencyMap',
+              'RepeatMap', 'RepeatOverview', 'SequenceHighlighter', 'SimilarityHeatMap', 'ThreeMerDetector', 'PhotoGallery']
 for name in graphNames:
     filename = 'SkittleCore.Graphs.' + name
     __import__(filename)
-assert len(availableGraphs) == len(graphNames), "One or more of the graphs didn't import correctly" + str(len(availableGraphs))
+assert len(availableGraphs) == len(graphNames), "One or more of the graphs didn't import correctly. " + str(len(availableGraphs))
 
 '''Finally, X = __import__('X') works like import X, with the difference that you
 1) pass the module name as a string, and 2) explicitly assign it to a variable in your current namespace.'''

@@ -5,11 +5,10 @@ from django.http import HttpResponse
 from django.views.decorators.cache import cache_control
 
 from SkittleCore import GraphRequestHandler
-from SkittleCore.GraphRequestHandler import handleRequest
 from SkittleCore.models import RequestPacket
 from SkittleCore.Graphs.models import *
 from DNAStorage.StorageRequestHandler import GetChromosomeLength
-from Annotations.StorageRequestHandler import GetAnnotationsChunk
+from Annotations.StorageRequestHandler import GetAnnotationsChunk,GetAnnotationsList
 
 
 def browse(request, genus="homo", species="sapiens", specimen="hg18", chromosome="chrY-sample"):
@@ -19,18 +18,9 @@ def browse(request, genus="homo", species="sapiens", specimen="hg18", chromosome
     zoom = request.GET.get('zoom', 1)
     graphs = request.GET.get('graphs', "n")
     colorPalette = request.GET.get('colorPalette', 'Classic')
-    selectionStart = request.GET.get('searchStart', 1)
-    selectionEnd = request.GET.get('searchStop', 1)
-    # if 'h' in graphs:
-    #     highlighterState = json.dumps(createHighlighterState(request,genus,species,specimen,chromosome).__dict__)
-    # else: highlighterState = "undefined"
-
-    fileLength = GetChromosomeLength(specimen, chromosome)
-    context = {'availableGraphs': GraphRequestHandler.availableGraphs, 'specimen': specimen, 'chromosome': chromosome,
-               'colorPalette': colorPalette, 'width': width, "scale": scale, "start": start, "zoom": zoom,
-               "graphs": graphs, "fileLength": fileLength, }
-    return render(request, 'browse.html', context)
-
+    fileLength = GetChromosomeLength(specimen,chromosome) 
+    context = {'availableGraphs':GraphRequestHandler.availableGraphs, 'availableAnnotations':GetAnnotationsList(specimen), "annotationStatus":json.dumps(GetAnnotationsList(specimen)), 'specimen':specimen,'chromosome':chromosome,'colorPalette':colorPalette,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength,}
+    return render(request, 'browse.html',context)
 
 @cache_control(must_revalidate=False, max_age=3600)
 def graph(request, genus="homo", species="sapiens", specimen="hg18", chromosome="chrY-sample"):
@@ -41,21 +31,25 @@ def graph(request, genus="homo", species="sapiens", specimen="hg18", chromosome=
         state.searchStart = int(request.GET.get('searchStart', 1))
         state.searchStop = int(request.GET.get('searchStop', 1))
 
-    image_data = handleRequest(state, graphSettings)
+    image_data = GraphRequestHandler.handleRequest(state, graphSettings)
     return HttpResponse(image_data, content_type="image/png")
 
 
 def annotation(request, genus="homo", species="sapiens", specimen="hg18", chromosome="chrY-sample"):
-    start = max(1, int(request.GET.get('start', 1)))
-    json = GetAnnotationsChunk(specimen, chromosome, start)
-    return HttpResponse(json, content_type="application/json")
+    if (request.GET.get('start')):
+        start = max(1, int(request.GET.get('start', 1)))
+        annotations = request.GET.getlist('annotation', None)
+        j = GetAnnotationsChunk(specimen, chromosome, start, annotations)
+    else:
+        j = json.dumps(GetAnnotationsList(specimen))
+    return HttpResponse(j, content_type="application/json")
 
 
 def state(request):
     j = "graphStatus = " + json.dumps(GraphRequestHandler.generateGraphListForServer())
-    # json = "annotationSources = " + simplejson.dumps(StorageRequestHandler.getAnnotations())
-    j += ";graphOrder = ['a','n','h','b','t','o','m','s'];"
-    return HttpResponse(j, content_type="application/json")
+    # j += "annotationSources = " + simplejson.dumps(StorageRequestHandler.getAnnotations())
+    j += ";graphOrder = ['n','h','b','t','o','m','s'];"
+    return HttpResponse(j,content_type="application/json")
 
 
 def sequence(request, genus="homo", species="sapiens", specimen="hg18", chromosome="chrY-sample"):
@@ -83,7 +77,7 @@ def createRequestPacket(request, specimen, chromosome):
 
 def createHighlighterState(request, genus, species, specimen, chromosome):
     graphSettings = HighlighterState()
-    useRevComp = True if request.GET.get('rev') else False
+    useRevComp = True if 'rev' in request.GET else False
     graphSettings.searchReverseComplement = useRevComp
     similarity = request.GET.get('sim', None)
     if similarity:

@@ -12,7 +12,9 @@ if (!window.location.getParameter ) { //for non Chrome browsers. See http://chuv
 			q = window.location.search.substring(1);
 
 		while (e = r.exec(q))
-			params[d(e[1])] = d(e[2]);
+			if (typeof params[d(e[1])] == 'array') params[d(e[1])].push(d(e[2]))
+			else if (params[d(e[1])]) params[d(e[1])] = [params[d(e[1])],d(e[2])] 
+			else params[d(e[1])] = d(e[2]);
 
 		return params;
 	}
@@ -24,6 +26,7 @@ if (!window.location.getParameter ) { //for non Chrome browsers. See http://chuv
   };
 }
 var round = function(val,precision,direction) {
+	precision = precision || 1;
 	if (direction && direction == "down") return Math.floor(val/precision)*precision;
 	else if (direction && direction == "up") return Math.ceil(val/precision)*precision;
 	return Math.round(val/precision)*precision;
@@ -114,7 +117,7 @@ var formatGffDescription = function(annotation){
 			var keyValue = v.match(/([A-Za-z][A-Za-z0-9_]*)(=| )"?([^\s"]*)"?/)
 			if (keyValue) {
 				keyValue[1] = keyValue[1][0].toUpperCase() + keyValue[1].slice(1).replace(/_/g," ")
-				if (keyValue[1] == "Gene name") keyValue[3] = '<a href="https://www.google.com/search?q='+keyValue[3]+'">'+keyValue[3]+"</a>"
+				if (keyValue[1] == "Gene name") keyValue[3] = '<a href="https://www.google.com/search?q='+keyValue[3]+'" target="_blank">'+keyValue[3]+"</a>"
 				table.append($('<tr><th>'+keyValue[1]+':</th><td>'+keyValue[3] + '</td></tr>'))
 			}
 		})
@@ -142,9 +145,6 @@ var formatSNPDescription = function(annotationArray){
 	html.append(table)
 
 	return html
-}
-var calcAnnotationColumn = function(mx) {
-	return Math.ceil((graphStatus["a"].skixelWidth+graphStatus["a"].skixelOffset-toSkixels(mx)-8)/3)
 }
 var benchmark = function(fn,count){
     var startTime = new Date().getTime();

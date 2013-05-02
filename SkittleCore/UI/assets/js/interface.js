@@ -72,50 +72,39 @@ function getMouseLocation(e) {
 
 function mouseDown(e) {
     getMouseLocation(e);
-    clearSelectedAnnotation()
 
-    if(graphStatus["a"] && graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
-        if(mx < toPixels(graphStatus["a"].skixelOffset +graphStatus["a"].skixelWidth) && mx > toPixels(graphStatus["a"].skixelOffset) ) {
-            var column = calcAnnotationColumn(mx)
-            var row = toSkixels(my)
-            $.each(visibleAnnotations,function(i,v){
-                if(column == annotations[v].column) {
-                        // console.log(column,row)
-                    if((row+1) >= annotations[v].startRow && (row-1) <= (annotations[v].startRow + annotations[v].rowHeight)) {
-                        annotationSelectedStart = annotations[v]["Start"]
-                        annotationSelectedEnd = annotations[v]["End"]
-                        if(annotations[activeAnnotation]) annotations[activeAnnotation].active = false
-                        activeAnnotation = v
-                        annotations[activeAnnotation].active = true;
+    clearSelectedAnnotation();
+    annotationMouseHandling("Mouse Down");
 
-                        annotations[v].snp_name = v
-
-                        showAnnotationDetail(annotations[v]);
-
-                        isInvalidDisplay = true;
-                        return false; //aka break
-                    }
-                }
-            })
-        }
-    }
     if(activeTool == "Move") {
-        if (graphStatus["n"].visible) {
-            var leftSideOfClickZone = toPixels(graphStatus["n"].skixelOffset + state.width())
-                if (mx > leftSideOfClickZone && mx < (leftSideOfClickZone + toPixels(gutterWidth)) ) { //change width
-                    dragWidth = true
-                    edgeOffset = mx - leftSideOfClickZone
-                    this.style.cursor = 'col-resize'
-                }
+        cc.style.cursor = 'move';
+        
+        //is mx in a gutter?
+        $.each(graphStatus,function(i,v){
+            var rightEdgeOfGraph = toPixels(v.skixelOffset+v.skixelWidth);
+            if ( v.visible && mx > rightEdgeOfGraph && mx < rightEdgeOfGraph + toPixels(gutterWidth) ) {
+                dragWidth = true;
+                widthOffset = state.width();
+                cc.style.cursor = 'col-resize';
+                return false;
             }
+        });
+        // if so then save the current mx and width
+        // if (graphStatus["n"].visible) {
+        //     var leftSideOfClickZone = toPixels(graphStatus["n"].skixelOffset + state.width())
+        //     if (mx > leftSideOfClickZone && mx < (leftSideOfClickZone + toPixels(gutterWidth)) ) { //change width
+        //         dragWidth = true
+        //         edgeOffset = mx - leftSideOfClickZone
+        //         cc.style.cursor = 'col-resize'
+        //     }
+        // }
 
     //else { // scroll
         isDrag = true;
         topOffset = my;
         startOffset = state.start();
         leftOffset = mx;
-        sideOffset = xOffset
-        this.style.cursor = 'move'
+        sideOffset = xOffset;
     //}
     }
     else if (activeTool == "Select") {
@@ -132,59 +121,40 @@ function mouseDown(e) {
 }
 function mouseMove(e) {
     getMouseLocation(e)
-    if(activeAnnotation==0 && graphStatus["a"] && graphStatus["a"].visible && (activeTool == "Move" || activeTool == "Select") )  {
-        if(mx < toPixels(graphStatus["a"].skixelOffset +graphStatus["a"].skixelWidth) && mx > toPixels(graphStatus["a"].skixelOffset) ) {
-            var column = calcAnnotationColumn(mx)
-            var row = toSkixels(my)
-            $.each(visibleAnnotations,function(i,v){
-                if(annotations[v]) annotations[v].active = false
-                if(column == annotations[v].column) {
-                    if((row+1) >= annotations[v].startRow && (row-1) <= (annotations[v].startRow + annotations[v].rowHeight)) {
-                        annotationSelectedStart = annotations[v]["Start"]
-                        annotationSelectedEnd = annotations[v]["End"]
-                        annotations[v].active = true;
-                        isInvalidDisplay = true;
-                        return false;
-                    }
-                }
 
-                activeAnnotation = annotationSelectedStart = annotationSelectedEnd = 0;
-                isInvalidDisplay = true;
-            })
-        }
-    }
+    annotationMouseHandling()
+
     if(activeTool == "Move") {
-        if (graphStatus["n"].visible) { //dragging width only applies to Nuc Display
-            var leftSideOfClickZone = toPixels(graphStatus["n"].skixelOffset + state.width())
-
-            // var widthInPixels = toPixels(width)
-                if (dragWidth){
-                    if (mx < 1) { //lose the drag if mouse goes over the edge
-                        mouseUp(e)
-                        return;
-                    }
-                    state.width( toSkixels(mx - edgeOffset) - graphStatus["n"].skixelOffset )
-                    this.style.cursor = 'col-resize'
-                }
-                else if(mx > leftSideOfClickZone && mx < (leftSideOfClickZone + toPixels(gutterWidth)) ) {
-                    this.style.cursor = 'col-resize'
-                }
-                else {
-                    this.style.cursor = 'default'
-                }
+        if (dragWidth){
+            if (mx < 1) { //lose the drag if mouse goes over the edge
+                mouseUp(e)
+                return false;
             }
+            state.width( toSkixels(mx - leftOffset) + widthOffset )
+            cc.style.cursor = 'col-resize';
+        }
+        else {
+            cc.style.cursor = 'default';
+        }
+        $.each(graphStatus,function(i,v){
+            var rightEdgeOfGraph = toPixels(v.skixelOffset+v.skixelWidth);
+            if ( v.visible && mx > rightEdgeOfGraph && mx < rightEdgeOfGraph + toPixels(gutterWidth) ) {
+                cc.style.cursor = 'col-resize';
+                return false;
+            }
+        });
 
         if (isDrag) {
 
             state.start( toSkixels(topOffset-my) * state.bpPerLine() + startOffset )
             if(!dragWidth) {
                 setXoffsetTo(sideOffset - toSkixels(leftOffset-mx))
-                this.style.cursor = 'move'
+                cc.style.cursor = 'move'
             }
         }
     }
     else if (activeTool == "Select") {
-        this.style.cursor = 'crosshair'
+        cc.style.cursor = 'crosshair'
     }
 }
 function mouseUp(e) {
@@ -192,6 +162,8 @@ function mouseUp(e) {
 }
 function mouseWheel(e) {
     e.preventDefault();
+
+    if (isDrag) return false;
 
     var delta = calcDeltaFromScrollEvent(event)
 
@@ -210,6 +182,47 @@ function mouseWheelDials(e) {
             default: state.start(by(-delta*10*state.scale())); return;
         }
     }
+}
+var annotationMouseHandling = function(isMouseDown) {
+    if(activeAnnotation==0 && annotationStatus && (activeTool == "Move" || activeTool == "Select")) {
+        var annotationFile,column,row
+        $.each(annotationStatus,function(i,v) {
+            if (v.visible==true && mx>toPixels(v.skixelOffset) && mx<toPixels(v.skixelOffset+v.skixelWidth)) {
+                annotationFile = v.FileName;
+                column = Math.ceil((v.skixelWidth+v.skixelOffset-toSkixels(mx)-8)/3)
+                row = toSkixels(my)
+                return false
+            }
+        })
+        if (annotations[annotationFile]) {
+            activeAnnotation = annotationSelectedStart = annotationSelectedEnd = 0;
+            $.each(visibleAnnotations[annotationFile],function(i,v){
+                var a = annotations[annotationFile][v]
+                if(a) a.active = false;
+                else return true;
+                if(column == a.column) {
+                    if((row+1) >= a.startRow && (row-1) <= (a.startRow + a.rowHeight)) {
+                        annotationSelectedStart = a.Start
+                        annotationSelectedEnd = a.End
+                        a.active = true;
+                        isInvalidDisplay = true;
+                        if (isMouseDown) {
+                            if(activeAnnotation.FileName && annotations[activeAnnotation.FileName][activeAnnotation.annotation]) {
+                                annotations[activeAnnotation].active = false;
+                            }
+                            activeAnnotation = {"FileName":annotationFile,"annotation":v}
+                            a.snp_name = v // only applies to SNPs
+
+                            showAnnotationDetail(a);
+
+                            return false; //aka break
+                        }
+                    }
+                }
+            });
+        }
+    }
+
 }
 // html widgets
 $(function() {
@@ -242,6 +255,7 @@ $(function() {
     $('#bug-report').click(function(){
         $('#feedback_current_view').val(getCurrentPageURL('fullURL'))
         $('#feedbackForm').toggle()
+        document.onkeydown = (typeof document.onkeydown == "function")? null : keyListener;
     })
     $("#buttonGraphs").click(function(){
         $("#graphList").toggleClass('active')
@@ -249,13 +263,24 @@ $(function() {
           $("#graphList").removeClass('active');
         }, 1500);
     })
+    $("#buttonAnnotations").click(function(){
+        $("#annotationList").toggleClass('active')
+        setTimeout(function() {
+          $("#annotationList").removeClass('active');
+        }, 1500);
+    })
     $('#graphList input').click(function() {
         graph = this.id.slice(-1);
         if ( $(this).is(':checked') ) showGraph(graph);
         else hideGraph(graph)
     })
+    $('#annotationList input').click(function() {
+        graph = this.id.match(/showAnnotation-(.*)/)[1];
+        if ( $(this).is(':checked') ) showGraph(graph);
+        else hideGraph(graph)
+    })
     $('#graph-labels .closeGraphButton').click(function() {
-        var graph = this.parentNode.id.slice(-1);
+        var graph = this.parentNode.id.match(/graphLabel-(.*)/)[1];
         hideGraph(graph)
         closeHelp(graph)
         closeSettings(graph)
@@ -332,6 +357,7 @@ var helpGraph = function(graph) {
     isInvalidDisplay = true;
 }
 var closeHelp = function(graph) {
+    if (!graphStatus[graph]) return false;
     graphStatus[graph].help = false;
     $('#graphLabel-'+graph+" .graphHelp").removeClass('active');
     $('#helpLabel-'+graph).remove()
@@ -353,6 +379,7 @@ var settingsGraph = function(graph) {
     if ($('.highlighterSequence').size() == 0) addHighlighterSearch('AAAAAAAAAA');
 }
 var closeSettings = function(graph) {
+    if (!graphStatus[graph]) return false;
     graphStatus[graph].controls = false;
     $('#graphLabel-'+graph+" .graphSettings").removeClass('active');
     $('#settingsLabel-'+graph).remove()
@@ -425,9 +452,14 @@ var getCurrentPageURL = function(fullURL) {
         if (graphStatus[key].visible == true) graphString += key;
     }
     var baseURL = (window.location.origin) ? window.location.origin : window.location.protocol + window.location.host;
-    var currentURL = window.location.pathname + "?graphs=" + graphString + "&start=" + state.start() + "&scale=" + state.scale() + "&width=" + state.width() 
+    var currentURL = window.location.pathname
+    var params = {"graphs":graphString,"start":state.start(),"scale":state.scale(),"width":state.width()};
+    params.annotation = []
+    $.each($.grep(annotationStatus, function(a){ return a.visible == true; }),function(i,v){
+        params.annotation.push(v.FileName)
+    })
+    currentURL += "?" + $.param(params,true);
     if (graphStatus['h'].visible && graphStatus['h'].settings) currentURL += highlighterEncodeURL(graphStatus['h'].settings)
-    // if (graphStatus['h'].visible) currentURL += "&searchStart=" + selectionStart + "&searchStop=" + selectionEnd;
     if (colorPalette !="Classic") graphPath += "&colorPalette="+colorPalette
     return fullURL ? baseURL + currentURL : currentURL;
 }
@@ -460,8 +492,8 @@ var showAnnotationDetail = function (annotation) {
                     'left':(toPixels(graphStatus['n'].skixelOffset+state.width()/2)-150)+'px'
                     })
     }
-    if(annotation["End"]-annotation["Start"] < state.bpPerLine() && annotation["Start"]-state.start() > 0) { //if selection is smaller than width
-        popup.css({ 'left':(toPixels(graphStatus['n'].skixelOffset+((annotation["Start"]-state.start())/state.scale())%state.width())-150)+'px'})
+    if(annotation.End-annotation.Start < state.bpPerLine() && annotation.Start-state.start() >= 0) { //if selection is smaller than width
+        popup.css({ 'left':(toPixels(graphStatus['n'].skixelOffset+Math.round((annotation.Start-state.start())/state.scale()).mod(state.width()))-150)+'px'})
     }
 
     $('#canvasContainer').append(popup)
@@ -475,15 +507,33 @@ var clearSelectedAnnotation = function() {
 
 // UI Dials interaction
 var hideGraph = function(graph) {
-    if (graphStatus[graph]) graphStatus[graph].visible = false;
-    $('#showGraph-' + graph).prop('checked',false)
+    if (graphStatus[graph]) {
+        g = graphStatus[graph]
+        $('#showGraph-' + graph).prop('checked',false)
+    }
+    else if ($.grep(annotationStatus, function(a){ return a.FileName == graph; }).length > 0) {
+        g = $.grep(annotationStatus, function(a){ return a.FileName == graph; })[0]
+        graph = $.grep(annotationStatus, function(a){ return a.FileName == graph; })[0].FileName
+        $('#showAnnotation-' + graph).prop('checked',false)
+    }
+    else return false
+    g.visible = false;
     $('#graphLabel-' + graph).hide();
     isInvalidDisplay = true;
 }
 var showGraph = function(graph) {
-    if (graphStatus[graph]) graphStatus[graph].visible = true;
+    if (graphStatus[graph]) {
+        g = graphStatus[graph]
+        $('#showGraph-' + graph).prop('checked',true)
+    }
+    else if ($.grep(annotationStatus, function(a){ return a.FileName == graph; }).length > 0) {
+        g = $.grep(annotationStatus, function(a){ return a.FileName == graph; })[0]
+        graph = $.grep(annotationStatus, function(a){ return a.FileName == graph; })[0].FileName
+        $('#showAnnotation-' + graph).prop('checked',true)
+    }
+    else return false
+    g.visible = true;
     $('#graphLabel-' + graph).show();
-    $('#showGraph-' + graph).prop('checked',true)
     isInvalidDisplay = true;
 }
 var updateDials = function() {
@@ -492,9 +542,9 @@ var updateDials = function() {
     // updateEnd();
     updateScale();
 
-    if(activeAnnotation!=0) {
+    if(activeAnnotation) {
         $('#annotationDetail').remove()
-        showAnnotationDetail(annotations[activeAnnotation])
+        showAnnotationDetail(annotations[activeAnnotation.FileName][activeAnnotation.annotation])
     }
 
     // window.history.replaceState(null,null,getCurrentPageURL())
@@ -561,11 +611,11 @@ var getterSetter = (function(){ //don't work in the global scope
 
 var StateObject = function() {}
 state = new StateObject();
-StateObject.prototype.width = getterSetter({defaultVal:100, filter:/(\d+)/, min:1, max:1024})
+StateObject.prototype.chunkSize = 65536;
+StateObject.prototype.width = getterSetter({defaultVal:100, filter:/(\d+)/, min:1, max:1024});
 StateObject.prototype.start = getterSetter({defaultVal:1, filter:/(\d+)/, min:1, max:function(){return fileLength - (skixelsOnScreen - (25+37)*state.width())*state.scale()/2 + 1}})
-StateObject.prototype.scale = getterSetter({defaultVal:1, filter:/(\d+)/, min:1, max:5000})
+StateObject.prototype.scale = getterSetter({defaultVal:1, filter:/(\d+)/, min:1, max:5000});
 StateObject.prototype.end = function(a){ return state.start(a.match(/(\d+)/)[0] - ( skixelsOnScreen - (25+37)*state.width() - 1 )*state.scale())}
-StateObject.prototype.bpPerLine = function(){ return this.width() * this.scale()}
 StateObject.prototype.goToEnd = function(){ return this.start(fileLength); }
 StateObject.prototype.scaleToFile = function(){ 
     this.start(1);
@@ -574,6 +624,13 @@ StateObject.prototype.scaleToFile = function(){
     var newScale = fileLength/(skixelsOnScreen-20*this.width());
     return newScale < 50 ? this.scale(newScale) : this.scale(round(newScale,50,"up"));
 }
+StateObject.prototype.chunkSizeBP = function(){ return this.chunkSize * this.scale(); }
+StateObject.prototype.chunkStart = function(start){ 
+    start = start || this.startTopOfScreen(1);
+    return Math.floor(start/state.chunkSizeBP())*state.chunkSizeBP() + 1;
+}
+StateObject.prototype.bpPerLine = function(){ return this.width() * this.scale(); }
+StateObject.prototype.startTopOfScreen = function(min1){ return min1? Math.max(1,state.start() - 8*state.bpPerLine()) : state.start() - 8*state.bpPerLine(); }
 var double = function(a){ return a * 2; }
 var half = function(a){ return a / 2; }
 var lines = function(a){ return Math.round(a) * state.bpPerLine(); }
