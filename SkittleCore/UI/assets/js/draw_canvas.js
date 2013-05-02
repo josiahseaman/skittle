@@ -38,6 +38,7 @@ var init = function() {
         }
         if (updateURL && loopCount++ == 100) {
             window.history.pushState(null,null,getCurrentPageURL())
+            simultainiousRequests = 0; //reset in case something weird happened
         }
     },50)
 }
@@ -76,19 +77,23 @@ var graphURL = function(graph,chunkOffset) {
 var annotationRequestor = function(chunkOffset,file) {
     if (chunkOffset > fileLength) return false;
 
-    if(!loadedAnnotations[chunkOffset] && chunkOffset <= fileLength) {
+    if(!loadedAnnotations[chunkOffset] && chunkOffset <= fileLength && simultainiousRequests < 4) {
+        simultainiousRequests++
+
         var activeAnnotations = [file];
 
         $.getJSON('annotation.json',{start:chunkOffset,annotation:activeAnnotations},function(data){
             $.each(data,function(i,v){
                 annotations[i] = annotations[i] || {}
                 $.extend(annotations[i],v)
+                simultainiousRequests--
             })
             isInvalidDisplay = true
             loadedAnnotations[chunkOffset] = true
         }).error(function(jqXHR, textStatus, errorThrown){
             if(jqXHR.responseText=="None") loadedAnnotations[chunkOffset] = true
             console.log(chunkOffset,jqXHR.responseText,textStatus,errorThrown)
+            simultainiousRequests--
         })
     }
 }
@@ -240,7 +245,7 @@ var drawAnnotation = function(file,statusIndex,offset) {
     visibleAnnotations[file].sort(function(a,b){
         var a = annotations[file][a]
         var b = annotations[file][b]
-        return a.Start - b.Start + (b.End/b.Start - a.Start/a.Start)
+        return a.Start - b.Start + ((b.End-b.Start) - (a.End-a.Start))/10
     })
 
     $.each(visibleAnnotations[file],function(i,v){
