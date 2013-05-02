@@ -116,13 +116,13 @@ def DeleteCache(graph, specimen, chromosome, start):
     #CD into the folder where this file is located as it should be the DNAStorage folder
     workingDir = settings.SKITTLE_TREE_LOC + "DNAStorage/png/"
     if specimen:
-        workingDir += specimen + "/"
+        workingDir += str(specimen).strip() + "/"
         if chromosome:
-            workingDir += chromosome + "/"
+            workingDir += str(chromosome).strip() + "/"
 
     graphString = graph + "_"
     if specimen and chromosome and start:
-        graphString += "start=" + start + "_"
+        graphString += "start=" + str(start).strip() + "_"
 
     for root, dirs, files in os.walk(workingDir):
         for f in files:
