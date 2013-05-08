@@ -250,15 +250,15 @@
 
 	{% endblock %}
 	{% block scripts %}
-<!--[if lt IE 9]>
-<script src="dist/html5shiv.js"></script>
-<![endif]-->
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 	<script type="text/javascript">
 
 
 	</script>
 	{% endblock %}
+
+	{% block requireChromeFrame %}{% endblock %}
+
 	{% block header %}{% endblock %}
 
 	{% block content %}
@@ -349,7 +349,7 @@
 	<script type="text/javascript">
 
 
-	$(document).ready(function() {
+	$(function() {
 		$('nav a').on('click',function() {
 			$('nav a').removeClass('active')
 			$(this).addClass('active')
