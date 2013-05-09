@@ -11,6 +11,6 @@ then
     fi
 fi
 
-python ./manage.py purgeProcessQueue
+python ./manage.py purgeprocessqueue
 python ./manage.py runserver 5000
 }
