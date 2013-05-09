@@ -11,6 +11,7 @@ import ctypes
 from models import ThreeMerDetectorState
 from PixelLogic import colorPalettes
 
+defaultColor = (125, 125, 125)
 
 try:
     skittleUtils = ctypes.CDLL(
@@ -129,7 +130,7 @@ def countListToColorSpace(countList, colorPalette, scale):
     for character, Magnitude in countList.items():#per entry in dictionary
         multiplier = Magnitude / (1.0 - expectedValue)
         colorContributions.append(
-            map(lambda c: c * multiplier, colorMapping[character])) #scales color amount by magnitude for each channel
+            map(lambda c: c * multiplier, colorMapping.get(character, defaultColor))) #scales color amount by magnitude for each channel
     resultingColor = map(sum, zip(*colorContributions))
 
     for i in range(len(resultingColor)):
@@ -183,7 +184,7 @@ def countNucleotides(seq, oligomerSize=1):
     counts = {'A': 0, 'C': 0, 'G': 0, 'T': 0, 'N': 0}
     if oligomerSize == 1:#optimized for Nucleotide Display
         for c in seq:
-            counts[c] = 1 + counts[c] #counts.get(c,0) #defaults to 0
+            counts[c] = 1 + counts.get(c, 0) #defaults to 0 counts[c] #
     else:
         for endIndex in range(oligomerSize, len(seq) + 1, 1):
             c = seq[endIndex - oligomerSize: endIndex]
@@ -232,7 +233,7 @@ def sequenceToColors(seq, colorPalette):
     pixels = []
     colorMapping = colorPalettes[colorPalette]
     for c in seq:
-        pixels.append(colorMapping[c])
+        pixels.append(colorMapping.get(c, defaultColor))  # [c]
     return pixels
 
 
