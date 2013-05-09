@@ -40,8 +40,8 @@ if PRODUCTION and not socket.gethostname().startswith('nyx'):
             'NAME': 'DNASkittle', # Or path to database file if using sqlite3.
             'USER': 'skittle', # Not used with sqlite3.
             'PASSWORD': 'sk!77l3PandaDatabase%', # Not used with sqlite3.
-            'HOST': '', # Set to empty string for localhost. Not used with sqlite3.
-            'PORT': '', # Set to empty string for default. Not used with sqlite3.
+            'HOST': '127.0.0.1', # Set to empty string for localhost. Not used with sqlite3.
+            'PORT': '3306', # Set to empty string for default. Not used with sqlite3.
         }
     }
 
@@ -52,8 +52,8 @@ else:
             'NAME': 'SkittleTree', # Or path to database file if using sqlite3.
             'USER': 'skittle', # Not used with sqlite3.
             'PASSWORD': 'sk!77l3PandaDatabase%', # Not used with sqlite3.
-            'HOST': '', # Set to empty string for localhost. Not used with sqlite3.
-            'PORT': '', # Set to empty string for default. Not used with sqlite3.
+            'HOST': '127.0.0.1', # Set to empty string for localhost. Not used with sqlite3.
+            'PORT': '3306', # Set to empty string for default. Not used with sqlite3.
         }
     }
 
