@@ -11,7 +11,6 @@ import ctypes
 from models import ThreeMerDetectorState
 from PixelLogic import colorPalettes
 
-defaultColor = (125, 125, 125)
 
 try:
     skittleUtils = ctypes.CDLL(
@@ -129,8 +128,11 @@ def countListToColorSpace(countList, colorPalette, scale):
     newMax = max(countList.values())
     for character, Magnitude in countList.items():#per entry in dictionary
         multiplier = Magnitude / (1.0 - expectedValue)
-        colorContributions.append(
-            map(lambda c: c * multiplier, colorMapping.get(character, defaultColor))) #scales color amount by magnitude for each channel
+        try:
+            currentColor = colorMapping[character]
+        except KeyError:
+            currentColor = colorMapping['N']
+        colorContributions.append(map(lambda c: c * multiplier, currentColor))  # scales color amount by magnitude for each channel
     resultingColor = map(sum, zip(*colorContributions))
 
     for i in range(len(resultingColor)):
@@ -182,9 +184,11 @@ def countNucleotides(seq, oligomerSize=1):
     if not seq:
         return {}
     counts = {'A': 0, 'C': 0, 'G': 0, 'T': 0, 'N': 0}
-    if oligomerSize == 1:#optimized for Nucleotide Display
+    if oligomerSize == 1:  # optimized for Nucleotide Display
         for c in seq:
-            counts[c] = 1 + counts.get(c, 0) #defaults to 0 counts[c] #
+            try:
+                counts[c] = 1 + counts[c]  # counts.get(c,0) #defaults to 0
+            except: pass
     else:
         for endIndex in range(oligomerSize, len(seq) + 1, 1):
             c = seq[endIndex - oligomerSize: endIndex]
@@ -213,8 +217,8 @@ def colorCompress(pixels, scale):
         return map(lambda x: colorCompress(x, scale), pixels)
     compressed = []
     for i in range(0, len(pixels) - scale, scale):
-        r = 0;
-        g = 0;
+        r = 0
+        g = 0
         b = 0
         for s in range(scale):
             r += pixels[i + s][0]
@@ -233,7 +237,10 @@ def sequenceToColors(seq, colorPalette):
     pixels = []
     colorMapping = colorPalettes[colorPalette]
     for c in seq:
-        pixels.append(colorMapping.get(c, defaultColor))  # [c]
+        try:
+            pixels.append(colorMapping[c])
+        except KeyError:
+            pixels.append(colorMapping['N'])
     return pixels
 
 
@@ -386,13 +393,11 @@ def oldRepeatMap(state, threeMerState):
     return freq
 
 
-'''This method takes a series of floating point numbers.  It checks each multiple of "frequency" and determines
-if the sum of samples at frequency are greater than the background level.  It then returns the frequency score.
-If there is no difference, this number will be 0.0.  This score is not currently normalized. This method is used
-to find the 3-periodicity bias found in most protein coding sequences.'''
-
-
 def sensitiveTestForSpecificFrequency(floatList, frequency=3, numberOfSamples=20.0):
+    """This method takes a series of floating point numbers.  It checks each multiple of "frequency" and determines
+    if the sum of samples at frequency are greater than the background level.  It then returns the frequency score.
+    If there is no difference, this number will be 0.0.  This score is not currently normalized. This method is used
+    to find the 3-periodicity bias found in most protein coding sequences."""
     if hasDepth(floatList):
         return map(lambda x: sensitiveTestForSpecificFrequency(x, frequency, numberOfSamples), floatList)
     assert isinstance(frequency, int), "Please use an integer offset frequency."
