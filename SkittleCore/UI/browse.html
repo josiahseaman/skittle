@@ -1,11 +1,31 @@
 {% extends "base.html" %}
-{% block pageTitle %}{{ specimen }} | DNASkittle{% endblock %}
+{% block pageTitle %}{{ specimen.ExtendedName }} | DNASkittle{% endblock %}
 {% block styles %}
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/browser.css">
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/popover.css">
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/simple-slider.css">
     <style type="text/css">
-
+	    header div {
+	    	margin: 0 8px;
+	    	padding: 0.35em 0.5em;
+	    	/*height: 60px;*/
+			box-shadow: 0 0 16px #000;
+	    }
+    	header h2 {
+    		display:inline-block;
+    		margin: 0;
+    		color:#ccc;
+    		font-weight: 600;
+    	}
+    	h2 .chromosomeName {
+    		font-weight: 400;
+    		font-size: 0.8em;
+    	}
+    	header .taxonomy {
+    		text-align: left;
+    		margin: 0 0 -0.3em 0;
+    		color:#fda;
+    	}
     </style>
 {% endblock %}
 {% block scripts %}
@@ -19,7 +39,7 @@
     <script src="{{ STATIC_URL }}js/draw_canvas.js"></script>
     <script type="text/javascript">
 	    xOffset = 0
-	    specimen = "{{ specimen }}"
+	    specimen = "{{ specimen.Name }}"
 	    chromosome = "{{ chromosome }}"
 	    // var getParams = JSON.parse('{"' + decodeURI(window.location.search.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}')
 	    colorPalette = "{{ colorPalette }}"
@@ -29,7 +49,24 @@
 
     </script>
 {% endblock %}
-
+	{% block header %}
+	<h1 id="logo"><a href="/"><img src="{{STATIC_URL}}gfx/skittle-logo3.png"><span>DNA</span>Skittle</a></h1>
+	
+	<header>	
+		<div>
+			<p class="taxonomy">{{ specimen.Kingdom }} &gt; {{ specimen.Class }} &gt; {{ specimen.Genus }} &gt; {{ specimen.Species }}</p>
+			<h2>{{ specimen.ExtendedName }} ({{ specimen.Name }}) <span class="chromosomeName">&gt; {{ chromosome }}</span>
+				
+			<div class="popover arrow-top-left" id="chromosomeList">
+				<ul>
+					{% for c in chromosomeList %}
+					<li><a href="../{{ c }}">{{ c }}</a></li>
+					{% endfor %}
+				</ul>
+			</div></h2>
+		</div>
+	</header>
+	{% endblock %}
 {% block content %}
 	<div id="canvasContainer">
 	    <canvas id="c" width="2000" height="1000"></canvas>
@@ -255,7 +292,9 @@
 
 	contactForm();
 
-
+		$('.chromosomeName').on('click',function(){
+			$('#chromosomeList').toggle();
+		})
 
 
 	})

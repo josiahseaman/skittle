@@ -159,7 +159,10 @@ def GetTreeList():
 
 #Get list of chromosomes related to a specimen
 def GetRelatedChromosomes(specimen):
-    fastaFiles = FastaFiles.objects.filter(Specimen=specimen)
+    if type(specimen) is unicode: 
+        fastaFiles = FastaFiles.objects.filter(Specimen__Name=specimen)
+    else:
+        fastaFiles = FastaFiles.objects.filter(Specimen=specimen)
 
     chromosomes = []
 

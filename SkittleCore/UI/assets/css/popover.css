@@ -111,6 +111,31 @@
 		box-shadow: 2px 2px 8px #000;
 	    border-color: transparent;
 	}​
+	.arrow-top-left::after, .arrow-top-left::before {
+	    content: ' ';
+	    display: block;
+	    position: absolute;
+	    top: -12px;
+	    left: 20px;
+	    margin-left: -10px;
+	    background: #333;
+		border:2px solid #888;
+		border-bottom: none;
+		border-right: none;
+		border-bottom-right-radius: 20px;
+	    width: 20px;
+	    height: 20px;
+	    -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	    -o-transform: rotate(45deg);
+	    -webkit-transform: rotate(45deg);
+	    transform: rotate(45deg);
+	}
+	.arrow-top-left::after {
+	    z-index: -10;
+		box-shadow: 2px 2px 8px #000;
+	    border-color: transparent;
+	}​
 	.arrow-left-top::after, .arrow-left-top::before {
 	    content: ' ';
 	    display: block;
