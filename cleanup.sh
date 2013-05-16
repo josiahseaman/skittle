@@ -15,4 +15,5 @@ then
 fi
 
 python ./manage.py purgeprocessqueue
+python ./manage.py deletecache all
 }
