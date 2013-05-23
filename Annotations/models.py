@@ -13,6 +13,8 @@ class GFF(models.Model):
     Protein = models.TextField(null=True, blank=True)
     SequenceRegion = models.CharField(max_length=255, null=True, blank=True)
     FileName = models.CharField(max_length=255)
+    Public = models.BooleanField()
+    User = models.CharField(max_length=255, null=True, blank=True)
 
 # Database of all gff chunk files storing json
 class AnnotationJsonChunk(models.Model):

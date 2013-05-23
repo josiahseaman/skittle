@@ -151,6 +151,15 @@ def RunMigration9():
     commitTrans()
     cur.execute(part2)
 
+#####_____MIGRATION 10_____#####
+def RunMigration10():
+    cur = setupDB()
+
+    part1 = "ALTER TABLE `Annotations_gff` ADD COLUMN `Public` TINYINT(1) UNSIGNED NOT NULL AFTER `FileName`"
+    part2 = "ALTER TABLE `Annotations_gff` ADD COLUMN `User` VARCHAR(255) AFTER `Public`"
+
+    part3 = "ALTER TABLE `DNAStorage_specimen` ADD COLUMN `User` VARCHAR(255) AFTER `Public`"
+
 
 def commitTrans():
     from django.db import transaction

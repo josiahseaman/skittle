@@ -14,6 +14,7 @@ class Specimen(models.Model):
     DatePublished = models.CharField(max_length=50, null=True, blank=True)
     Thumbnail = models.CharField(max_length=255, null=True, blank=True)
     Public = models.BooleanField()
+    User = models.CharField(max_length=255, null=True, blank=True)
 
 
 class FastaFiles(models.Model):
