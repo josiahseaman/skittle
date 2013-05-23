@@ -160,6 +160,10 @@ def RunMigration10():
 
     part3 = "ALTER TABLE `DNAStorage_specimen` ADD COLUMN `User` VARCHAR(255) AFTER `Public`"
 
+    cur.execute(part1)
+    cur.execute(part2)
+    cur.execute(part3)
+
 
 def commitTrans():
     from django.db import transaction
