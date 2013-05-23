@@ -190,7 +190,7 @@ def RunMigration11():
 def RunMigration12():
     cur = setupDB()
 
-    part1 = "CREATE TABLE `SkittleCore_skittleuser` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `password` varchar(128) NOT NULL, `last_login` datetime NOT NULL, `is_superuser` bool NOT NULL, `Email` varchar(255) NOT NULL UNIQUE, `FirstName` varchar(255) NOT NULL, `LastName` varchar(255), `IsAdmin` bool NOT NULL, `IsActive` bool NOT NULL, `DateJoined` datetime NOT NULL, `State_id` integer NOT NULL UNIQUE)"
+    part1 = "CREATE TABLE `SkittleCore_skittleuser` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `password` varchar(128) NOT NULL, `last_login` datetime NOT NULL, `is_superuser` bool NOT NULL, `Email` varchar(255) NOT NULL UNIQUE, `FirstName` varchar(255) NOT NULL, `LastName` varchar(255), `IsAdmin` bool NOT NULL, `IsActive` bool NOT NULL, `DateJoined` datetime NOT NULL, `State_id` integer UNIQUE)"
     part2 = "CREATE TABLE `SkittleCore_skittleuser_groups` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `skittleuser_id` integer NOT NULL, `group_id` integer NOT NULL, UNIQUE (`skittleuser_id`, `group_id`))"
     part3 = "CREATE TABLE `SkittleCore_skittleuser_user_permissions` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `skittleuser_id` integer NOT NULL,  `permission_id` integer NOT NULL, UNIQUE (`skittleuser_id`, `permission_id`))"
     part4 = "ALTER TABLE `SkittleCore_skittleuser_groups` ADD CONSTRAINT `group_id_refs_id_c5dbdda0` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`)"
