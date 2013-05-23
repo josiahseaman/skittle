@@ -17,3 +17,5 @@ if __name__ == "__main__":
     #RunMigration9()
     RunMigration10()
     RunMigration11()
+    RunMigration12()
+    RunMigration13()

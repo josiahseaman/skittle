@@ -175,12 +175,54 @@ def RunMigration11():
     cur = setupDB()
 
     part1 = "DROP TABLE IF EXISTS `SkittleCore_statepacket`"
-    part2 = "DROP TABLE IF EXISTS `SkittleCore_requestpacket`"
-    part3 = "CREATE TABLE `SkittleCore_statepacket` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `specimen` varchar(200) NOT NULL, `chromosome` varchar(200) NOT NULL, `seq` longtext, `colorPalette` varchar(50) NOT NULL, `width` integer, `scale` integer, `start` integer, `length` integer NOT NULL, `requestedGraph` varchar(1), `searchStart` integer NOT NULL, `searchStop` integer NOT NULL)"
+    part2 = "SET FOREIGN_KEY_CHECKS=0"
+    part3 = "DROP TABLE IF EXISTS `SkittleCore_requestpacket`"
+    part4 = "SET FOREIGN_KEY_CHECKS=1"
+    part5 = "CREATE TABLE `SkittleCore_statepacket` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `specimen` varchar(200) NOT NULL, `chromosome` varchar(200) NOT NULL, `seq` longtext, `colorPalette` varchar(50) NOT NULL, `width` integer, `scale` integer, `start` integer, `length` integer NOT NULL, `requestedGraph` varchar(1), `searchStart` integer NOT NULL, `searchStop` integer NOT NULL)"
 
     cur.execute(part1)
     cur.execute(part2)
     cur.execute(part3)
+    cur.execute(part4)
+    cur.execute(part5)
+
+#####_____MIGRATION 12_____#####
+def RunMigration12():
+    cur = setupDB()
+
+    part1 = "CREATE TABLE `SkittleCore_skittleuser` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `password` varchar(128) NOT NULL, `last_login` datetime NOT NULL, `is_superuser` bool NOT NULL, `Email` varchar(255) NOT NULL UNIQUE, `FirstName` varchar(255) NOT NULL, `LastName` varchar(255), `IsAdmin` bool NOT NULL, `IsActive` bool NOT NULL, `DateJoined` datetime NOT NULL, `State_id` integer NOT NULL UNIQUE)"
+    part2 = "CREATE TABLE `SkittleCore_skittleuser_groups` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `skittleuser_id` integer NOT NULL, `group_id` integer NOT NULL, UNIQUE (`skittleuser_id`, `group_id`))"
+    part3 = "CREATE TABLE `SkittleCore_skittleuser_user_permissions` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `skittleuser_id` integer NOT NULL,  `permission_id` integer NOT NULL, UNIQUE (`skittleuser_id`, `permission_id`))"
+    part4 = "ALTER TABLE `SkittleCore_skittleuser_groups` ADD CONSTRAINT `group_id_refs_id_c5dbdda0` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`)"
+    part5 = "ALTER TABLE `SkittleCore_skittleuser_user_permissions` ADD CONSTRAINT `permission_id_refs_id_af15d326` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`)"
+    part6 = "ALTER TABLE `SkittleCore_skittleuser` ADD CONSTRAINT `State_id_refs_id_8b1369ee` FOREIGN KEY (`State_id`) REFERENCES `SkittleCore_statepacket` (`id`)"
+    part7 = "ALTER TABLE `SkittleCore_skittleuser_groups` ADD CONSTRAINT `skittleuser_id_refs_id_4d6ae9f2` FOREIGN KEY (`skittleuser_id`) REFERENCES `SkittleCore_skittleuser` (`id`)"
+    part8 = "ALTER TABLE `SkittleCore_skittleuser_user_permissions` ADD CONSTRAINT `skittleuser_id_refs_id_eb0d7075` FOREIGN KEY (`skittleuser_id`) REFERENCES `SkittleCore_skittleuser` (`id`)"
+
+    cur.execute(part1)
+    cur.execute(part2)
+    cur.execute(part3)
+    cur.execute(part4)
+    cur.execute(part5)
+    cur.execute(part6)
+    cur.execute(part7)
+    cur.execute(part8)
+
+#####_____MIGRATION 13_____#####
+def RunMigration13():
+    cur = setupDB()
+
+    part1 = "DROP TABLE IF EXISTS `auth_user_groups`"
+    part2 = "DROP TABLE IF EXISTS `auth_user_user_permissions`"
+    part3 = "SET FOREIGN_KEY_CHECKS=0"
+    part4 = "DROP TABLE IF EXISTS `auth_user`"
+    part5 = "SET FOREIGN_KEY_CHECKS=1"
+
+    cur.execute(part1)
+    cur.execute(part2)
+    cur.execute(part3)
+    cur.execute(part4)
+    cur.execute(part5)
 
 def commitTrans():
     from django.db import transaction
