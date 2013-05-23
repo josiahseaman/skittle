@@ -5,10 +5,10 @@
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/popover.css">
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/simple-slider.css">
     <style type="text/css">
-	    header div {
-	    	margin: 0 8px;
-	    	padding: 0.35em 0.5em;
-	    	/*height: 60px;*/
+	    header>div {
+	    	margin: 0;
+	    	padding-left: 0.5em;
+	    	height: 60px;
 			box-shadow: 0 0 16px #000;
 	    }
     	header h2 {
@@ -20,11 +20,39 @@
     	h2 .chromosomeName {
     		font-weight: 400;
     		font-size: 0.8em;
+    		position: relative;
     	}
     	header .taxonomy {
     		text-align: left;
     		margin: 0 0 -0.3em 0;
+    		padding-top: 0.35em;
     		color:#fda;
+    	}
+    	#chromosomeList {
+    		top:2.2em;
+    	}
+    	#chromosomeList a {
+    		box-shadow: none;
+    		text-align: left;
+    		min-width:100px;
+    		height: inherit;
+    		line-height: 1.2em;
+    		padding: 0.5em;
+    	}
+    	#usertools {
+    		float:right;
+    		text-align: right;
+    		margin: 0;
+    		padding: 0 1em;
+    		height: 60px;
+    		font-size: 0.8em;
+			box-shadow: 0 0 16px #000;
+    	}
+    	header a {
+    		text-decoration: none;
+    	}
+    	header a:hover {
+    		text-decoration: underline;
     	}
     </style>
 {% endblock %}
@@ -54,16 +82,22 @@
 	
 	<header>	
 		<div>
-			<p class="taxonomy">{{ specimen.Kingdom }} &gt; {{ specimen.Class }} &gt; {{ specimen.Genus }} &gt; {{ specimen.Species }}</p>
-			<h2>{{ specimen.ExtendedName }} ({{ specimen.Name }}) <span class="chromosomeName">&gt; {{ chromosome }}</span>
+			<div id="usertools">Welcome Username<br />
+				Logout<br />
+				My Genomes
+			</div>
+			<p class="taxonomy"><a href="/discover">{{ specimen.Kingdom }}</a> &gt; <a href="/discover">{{ specimen.Class }}</a> &gt; <a href="/discover">{{ specimen.Genus }}</a> &gt; <a href="/discover">{{ specimen.Species }}</a></p>
+			<h2>{{ specimen.ExtendedName }} ({{ specimen.Name }}) <span class="chromosomeName">&gt; {{ chromosome }}
 				
 			<div class="popover arrow-top-left" id="chromosomeList">
 				<ul>
 					{% for c in chromosomeList %}
+						{% if c != chromosome %}
 					<li><a href="../{{ c }}">{{ c }}</a></li>
+						{% endif %}
 					{% endfor %}
 				</ul>
-			</div></h2>
+			</div></span></h2>
 		</div>
 	</header>
 	{% endblock %}
