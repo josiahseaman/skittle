@@ -170,7 +170,17 @@ def RunMigration10():
         annotation.Public = True
         annotation.save()
 
+#####_____MIGRATION 11_____#####
+def RunMigration11():
+    cur = setupDB()
 
+    part1 = "DROP TABLE IF EXISTS `SkittleCore_statepacket`"
+    part2 = "DROP TABLE IF EXISTS `SkittleCore_requestpacket`"
+    part3 = "CREATE TABLE `SkittleCore_statepacket` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `specimen` varchar(200) NOT NULL, `chromosome` varchar(200) NOT NULL, `seq` longtext, `colorPalette` varchar(50) NOT NULL, `width` integer, `scale` integer, `start` integer, `length` integer NOT NULL, `requestedGraph` varchar(1), `searchStart` integer NOT NULL, `searchStop` integer NOT NULL)"
+
+    cur.execute(part1)
+    cur.execute(part2)
+    cur.execute(part3)
 
 def commitTrans():
     from django.db import transaction
