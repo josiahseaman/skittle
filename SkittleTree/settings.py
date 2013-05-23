@@ -33,7 +33,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 if PRODUCTION and not socket.gethostname().startswith('nyx'):
-    #TODOL mysql_pool
+    #TODO: mysql_pool
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
