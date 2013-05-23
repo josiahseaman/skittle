@@ -32,6 +32,8 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+AUTH_USER_MODEL = 'SkittleCore.SkittleUser'
+
 if PRODUCTION and not socket.gethostname().startswith('nyx'):
     #TODO: mysql_pool
     DATABASES = {
