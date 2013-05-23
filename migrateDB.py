@@ -6,10 +6,10 @@ def setupDB():
     db = None
 
     if settings.PRODUCTION:
-        db = MySQLdb.connect(host="localhost", user="skittle", passwd="sk!77l3PandaDatabase%", db="DNASkittle")
+        db = MySQLdb.connect(host="127.0.0.1", user="skittle", passwd="sk!77l3PandaDatabase%", db="DNASkittle")
         dbName = "dnaskittle"
     else:
-        db = MySQLdb.connect(host="localhost", user="skittle", passwd="sk!77l3PandaDatabase%", db="SkittleTree")
+        db = MySQLdb.connect(host="127.0.0.1", user="skittle", passwd="sk!77l3PandaDatabase%", db="SkittleTree")
         dbName = "skittletree"
 
     cur = db.cursor()
@@ -163,6 +163,13 @@ def RunMigration10():
     cur.execute(part1)
     cur.execute(part2)
     cur.execute(part3)
+
+    from Annotations.models import GFF
+    annotations = GFF.objects.all()
+    for annotation in annotations:
+        annotation.Public = True
+        annotation.save()
+
 
 
 def commitTrans():
