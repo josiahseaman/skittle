@@ -16,10 +16,7 @@ This is the single global state packet that defines a view state in Skittle.
 This state packet is equivalent to an URL or a request from the Skittle website.
 '''
 
-
-class RequestPacket(models.Model):
-    #TODO: user = models.ForeignKey(User)
-    #TODO: session
+class basePacket(models.Model):
     specimen = models.CharField(max_length=200, default='hg18')
     chromosome = models.CharField(max_length=200, default='chrY-sample')
     '''It is debatable whether or not the sequence should be stored in the state
@@ -38,7 +35,7 @@ class RequestPacket(models.Model):
                                     default='Classic')
     width = models.IntegerField(default=None, null=True)
     scale = models.IntegerField(default=None, null=True)
-    '''Internally, start begins at 0.  Biologists count indices starting at 1, so this number 
+    '''Internally, start begins at 0.  Biologists count indices starting at 1, so this number
     is 1 less than the number displayed on the website.  This also means that you should print
     index+1 whenever you are writing user readable output.'''
     start = models.IntegerField(default=None, null=True)
@@ -48,6 +45,17 @@ class RequestPacket(models.Model):
     searchStart = models.IntegerField(default=1)
     searchStop = models.IntegerField(default=1)
 
+    class Meta:
+        abstract = True
+
+class StatePacket(basePacket):
+    # NOTE: We can store other state items that come up here.
+    # Session management and stuff. This will be nice when the Social aspect comes up.
+
+    class Meta:
+        abstract = False
+
+class RequestPacket(basePacket):
     def copy(self):
         c = RequestPacket()
         #copy everything except the sequence
@@ -85,7 +93,7 @@ class RequestPacket(models.Model):
             self.seq = '' #ensure that seq is at least a string object
         self.start = self.start + len(self.seq) # jump to the end of the current sequence  (+ chunkSize)
 
-        #print "Requesting",self.specimen, self.chromosome, self.start 
+        #print "Requesting",self.specimen, self.chromosome, self.start
         sequence = readFile(self)# see if there's a file that begins where you end, this will stop on a partial file
         if sequence is not None:
             self.seq = self.seq + sequence #append two sequences together
@@ -114,15 +122,8 @@ class RequestPacket(models.Model):
             print "Done reading files"
         self.length = len(self.seq)
 
-
-class StatePacket(RequestPacket):
-    specimen = 'hg18'
-    chromosome = 'chrY-sample'
-    width = 200
-    scale = 1
-    start = 1
-    requestedGraph = 'n'
-
+    class Meta(basePacket.Meta):
+        managed = False
 
 class ProcessQueue(models.Model):
     Specimen = models.CharField(max_length=200)
