@@ -48,7 +48,10 @@
 			<li><a href="/discover">Discover</a></li><!-- <li><a>Share</a></li> --><li><a href="/learn">Learn</a></li>
 		</ul>
 		<p><a href="https://twitter.com/genome_skittle" target="blank"><img src="{{STATIC_URL}}gfx/twitter-bird-dark-bgs.png" height="36" width="36"></a><a href="https://plus.google.com/u/0/113106795968395476024/about" target="blank"><img src="{{STATIC_URL}}gfx/gplus-white-26.png" height="26" width="26"></a>
-			<a href="https://github.com/josiahseaman/skittle" target="blank"><img src="{{STATIC_URL}}gfx/github-white.png" height="22"></a></p>
+			<a href="https://github.com/josiahseaman/skittle" target="blank"><img src="{{STATIC_URL}}gfx/github-white.png" height="22"></a>
+			{% block usertools %}
+			{% endblock %}
+		</p>
 	</header>
 	{% endblock %}
 	{% block content %}
@@ -71,7 +74,9 @@
 			<li class="radio-tools" data-tool="Annotate"><img src="{{STATIC_URL}}gfx/icons/39.png" width="20" height="20">Annotate</li> -->
 			<li id="link-here"><img src="{{STATIC_URL}}gfx/icons/flag.png" width="20" height="20">Link Here</li>
 			<!-- <li><img src="{{STATIC_URL}}gfx/icons/camera.png" width="20" height="20">Screenshot</li> -->
+			<div class="bottom">
 			<li class="bottom"><img src="{{STATIC_URL}}gfx/icons/cog.png" width="20" height="20">Settings</li>
+			</div>
 		</ul>
 	</div>
 	<div id="dials">
@@ -107,6 +112,11 @@
 		</ul>
 	</div>
 
+
+{% endblock %}
+{% block login %}
+	<div class="popover" id="login">
+	</div>
 {% endblock %}
 
 {% if PRODUCTION %}

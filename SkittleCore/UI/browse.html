@@ -143,8 +143,11 @@
 			<li class="radio-tools" data-tool="Annotate"><img src="{{STATIC_URL}}gfx/icons/39.png" width="20" height="20">Annotate</li> -->
 			<li id="link-here"><img src="{{STATIC_URL}}gfx/icons/link.png" width="20" height="20">Link Here</li>
 			<!-- <li><img src="{{STATIC_URL}}gfx/icons/camera.png" width="20" height="20">Screenshot</li> -->
-			<!-- <li class="bottom"><img src="{{STATIC_URL}}gfx/icons/cog.png" width="20" height="20">Settings</li> -->
-			<li id="bug-report" class="bottom"><img src="{{STATIC_URL}}gfx/icons/bug.png" width="20" height="20">Bug Report</li>
+			<div class="bottom">
+
+			<li id="bug-report"><img src="{{STATIC_URL}}gfx/icons/bug.png" width="20" height="20">Bug Report</li>
+			<!-- <li><img src="{{STATIC_URL}}gfx/icons/cog.png" width="20" height="20">Settings</li> -->
+			</div>
 		</ul>
 	</div>
 	<div id="dials">
@@ -205,6 +208,9 @@
 		<input type="submit" value="Send Feedback">
 	</form>
 	</div>
+
+	{% block login %}{% endblock %}
+
 	<script type="text/javascript">
     var cc, c, b, a;
     var isDrag = false;
