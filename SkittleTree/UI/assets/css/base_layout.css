@@ -68,6 +68,12 @@ header p img {
 	border:1px solid #777;
 	border-radius: 4px;
 }
+.message {
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 6px;
+	padding: 0.5em;
+}
 
 #feedbackForm {
 	display: none;

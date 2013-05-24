@@ -53,7 +53,8 @@
 		input {
 			font-size: 1.1em;
 		}
-		input[type="text"] {
+		input[type="text"],textarea {
+			display:inline-block;
 			background: #333;
 			color:#fff;
 			border: 1px solid #444;
@@ -141,8 +142,12 @@
 {% block content %}
 
 	<div class="container">
+		{% if status %}
+		<div class="message {{ status }}">{{ message }}</div>
+		{% endif %}
 		<h2>Upload a Genome</h2>
-		<form id="uploadForm">
+		<form id="uploadForm" action="upload" method="post">
+			{% csrf_token %}
 			<div class="vertical-grid">
 			<label for="fastaPublic">Availability:</label>
 			<input type="radio" name="fastaPublic" value="public" checked>Public
@@ -151,8 +156,9 @@
 			<label for="fastaName">Genome Name:</label><input type="text" name="fastaName" placeholder="(e.g. Human Genome)" class="primary"><br>
 			<label for="fastaSpecimen">Specimen Name:</label><input type="text" name="fastaSpecimen" placeholder="(e.g. hg19)" class="primary"><br>
 			<label for="fastaSource">Source:</label><input type="text" name="fastaSource" value=
-			"{{ user.name }}"><br>
+			"{{ user.get_full_name }}"><br>
 			<label for="fastaDate">Date Sequenced:</label><input type="text" name="fastaDate" placeholder="mo. year"><br>
+			<label for="fastaDescription">Description:</label><textarea name="fastaDescription"></textarea><br>
 		</div>
 			<h4>Taxonomy:</h4>
 			<input type="checkbox" name="uncategorized" id="uncategorized" checked><label for="uncategorized">Uncategorized</label>
@@ -161,13 +167,11 @@
 			</div>
 
 
-			<h3>Chromosomes:</h3>
-			<div id="chromosomes">
-			<div class="chromosome">
-				<input type="text" name="chrName" placeholder="Name" class="primary">
-				<input type="button" value="upload file..." class="">
-			</div>
-			</div>
+			<h4>Select Chromosome Files:</h4>
+			<input type="file" class="" multiple="multiple" id="fastafiles">
+			<br>
+			<input type="submit" class="button" value="Save">
+				
 		</form>
 		<div id="info">
 			<h3>Info</h3>
@@ -184,11 +188,12 @@
 	</div>
 	<div id="templates">
 		<div class="chromosome">
-			<input type="text" name="chrName" placeholder="Name" class="primary">
-			<input type="button" value="upload file..." class="">
+			<h4></h4>
+			<div class="progress"></div>
 		</div>
 	</div>
-	
+
+
 	<script type="text/javascript">
 	var levels = ['Kingdom','Class','Genus','Species']
 	$(function() {
@@ -259,6 +264,31 @@
 		}
 		return levelInput;
 	}
+
+	$('#fastafiles').on('change', function(e) {
+        var formData = new FormData();
+		formData.append('csrfmiddlewaretoken','{{ csrf_token }}');
+	    var file = this.files[0];
+	    formData.append(file.name,file);
+	    var xhr = new XMLHttpRequest();
+	    xhr.addEventListener('progress', function(e) {
+	        var done = e.position || e.loaded, total = e.totalSize || e.total;
+	        console.log('xhr progress: ' + (Math.floor(done/total*1000)/10) + '%');
+	    }, false);
+	    if ( xhr.upload ) {
+	        xhr.upload.onprogress = function(e) {
+	            var done = e.position || e.loaded, total = e.totalSize || e.total;
+	            console.log('xhr.upload progress: ' + done + ' / ' + total + ' = ' + (Math.floor(done/total*1000)/10) + '%');
+	        };
+	    }
+	    xhr.onreadystatechange = function(e) {
+	        if ( 4 == this.readyState ) {
+	            console.log(['xhr upload complete', e]);
+	        }
+	    };
+	    xhr.open('post', "upload", true);
+	    xhr.send(formData);
+	});
 	</script>
 
 {% endblock %}

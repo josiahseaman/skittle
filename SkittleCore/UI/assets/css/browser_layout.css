@@ -155,7 +155,7 @@ li:hover #widthBubble,li:hover #scaleBubble,li:hover #startBubble, .popover:hove
 #graphList:hover,#annotationList:hover {
 	display:block;
 }
-#graphList.active, .popover.active {
+#graphList.active {
 	display: block;
 }
 #graph-labels li.helpLabel,#graph-labels li.settingsLabel {

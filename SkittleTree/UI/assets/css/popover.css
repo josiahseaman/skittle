@@ -10,6 +10,9 @@
 		font-size: 0.8em;
 		z-index: 100;
 	}
+	.popover.active {
+		display: block;
+	}
 	.arrow-left-top, .arrow-right-top {
 		min-height: 40px;
 	}

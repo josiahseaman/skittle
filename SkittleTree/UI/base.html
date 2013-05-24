@@ -9,7 +9,6 @@
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/basic_style.css">
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/popover.css">
 	{% block styles %}
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/popover.css">
 	<style type="text/css">
 
 	</style>
@@ -20,13 +19,8 @@
     <script src="{{STATIC_URL}}js/excanvas.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
 <![endif]-->
-	{% block scripts %}
-	<script src="/browse/state.json"></script>
-	<script src="annotation.json"></script>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-	<script src="{{STATIC_URL}}js/utility.js"></script>
-	<script src="{{STATIC_URL}}js/interface.js"></script>
-	<script src="{{STATIC_URL}}js/draw_canvas.js"></script>
+	{% block scripts %}
 	<script type="text/javascript">
 
 

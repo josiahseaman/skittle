@@ -13,7 +13,13 @@ def index(request):
 
 
 def upload(request):
-    context = {}
+    status = None
+    message =""
+    if request.is_ajax() or request.method == 'POST':
+        # handle the form data?
+        status = "success"
+        message = "Your files were uploaded successfully. Please Allow a few hours for processing."
+    context = {'status':status,'message':message}
     return render(request, 'upload.html', context)
 
 
