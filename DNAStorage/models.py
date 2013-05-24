@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class Specimen(models.Model):
@@ -14,7 +15,7 @@ class Specimen(models.Model):
     DatePublished = models.CharField(max_length=50, null=True, blank=True)
     Thumbnail = models.CharField(max_length=255, null=True, blank=True)
     Public = models.BooleanField()
-    User = models.CharField(max_length=255, null=True, blank=True)
+    User = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True)
 
 
 class FastaFiles(models.Model):

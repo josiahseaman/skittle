@@ -1,4 +1,6 @@
 from django.db import models
+from django.conf import settings
+
 from DNAStorage.models import Specimen
 
 # Database for storing imported GFF information
@@ -14,7 +16,7 @@ class GFF(models.Model):
     SequenceRegion = models.CharField(max_length=255, null=True, blank=True)
     FileName = models.CharField(max_length=255)
     Public = models.BooleanField()
-    User = models.CharField(max_length=255, null=True, blank=True)
+    User = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True)
 
 # Database of all gff chunk files storing json
 class AnnotationJsonChunk(models.Model):

@@ -254,6 +254,30 @@ def RunMigration14():
     cur.execute(part2)
     cur.execute(part10)
 
+#####_____MIGRATION 15_____#####
+def RunMigration15():
+    cur = setupDB()
+
+    part1 = "ALTER TABLE `DNAStorage_specimen` DROP COLUMN `User`"
+    part2 = "ALTER TABLE `Annotations_gff` DROP COLUMN `User`"
+    part3 = "CREATE TABLE `DNAStorage_specimen_User` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `specimen_id` integer NOT NULL, `skittleuser_id` integer NOT NULL, UNIQUE (`specimen_id`, `skittleuser_id`))"
+    part4 = "ALTER TABLE `DNAStorage_specimen_User` ADD CONSTRAINT `specimen_id_refs_id_e50ef8d8` FOREIGN KEY (`specimen_id`) REFERENCES `DNAStorage_specimen` (`id`)"
+    part5 = "ALTER TABLE `DNAStorage_specimen_User` ADD CONSTRAINT `skittleuser_id_refs_id_de15f914` FOREIGN KEY (`skittleuser_id`) REFERENCES `SkittleCore_skittleuser` (`id`)"
+    part6 = "CREATE TABLE `Annotations_gff_User` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `gff_id` integer NOT NULL, `skittleuser_id` integer NOT NULL, UNIQUE (`gff_id`, `skittleuser_id`))"
+    part7 = "ALTER TABLE `Annotations_gff` ADD CONSTRAINT `Specimen_id_refs_id_bed804f4` FOREIGN KEY (`Specimen_id`) REFERENCES `DNAStorage_specimen` (`id`)"
+    part8 = "ALTER TABLE `Annotations_gff_User` ADD CONSTRAINT `gff_id_refs_id_2694d050` FOREIGN KEY (`gff_id`) REFERENCES `Annotations_gff` (`id`)"
+    part9 = "ALTER TABLE `Annotations_gff_User` ADD CONSTRAINT `skittleuser_id_refs_id_7881899e` FOREIGN KEY (`skittleuser_id`) REFERENCES `SkittleCore_skittleuser` (`id`)"
+
+    cur.execute(part1)
+    cur.execute(part2)
+    cur.execute(part3)
+    cur.execute(part4)
+    cur.execute(part5)
+    cur.execute(part6)
+    cur.execute(part7)
+    cur.execute(part8)
+    cur.execute(part9)
+
 def commitTrans():
     from django.db import transaction
 
