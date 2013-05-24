@@ -170,6 +170,7 @@
 			<h4>Select Chromosome Files:</h4>
 			<input type="file" class="" multiple="multiple" id="fastafiles">
 			<br>
+			<div id="chromosomeList"></div>
 			<input type="submit" class="button" value="Save">
 				
 		</form>
@@ -266,29 +267,46 @@
 	}
 
 	$('#fastafiles').on('change', function(e) {
-        var formData = new FormData();
-		formData.append('csrfmiddlewaretoken','{{ csrf_token }}');
-	    var file = this.files[0];
+		$('#chromosomeList').empty();
+		$.each(this.files,function(i,v){
+			var t = $('#templates .chromosome')
+					.clone()
+					.attr('id','chr-'+i)
+			t.find('h4').html(v.name)
+			$('#chromosomeList').append(t);
+		})
+        ajaxFile(this,0);
+	});
+	var ajaxFile = function(fileinput,i){
+		if (!fileinput.files[i]) return false;
+
+        var formData = new FormData(document.getElementById('uploadForm'));
+	    var file = fileinput.files[i];
 	    formData.append(file.name,file);
+
 	    var xhr = new XMLHttpRequest();
 	    xhr.addEventListener('progress', function(e) {
 	        var done = e.position || e.loaded, total = e.totalSize || e.total;
+            $('#chr-'+i+' .progress').html('xhr progress: ' + (Math.floor(done/total*1000)/10) + '%');
 	        console.log('xhr progress: ' + (Math.floor(done/total*1000)/10) + '%');
 	    }, false);
 	    if ( xhr.upload ) {
 	        xhr.upload.onprogress = function(e) {
 	            var done = e.position || e.loaded, total = e.totalSize || e.total;
+	            $('#chr-'+i+' .progress').html('xhr.upload progress: ' + done + ' / ' + total + ' = ' + (Math.floor(done/total*1000)/10) + '%');
 	            console.log('xhr.upload progress: ' + done + ' / ' + total + ' = ' + (Math.floor(done/total*1000)/10) + '%');
 	        };
 	    }
 	    xhr.onreadystatechange = function(e) {
 	        if ( 4 == this.readyState ) {
+	            $('#chr-'+i+' .progress').html('xhr upload complete');
 	            console.log(['xhr upload complete', e]);
+	        	ajaxFile(fileinput,++i);
 	        }
 	    };
 	    xhr.open('post', "upload", true);
 	    xhr.send(formData);
-	});
+	}
 	</script>
 
 {% endblock %}
