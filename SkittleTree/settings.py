@@ -63,6 +63,10 @@ else:
 
 DATABASE_WAIT_TIMEOUT = 28800
 
+if PRODUCTION:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
