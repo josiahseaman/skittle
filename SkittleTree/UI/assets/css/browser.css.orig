@@ -1,0 +1,896 @@
+<<<<<<< HEAD
+/*@import url(http://fonts.googleapis.com/css?family=Exo:100,200,300,400,500,600,700|Titillium+Web:400,200,300,600,700|Open+Sans:400,600,300,700|Share:400,700|Aldrich);*/
+@import url(http://fonts.googleapis.com/css?family=Exo:100,200,300,400,500,600,700|Source+Code+Pro:400,500,600|Rock+Salt);
+body {
+	font-family: 'Exo', Helvetica, sans-serif;
+	background: #000;
+}
+img {
+	border: none;
+}
+.seq {
+	font-family: 'Source Code Pro', monospace;
+	font-weight: 600;
+	color:#dd9;
+}
+a,a:visited {
+	color:#fda;
+}
+#logo {
+	position: absolute;
+	z-index: 100;
+	top:0;
+	left: 0;
+	padding: 6px;
+	margin:0;
+
+	font-weight: 500;
+	font-size: 2.4em;
+	color:#eee;
+	text-shadow:#000 0 0 8px;
+}
+#logo img {
+	float:left;
+	margin-right: 6px;
+	box-shadow: 0 0 4;
+	margin-top:-6px;
+	margin-left:-6px;
+	margin-right: -38px;
+}
+#logo span {
+	font-weight: 100;
+	text-shadow:#000 0 0 4px,#000 0 0 12px;
+}
+#logo:after {
+	content: url('../gfx/alpha.png');
+	position: absolute;
+	top:-10px;
+	left:230px;
+}
+#logo a,#logo a:visited,#logo a:hover,#logo a:active {
+	color:inherit;
+	text-decoration: none;
+}
+#canvas {
+	position: absolute;
+	top:30px;
+	left:30px;
+	right:0;
+	bottom: 0;
+	overflow: auto;
+
+	background: url('n-display.png') 130px 0 repeat-y, url('n-bias.png') 360px 0 repeat-y, url('r-map.png') 760px 0 repeat-y, #000;
+}
+header {
+	position: absolute;
+	z-index: 50;
+	top: 0;
+	left:0;
+	right:0;
+	height:60px;
+	padding:0;
+	padding-left: 280px;
+	background:url('../gfx/noise_cover_b.png'), #333;
+	color:#fff;
+	box-shadow: inset 0 0 16px #000;
+	/*border-bottom: 2px solid #000;*/
+	text-shadow:#000 0 0 4px,#000 0 0 12px;
+	letter-spacing: 1px;
+}
+header::selection,h1::selection,li::selection,li span::selection,img::selection,ul::selection,div::selection,header p::selection,h1 span::selection {
+	background: transparent;
+}
+div.popover::selection {
+	background: blue;
+}
+#graph-labels {
+	position: absolute;
+	/*overflow: hidden;*/
+	top:0;
+	left:24px;
+	right:0;
+	color:#fff;
+	font-size: 0.8em;
+	font-weight:600;
+	text-shadow: 0 0 1px #000, 1px 1px 0 #000, 2px 2px 0 #000,-1px -1px 4px #000;
+}
+#dials {
+	position: absolute;
+	bottom: 0;
+	left:0px;
+	right:0;
+	padding: 0px;
+	padding-left: 170px;
+	color:#8f5;
+	background: rgba(0,0,0,0.6);
+	text-shadow: 0 0 1px #000, 1px 1px 0 #000, 2px 2px 0 #000,-1px -1px 4px #000;
+	font-weight: 300;
+}
+#tools {
+	position: absolute;
+	z-index: 20;
+	left:0;
+	top: 60px;
+	bottom: 0;
+	width:138px;
+	/*width:50px;*/
+	overflow: hidden;
+	background: #eee;
+	border-right: 2px solid #ccc;
+}
+header ul, #graph-labels ul, #dials ul, #tools ul {
+	list-style: none;
+	margin:0;
+	padding:0;
+}
+#graph-labels ul, #tools ul {
+	width:10000px;
+}
+#graph-labels li {
+	display: none;
+}
+#graph-labels li img {
+	margin-bottom: -4px;
+	margin-left: 3px;
+}
+header li>a, #dials li {
+	display: inline-block;
+}
+header li>a,header li>a:visited {
+	margin: 0;
+	width:180px;
+	height:60px;
+	line-height: 60px;
+	float: left;
+	box-shadow: 0 0 16px #000;
+	font-size: 1.2em;
+	font-weight: 600;
+	text-align: center;
+	text-decoration: none;
+	color:#eee;
+}
+header li>a:hover {
+	background: #222;
+	box-shadow: inset 0 0 16px #000,0 0 16px #000;
+
+}
+header p {
+	text-align: right;
+	margin:0;
+}
+header p img {
+	margin:10px;
+	vertical-align: middle;
+}
+#tools li {
+	margin: 8px;
+	padding:8px;
+	width: 105px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	font-size: 0.8em;
+	font-weight: 600;
+	cursor: pointer;
+}
+#tools img {
+	margin:0px 16px -6px 0px;
+}
+#tools .active, #tools li:hover {
+	border: 1px solid #ccc;
+	background: rgba(0,0,0,0.04);
+}
+#tools li:active {
+	border: 1px solid #bbb;
+	background: rgba(0,0,0,0.08);
+}
+#tools .bottom {
+	position: absolute;
+	bottom: 0;
+	margin-bottom: 2px;
+}
+#graph-labels li {
+	position: relative;
+	float:left;
+	padding: 4px 0 3px;
+	background: rgba(0,0,0,0.5);
+	text-align: center;
+}
+#dials li {
+	position: relative;
+	width: 175px;
+	padding: 8px;
+}
+@media screen and (min-width: 1156px) {
+	#dials li {
+		width:20%;
+	}
+}
+#dials span {
+	font-weight: normal;
+	padding-right: 20px;
+}
+#dials input {
+	position: absolute;
+	background: #000;
+	color:inherit;
+	padding:2px;
+	margin: -4px;
+	width:115px;
+	font:inherit;
+	border-radius: 8px;
+	border: 2px solid rgba(50,50,50,0.5);
+
+}
+#canvasContainer {
+    position: absolute;
+    left: 140px;
+    right: 0px;
+    top:60px;
+    bottom:0;
+    overflow: hidden;
+}
+#learn {
+	display:none;
+	position: absolute;
+	color:#fda;
+	background: rgba(0,0,0,0.6);
+	top:0;
+	bottom: 0;
+	left:0;
+	right:0;
+	font-family: "Rock Salt",cursive;
+	line-height: 1.1em;
+	text-shadow:2px 2px 2px #000,0px 0px 2px #000;
+}
+#learn.active {
+	display: block;
+}
+#learn p,#learn div,#learn img {
+	position: absolute;
+}
+
+.button {
+	font-family: 'Exo', Helvetica, sans-serif;
+
+	display: inline-block;
+	background:#111;
+	padding: 0.5em;
+	margin:0px;
+	border:1px solid #777;
+	border-radius: 4px;
+	font-weight: 500;
+}
+.button:hover {
+	background: #222;
+	color:#eee;
+	cursor: pointer;
+}
+.button:active {
+	background: #555;
+	color: #fff;
+}
+
+#graphList,#annotationList {
+	left:160px;
+	top:60px;
+	font-size: 0.9em;
+	line-height:1.6;
+}
+#annotationList {
+	top: 80px;
+}
+#graphList ul,#annotationList ul {
+	list-style: none;
+	padding:0;
+	margin: 0;
+}
+#graphList:hover,#annotationList:hover {
+	display:block;
+}
+#graphList.active, .popover.active {
+	display: block;
+}
+#graph-labels li.helpLabel,#graph-labels li.settingsLabel {
+	display:list-item;
+	width:170px;
+	padding-right: 30px;
+}
+.graphHelp, .graphSettings {
+	position: absolute;
+	display: none;
+	top:40px;
+	right:-175px;
+	width: 170px;
+	padding: 10px;
+	border-left: 1px solid #eee;
+	text-align: left;
+	font-family: trebuchet,'trebuchet ms','myriad pro',helvetica,ariel,sans-serif;
+	font-weight: 300;
+	/*font-size: 1.1em;*/
+	line-height: 1.5;
+	color: #ddd;
+}
+.graphHelp.active,.graphSettings.active {
+	display: block;
+}
+.graphSettings {
+	right:-305px;
+}
+#graph-labels li.settingsLabel,.graphSettings {
+	width:300px;
+}
+.addSeq {
+	/*display: block;*/
+}
+.highlighterSequence {
+	background: #222;
+	border: 1px solid #444;
+	border-radius: 4px;
+	padding: 2%;
+	margin: 2% 0;
+}
+#highlighterSequence {
+	display:none;
+}
+.highlighterSequence .sequenceInput {
+	display:block;
+}
+.highlighterSettings {
+	display: none;
+}
+#graph-labels .highlighterSettings {
+	display: block;
+}
+.removeSeq span {
+	color:#f22;
+	font-size: 2em;
+	line-height: 0.7em;
+	vertical-align: bottom;
+}
+.highlighterSettings input[type^=text],.highlighterSettings .sequenceColor {
+	width:99%;
+	line-height:1.8em;
+	font-size: 1.2em;
+	border-radius: 4px;
+	border: 1px solid #888;
+	background: #222;
+	color:#ddd;
+}
+.highlighterSequence .sequenceColor {
+	width: 4em;
+	height: 2.2em;
+	margin-bottom: -0.9em;
+	border: 0;
+}
+#similarityPercent {
+	margin-left:9px;
+	text-align: center;
+}
+
+#widthBubble {
+	left:32px;
+	bottom:40px;
+	width:62px;
+	height:30px;
+}
+#scaleBubble {
+	left:0;
+	bottom:40px;
+	width:108px;
+	height:30px;
+}
+#startBubble {
+	left:14px;
+	bottom:40px;
+	width:142px;
+	height:30px;
+}
+li:hover #widthBubble,li:hover #scaleBubble,li:hover #startBubble, .popover:hover {
+	display: block;
+}
+
+#feedbackForm {
+	display: none;
+	width: 258px;
+}
+#bug-report-form input[type=text],select,textarea {
+	display: block;
+	width:250px;
+	font-size: 1.2em;
+	border-radius: 4px
+}
+#bug-report-form h4 {
+	margin-bottom: 0;
+}
+#bug-report-form input[type=submit] {
+	font-size: 1.2em;
+	border-radius: 4px;
+	width:140px;
+	background:#257A00;
+	color:#fff;
+	float:left;
+}
+.annotationDetail {
+	max-height: 300px;
+	width: 280px;
+	overflow: auto;
+}
+.annotationDetail th {
+	color:#8f5;
+	text-align: right;
+	font-weight: 500;
+	min-width: 80px;
+}
+.SNPtable {
+	width: 100%
+}
+.SNPtable td, .SNPtable th {
+	text-align: center;
+	width: 33%;
+	font-size: 1.2em;
+}
+
+
+/* colors */
+.nuc {
+	padding:0 0.4em;
+}
+.nuc-A {
+	background: #000000;
+}
+.nuc-C {
+	background: #aa0000;
+}
+.nuc-G {
+	background: #00aa00;
+}
+.nuc-T {
+	background: #0000ff;
+}
+=======
+	/*@import url(http://fonts.googleapis.com/css?family=Exo:100,200,300,400,500,600,700|Titillium+Web:400,200,300,600,700|Open+Sans:400,600,300,700|Share:400,700|Aldrich);*/
+	@import url(http://fonts.googleapis.com/css?family=Exo:100,200,300,400,500,600,700|Source+Code+Pro:400,500,600|Rock+Salt);
+	body {
+		font-family: 'Exo', Helvetica, sans-serif;
+		background: #000;
+	}
+	img {
+		border: none;
+	}
+	.seq {
+		font-family: 'Source Code Pro', monospace;
+		font-weight: 600;
+		color:#dd9;
+	}
+	a,a:visited {
+		color:#fda;
+	}
+	#logo {
+		position: absolute;
+		z-index: 100;
+		top:0;
+		left: 0;
+		padding: 6px;
+		margin:0;
+
+		font-weight: 500;
+		font-size: 2.4em;
+		color:#eee;
+		text-shadow:#000 0 0 8px;
+	}
+	#logo img {
+		float:left;
+		margin-right: 6px;
+		box-shadow: 0 0 4;
+		margin-top:-6px;
+		margin-left:-6px;
+		margin-right: -38px;
+	}
+	#logo span {
+		font-weight: 100;
+		text-shadow:#000 0 0 4px,#000 0 0 12px;
+	}
+	#logo:after {
+		content: url('../gfx/alpha.png');
+		position: absolute;
+		top:-10px;
+		left:230px;
+	}
+	#logo a,#logo a:visited,#logo a:hover,#logo a:active {
+		color:inherit;
+		text-decoration: none;
+	}
+	#canvas {
+		position: absolute;
+		top:30px;
+		left:30px;
+		right:0;
+		bottom: 0;
+		overflow: auto;
+
+		background: url('n-display.png') 130px 0 repeat-y, url('n-bias.png') 360px 0 repeat-y, url('r-map.png') 760px 0 repeat-y, #000;
+	}
+	header {
+		position: absolute;
+		z-index: 50;
+		top: 0;
+		left:0;
+		right:0;
+		height:60px;
+		padding:0;
+		padding-left: 280px;
+		background:url('../gfx/noise_cover_b.png'), #333;
+		color:#fff;
+		box-shadow: inset 0 0 16px #000;
+		/*border-bottom: 2px solid #000;*/
+		text-shadow:#000 0 0 4px,#000 0 0 12px;
+		letter-spacing: 1px;
+	}
+	header::selection,h1::selection,li::selection,li span::selection,img::selection,ul::selection,div::selection,header p::selection,h1 span::selection {
+		background: transparent;
+	}
+	div.popover::selection {
+		background: blue;
+	}
+	#graph-labels {
+		position: absolute;
+		/*overflow: hidden;*/
+		top:0;
+		left:24px;
+		right:0;
+		color:#fff;
+		font-size: 0.8em;
+		font-weight:600;
+		text-shadow: 0 0 1px #000, 1px 1px 0 #000, 2px 2px 0 #000,-1px -1px 4px #000;
+	}
+	#dials {
+		position: absolute;
+		bottom: 0;
+		left:0px;
+		right:0;
+		padding: 0px;
+		padding-left: 170px;
+		color:#8f5;
+		background: rgba(0,0,0,0.6);
+		text-shadow: 0 0 1px #000, 1px 1px 0 #000, 2px 2px 0 #000,-1px -1px 4px #000;
+		font-weight: 300;
+	}
+	#tools {
+		position: absolute;
+		z-index: 20;
+		left:0;
+		top: 60px;
+		bottom: 0;
+		width:138px;
+		/*width:50px;*/
+		overflow: hidden;
+		background: #eee;
+		border-right: 2px solid #ccc;
+	}
+	header ul, #graph-labels ul, #dials ul, #tools ul {
+		list-style: none;
+		margin:0;
+		padding:0;
+	}
+	#graph-labels ul, #tools ul {
+		width:10000px;
+	}
+	#graph-labels li {
+		display: none;
+	}
+	#graph-labels li img {
+		margin-bottom: -4px;
+		margin-left: 3px;
+	}
+	header li>a, #dials li {
+		display: inline-block;
+	}
+	header li>a,header li>a:visited {
+		margin: 0;
+		width:180px;
+		height:60px;
+		line-height: 60px;
+		float: left;
+		box-shadow: 0 0 16px #000;
+		font-size: 1.2em;
+		font-weight: 600;
+		text-align: center;
+		text-decoration: none;
+		color:#eee;
+	}
+	header li>a:hover {
+		background: #222;
+		box-shadow: inset 0 0 16px #000,0 0 16px #000;
+
+	}
+	header p {
+		text-align: right;
+		margin:0;
+	}
+	header p img {
+		margin:10px;
+		vertical-align: middle;
+	}
+	#tools li {
+		margin: 8px;
+		padding:8px;
+		width: 105px;
+		border: 1px solid transparent;
+		border-radius: 4px;
+		font-size: 0.8em;
+		font-weight: 600;
+		cursor: pointer;
+	}
+	#tools img {
+		margin:0px 16px -6px 0px;
+	}
+	#tools .active, #tools li:hover {
+		border: 1px solid #ccc;
+		background: rgba(0,0,0,0.04);
+	}
+	#tools li:active {
+		border: 1px solid #bbb;
+		background: rgba(0,0,0,0.08);
+	}
+	#tools .bottom {
+		position: absolute;
+		bottom: 0;
+		margin-bottom: 2px;
+	}
+	#graph-labels li {
+		position: relative;
+		float:left;
+		padding: 4px 0 3px;
+		background: rgba(0,0,0,0.5);
+		text-align: center;
+	}
+	#dials li {
+		position: relative;
+		width: 175px;
+		padding: 8px;
+	}
+	@media screen and (min-width: 1156px) {
+		#dials li {
+			width:20%;
+		}
+	}
+	#dials span {
+		font-weight: normal;
+		padding-right: 20px;
+	}
+	#dials input {
+		position: absolute;
+		background: #000;
+		color:inherit;
+		padding:2px;
+		margin: -4px;
+		width:115px;
+		font:inherit;
+		border-radius: 8px;
+		border: 2px solid rgba(50,50,50,0.5);
+
+	}
+	#canvasContainer {
+	    position: absolute;
+	    left: 140px;
+	    right: 0px;
+	    top:60px;
+	    bottom:0;
+	    overflow: hidden;
+	}
+	#learn {
+		display:none;
+		position: absolute;
+		color:#fda;
+		background: rgba(0,0,0,0.6);
+		top:0;
+		bottom: 0;
+		left:0;
+		right:0;
+		font-family: "Rock Salt",cursive;
+		line-height: 1.1em;
+		text-shadow:2px 2px 2px #000,0px 0px 2px #000;
+	}
+	#learn.active {
+		display: block;
+	}
+	#learn p,#learn div,#learn img {
+		position: absolute;
+	}
+
+	.button {
+		font-family: 'Exo', Helvetica, sans-serif;
+
+		display: inline-block;
+		background:#111;
+		padding: 0.5em;
+		margin:0px;
+		border:1px solid #777;
+		border-radius: 4px;
+		font-weight: 500;
+	}
+	.button:hover {
+		background: #222;
+		color:#eee;
+		cursor: pointer;
+	}
+	.button:active {
+		background: #555;
+		color: #fff;
+	}
+
+	#graphList {
+		left:160px;
+		top:60px;
+		font-size: 0.9em;
+		line-height:1.6;
+	}
+	#graphList ul {
+		list-style: none;
+		padding:0;
+		margin: 0;
+	}
+	#graphList:hover {
+		display:block;
+	}
+	#graphList.active, .popover.active {
+		display: block;
+	}
+	#graph-labels li.helpLabel,#graph-labels li.settingsLabel {
+		display:list-item;
+		width:170px;
+		padding-right: 30px;
+	}
+	.graphHelp, .graphSettings {
+		position: absolute;
+		display: none;
+		top:40px;
+		right:-175px;
+		width: 170px;
+		padding: 10px;
+		border-left: 1px solid #eee;
+		text-align: left;
+		font-family: trebuchet,'trebuchet ms','myriad pro',helvetica,ariel,sans-serif;
+		font-weight: 300;
+		/*font-size: 1.1em;*/
+		line-height: 1.5;
+		color: #ddd;
+	}
+	.graphHelp.active,.graphSettings.active {
+		display: block;
+	}
+	.graphSettings {
+		right:-305px;
+	}
+	#graph-labels li.settingsLabel,.graphSettings {
+		width:300px;
+	}
+	.addSeq {
+		/*display: block;*/
+	}
+	.highlighterSequence {
+		background: #222;
+		border: 1px solid #444;
+		border-radius: 4px;
+		padding: 2%;
+		margin: 2% 0;
+	}
+	#highlighterSequence {
+		display:none;
+	}
+	.highlighterSequence .sequenceInput {
+		display:block;
+	}
+	.highlighterSettings {
+		display: none;
+	}
+	#graph-labels .highlighterSettings {
+		display: block;
+	}
+	.removeSeq span {
+		color:#f22;
+		font-size: 2em;
+		line-height: 0.7em;
+		vertical-align: bottom;
+	}
+	.highlighterSettings input[type^=text],.highlighterSettings .sequenceColor {
+		width:99%;
+		line-height:1.8em;
+		font-size: 1.2em;
+		border-radius: 4px;
+		border: 1px solid #888;
+		background: #222;
+		color:#ddd;
+	}
+	.highlighterSequence .sequenceColor {
+		width: 4em;
+		height: 2.2em;
+		margin-bottom: -0.9em;
+		border: 0;
+	}
+	#similarityPercent {
+		margin-left:9px;
+		text-align: center;
+	}
+
+	#widthBubble {
+		left:32px;
+		bottom:40px;
+		width:62px;
+		height:30px;
+	}
+	#scaleBubble {
+		left:0;
+		bottom:40px;
+		width:108px;
+		height:30px;
+	}
+	#startBubble {
+		left:14px;
+		bottom:40px;
+		width:142px;
+		height:30px;
+	}
+	li:hover #widthBubble,li:hover #scaleBubble,li:hover #startBubble, .popover:hover {
+		display: block;
+	}
+
+	#feedbackForm {
+		display: none;
+		width: 258px;
+	}
+	#bug-report-form input[type=text],select,textarea {
+		display: block;
+		width:250px;
+		font-size: 1.2em;
+		border-radius: 4px
+	}
+	#bug-report-form h4 {
+		margin-bottom: 0;
+	}
+	#bug-report-form input[type=submit] {
+		font-size: 1.2em;
+		border-radius: 4px;
+		width:140px;
+		background:#257A00;
+		color:#fff;
+		float:left;
+	}
+	.annotationDetail {
+		max-height: 300px;
+		width: 280px;
+		overflow: auto;
+	}
+	.annotationDetail th {
+		color:#8f5;
+		text-align: right;
+		font-weight: 500;
+		min-width: 80px;
+	}
+	.SNPtable {
+		width: 100%
+	}
+	.SNPtable td, .SNPtable th {
+		text-align: center;
+		width: 33%;
+		font-size: 1.2em;
+	}
+
+
+	/* colors */
+	.nuc {
+		padding:0 0.4em;
+	}
+	.nuc-A {
+		background: #000000;
+	}
+	.nuc-C {
+		background: #aa0000;
+	}
+	.nuc-G {
+		background: #00aa00;
+	}
+	.nuc-T {
+		background: #0000ff;
+	}
+>>>>>>> 6e66db9f695badcfc6c0c18b6737a8e8b1d1c6ce

@@ -21,7 +21,7 @@ urlpatterns = patterns('',
    # Uncomment the next line to enable the admin:
    url(r'^admin/', include(admin.site.urls)),
    url(r'^sendFeedback$', 'SkittleTree.views.feedbackSend'),
-   (r'^learn/?$', RedirectView.as_view(url='/browse/homo/sapiens/hg19/chrY/?graphs=abn&start=1468365&scale=1&width=105#learn')),
+   (r'^learn/?$', RedirectView.as_view(url='/browse/homo/sapiens/hg19/chrY/?graphs=bn&start=1468365&scale=1&width=105&annotation=gencode#learn')),
    (r'^card/?$', RedirectView.as_view(url='/browse/businesscard/bcbanner/?graphs=abn&start=1&scale=1&width=296')),
    (r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
    (r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'login.html'}),

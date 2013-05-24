@@ -1,0 +1,86 @@
+#graph-labels {
+	color:#fff;
+	font-size: 0.8em;
+	font-weight:600;
+	text-shadow: 0 0 1px #000, 1px 1px 0 #000, 2px 2px 0 #000,-1px -1px 4px #000;
+}
+#graph-labels li {
+	background: rgba(0,0,0,0.5);
+	text-align: center;
+}
+#dials {
+	color:#8f5;
+	background: rgba(0,0,0,0.6);
+	text-shadow: 0 0 1px #000, 1px 1px 0 #000, 2px 2px 0 #000,-1px -1px 4px #000;
+	font-weight: 300;
+}
+#dials span {
+	font-weight: normal;
+}
+#dials input {
+	background: #000;
+	color:inherit;
+	font:inherit;
+	border-radius: 8px;
+	border: 2px solid rgba(50,50,50,0.5);
+}
+#tools {
+	background: #eee;
+	border-right: 2px solid #ccc;
+}
+#tools li {
+	font-size: 0.8em;
+	font-weight: 600;
+	cursor: pointer;
+}
+#tools .active, #tools li:hover {
+	background: rgba(0,0,0,0.04);
+}
+#tools li:active {
+	background: rgba(0,0,0,0.08);
+}
+#learn {
+	color:#fda;
+	background: rgba(0,0,0,0.6);
+	font-family: "Rock Salt",cursive;
+	line-height: 1.1em;
+	text-shadow:2px 2px 2px #000,0px 0px 2px #000;
+}
+
+#graphList,#annotationList {
+	font-size: 0.9em;
+}
+.graphHelp, .graphSettings {
+	text-align: left;
+	font-family: trebuchet,'trebuchet ms','myriad pro',helvetica,ariel,sans-serif;
+	font-weight: 300;
+	/*font-size: 1.1em;*/
+	line-height: 1.5;
+	color: #ddd;
+}
+.highlighterSequence {
+	background: #222;
+}
+.removeSeq span {
+	color:#f22;
+	font-size: 2em;
+}
+.highlighterSettings input[type^=text],.highlighterSettings .sequenceColor {
+	font-size: 1.2em;
+	border-radius: 4px;
+	border: 1px solid #888;
+	background: #222;
+	color:#ddd;
+}
+
+.annotationDetail th {
+	color:#8f5;
+	text-align: right;
+	font-weight: 500;
+	min-width: 80px;
+}
+.SNPtable td, .SNPtable th {
+	text-align: center;
+	font-size: 1.2em;
+}
+

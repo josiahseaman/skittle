@@ -1,0 +1,105 @@
+@import url(http://fonts.googleapis.com/css?family=Exo:100,200,300,400,500,600,700|Source+Code+Pro:400,500,600|Rock+Salt);
+html,body {
+	background-color: #000000;
+}
+body {
+	font-family: 'Exo', Helvetica, sans-serif;
+	background: #000;
+}
+a,a:visited {
+	color:#fda;
+}
+#logo {
+	font-weight: 500;
+	font-size: 2.4em;
+	color:#eee;
+	text-shadow:#000 0 0 8px;
+}
+#logo span {
+	font-weight: 100;
+	text-shadow:#000 0 0 4px,#000 0 0 12px;
+}
+#logo a,#logo a:visited,#logo a:hover,#logo a:active {
+	color:inherit;
+	text-decoration: none;
+}
+header {
+	background:url('../gfx/noise_cover_b.png'), #333;
+	color:#fff;
+	box-shadow: inset 0 0 16px #000;
+	/*border-bottom: 2px solid #000;*/
+	text-shadow:#000 0 0 4px,#000 0 0 12px;
+	letter-spacing: 1px;
+}
+header ul, #graph-labels ul, #dials ul, #tools ul {
+	list-style: none;
+	margin:0;
+	padding:0;
+}
+header li>a,header li>a:visited {
+	box-shadow: 0 0 16px #000;
+	font-size: 1.2em;
+	font-weight: 600;
+	text-align: center;
+	text-decoration: none;
+	color:#eee;
+}
+header li>a:hover {
+	background: #222;
+	box-shadow: inset 0 0 16px #000,0 0 16px #000;
+}
+header p {
+	text-align: right;
+}
+
+.button {
+	font-family: 'Exo', Helvetica, sans-serif;
+	background:#111;
+	font-weight: 500;
+}
+.button:hover {
+	background: #222;
+	color:#eee;
+	cursor: pointer;
+}
+.button:active {
+	background: #555;
+	color: #fff;
+}
+
+
+#bug-report-form input[type=text],select,textarea {
+	font-size: 1.2em;
+	border-radius: 4px
+}
+#bug-report-form input[type=submit] {
+	font-size: 1.2em;
+	background:#257A00;
+	color:#fff;
+}
+#login {
+
+}
+
+
+.seq {
+	font-family: 'Source Code Pro', monospace;
+	font-weight: 600;
+	color:#dd9;
+}
+/* colors */
+.nuc {
+	padding:0 0.4em;
+}
+.nuc-A {
+	background: #000000;
+}
+.nuc-C {
+	background: #aa0000;
+}
+.nuc-G {
+	background: #00aa00;
+}
+.nuc-T {
+	background: #0000ff;
+}

@@ -1,0 +1,247 @@
+@import url(http://fonts.googleapis.com/css?family=Exo:100,200,300,400,500,600,700|Source+Code+Pro:400,500,600|Rock+Salt);
+
+
+#graph-labels {
+	position: absolute;
+	display: block;
+	/*overflow: hidden;*/
+	top:0;
+	left:24px;
+	right:0;
+}
+#graph-labels ul, #dials ul, #tools ul {
+	list-style: none;
+	margin:0;
+	padding:0;
+}
+#graph-labels ul, #tools ul {
+	width:10000px;
+}
+#graph-labels li {
+	display: none;
+}
+#graph-labels li img {
+	margin-bottom: -4px;
+	margin-left: 3px;
+}
+#graph-labels li {
+	position: relative;
+	float:left;
+	padding: 4px 0 3px;
+	text-align: center;
+}
+#dials {
+	position: absolute;
+	bottom: 0;
+	left:0px;
+	right:0;
+	padding: 0px;
+	padding-left: 170px;
+}
+#dials li {
+	display: inline-block;
+}
+#dials li {
+	position: relative;
+	width: 175px;
+	padding: 8px;
+}
+@media screen and (min-width: 1156px) {
+	#dials li {
+		width:20%;
+	}
+}
+#dials span {
+	padding-right: 20px;
+}
+#dials input {
+	position: absolute;
+	padding:2px;
+	margin: -4px;
+	width:115px;
+	border-radius: 8px;
+	border: 2px solid rgba(50,50,50,0.5);
+
+}
+#widthBubble {
+	left:32px;
+	bottom:40px;
+	width:62px;
+	height:30px;
+}
+#scaleBubble {
+	left:0;
+	bottom:40px;
+	width:108px;
+	height:30px;
+}
+#startBubble {
+	left:14px;
+	bottom:40px;
+	width:142px;
+	height:30px;
+}
+li:hover #widthBubble,li:hover #scaleBubble,li:hover #startBubble, .popover:hover {
+	display: block;
+}
+#tools {
+	position: absolute;
+	z-index: 20;
+	left:0;
+	top: 60px;
+	bottom: 0;
+	width:138px;
+	/*width:50px;*/
+	overflow: hidden;
+}
+#tools li {
+	margin: 8px;
+	padding:8px;
+	width: 105px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
+#tools img {
+	margin:0px 12px -6px 0px;
+}
+#tools .active, #tools li:hover {
+	border: 1px solid #ccc;
+}
+#tools li:active {
+	border: 1px solid #bbb;
+}
+#tools .bottom {
+	position: absolute;
+	bottom: 0;
+	margin-bottom: 2px;
+}
+#canvasContainer {
+    position: absolute;
+    left: 140px;
+    right: 0px;
+    top:60px;
+    bottom:0;
+    overflow: hidden;
+}
+#learn {
+	display:none;
+	position: absolute;
+	top:0;
+	bottom: 0;
+	left:0;
+	right:0;
+	line-height: 1.1em;
+}
+#learn.active {
+	display: block;
+}
+#learn p,#learn div,#learn img {
+	position: absolute;
+}
+
+#graphList,#annotationList {
+	left:160px;
+	top:60px;
+	line-height:1.6;
+}
+#annotationList {
+	top: 98px;
+}
+#graphList ul,#annotationList ul {
+	list-style: none;
+	padding:0;
+	margin: 0;
+}
+#graphList:hover,#annotationList:hover {
+	display:block;
+}
+#graphList.active, .popover.active {
+	display: block;
+}
+#graph-labels li.helpLabel,#graph-labels li.settingsLabel {
+	display:list-item;
+	width:170px;
+	padding-right: 30px;
+}
+.graphHelp, .graphSettings {
+	position: absolute;
+	display: none;
+	top:40px;
+	right:-175px;
+	width: 170px;
+	padding: 10px;
+	border-left: 1px solid #eee;
+	text-align: left;
+	/*font-size: 1.1em;*/
+	line-height: 1.5;
+}
+.graphHelp.active,.graphSettings.active {
+	display: block;
+}
+.graphSettings {
+	right:-305px;
+}
+#graph-labels li.settingsLabel,.graphSettings {
+	width:300px;
+}
+.highlighterSequence {
+	border: 1px solid #444;
+	border-radius: 4px;
+	padding: 2%;
+	margin: 2% 0;
+}
+#highlighterSequence {
+	display:none;
+}
+.highlighterSequence .sequenceInput {
+	display:block;
+}
+.highlighterSettings {
+	display: block;
+	/*display: none;*/
+}
+.removeSeq span {
+	line-height: 0.7em;
+	vertical-align: bottom;
+}
+.highlighterSettings input[type^=text],.highlighterSettings .sequenceColor {
+	width:99%;
+	line-height:1.8em;
+	border-radius: 4px;
+	border: 1px solid #888;
+}
+.highlighterSequence .sequenceColor {
+	width: 4em;
+	height: 2.2em;
+	margin-bottom: -0.9em;
+	border: 0;
+}
+#similarityPercent {
+	margin-left:9px;
+	text-align: center;
+}
+
+
+.annotationDetail {
+	max-height: 300px;
+	width: 280px;
+	overflow: auto;
+}
+.annotationDetail th {
+	text-align: right;
+	min-width: 80px;
+}
+.SNPtable {
+	width: 100%
+}
+.SNPtable td, .SNPtable th {
+	width: 33%;
+}
+
+
+header::selection,h1::selection,li::selection,li span::selection,img::selection,ul::selection,div::selection,header p::selection,h1 span::selection {
+	background: transparent;
+}
+div.popover::selection {
+	background: blue;
+}

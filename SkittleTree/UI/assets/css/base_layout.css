@@ -1,0 +1,97 @@
+body {
+	height: 100%;
+	min-width:960px;
+}
+img {
+	border: none;
+}
+#logo {
+	position: absolute;
+	z-index: 100;
+	top:0;
+	left: 0;
+	padding: 6px;
+	margin:0;
+}
+#logo img {
+	float:left;
+	margin-right: 6px;
+	box-shadow: 0 0 4;
+	margin-top:-6px;
+	margin-left:-6px;
+	margin-right: -38px;
+}
+#logo:after {
+	content: url('../gfx/alpha.png');
+	position: absolute;
+	top:-10px;
+	left:230px;
+}
+header {
+	position: absolute;
+	z-index: 50;
+	top: 0;
+	left:0;
+	right:0;
+	height:60px;
+	padding:0;
+	padding-left: 290px;
+}
+header ul {
+	list-style: none;
+	margin:0;
+	padding:0;
+}
+header li>a {
+	display: inline-block;
+}
+header li>a,header li>a:visited {
+	margin: 0;
+	width:180px;
+	height:60px;
+	line-height: 60px;
+	float: left;
+}
+header p {
+	text-align: right;
+	margin:0;
+}
+header p img {
+	margin:10px;
+	vertical-align: middle;
+}
+
+.button {
+	display: inline-block;
+	padding: 0.5em;
+	margin:0px;
+	border:1px solid #777;
+	border-radius: 4px;
+}
+
+#feedbackForm {
+	display: none;
+	width: 258px;
+}
+#bug-report-form input[type=text],select,textarea {
+	display: block;
+	width:250px;
+	border-radius: 4px
+}
+#bug-report-form h4 {
+	margin-bottom: 0;
+}
+#bug-report-form input[type=submit] {
+	border-radius: 4px;
+	width:140px;
+	float:left;
+}
+
+#login {
+	width:400px;
+	height: 300px;
+	left: 50%;
+	top:50%;
+	margin-top: -200px;
+	margin-left: -200px;
+}
