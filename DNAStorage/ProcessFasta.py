@@ -138,3 +138,6 @@ def run():
             except IOError as ex:
                 print ex
                 shutil.move("to_import/" + file, "rejected/" + file)
+
+def Import(fileLoc, kingdom, classtype, genus, species, specimen, chromosome):
+    pass
