@@ -82,10 +82,17 @@
 	
 	<header>	
 		<div>
-			<div id="usertools">Welcome Username<br />
-				Logout<br />
-				My Genomes
+			{% block usertools %}
+			<div id="usertools">
+				{% if user.is_authenticated %}
+				Welcome {{ user.FirstName }}<br />
+				<a href="/accounts/logout">Logout</a><br />
+				<a href="/discover/">My Genomes</a>
+				{% else %}
+				<a href="{% url 'django.contrib.auth.views.login' %}" id="loginLink">Login</a>
+				{% endif %}
 			</div>
+			{% endblock %}
 			<p class="taxonomy"><a href="/discover">{{ specimen.Kingdom }}</a> &gt; <a href="/discover">{{ specimen.Class }}</a> &gt; <a href="/discover">{{ specimen.Genus }}</a> &gt; <a href="/discover">{{ specimen.Species }}</a></p>
 			<h2>{{ specimen.ExtendedName }} ({{ specimen.Name }}) <span class="chromosomeName">&gt; {{ chromosome }}
 				
@@ -243,7 +250,6 @@
 	</form>
 	</div>
 
-	{% block login %}{% endblock %}
 
 	<script type="text/javascript">
     var cc, c, b, a;
@@ -334,6 +340,10 @@
 
 		$('.chromosomeName').on('click',function(){
 			$('#chromosomeList').toggle();
+		})
+
+		$('#loginLink').on('click',function(){
+			$('#login').show();
 		})
 
 

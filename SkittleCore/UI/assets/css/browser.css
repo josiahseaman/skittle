@@ -3,6 +3,7 @@
 body {
 	font-family: 'Exo', Helvetica, sans-serif;
 	background: #000;
+	height: 100%;
 }
 img {
 	border: none;
@@ -427,6 +428,14 @@ li:hover #widthBubble,li:hover #scaleBubble,li:hover #startBubble, .popover:hove
 	text-align: center;
 	width: 33%;
 	font-size: 1.2em;
+}
+#login {
+	width:400px;
+	height: 300px;
+	left: 50%;
+	top:50%;
+	margin-top: -200px;
+	margin-left: -200px;
 }
 
 

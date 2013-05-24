@@ -10,4 +10,4 @@ if __name__ == "__main__":
 
     from SkittleCore.models import SkittleUserManager
     thingy = SkittleUserManager()
-    thingy.create_superuser("bryan@newlinetechnicalinnovations.com", "mypassword", "Bryan", "Hurst")
+    thingy.create_superuser("marshall@newlinetechnicalinnovations.com", "I<3$Connie", "Marshall", "Smith")
