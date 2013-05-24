@@ -139,5 +139,5 @@ def run():
                 print ex
                 shutil.move("to_import/" + file, "rejected/" + file)
 
-def Import(fileLoc, kingdom, classtype, genus, species, specimen, chromosome):
+def Import(fileLoc, kingdom, classType, genus, species, specimen, genomeName, source, dateSequenced, description):
     pass
