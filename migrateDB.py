@@ -224,6 +224,36 @@ def RunMigration13():
     cur.execute(part4)
     cur.execute(part5)
 
+#####_____MIGRATION 14_____#####
+def RunMigration14():
+    cur = setupDB()
+
+    partPre = "SET FOREIGN_KEY_CHECKS=0"
+    part1 = "DROP TABLE IF EXISTS `Graphs_annotationdisplaystate`"
+    partX = "DROP TABLE IF EXISTS `Graphs_sequenceentry`"
+    part2 = "DROP TABLE IF EXISTS `Graphs_highlighterstate`"
+    part3 = "DROP TABLE IF EXISTS `Graphs_nucleotidebiasstate`"
+    part4 = "DROP TABLE IF EXISTS `Graphs_nucleotidedisplaystate`"
+    part5 = "DROP TABLE IF EXISTS `Graphs_oligomerusagestate`"
+    part6 = "DROP TABLE IF EXISTS `Graphs_repeatmapstate`"
+    part7 = "DROP TABLE IF EXISTS `Graphs_threemerdetectorstate`"
+    part8 = "DROP TABLE IF EXISTS `Graphs_similarityheatmapstate`"
+    part9 = "DROP TABLE IF EXISTS `Graphs_oligomerusagestate`"
+    part10 = "SET FOREIGN_KEY_CHECKS=1"
+
+    cur.execute(partPre)
+    cur.execute(part1)
+    cur.execute(partX)
+    cur.execute(part3)
+    cur.execute(part4)
+    cur.execute(part5)
+    cur.execute(part6)
+    cur.execute(part7)
+    cur.execute(part8)
+    cur.execute(part9)
+    cur.execute(part2)
+    cur.execute(part10)
+
 def commitTrans():
     from django.db import transaction
 
