@@ -5,7 +5,8 @@ import shutil
 from django.conf import settings
 
 from models import FastaFiles, FastaChunkFiles, Specimen
-from StorageRequestHandler import HasFastaFile
+#from StorageRequestHandler import HasFastaFile
+import StorageRequestHandler
 
 
 #Take a fasta file, split it and sort it into the correct folders
@@ -25,7 +26,7 @@ def splitAndSort(file, storageLocation, workingLocation):
         raise IOError("Error! File " + fileName + " in to_import is not validly named!")
 
     #Check to see if this specific file has already been split up and is stored in the system
-    if HasFastaFile(taxonomic[4], taxonomic[5]):
+    if StorageRequestHandler.HasFastaFile(taxonomic[4], taxonomic[5]):
         print "This sample is already stored in the system!"
         return False
     print "Entering this sample into the system..."
@@ -139,6 +140,6 @@ def run():
                 print ex
                 shutil.move("to_import/" + file, "rejected/" + file)
 
-def Import(fileLoc, attributes):
+def ImportFasta(fileLoc, attributes):
     #Import(fileLoc, kingdom, class, genus, species, specimen, genomeName, source, dateSequenced, description)
     pass

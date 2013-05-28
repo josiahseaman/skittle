@@ -5,7 +5,7 @@ from django.conf import settings
 
 from models import FastaFiles, FastaChunkFiles, ImageFiles, Specimen
 from Utilities.SkittleUtils import GetRoundedIndex
-# from ProcessFasta import Import
+from ProcessFasta import ImportFasta
 
 
 #Returns if the system contains the requested fasta file. This does NOT return full data associated with it for speed purposes.
@@ -205,5 +205,5 @@ def HandleUploadedFile(f, attributes):
         for chunk in f.chunks():
             destination.write(chunk)
     fileLoc = settings.SKITTLE_TREE_LOC + "DNAStorage/to_import/" + f.name
-    Import(fileLoc, attributes)
+    ImportFasta(fileLoc, attributes)
     return fileLoc
