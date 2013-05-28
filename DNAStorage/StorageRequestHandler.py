@@ -200,10 +200,11 @@ def GetSpecimen(specimen):
     else:
         return None
 
-def HandleUploadedFile(f, kingdom, classType, genus, species, specimen, genomeName=None, source=None, dateSequenced=None, description=None):
+def HandleUploadedFile(f, attributes):
     with open(settings.SKITTLE_TREE_LOC + "DNAStorage/to_import/" + f.name, 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
     fileLoc = settings.SKITTLE_TREE_LOC + "DNAStorage/to_import/" + f.name
-    Import(fileLoc, kingdom, classType, genus, species, specimen, genomeName, source, dateSequenced, description)
+    #Import(fileLoc, kingdom, classType, genus, species, specimen, genomeName, source, dateSequenced, description)
+    Import(fileLoc, attributes)
     return fileLoc
