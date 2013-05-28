@@ -35,7 +35,7 @@
 		}
 		#uploadForm {
 			width:450px;
-			line-height: 2.2;
+			/*line-height: 2.2;*/
 			float: left;
 		}
 		#info {
@@ -127,6 +127,18 @@
 			margin-left: 1em;
 			vertical-align: middle;
 		}
+		#nextButton {
+			float: right;
+			margin-top: 1em;
+			margin-right: 1em;
+			clear:left;
+		}
+		#page1, #page2 {
+			display: none;
+		}
+		#page1.active, #page2.active {
+			display: block;
+		}
 
 	</style>
 	{% endblock %}
@@ -148,31 +160,32 @@
 		<h2>Upload a Genome</h2>
 		<form id="uploadForm" action="upload" method="post">
 			{% csrf_token %}
+			<div id="page1" class="active">
 			<div class="vertical-grid">
-			<label for="fastaPublic">Availability:</label>
-			<input type="radio" name="fastaPublic" value="public" checked>Public
-			<input type="radio" name="fastaPublic" value="private">Private
+			<label for="availability">Availability:</label>
+			<input type="radio" name="availability" value="public" checked>Public
+			<input type="radio" name="availability" value="private">Private
 			<br>
-			<label for="fastaName">Genome Name:</label><input type="text" name="fastaName" placeholder="(e.g. Human Genome)" class="primary"><br>
-			<label for="fastaSpecimen">Specimen Name:</label><input type="text" name="fastaSpecimen" placeholder="(e.g. hg19)" class="primary"><br>
-			<label for="fastaSource">Source:</label><input type="text" name="fastaSource" value=
-			"{{ user.get_full_name }}"><br>
-			<label for="fastaDate">Date Sequenced:</label><input type="text" name="fastaDate" placeholder="mo. year"><br>
-			<label for="fastaDescription">Description:</label><textarea name="fastaDescription"></textarea><br>
+			<label for="genomeName">Genome Name:</label><input type="text" name="genomeName" placeholder="(e.g. Human Genome)" class="primary"><br>
+			<label for="specimenName">Specimen Name:</label><input type="text" name="specimenName" placeholder="(e.g. hg19)" class="primary"><br>
+			<label for="source">Source:</label><input type="text" name="source" value="{{ user.get_full_name }}"><br>
+			<label for="dateSequenced">Date Sequenced:</label><input type="text" name="dateSequenced" placeholder="mo. year"><br>
+			<label for="description">Description:</label><textarea name="description"></textarea><br>
 		</div>
 			<h4>Taxonomy:</h4>
 			<input type="checkbox" name="uncategorized" id="uncategorized" checked><label for="uncategorized">Uncategorized</label>
 			<div id="taxonomyBuilder" style="display:none;">
 				
 			</div>
-
-
-			<h4>Select Chromosome Files:</h4>
+			<a href="#" class="button" id="nextButton">Next &gt;</a>
+			</div>
+			<div id="page2">
+			<h3>Select Chromosome Files:</h3>
 			<input type="file" class="" multiple="multiple" id="fastafiles">
 			<br>
 			<div id="chromosomeList"></div>
-			<input type="submit" class="button" value="Save">
-				
+			<input type="submit" class="button" value="Upload">
+			</div>
 		</form>
 		<div id="info">
 			<h3>Info</h3>
@@ -196,6 +209,12 @@
 
 
 	<script type="text/javascript">
+	$("#nextButton").on("click",function(){
+		$('#page1').removeClass('active');
+		$('#page2').addClass('active');
+	})
+
+
 	var levels = ['Kingdom','Class','Genus','Species']
 	$(function() {
 		$('#uncategorized').on('click',function(){
@@ -266,6 +285,13 @@
 		return levelInput;
 	}
 
+	$('#uploadForm').on('submit',function(e){
+		e.preventDefault();
+		$('#page2 input').attr('disabled','disabled');
+
+        ajaxFile($('#fastafiles')[0],0);
+	})
+
 	$('#fastafiles').on('change', function(e) {
 		$('#chromosomeList').empty();
 		$.each(this.files,function(i,v){
@@ -275,7 +301,7 @@
 			t.find('h4').html(v.name)
 			$('#chromosomeList').append(t);
 		})
-        ajaxFile(this,0);
+        // ajaxFile(this,0);
 	});
 	var ajaxFile = function(fileinput,i){
 		if (!fileinput.files[i]) return false;

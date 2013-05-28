@@ -5,7 +5,7 @@ from django.conf import settings
 
 from models import FastaFiles, FastaChunkFiles, ImageFiles, Specimen
 from Utilities.SkittleUtils import GetRoundedIndex
-from ProcessFasta import Import
+# from ProcessFasta import Import
 
 
 #Returns if the system contains the requested fasta file. This does NOT return full data associated with it for speed purposes.
@@ -200,10 +200,11 @@ def GetSpecimen(specimen):
     else:
         return None
 
-def HandleUploadedFile(f, kingdom, classType, genus, species, specimen, genomeName=None, source=None, dateSequenced=None, description=None):
+def HandleUploadedFile(f, attributes):
     with open(settings.SKITTLE_TREE_LOC + "DNAStorage/to_import/" + f.name, 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
     fileLoc = settings.SKITTLE_TREE_LOC + "DNAStorage/to_import/" + f.name
-    Import(fileLoc, kingdom, classType, genus, species, specimen, genomeName, source, dateSequenced, description)
+    #Import(fileLoc, kingdom, classType, genus, species, specimen, genomeName, source, dateSequenced, description)
+    Import(fileLoc, attributes)
     return fileLoc

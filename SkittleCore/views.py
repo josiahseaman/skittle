@@ -20,7 +20,6 @@ def browse(request, genus="homo", species="sapiens", specimen="hg18", chromosome
     colorPalette = request.GET.get('colorPalette', 'Classic')
     fileLength = GetChromosomeLength(specimen,chromosome) 
     chromosomeList = GetRelatedChromosomes(specimen)
-    print chromosomeList
     context = {'availableGraphs':GraphRequestHandler.availableGraphs, 'availableAnnotations':GetAnnotationsList(specimen), "annotationStatus":json.dumps(GetAnnotationsList(specimen)), 'specimen':GetSpecimen(specimen),'chromosome':chromosome,'chromosomeList':chromosomeList ,'colorPalette':colorPalette,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength,}
     return render(request, 'browse.html',context)
 

@@ -52,11 +52,12 @@ header p {
 	text-align: right;
 }
 
-.button {
+.button,.button:disabled:hover {
 	font-family: 'Exo', Helvetica, sans-serif;
 	background:#111;
 	color:#ddd;
 	font-weight: 500;
+	text-decoration: none;
 }
 .button:hover {
 	background: #222;
@@ -66,6 +67,9 @@ header p {
 .button:active {
 	background: #555;
 	color: #fff;
+}
+.button:disabled {
+	opacity: 0.5;
 }
 .success {
 	color:#8f5;
