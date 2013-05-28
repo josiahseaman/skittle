@@ -140,4 +140,5 @@ def run():
                 shutil.move("to_import/" + file, "rejected/" + file)
 
 def Import(fileLoc, attributes):
+    #Import(fileLoc, kingdom, class, genus, species, specimen, genomeName, source, dateSequenced, description)
     pass

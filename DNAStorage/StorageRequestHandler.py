@@ -205,6 +205,5 @@ def HandleUploadedFile(f, attributes):
         for chunk in f.chunks():
             destination.write(chunk)
     fileLoc = settings.SKITTLE_TREE_LOC + "DNAStorage/to_import/" + f.name
-    #Import(fileLoc, kingdom, classType, genus, species, specimen, genomeName, source, dateSequenced, description)
     Import(fileLoc, attributes)
     return fileLoc
