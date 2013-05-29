@@ -43,7 +43,7 @@ def Upload(request):
                         'source':request.POST.get('source',None),
                         'dateSequenced':request.POST.get('dateSequenced',None),
                         'description':request.POST.get('description',None),
-                        'isPublic':request.POST.get('isPublic',True)
+                        'isPublic':request.POST.get('isPublic',False)
                     }
         # if form.is_valid():
         filePath = HandleUploadedFile(request.FILES['file'],genomeInfo)

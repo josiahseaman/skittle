@@ -87,6 +87,30 @@ header p img {
 	width: 0;
 }
 
+
+
+.tableform label {
+	margin:0.5em;
+	width:35%;
+	float:left;
+}
+.tableform input {
+	width:50%;
+	margin:0.5em;
+	clear:right;
+}
+.tableform .helptext {
+	display: none;
+}
+.tableform .errorlist {
+	position: absolute;
+	left:95%;
+	width:300px;
+	padding:0.4em;
+	margin: 0;
+}
+
+
 #feedbackForm {
 	display: none;
 	width: 258px;

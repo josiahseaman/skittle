@@ -130,18 +130,18 @@ class RequestPacket(basePacket):
         managed = False
 
 class SkittleUserManager(BaseUserManager):
-    def create_user(self, email=None, password=None, firstname=None, lastname=None, **extra_fields):
-        if not email:
+    def create_user(self, Email=None, password1=None, FirstName=None, LastName=None, **extra_fields):
+        if not Email:
             raise ValueError("Users must have an email address")
-        if not firstname:
+        if not FirstName:
             raise ValueError("Users must have a first name")
-        if not password:
+        if not password1:
             raise ValueError("Users must set a password")
 
-        email = SkittleUserManager.normalize_email(email)
-        user = SkittleUser(Email=email, FirstName=firstname, LastName=lastname)
+        Email = SkittleUserManager.normalize_email(Email)
+        user = SkittleUser(Email=Email, FirstName=FirstName, LastName=LastName)
 
-        user.set_password(password)
+        user.set_password(password1)
         user.save()
         return user
 

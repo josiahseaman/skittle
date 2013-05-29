@@ -85,6 +85,25 @@ header p {
 }
 
 
+.tableform {
+	font-size: 1em;
+}
+.tableform label {
+	text-align: right;
+	color:#fda;
+	font-size: 1em;
+}
+.tableform input {
+	border-radius: 6px;
+	font-size: 1em;
+}
+.tableform .errorlist {
+	background: #411;
+	border: 2px solid #d66;
+	border-radius: 6px;
+	color: #d66;
+}
+
 #bug-report-form input[type=text],select,textarea {
 	font-size: 1.2em;
 	border-radius: 4px
