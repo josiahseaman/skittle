@@ -163,8 +163,8 @@
 			<div id="page1" class="active">
 			<div class="vertical-grid">
 			<label for="availability">Availability:</label>
-			<input type="radio" name="availability" value="public" checked>Public
-			<input type="radio" name="availability" value="private">Private
+			<input type="radio" name="isPublic" value="public" checked>Public
+			<input type="radio" name="isPublic" value="private">Private
 			<br>
 			<label for="genomeName">Genome Name:</label><input type="text" name="genomeName" placeholder="(e.g. Human Genome)" class="primary"><br>
 			<label for="specimenName">Specimen Name:</label><input type="text" name="specimenName" placeholder="(e.g. hg19)" class="primary"><br>
@@ -173,6 +173,10 @@
 			<label for="description">Description:</label><textarea name="description"></textarea><br>
 		</div>
 			<h4>Taxonomy:</h4>
+			<input type="hidden" id="Kingdom" name="Kingdom">
+			<input type="hidden" id="Class" name="Class">
+			<input type="hidden" id="Genus" name="Genus">
+			<input type="hidden" id="Species" name="Species">
 			<input type="checkbox" name="uncategorized" id="uncategorized" checked><label for="uncategorized">Uncategorized</label>
 			<div id="taxonomyBuilder" style="display:none;">
 				
@@ -189,21 +193,15 @@
 		</form>
 		<div id="info">
 			<h3>Info</h3>
-			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-			tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-			consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-			cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-			proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-			^.*(Phylum:|Order:|Family:|Subclass:|Infraclass:|Tribe:).*[\r\n]
-			^.*(Genus:  )(\w*) 
-			{"$2"},
+			<p>Please wait for your fasta files to finish uploading before closing the browser window. Once the upload is
+				complete the server will begin processing the files and preparing them for display. This could take 
+				a few minutes to several hours depending on the file size.</p>
 		</div>
 	</div>
 	<div id="templates">
 		<div class="chromosome">
 			<h4></h4>
-			<div class="progress"></div>
+			<div class="progress"><div class="progressbar"></div><div class="progresspercent"></div></div>
 		</div>
 	</div>
 
@@ -256,7 +254,8 @@
 			.autocomplete({source:getTypeaheadValues(level),minLength: 0})
 			.blur(function() {
 				if ($(this).val().length>0) {
-					var levelSpan = $('<span id="level'+level+'" class="taxonomy">'+$(this).val()+'</span>')
+					var levelSpan = $('<span id="level'+level+'" class="taxonomy">'+$(this).val()+'</span>');
+					$('#'+levels[level]).val($(this).val())
 					levelSpan
 						.insertAfter($(this))
 						.on('click',function(){
@@ -287,7 +286,7 @@
 
 	$('#uploadForm').on('submit',function(e){
 		e.preventDefault();
-		$('#page2 input').attr('disabled','disabled');
+		$('#page2 input[type="file"]').attr('disabled','disabled');
 
         ajaxFile($('#fastafiles')[0],0);
 	})
@@ -308,30 +307,32 @@
 
         var formData = new FormData(document.getElementById('uploadForm'));
 	    var file = fileinput.files[i];
-	    formData.append(file.name,file);
+	    formData.append('file',file);
 
 	    var xhr = new XMLHttpRequest();
 	    xhr.addEventListener('progress', function(e) {
 	        var done = e.position || e.loaded, total = e.totalSize || e.total;
-            $('#chr-'+i+' .progress').html('xhr progress: ' + (Math.floor(done/total*1000)/10) + '%');
+            $('#chr-'+i+' .progressbar').width(round(100*done/total) + '%');
 	        console.log('xhr progress: ' + (Math.floor(done/total*1000)/10) + '%');
 	    }, false);
 	    if ( xhr.upload ) {
 	        xhr.upload.onprogress = function(e) {
 	            var done = e.position || e.loaded, total = e.totalSize || e.total;
-	            $('#chr-'+i+' .progress').html('xhr.upload progress: ' + done + ' / ' + total + ' = ' + (Math.floor(done/total*1000)/10) + '%');
+	            $('#chr-'+i+' .progressbar').width(round(100*done/total) + '%');
 	            console.log('xhr.upload progress: ' + done + ' / ' + total + ' = ' + (Math.floor(done/total*1000)/10) + '%');
 	        };
 	    }
 	    xhr.onreadystatechange = function(e) {
 	        if ( 4 == this.readyState ) {
-	            $('#chr-'+i+' .progress').html('xhr upload complete');
+	            if (this.status == 200 ) $('#chr-'+i+' .progressbar').html('upload complete');
+	            else $('#chr-'+i+' .progressbar').html('error').css('background','#a00');
 	            console.log(['xhr upload complete', e]);
 	        	ajaxFile(fileinput,++i);
 	        }
 	    };
 	    xhr.open('post', "upload", true);
 	    xhr.send(formData);
+
 	}
 	</script>
 

@@ -74,6 +74,18 @@ header p img {
 	border-radius: 6px;
 	padding: 0.5em;
 }
+.progress {
+	border-radius: 6px;
+	border: 1px solid #555;
+	width:300px;
+	overflow: hidden;
+	margin: 0.5em 0;
+}
+.progressbar {
+	height:1em;
+	line-height: 1em;
+	width: 0;
+}
 
 #feedbackForm {
 	display: none;

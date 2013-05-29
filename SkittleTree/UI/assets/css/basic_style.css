@@ -76,6 +76,10 @@ header p {
 	background-color: rgba(130,255,100,0.2);
 	border-color:rgba(130,255,100,0.4);
 }
+.progressbar {
+	background: #8f5;
+	text-align: center;
+}
 
 
 #bug-report-form input[type=text],select,textarea {

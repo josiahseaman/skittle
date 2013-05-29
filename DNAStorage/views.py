@@ -34,11 +34,11 @@ def Upload(request):
         # form = uploadFileForm(request.POST, request.FILES)
         print request.POST
         genomeInfo = {
-                        'kingdom':request.POST.get('kingdom',None),
-                        'class':request.POST.get('className',None),
-                        'genus':request.POST.get('genusName',None),
-                        'species':request.POST.get('species',None),
-                        'specimen':request.POST.get('specimenName',None),
+                        'kingdom':request.POST.get('Kingdom',"uncategorized"),
+                        'class':request.POST.get('Class',None),
+                        'genus':request.POST.get('Genus',None),
+                        'species':request.POST.get('Species',None),
+                        'specimen':request.POST.get('specimenName',"Unknown"),
                         'genomeName':request.POST.get('genomeName',None),
                         'source':request.POST.get('source',None),
                         'dateSequenced':request.POST.get('dateSequenced',None),
@@ -47,9 +47,9 @@ def Upload(request):
                     }
         # if form.is_valid():
         filePath = HandleUploadedFile(request.FILES['file'],genomeInfo)
-        # handle the form data?
         status = "success"
         message = "Your files were uploaded successfully. Please Allow a few hours for processing."
+        return simplejson.dumps({'status':status,'message':message})
     context = {'status':status,'message':message}
     return render(request, 'upload.html', context)
 
