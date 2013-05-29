@@ -67,6 +67,21 @@ http://www.lfd.uci.edu/~gohlke/pythonlibs/#mysql-python
 
 #
 
+====================THREAD CONFIGURATIONS====================
+Apache httpd config under worker module:
+StartServers 2
+ServerLimit 16
+MaxClients 400
+MinSpareThreads 25
+MaxSpareThreads 75
+ThreadsPerChild 25
+
+WSGIDaemonProcess
+processes=8
+threads=2
+Note, this is static and doesn't create more as requests come in. The two times each other is the total number of python interpreters spawned and the max number of python requests that can be handled.
+Static files and assets are NOT served off of this. They are served off of the Apache threads that are dynamically spawned from above.
+
 ====================COMPILE C FUNCTIONS====================
 1) Create your .c file
 2) Convert it to an object file `gcc -c -fPIC yourFile.c -o yourFile.o`
