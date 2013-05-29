@@ -201,9 +201,10 @@ def GetSpecimen(specimen):
         return None
 
 def HandleUploadedFile(f, attributes):
-    with open(settings.SKITTLE_TREE_LOC + "DNAStorage/to_import/" + f.name, 'wb+') as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
-    fileLoc = settings.SKITTLE_TREE_LOC + "DNAStorage/to_import/" + f.name
-    ImportFasta(fileLoc, attributes)
-    return fileLoc
+    try:
+        with open(settings.SKITTLE_TREE_LOC + "DNAStorage/to_import/" + f.name, 'wb+') as destination:
+            for chunk in f.chunks():
+                destination.write(chunk)
+    except:
+        return "Error uploading file!"
+    return ImportFasta(f.name, attributes)

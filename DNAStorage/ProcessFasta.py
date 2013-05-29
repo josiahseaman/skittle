@@ -10,7 +10,7 @@ import StorageRequestHandler
 
 
 #Take a fasta file, split it and sort it into the correct folders
-def splitAndSort(file, storageLocation, workingLocation):
+def splitAndSort(file, storageLocation, workingLocation, attributes=None):
     bp = settings.CHUNK_SIZE
 
     #Take the file name and split it at each delim.
@@ -120,7 +120,7 @@ def splitAndSort(file, storageLocation, workingLocation):
         fa.FastaFile = fastaFile
         fa.save()
 
-    print "Done enterting " + taxonomic[4] + " " + taxonomic[5] + " into the system!"
+    print "Done entering " + taxonomic[4] + " " + taxonomic[5] + " into the system!"
     return True
 
 #----------------------------------------------------------------------------------------
@@ -140,6 +140,27 @@ def run():
                 print ex
                 shutil.move("to_import/" + file, "rejected/" + file)
 
-def ImportFasta(fileLoc, attributes):
-    #Import(fileLoc, kingdom, class, genus, species, specimen, genomeName, source, dateSequenced, description)
-    pass
+
+def ImportFasta(fileName, attributes):
+    #Attributes(kingdom, class, genus, species, specimen, genomeName, source, dateSequenced, description)
+    workingDir = settings.SKITTLE_TREE_LOC + "DNAStorage"
+    os.chdir(workingDir)
+
+    if fileName.endswith(".fasta") or fileName.endswith(".fa"):
+        from multiprocessing import Process
+        importer = Process(target=importFasta, args=(workingDir, fileName, attributes))
+        importer.start()
+        return 1  # TODO: Make this return the ID of a progress object
+    else:
+        print "This is not a fasta file!"
+        shutil.move("to_import/" + fileName, "rejected/" + fileName)
+        return "This is not a fasta file... Import failed!"
+
+def importFasta(workingDir, fileName, attributes):
+    try:
+        splitAndSort(file, workingDir + "/fasta", workingDir + "/to_import/", attributes=attributes)
+        shutil.move("to_import/" + fileName, "history/" + fileName)
+    except IOError as ex:
+        print ex
+        shutil.move("to_import/" + fileName, "rejected/" + fileName)
+        return ex.message
