@@ -5,6 +5,7 @@ import socket
 PRODUCTION = False
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+HOSTNAME = socket.gethostname()
 
 #--------------------
 
@@ -12,14 +13,14 @@ CHUNK_SIZE = 65536
 
 #--------------------
 
-if PRODUCTION and not socket.gethostname().startswith('nyx'):
+if PRODUCTION and not HOSTNAME.startswith('nyx'):
     SKITTLE_TREE_LOC = "/var/www/skittle/"
 
-    SKITTLE_TREE_URL = "http://dnaskittle.com/"
-elif socket.gethostname().startswith('nyx'):
+    SKITTLE_TREE_URL = "https://dnaskittle.com/"
+elif HOSTNAME.startswith('nyx'):
     SKITTLE_TREE_LOC = "/var/www/skittle-development/"
 
-    SKITTLE_TREE_URL = "http://skittle.newlinetechnicalinnovations.com/"
+    SKITTLE_TREE_URL = "https://skittle.newlinetechnicalinnovations.com/"
 else:
     SKITTLE_TREE_LOC = os.getcwd().replace("\\", "/") + "/"
     SKITTLE_TREE_URL = "/"
@@ -36,7 +37,7 @@ AUTH_USER_MODEL = 'SkittleCore.SkittleUser'
 
 DEFAULT_FROM_EMAIL = "info@dnaskittle.com"
 
-if PRODUCTION and not socket.gethostname().startswith('nyx'):
+if PRODUCTION and not HOSTNAME.startswith('nyx'):
     #TODO: mysql_pool
     DATABASES = {
         'default': {
@@ -63,7 +64,7 @@ else:
 
 DATABASE_WAIT_TIMEOUT = 28800
 
-if PRODUCTION:
+if PRODUCTION or HOSTNAME.startswith('nyx'):
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
