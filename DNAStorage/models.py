@@ -14,14 +14,14 @@ class Specimen(models.Model):
     Description = models.TextField(null=True, blank=True)
     DatePublished = models.CharField(max_length=50, null=True, blank=True)
     Thumbnail = models.CharField(max_length=255, null=True, blank=True)
-    Public = models.BooleanField()
-    User = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True)
 
 
 class FastaFiles(models.Model):
     Specimen = models.ForeignKey(Specimen)
     Chromosome = models.CharField(max_length=50)
     Length = models.IntegerField()
+    Public = models.BooleanField()
+    User = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True)
 
 
 class FastaChunkFiles(models.Model):
