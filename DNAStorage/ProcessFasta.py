@@ -43,12 +43,12 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
     else:
         taxonomic = []
         #Attributes(kingdom, class, genus, species, specimen, genomeName, source, dateSequenced, description, isPublic)
-        taxonomic[0] = attributes.get('kingdom', "Uncategorized")  # attributes['kingdom']
-        taxonomic[1] = attributes.get('class', "Uncategorized")
-        taxonomic[2] = attributes.get('genus', "Uncategorized")
-        taxonomic[3] = attributes.get('species', "Uncategorized")
-        taxonomic[4] = attributes['specimen']
-        taxonomic[5] = parseChromosome(fileName)
+        taxonomic.append(attributes.get('kingdom', "Uncategorized"))  # attributes['kingdom']
+        taxonomic.append(attributes.get('class', "Uncategorized"))
+        taxonomic.append(attributes.get('genus', "Uncategorized"))
+        taxonomic.append(attributes.get('species', "Uncategorized"))
+        taxonomic.append(attributes['specimen'])
+        taxonomic.append(parseChromosome(fileName))
 
     if len(taxonomic) != 6 and not attributes:
         raise IOError("Error! File " + fileName + " in to_import is not validly named!")
