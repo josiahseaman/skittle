@@ -137,28 +137,31 @@ def DeleteCache(graph, specimen, chromosome, start):
                 os.remove(fullpath)
 
 #Get a python object containing a unique tree that travels to the specimens and contains the chromosome files of each specimen
-def GetTreeList():
-    specimens = Specimen.objects.all()
-
+def GetTreeList(user=None):
     tree = {}
-
     #tree = {"Kingdom": {"Class": {"Genus": {"Species": {"Specimen": {"ExtendedName", "Source", "Description", "DatePublished", "Thumbnail", {"ChromosomeListing",}}}}}}}
 
+    specimens = Specimen.objects.all()
     for entry in specimens:
         #Go through all chromosomes related to this specimen and generate list
         chromosomeList = []
         chromosomes = FastaFiles.objects.filter(Specimen=entry)
         for chr in chromosomes:
-            chromosomeList.append(chr.Chromosome)
+            if chr.Public:
+                chromosomeList.append(chr.Chromosome)
+            if user:
+                if user in chr.User.all():
+                    chromosomeList.append(chr.Chromosome)
 
-        #Gather all specimen details (including chromosomes) into list
-        details = {"ExtendedName": entry.ExtendedName, "Source": entry.Source, "Description": entry.Description,
+        if len(chromosomeList) > 0:
+            #Gather all specimen details (including chromosomes) into list
+            details = {"ExtendedName": entry.ExtendedName, "Source": entry.Source, "Description": entry.Description,
                    "DatePublished": entry.DatePublished, "Thumbnail": entry.Thumbnail, "Chromosomes": chromosomeList}
 
-        subtree = {entry.Kingdom: {entry.Class: {entry.Genus: {entry.Species: {entry.Name: details}}}}}
+            subtree = {entry.Kingdom: {entry.Class: {entry.Genus: {entry.Species: {entry.Name: details}}}}}
 
-        #add this generated tree to the main tree
-        tree.update(subtree)
+            #add this generated tree to the main tree
+            tree.update(subtree)
 
     return tree
 
