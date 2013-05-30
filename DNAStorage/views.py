@@ -8,7 +8,7 @@ from django import forms
 
 
 def index(request):
-    specimens = Specimen.objects.all
+    specimens = Specimen.objects.exclude(Name="businesscard")
     chromosomes = FastaFiles.objects.filter(Public=True).order_by('Length').reverse()
     context = {'specimens': specimens, 'chromosomes': chromosomes}
     return render(request, 'index.html', context)
