@@ -37,3 +37,13 @@ class ImageFiles(models.Model):
     Scale = models.IntegerField(null=True)
     CharactersPerLine = models.IntegerField(null=True)
     IsInRamDisk = models.BooleanField(default=False)
+
+
+class ImportProgress(models.Model):
+    Specimen = models.CharField(max_length=255)
+    FileName = models.CharField(max_length=255)
+    Message = models.CharField(max_length=255, null=True, blank=True)
+    IsWorking = models.BooleanField(default=True)
+    Success = models.BooleanField(default=False)
+    FastaFile = models.OneToOneField(FastaFiles, null=True, default=None)
+    User = models.ManyToManyField(settings.AUTH_USER_MODEL)
