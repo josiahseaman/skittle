@@ -278,6 +278,31 @@ def RunMigration15():
     cur.execute(part8)
     cur.execute(part9)
 
+#####_____MIGRATION 16_____#####
+def RunMigration16():
+    cur = setupDB()
+
+    partPre = "SET FOREIGN_KEY_CHECKS=0"
+    partTest = "ALTER TABLE `Annotations_gff` DROP FOREIGN KEY `Specimen_id_refs_id_bed804f4`"
+    part1 = "ALTER TABLE `DNAStorage_specimen` DROP COLUMN `Public`"
+    part2 = "DROP TABLE IF EXISTS `DNAStorage_specimen_user`"
+    part3 = "SET FOREIGN_KEY_CHECKS=1"
+    part4 = "ALTER TABLE `DNAStorage_fastafiles` ADD COLUMN `Public` TINYINT(1) UNSIGNED NOT NULL AFTER `Length`"
+    part5 = "CREATE TABLE `DNAStorage_fastafiles_User` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `fastafiles_id` integer NOT NULL, `skittleuser_id` integer NOT NULL, UNIQUE (`fastafiles_id`, `skittleuser_id`))"
+    part6 = "ALTER TABLE `DNAStorage_fastafiles_User` ADD CONSTRAINT `fastafiles_id_refs_id_56a60359` FOREIGN KEY (`fastafiles_id`) REFERENCES `DNAStorage_fastafiles` (`id`)"
+    part7 = "ALTER TABLE `DNAStorage_fastafiles_User` ADD CONSTRAINT `skittleuser_id_refs_id_f38a8c68` FOREIGN KEY (`skittleuser_id`) REFERENCES `SkittleCore_skittleuser` (`id`)"
+
+    cur.execute(partPre)
+    cur.execute(partTest)
+    cur.execute(part1)
+    cur.execute(part2)
+    cur.execute(part3)
+    cur.execute(part4)
+    cur.execute(part5)
+    cur.execute(part6)
+    cur.execute(part7)
+
+
 def commitTrans():
     from django.db import transaction
 
