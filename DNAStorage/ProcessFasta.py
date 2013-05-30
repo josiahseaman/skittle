@@ -73,6 +73,9 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
         return False
 
     print "Entering this sample into the system..."
+    if progress:
+        progress.Success = False
+        progress.save()
 
     filePath = os.path.join(storageLocation)
     pngFilePath = os.path.join(storageLocation).replace("fasta", "png")
@@ -212,6 +215,7 @@ def ImportFasta(fileName, attributes, user):
             return False
 
         progress, created = ImportProgress.objects.get_or_create(Specimen=attributes['specimen'], FileName=fileName)
+        progress.IsWorking = False
         progress.User.add(user)
         progress.save()
 
