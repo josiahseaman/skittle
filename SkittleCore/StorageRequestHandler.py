@@ -1,7 +1,7 @@
-from django.conf import settings
+from SkittleCore import models as core
 
 def GetUser(userId):
-    user = settings.AUTH_USER_MODEL.objects.filter(id=userId)[:1]
+    user = core.SkittleUser.objects.filter(id=userId)[:1]
 
     if user:
         return user[0]
