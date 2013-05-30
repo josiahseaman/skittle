@@ -1,7 +1,7 @@
-from models import SkittleUser, StatePacket
+from django.conf import settings
 
 def GetUser(userId):
-    user = SkittleUser.objects.filter(id=userId)[:1]
+    user = settings.AUTH_USER_MODEL.objects.filter(id=userId)[:1]
 
     if user:
         return user[0]
