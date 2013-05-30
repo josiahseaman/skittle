@@ -1,4 +1,4 @@
-from SkittleCore import models as core
+import models as core
 
 def GetUser(userId):
     user = core.SkittleUser.objects.filter(id=userId)[:1]
