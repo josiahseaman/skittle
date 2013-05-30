@@ -211,8 +211,7 @@ def ImportFasta(fileName, attributes, user):
         if not user:
             return False
 
-        progress = ImportProgress(Specimen=attributes['specimen'], FileName=fileName, IsWorking=False)
-        progress.save()
+        progress, created = ImportProgress.objects.get_or_create(Specimen=attributes['specimen'], FileName=fileName)
         progress.User.add(user)
         progress.save()
 
