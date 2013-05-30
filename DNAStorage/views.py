@@ -36,7 +36,7 @@ def Upload(request):
         # form = uploadFileForm(request.POST, request.FILES)
         if request.method == 'POST':
             genomeInfo = {
-                            'kingdom':request.POST.get('Kingdom',"uncategorized"),
+                            'kingdom':request.POST.get('Kingdom',u''),
                             'class':request.POST.get('Class',None),
                             'genus':request.POST.get('Genus',None),
                             'species':request.POST.get('Species',None),
@@ -48,11 +48,8 @@ def Upload(request):
                             'isPublic':request.POST.get('isPublic',False)
                         }
             filePath = StorageRequestHandler.HandleUploadedFile(request.FILES['file'],genomeInfo,request.user)
-        return render(request, 'uploadStatus.json', {'uploads':StorageRequestHandler.GetUserImports(request.user)}, content_type="application/json")
-        status = StorageRequestHandler.GetUserImports(request.user)
-        print status
-        status = "do a thing"
-        return HttpResponse(status) #simplejson.dumps({'status':status})
+        uploads = StorageRequestHandler.GetUserImports(request.user).distinct()
+        return render(request, 'uploadStatus.json', {'uploads':uploads}, content_type="application/json")
     context = {'status':status,'message':message}
     return render(request, 'upload.html', context)
 

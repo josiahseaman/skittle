@@ -150,6 +150,7 @@
 	function test() {
 		$.getJSON('#',function(data){
 			console.log(data)
+			updateStatus(data)
 		})
 	}
 	</script>
@@ -161,7 +162,6 @@
 		<div class="message {{ status }}">{{ message }}</div>
 		{% endif %}
 		<h2>Upload a Genome</h2>
-		<a href="#" onClick="test()">A button</a>
 		<form id="uploadForm" action="upload" method="post">
 			{% csrf_token %}
 			<div id="page1" class="active">
@@ -222,6 +222,7 @@
 		$('#uncategorized').on('click',function(){
 			if ($(this).is(':checked')) {
 				$('#taxonomyBuilder').hide()
+				$('#Kingdom,#Class,#Genus,#Species').val("")
 			}
 			else {
 				$('#taxonomyBuilder').show()
@@ -301,6 +302,7 @@
 			var t = $('#templates .chromosome')
 					.clone()
 					.attr('id','chr-'+i)
+					.attr('data-filename',v.name)
 			t.find('h4').html(v.name)
 			$('#chromosomeList').append(t);
 		})
@@ -331,12 +333,26 @@
 	            if (this.status == 200 ) $('#chr-'+i+' .progressbar').html('upload complete');
 	            else $('#chr-'+i+' .progressbar').html('error').css('background','#a00');
 	            console.log(['xhr upload complete', e]);
+	            updateStatus($.parseJSON(this.response))
 	        	ajaxFile(fileinput,++i);
 	        }
 	    };
 	    xhr.open('post', "upload", true);
 	    xhr.send(formData);
 
+	    var updateStatus = function(status) {
+	    	if(!status) return false;
+	    	console.log(status);
+	    	$.each(status,function(i,v){
+	    		if (i == "null") return	false;
+	    		$outputLocation = $('.chromosome[data-filename="'+i+'"] .progressbar');
+
+	    		if (v.IsWorking == "True") $outputLocation.html('processing...');
+	    		else if (v.Success == "True") $outputLocation.html('Ready for viewing!');
+	    		else $outputLocation.html('processing error: '+v.Message).css('background','#a00');
+	    		
+	    	})
+	    }
 	}
 	</script>
 
