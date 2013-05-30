@@ -4,13 +4,12 @@ import shutil
 
 from django.conf import settings
 
-from models import FastaFiles, FastaChunkFiles, Specimen
-#from StorageRequestHandler import HasFastaFile
+from models import FastaFiles, FastaChunkFiles, Specimen, ImportProgress
 import StorageRequestHandler
 
 
 #Take a fasta file, split it and sort it into the correct folders
-def splitAndSort(file, storageLocation, workingLocation, attributes=None):
+def splitAndSort(file, storageLocation, workingLocation, attributes=None, progress=None):
     bp = settings.CHUNK_SIZE
 
     #Take the file name and split it at each delim.
@@ -19,16 +18,41 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None):
     fileName = re.sub('\.fasta', '', file)
     fileName = re.sub('\.fa', '', fileName)
 
-    #Parse file name into system path
-    taxonomic = fileName.split("_")
+    if not attributes:
+        #Parse file name into system path
+        taxonomic = fileName.split("_")
+    else:
+        taxonomic = []
+        #Attributes(kingdom, class, genus, species, specimen, genomeName, source, dateSequenced, description, isPublic)
+        taxonomic[0] = attributes['kingdom']
+        taxonomic[1] = attributes['class']
+        taxonomic[2] = attributes['genus']
+        taxonomic[3] = attributes['species']
+        taxonomic[4] = attributes['specimen']
+        taxonomic[5] = "BAD DATA"  # TODO Find the chromosome name from the file name
 
-    if len(taxonomic) != 6:
+    if len(taxonomic) != 6 and not attributes:
         raise IOError("Error! File " + fileName + " in to_import is not validly named!")
+    if not taxonomic[4] or not taxonomic[5]:
+        message = "Error! Specimen and/or Chromosome name not valid!"
+        print message
+        progress.Message = message
+        progress.IsWorking = False
+        progress.Success = False
+        progress.save()
+        return False
 
     #Check to see if this specific file has already been split up and is stored in the system
     if StorageRequestHandler.HasFastaFile(taxonomic[4], taxonomic[5]):
-        print "This sample is already stored in the system!"
+        message = "This sample is already stored in the system!"
+        print message
+        if progress:
+            progress.Message = message
+            progress.IsWorking = False
+            progress.Success = False
+            progress.save()
         return False
+
     print "Entering this sample into the system..."
 
     filePath = os.path.join(storageLocation)
@@ -45,9 +69,17 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None):
     specimen, created = Specimen.objects.get_or_create(Name=taxonomic[4], Species=taxonomic[3], Genus=taxonomic[2],
                                                        Class=taxonomic[1], Kingdom=taxonomic[0])
     if created:
-        specimen.Public = True
+        if not attributes or attributes['isPublic']:
+            specimen.Public = True
+        else:
+            specimen.Public = False
         specimen.GenomeLength = 0
         specimen.save()
+
+    if progress:
+        #Mark that we are now starting processing
+        progress.IsWorking = True
+        progress.save()
 
     #Begin setting up the FastaFile object for the database
     fastaFile = FastaFiles()
@@ -113,6 +145,8 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None):
 
     #Save fasta file to database then populate chunks with foreign keys and save
     fastaFile.save()
+    if progress:
+        fastaFile.User.add(progress.User.all()[0])
     specimen.GenomeLength += fastaFile.Length
     specimen.save()
 
@@ -120,7 +154,15 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None):
         fa.FastaFile = fastaFile
         fa.save()
 
-    print "Done entering " + taxonomic[4] + " " + taxonomic[5] + " into the system!"
+    message = "Done entering " + taxonomic[4] + " " + taxonomic[5] + " into the system!"
+    print message
+    if progress:
+        progress.Message = message
+        progress.IsWorking = False
+        progress.Success = True
+        progress.FastaFile = fastaFile
+        progress.save()
+        # TODO Notify the user that their file is completely imported
     return True
 
 #----------------------------------------------------------------------------------------
@@ -141,24 +183,37 @@ def run():
                 shutil.move("to_import/" + file, "rejected/" + file)
 
 
-def ImportFasta(fileName, attributes):
+def ImportFasta(fileName, attributes, userId):
     #Attributes(kingdom, class, genus, species, specimen, genomeName, source, dateSequenced, description)
     workingDir = settings.SKITTLE_TREE_LOC + "DNAStorage"
     os.chdir(workingDir)
 
     if fileName.endswith(".fasta") or fileName.endswith(".fa"):
+        from SkittleCore.StorageRequestHandler import GetUser
+        user = GetUser(userId)
+
+        if not user:
+            return False
+
+        progress = ImportProgress(Specimen=attributes['specimen'], FileName=fileName, IsWorking=False)
+        progress.save()
+        progress.User.add(user)
+        progress.save()
+
         from multiprocessing import Process
-        importer = Process(target=importFasta, args=(workingDir, fileName, attributes))
+        importer = Process(target=importFasta, args=(workingDir, fileName, attributes, progress))
         importer.start()
-        return 1  # TODO: Make this return the ID of a progress object
+
+        return progress.id
     else:
         print "This is not a fasta file!"
         shutil.move("to_import/" + fileName, "rejected/" + fileName)
         return "This is not a fasta file... Import failed!"
 
-def importFasta(workingDir, fileName, attributes):
+
+def importFasta(workingDir, fileName, attributes, progress):
     try:
-        splitAndSort(file, workingDir + "/fasta", workingDir + "/to_import/", attributes=attributes)
+        splitAndSort(file, workingDir + "/fasta", workingDir + "/to_import/", attributes=attributes, progress=progress)
         shutil.move("to_import/" + fileName, "history/" + fileName)
     except IOError as ex:
         print ex

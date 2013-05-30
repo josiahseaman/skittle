@@ -3,8 +3,9 @@ import os
 
 from django.conf import settings
 
-from models import FastaFiles, FastaChunkFiles, ImageFiles, Specimen
+from models import *
 from Utilities.SkittleUtils import GetRoundedIndex
+from SkittleCore.StorageRequestHandler import GetUser
 from ProcessFasta import ImportFasta
 
 
@@ -199,6 +200,20 @@ def GetSpecimen(specimen):
         return specimen[0]
     else:
         return None
+
+def GetImportProgress(specimen, fileName):
+    progress = ImportProgress.objects.filter(Specimen=specimen, FileName=fileName)[:1]
+
+    if progress:
+        return progress[0]
+    else:
+        return None
+
+def GetUserImports(userId):
+    user = GetUser(userId)
+    uploads = ImportProgress.objects.filter(User__id=userId)
+
+    return uploads
 
 def HandleUploadedFile(f, attributes):
     try:
