@@ -43,7 +43,7 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
     else:
         taxonomic = []
         #Attributes(kingdom, class, genus, species, specimen, genomeName, source, dateSequenced, description, isPublic)
-        taxonomic.append(attributes.get('kingdom', "Uncategorized") or "Uncategorized")  # attributes['kingdom']
+        taxonomic.append(attributes.get('kingdom', "Uncategorized") or "Uncategorized")
         taxonomic.append(attributes.get('class', "Uncategorized") or "Uncategorized")
         taxonomic.append(attributes.get('genus', "Uncategorized") or "Uncategorized")
         taxonomic.append(attributes.get('species', "Uncategorized") or "Uncategorized")
@@ -95,6 +95,13 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
             specimen.Public = True
         else:
             specimen.Public = False
+
+        if attributes:
+            specimen.ExtendedName = attributes.get('genomeName', "") or ""
+            specimen.Source = attributes.get('source', "") or ""
+            specimen.Description = attributes.get('description', "") or ""
+            specimen.DatePublished = attributes.get('dateSequenced', "") or ""
+
         specimen.GenomeLength = 0
         specimen.save()
 
