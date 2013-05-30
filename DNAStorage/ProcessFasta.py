@@ -8,6 +8,25 @@ from models import FastaFiles, FastaChunkFiles, Specimen, ImportProgress
 import StorageRequestHandler
 
 
+def parseChromosome(fileName):
+    known = ["chromosome", "ch", "chr", "chro", "chrom"]
+
+    parts = re.split('-|_|\.|\ ', fileName)
+
+    if len(parts) > 1:
+        for part in parts:
+            for sample in known:
+                if sample in part.tolower().trim():
+                    return part.tolower().trim()
+        return part[-1].tolower().trim()
+    else:
+        parts = parts[0]
+        for sample in known:
+            if sample in parts.tolower().trim():
+                location = re.search(sample, parts)
+                return parts[location.start():]
+        return parts
+
 #Take a fasta file, split it and sort it into the correct folders
 def splitAndSort(file, storageLocation, workingLocation, attributes=None, progress=None):
     bp = settings.CHUNK_SIZE
@@ -29,7 +48,7 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
         taxonomic[2] = attributes['genus']
         taxonomic[3] = attributes['species']
         taxonomic[4] = attributes['specimen']
-        taxonomic[5] = "BAD DATA"  # TODO Find the chromosome name from the file name
+        taxonomic[5] = parseChromosome(fileName)
 
     if len(taxonomic) != 6 and not attributes:
         raise IOError("Error! File " + fileName + " in to_import is not validly named!")
@@ -189,7 +208,6 @@ def ImportFasta(fileName, attributes, user):
     os.chdir(workingDir)
 
     if fileName.endswith(".fasta") or fileName.endswith(".fa"):
-
         if not user:
             return False
 

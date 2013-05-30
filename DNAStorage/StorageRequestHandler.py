@@ -5,7 +5,6 @@ from django.conf import settings
 
 from models import *
 from Utilities.SkittleUtils import GetRoundedIndex
-from SkittleCore.StorageRequestHandler import GetUser
 from ProcessFasta import ImportFasta
 
 
