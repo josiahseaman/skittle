@@ -216,9 +216,12 @@ def GetImportProgress(specimen, fileName):
         return None
 
 def GetUserImports(user):
-    uploads = ImportProgress.objects.filter(User__id=user.id)
-
+    uploads = ImportProgress.objects.filter(User=user)
     return uploads
+
+def GetUserFastas(user):
+    fastas = FastaFiles.objects.filter(User=user)
+    return fastas
 
 def HandleUploadedFile(f, attributes, user):
     try:
