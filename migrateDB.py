@@ -313,6 +313,23 @@ def RunMigration16():
         chromosome.save()
 
 
+#####_____MIGRATION 16_____#####
+def RunMigration17():
+    cur = setupDB()
+
+    part1 = "CREATE TABLE `DNAStorage_importprogress_User` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `importprogress_id` integer NOT NULL, `skittleuser_id` integer NOT NULL, UNIQUE (`importprogress_id`, `skittleuser_id`))"
+    part2 = "CREATE TABLE `DNAStorage_importprogress` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `Specimen` varchar(255) NOT NULL, `FileName` varchar(255) NOT NULL, `Message` varchar(255), `IsWorking` bool NOT NULL, `Success` bool NOT NULL, `FastaFile_id` integer UNIQUE)"
+    part3 = "ALTER TABLE `DNAStorage_importprogress` ADD CONSTRAINT `FastaFile_id_refs_id_b2920254` FOREIGN KEY (`FastaFile_id`) REFERENCES `DNAStorage_fastafiles` (`id`)"
+    part4 = "ALTER TABLE `DNAStorage_importprogress_User` ADD CONSTRAINT `importprogress_id_refs_id_a5f0bb0c` FOREIGN KEY (`importprogress_id`) REFERENCES `DNAStorage_importprogress` (`id`)"
+    part5 = "ALTER TABLE `DNAStorage_importprogress_User` ADD CONSTRAINT `skittleuser_id_refs_id_a0aa1864` FOREIGN KEY (`skittleuser_id`) REFERENCES `SkittleCore_skittleuser` (`id`)"
+
+    cur.execute(part1)
+    cur.execute(part2)
+    cur.execute(part3)
+    cur.execute(part4)
+    cur.execute(part5)
+
+
 def commitTrans():
     from django.db import transaction
 

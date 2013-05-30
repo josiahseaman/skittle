@@ -22,3 +22,4 @@ if __name__ == "__main__":
     RunMigration14()
     RunMigration15()
     RunMigration16()
+    RunMigration17()
