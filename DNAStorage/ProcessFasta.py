@@ -88,22 +88,29 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
         os.makedirs(pngFilePath)
 
     #Begin setting up the Specimen object for the database
-    specimen, created = Specimen.objects.get_or_create(Name=taxonomic[4], Species=taxonomic[3], Genus=taxonomic[2],
-                                                       Class=taxonomic[1], Kingdom=taxonomic[0])
-    if created:
+    #specimen, created = Specimen.objects.get_or_create(Name=taxonomic[4], Species=taxonomic[3], Genus=taxonomic[2], Class=taxonomic[1], Kingdom=taxonomic[0])
+    hasSpecimen = StorageRequestHandler.HasSpecimen(taxonomic[4])
+
+    if not hasSpecimen:
+        specimen = Specimen(Name=taxonomic[4], Species=taxonomic[3], Genus=taxonomic[2], Class=taxonomic[1], Kingdom=taxonomic[0])
         if not attributes or attributes['isPublic']:
             specimen.Public = True
         else:
             specimen.Public = False
+    else:
+        specimen = StorageRequestHandler.GetSpecimen(taxonomic[4])
+        specimen.Kingdom = attributes.get('kingdom', specimen.Kingdom) or specimen.Kingdom
+        specimen.Class = attributes.get('class', specimen.Class) or specimen.Class
+        specimen.Genus = attributes.get('genus', specimen.Genus) or specimen.Genus
+        specimen.Species = attributes.get('species', specimen.Species) or specimen.Species
 
-        if attributes:
-            specimen.ExtendedName = attributes.get('genomeName', "") or ""
-            specimen.Source = attributes.get('source', "") or ""
-            specimen.Description = attributes.get('description', "") or ""
-            specimen.DatePublished = attributes.get('dateSequenced', "") or ""
+    if attributes:
+        specimen.ExtendedName = attributes.get('genomeName', specimen.ExtendedName) or specimen.ExtendedName
+        specimen.Source = attributes.get('source', specimen.Source) or specimen.Source
+        specimen.Description = attributes.get('description', specimen.Description) or specimen.Description
+        specimen.DatePublished = attributes.get('dateSequenced', specimen.DatePublished) or specimen.DatePublished
 
-        specimen.GenomeLength = 0
-        specimen.save()
+    specimen.save()
 
     if progress:
         #Mark that we are now starting processing

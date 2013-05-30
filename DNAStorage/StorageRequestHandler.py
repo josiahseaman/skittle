@@ -8,6 +8,10 @@ from Utilities.SkittleUtils import GetRoundedIndex
 import ProcessFasta
 
 
+def HasSpecimen(specimen):
+    has = Specimen.objects.filter(Name=specimen)[:1]
+    return has
+
 #Returns if the system contains the requested fasta file. This does NOT return full data associated with it for speed purposes.
 def HasFastaFile(specimen, chromosome):
     has = FastaFiles.objects.filter(Specimen__Name=specimen, Chromosome=chromosome)[:1]
