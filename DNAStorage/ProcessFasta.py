@@ -229,7 +229,7 @@ def ImportFasta(fileName, attributes, user):
 
 def importFasta(workingDir, fileName, attributes, progress):
     try:
-        splitAndSort(file, workingDir + "/fasta", workingDir + "/to_import/", attributes=attributes, progress=progress)
+        splitAndSort(fileName, workingDir + "/fasta", workingDir + "/to_import/", attributes=attributes, progress=progress)
         shutil.move("to_import/" + fileName, "history/" + fileName)
     except IOError as ex:
         print ex
