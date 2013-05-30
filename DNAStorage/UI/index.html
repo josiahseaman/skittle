@@ -3,8 +3,6 @@
 {% load nti_filters %}
 {% block pageTitle %}DNASkittle|Select a Genome{% endblock %}
 {% block styles %}
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/popover.css">
 	<style type="text/css">
 		#previewPane {
 			position: absolute;
@@ -165,7 +163,7 @@
 				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
 				<h2>{% firstof specimen.ExtendedName  specimen.Genus|add:" "|add:specimen.Species|add:" Genome" %}</h2>
 				<!-- <p class="source"><span>Source:</span>{{ specimen.Source }}</p> -->
-				<p class="info"><span class="seqNum">{{ specimen.DatePublished }} ({{ specimen.Name }})</span> Length: {{ specimen.GenomeLength|toSI }}bp</p>
+				<p class="info"><span class="seqNum">{% firstof specimen.DatePublished "" %} ({{ specimen.Name }})</span> Length: {{ specimen.GenomeLength|toSI }}bp</p>
 			</section>
 			{% endfor %}
 		</div>
@@ -187,29 +185,35 @@
 			<h4>Chromosomes:</h4>
 			<ul class="chromosomeList">
 				{% for chromosome in chromosomes %}
-				<li><a href="/browse/{{ chromosome.Specimen.Genus }}/{{ chromosome.Specimen.Species }}/{{ chromosome.Specimen.Name }}/{{ chromosome.Chromosome }}">{{ chromosome.Chromosome|capfirst }}</a></li>
+				<li><a href="/browse/{{ chromosome.Specimen.Genus }}/{{ chromosome.Specimen.Species }}/{{ chromosome.Specimen.Name }}/{{ chromosome.Chromosome }}">{{ chromosome.Specimen }}{{ chromosome.Chromosome|capfirst }}</a></li>
 				{% endfor %}
 			</ul>
 		</div>
-		{% for specimen in specimens %}
-		<div class="previewSpecimen" id="preview-{{ specimen.Name }}">
+		{% for kingdomName, kingdom in tree.items %}
+		{% for className, class in kingdom.items %}
+		{% for genusName, genus in class.items %}
+		{% for speciesName, species in genus.items %}
+		{% for specimenName, specimen in species.items %}
+		<div class="previewSpecimen" id="preview-{{ specimenName }}">
 			<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="150" height="150"><br>
-			<h3>{% firstof specimen.ExtendedName " Genome" %} ({{specimen.Name}})</h3>
+			<h3>{% firstof specimen.ExtendedName  genusName|add:" "|add:speciesName|add:" Genome" %} ({{specimenName}})</h3>
 
 			<p>Source: {{ specimen.Source }}</p>
 			<p>Length: {{ specimen.GenomeLength|intcomma }} bp</p>
 			<p>Description: {{ specimen.Description }}</p>
-			<h4>{% if specimen.Kingdom == 'Eubacteria' %}Derivatives:
+			<h4>{% if kingdomName == 'Eubacteria' %}Derivatives:
 				{% else %}Chromosomes:
 				{% endif %}</h4>
 			<ul class="chromosomeList">
-				{% for chromosome in chromosomes %}
-				{% if chromosome.Specimen == specimen %}
-				<li><a href="/browse/{{ chromosome.Specimen.Genus }}/{{ chromosome.Specimen.Species }}/{{ chromosome.Specimen.Name }}/{{ chromosome.Chromosome }}">{{ chromosome.Chromosome|capfirst }}</a></li>
-				{% endif %}
+				{% for chromosome in specimen.Chromosomes %}
+				<li><a href="/browse/{{ genusName }}/{{ speciesName }}/{{ specimenName }}/{{ chromosome }}">{{ chromosome|capfirst }}</a></li>
 				{% endfor %}
 			</ul>
 		</div>
+		{% endfor %}
+		{% endfor %}
+		{% endfor %}
+		{% endfor %}
 		{% endfor %}
 	</div>
 

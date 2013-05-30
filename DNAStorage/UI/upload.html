@@ -333,26 +333,28 @@
 	            if (this.status == 200 ) $('#chr-'+i+' .progressbar').html('upload complete');
 	            else $('#chr-'+i+' .progressbar').html('error').css('background','#a00');
 	            console.log(['xhr upload complete', e]);
-	            updateStatus($.parseJSON(this.response))
+	            try {updateStatus($.parseJSON(this.response))}
+	            catch (e) { updateStatus() }
 	        	ajaxFile(fileinput,++i);
 	        }
 	    };
 	    xhr.open('post', "upload", true);
 	    xhr.send(formData);
 
-	    var updateStatus = function(status) {
-	    	if(!status) return false;
-	    	console.log(status);
-	    	$.each(status,function(i,v){
-	    		if (i == "null") return	false;
-	    		$outputLocation = $('.chromosome[data-filename="'+i+'"] .progressbar');
+	}
+	
+	var updateStatus = function(status) {
+		if(!status) return false;
+		console.log(status);
+		$.each(status,function(i,v){
+			if (i == "null") return	false;
+			$outputLocation = $('.chromosome[data-filename="'+i+'"] .progressbar');
 
-	    		if (v.IsWorking == "True") $outputLocation.html('processing...');
-	    		else if (v.Success == "True") $outputLocation.html('Ready for viewing!');
-	    		else $outputLocation.html('processing error: '+v.Message).css('background','#a00');
-	    		
-	    	})
-	    }
+			if (v.IsWorking == "True") $outputLocation.html('processing...');
+			else if (v.Success == "True") $outputLocation.html('Ready for viewing!');
+			else $outputLocation.html('processing error: '+v.Message).css('background','#a00');
+			
+		})
 	}
 	</script>
 

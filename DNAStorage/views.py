@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.utils import simplejson
 from django import forms
 from django.contrib.auth.decorators import login_required
+from itertools import chain
 
 from DNAStorage.models import Specimen, FastaFiles
 from DNAStorage import StorageRequestHandler
@@ -10,8 +11,8 @@ from DNAStorage import StorageRequestHandler
 
 def index(request):
     specimens = Specimen.objects.exclude(Name="businesscard")
-    chromosomes = FastaFiles.objects.filter(Public=True).order_by('Length').reverse()
-    context = {'specimens': specimens, 'chromosomes': chromosomes}
+    tree = StorageRequestHandler.GetTreeList(request.user)
+    context = {'specimens': specimens, 'tree': tree}
     return render(request, 'index.html', context)
 
 
