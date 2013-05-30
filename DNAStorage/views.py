@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.utils import simplejson
+from django import forms
+from django.contrib.auth.decorators import login_required
+
 from DNAStorage.models import Specimen, FastaFiles
 from DNAStorage import StorageRequestHandler
-from StorageRequestHandler import HandleUploadedFile
-from django import forms
 
 
 def index(request):
@@ -27,29 +28,31 @@ class uploadFileForm(forms.Form):
     description = forms.CharField(required=False)
     file = forms.FileField()
 
+@login_required
 def Upload(request):
     status = None
     message =""
     if request.is_ajax() or request.method == 'POST':
         # form = uploadFileForm(request.POST, request.FILES)
-        print request.POST
-        genomeInfo = {
-                        'kingdom':request.POST.get('Kingdom',"uncategorized"),
-                        'class':request.POST.get('Class',None),
-                        'genus':request.POST.get('Genus',None),
-                        'species':request.POST.get('Species',None),
-                        'specimen':request.POST.get('specimenName',"Unknown"),
-                        'genomeName':request.POST.get('genomeName',None),
-                        'source':request.POST.get('source',None),
-                        'dateSequenced':request.POST.get('dateSequenced',None),
-                        'description':request.POST.get('description',None),
-                        'isPublic':request.POST.get('isPublic',False)
-                    }
-        # if form.is_valid():
-        filePath = HandleUploadedFile(request.FILES['file'],genomeInfo)
-        status = "success"
-        message = "Your files were uploaded successfully. Please Allow a few hours for processing."
-        return simplejson.dumps({'status':status,'message':message})
+        if request.method == 'POST':
+            genomeInfo = {
+                            'kingdom':request.POST.get('Kingdom',"uncategorized"),
+                            'class':request.POST.get('Class',None),
+                            'genus':request.POST.get('Genus',None),
+                            'species':request.POST.get('Species',None),
+                            'specimen':request.POST.get('specimenName',"Unknown"),
+                            'genomeName':request.POST.get('genomeName',None),
+                            'source':request.POST.get('source',None),
+                            'dateSequenced':request.POST.get('dateSequenced',None),
+                            'description':request.POST.get('description',None),
+                            'isPublic':request.POST.get('isPublic',False)
+                        }
+            filePath = StorageRequestHandler.HandleUploadedFile(request.FILES['file'],genomeInfo,request.user)
+        return render(request, 'uploadStatus.json', {'uploads':StorageRequestHandler.GetUserImports(request.user)}, content_type="application/json")
+        status = StorageRequestHandler.GetUserImports(request.user)
+        print status
+        status = "do a thing"
+        return HttpResponse(status) #simplejson.dumps({'status':status})
     context = {'status':status,'message':message}
     return render(request, 'upload.html', context)
 

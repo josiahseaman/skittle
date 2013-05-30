@@ -183,14 +183,12 @@ def run():
                 shutil.move("to_import/" + file, "rejected/" + file)
 
 
-def ImportFasta(fileName, attributes, userId):
+def ImportFasta(fileName, attributes, user):
     #Attributes(kingdom, class, genus, species, specimen, genomeName, source, dateSequenced, description)
     workingDir = settings.SKITTLE_TREE_LOC + "DNAStorage"
     os.chdir(workingDir)
 
     if fileName.endswith(".fasta") or fileName.endswith(".fa"):
-        from SkittleCore.StorageRequestHandler import GetUser
-        user = GetUser(userId)
 
         if not user:
             return False

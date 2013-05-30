@@ -147,7 +147,11 @@
 	<script src="{{ STATIC_URL }}js/taxonomy.json"></script>
 	<script type="text/javascript">
 
-
+	function test() {
+		$.getJSON('#',function(data){
+			console.log(data)
+		})
+	}
 	</script>
 	{% endblock %}
 {% block content %}
@@ -157,6 +161,7 @@
 		<div class="message {{ status }}">{{ message }}</div>
 		{% endif %}
 		<h2>Upload a Genome</h2>
+		<a href="#" onClick="test()">A button</a>
 		<form id="uploadForm" action="upload" method="post">
 			{% csrf_token %}
 			<div id="page1" class="active">

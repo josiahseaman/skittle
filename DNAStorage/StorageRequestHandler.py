@@ -209,17 +209,16 @@ def GetImportProgress(specimen, fileName):
     else:
         return None
 
-def GetUserImports(userId):
-    user = GetUser(userId)
-    uploads = ImportProgress.objects.filter(User__id=userId)
+def GetUserImports(user):
+    uploads = ImportProgress.objects.filter(User__id=user.id)
 
     return uploads
 
-def HandleUploadedFile(f, attributes):
+def HandleUploadedFile(f, attributes, user):
     try:
         with open(settings.SKITTLE_TREE_LOC + "DNAStorage/to_import/" + f.name, 'wb+') as destination:
             for chunk in f.chunks():
                 destination.write(chunk)
     except:
         return "Error uploading file!"
-    return ImportFasta(f.name, attributes)
+    return ImportFasta(f.name, attributes, user)
