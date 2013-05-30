@@ -43,11 +43,11 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
     else:
         taxonomic = []
         #Attributes(kingdom, class, genus, species, specimen, genomeName, source, dateSequenced, description, isPublic)
-        taxonomic[0] = attributes['kingdom']
-        taxonomic[1] = attributes['class']
-        taxonomic[2] = attributes['genus']
-        taxonomic[3] = attributes['species']
-        taxonomic[4] = attributes['specimen']
+        taxonomic[0] = attributes.get('kingdom', "Uncategorized")  # attributes['kingdom']
+        taxonomic[1] = attributes.get('class', "")
+        taxonomic[2] = attributes.get('genus', "")
+        taxonomic[3] = attributes.get('species', "")
+        taxonomic[4] = attributes.get('specimen', "")
         taxonomic[5] = parseChromosome(fileName)
 
     if len(taxonomic) != 6 and not attributes:
