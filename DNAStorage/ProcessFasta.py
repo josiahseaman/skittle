@@ -16,13 +16,13 @@ def parseChromosome(fileName):
     if len(parts) > 1:
         for part in parts:
             for sample in known:
-                if sample in part.tolower().trim():
-                    return part.tolower().trim()
-        return part[-1].tolower().trim()
+                if sample in part.lower().strip():
+                    return part.lower().strip()
+        return part[-1].lower().strip()
     else:
         parts = parts[0]
         for sample in known:
-            if sample in parts.tolower().trim():
+            if sample in parts.lower().strip():
                 location = re.search(sample, parts)
                 return parts[location.start():]
         return parts

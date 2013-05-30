@@ -5,7 +5,7 @@ from django.conf import settings
 
 from models import *
 from Utilities.SkittleUtils import GetRoundedIndex
-from ProcessFasta import ImportFasta
+import ProcessFasta
 
 
 #Returns if the system contains the requested fasta file. This does NOT return full data associated with it for speed purposes.
@@ -220,4 +220,4 @@ def HandleUploadedFile(f, attributes, user):
                 destination.write(chunk)
     except:
         return "Error uploading file!"
-    return ImportFasta(f.name, attributes, user)
+    return ProcessFasta.ImportFasta(f.name, attributes, user)
