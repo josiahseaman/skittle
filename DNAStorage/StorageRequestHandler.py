@@ -146,22 +146,29 @@ def GetTreeList(user=None):
         #Go through all chromosomes related to this specimen and generate list
         chromosomeList = []
         chromosomes = FastaFiles.objects.filter(Specimen=entry)
-        for chr in chromosomes:
-            if chr.Public:
-                chromosomeList.append(chr.Chromosome)
-            if user:
-                if user in chr.User.all():
-                    chromosomeList.append(chr.Chromosome)
+        for chromosome in chromosomes:
+            if chromosome.Public:
+                chromosomeList.append(chromosome.Chromosome)
+            elif user:
+                if user in chromosome.User.all():
+                    chromosomeList.append(chromosome.Chromosome)
 
         if len(chromosomeList) > 0:
             #Gather all specimen details (including chromosomes) into list
-            details = {"ExtendedName": entry.ExtendedName, "Source": entry.Source, "Description": entry.Description,
+            details = {"ExtendedName": entry.ExtendedName, "GenomeLength": entry.GenomeLength, "Source": entry.Source, "Description": entry.Description,
                    "DatePublished": entry.DatePublished, "Thumbnail": entry.Thumbnail, "Chromosomes": chromosomeList}
 
-            subtree = {entry.Kingdom: {entry.Class: {entry.Genus: {entry.Species: {entry.Name: details}}}}}
-
-            #add this generated tree to the main tree
-            tree.update(subtree)
+            if not entry.Kingdom in tree:
+                tree[entry.Kingdom] = {}
+            if not entry.Class in tree[entry.Kingdom]:
+                tree[entry.Kingdom][entry.Class] = {}
+            if not entry.Genus in tree[entry.Kingdom][entry.Class]:
+                tree[entry.Kingdom][entry.Class][entry.Genus] = {}
+            if not entry.Species in tree[entry.Kingdom][entry.Class][entry.Genus]:
+                tree[entry.Kingdom][entry.Class][entry.Genus][entry.Species] = {}
+            if not entry.Name in tree[entry.Kingdom][entry.Class][entry.Genus][entry.Species]:
+                tree[entry.Kingdom][entry.Class][entry.Genus][entry.Species][entry.Name] = {}
+            tree[entry.Kingdom][entry.Class][entry.Genus][entry.Species][entry.Name] = details
 
     return tree
 
