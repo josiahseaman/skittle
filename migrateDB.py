@@ -293,7 +293,7 @@ def RunMigration16():
     part7 = "ALTER TABLE `DNAStorage_fastafiles_User` ADD CONSTRAINT `skittleuser_id_refs_id_f38a8c68` FOREIGN KEY (`skittleuser_id`) REFERENCES `SkittleCore_skittleuser` (`id`)"
 
     cur.execute(partPre)
-    #cur.execute(partTest)
+    cur.execute(partTest)
     cur.execute(part1)
     cur.execute(part2)
     cur.execute(part3)
