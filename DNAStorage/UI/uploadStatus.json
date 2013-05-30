@@ -1,0 +1,6 @@
+{
+	{% for c in uploads.distinct %}
+	"{{ c.FileName }}":{"Specimen":"{{ c.Specimen }}","Message":"{{ c.Message }}","IsWorking":"{{ c.IsWorking }}","Success":"{{ c.Success }}","FastaFile":"{{ c.FastaFile }}"},
+	{% endfor %}
+	"null":null
+}
