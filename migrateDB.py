@@ -302,6 +302,16 @@ def RunMigration16():
     cur.execute(part6)
     cur.execute(part7)
 
+    from DNAStorage.models import FastaFiles
+    chromosomes = FastaFiles.objects.all()
+    for chromosome in chromosomes:
+        chromosome.Public = True
+
+        if chromosome.Chromosome == "bcbanner":
+            chromosome.Public = False
+
+        chromosome.save()
+
 
 def commitTrans():
     from django.db import transaction
