@@ -60,6 +60,21 @@ header p img {
 	margin:10px;
 	vertical-align: middle;
 }
+header a {
+	text-decoration: none;
+}
+header a:hover {
+	text-decoration: underline;
+}
+#usertools {
+	float:right;
+	text-align: right;
+	margin: 0;
+	padding: 0 1em;
+	height: 60px;
+	font-size: 0.8em;
+	box-shadow: 0 0 16px #000;
+}
 
 .button {
 	display: inline-block;

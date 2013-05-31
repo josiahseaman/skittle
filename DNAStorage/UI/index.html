@@ -151,20 +151,29 @@
 	{% endblock %}
 {% block content %}
 	<div id="listPane">
-		<h2>Genome Library</h2>
+		<a href="upload" class="button" style="float:right;margin-top:2.3em;">Upload your own genome</a>
+		<h2>Genome Library </h2>
 		<p>To get started, choose a genome from the list below and then select a chromosome.</p>
-<!-- 		<input type="text" placeholder="search" id="searchbox">
+<!--  		<input type="text" placeholder="search" id="searchbox">
 
-		<nav class="breadcrumbs"><a href=#>Animals</a> > <a href=#>Vertibrates</a> > <a href=#>Mammals</a></nav> -->
+		<nav class="breadcrumbs"><a href=#>Animals</a> > <a href=#>Vertibrates</a> > <a href=#>Mammals</a></nav>  -->
 
 		<div id="genomes">
-			{% for specimen in specimens %}
-			<section data-target="preview-{{ specimen.Name }}">
+			{% for kingdomName, kingdom in tree.items %}
+			{% for className, class in kingdom.items %}
+			{% for genusName, genus in class.items %}
+			{% for speciesName, species in genus.items %}
+			{% for specimenName, specimen in species.items %}
+			<section data-target="preview-{{ specimenName }}">
 				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
-				<h2>{% firstof specimen.ExtendedName  specimen.Genus|add:" "|add:specimen.Species|add:" Genome" %}</h2>
+				<h2>{% firstof specimen.ExtendedName  genusName|add:" "|add:speciesName|add:" Genome" %}</h2>
 				<!-- <p class="source"><span>Source:</span>{{ specimen.Source }}</p> -->
-				<p class="info"><span class="seqNum">{% firstof specimen.DatePublished "" %} ({{ specimen.Name }})</span> Length: {{ specimen.GenomeLength|toSI }}bp</p>
+				<p class="info"><span class="seqNum">{% firstof specimen.DatePublished "" %} ({{ specimenName }})</span> Length: {{ specimen.GenomeLength|toSI }}bp</p>
 			</section>
+			{% endfor %}
+			{% endfor %}
+			{% endfor %}
+			{% endfor %}
 			{% endfor %}
 		</div>
 	</div>
@@ -199,7 +208,7 @@
 			<h3>{% firstof specimen.ExtendedName  genusName|add:" "|add:speciesName|add:" Genome" %} ({{specimenName}})</h3>
 
 			<p>Source: {{ specimen.Source }}</p>
-			<p>Length: {{ specimen.GenomeLength|intcomma }} bp</p>
+			<p>Length: {{ specimen.GenomeLength|intcomma }} bp for {{ specimen.Chromosomes|length }} Chromosome{{ specimen.Chromosomes|length|pluralize }}</p>
 			<p>Description: {{ specimen.Description }}</p>
 			<h4>{% if kingdomName == 'Eubacteria' %}Derivatives:
 				{% else %}Chromosomes:

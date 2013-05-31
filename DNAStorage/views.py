@@ -51,7 +51,7 @@ def Upload(request):
             filePath = StorageRequestHandler.HandleUploadedFile(request.FILES['file'],genomeInfo,request.user)
         uploads = StorageRequestHandler.GetUserImports(request.user).distinct()
         return render(request, 'uploadStatus.json', {'uploads':uploads}, content_type="application/json")
-    context = {'status':status,'message':message}
+    context = {'status':status,'message':message,'existingSpecimens':StorageRequestHandler.GetTreeList(request.user)}
     return render(request, 'upload.html', context)
 
 
