@@ -16,7 +16,7 @@ def learn(request):
     return HttpResponseRedirect('/browse/homo/sapiens/hg19/chrY/?graphs=bn&start=1468365&scale=1&width=105&annotation=gencode#learn')
 
 def loggedInRedirect(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.NewUser:
         return HttpResponseRedirect('/discover/')
     else:
         return learn(request)

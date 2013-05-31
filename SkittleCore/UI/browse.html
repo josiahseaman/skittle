@@ -84,10 +84,11 @@
 			{% block usertools %}
 			<div id="usertools">
 				{% if user.is_authenticated %}
-				Welcome {{ user.FirstName }}<br />
+				Welcome {% firstof user.FirstName user.LastName user %}<br />
 				<a href="/accounts/logout">Logout</a><br />
 				<a href="/discover/">My Genomes</a>
 				{% else %}
+				Welcome<br/>
 				<a href="{% url 'django.contrib.auth.views.login' %}" id="loginLink">Login</a>
 				{% endif %}
 			</div>
