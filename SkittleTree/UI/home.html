@@ -195,18 +195,43 @@
 		bottom: 0;
 		text-align: center;
 	}
-	.actionButton {
+	.bigButton {
 		text-decoration: none;
-		color:#fff;
 		font-size: 1.4em;
-		width: 250px;
-		margin: 0.5em auto;
+		margin: 0.5em 0.5em;
 		padding:0.4em 1em;
-		background: #040;
 		border: 1px solid #040;
 		border-radius: 8px;
 		vertical-align: middle;
 		text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+		background-color: #333;
+		background-image: -ms-linear-gradient(top, #111, #444);
+		background-image: -moz-linear-gradient(top, #111, #444);
+		background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#111), to(#444));
+		background-image: -webkit-linear-gradient(top, #111, #444);
+		background-image: -o-linear-gradient(top, #111, #444);
+		background-image: linear-gradient(to bottom, #111, #444);
+		background-repeat: repeat-x;
+		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#11111100', endColorstr='#44444400', GradientType=0);
+		border-color: #185200 #185200 #38592a;
+		border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+		filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+		box-shadow: 0 0 8px #000,0 0 12px #000,0 0 16px #000;
+	}
+	.bigButton:hover {
+		background-color: #222;
+		background-image: -ms-linear-gradient(top, #444, #111);
+		background-image: -moz-linear-gradient(top, #444, #111);
+		background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#444), to(#111));
+		background-image: -webkit-linear-gradient(top, #444, #111);
+		background-image: -o-linear-gradient(top, #444, #111);
+		background-image: linear-gradient(to bottom, #444, #111);
+		background-repeat: repeat-x;
+	}
+	.actionButton {
+		color:#fff;
+		background: #040;
+		border: 1px solid #040;
 		background-color: #123D00;
 		background-image: -ms-linear-gradient(top, #061400, #185200);
 		background-image: -moz-linear-gradient(top, #061400, #185200);
@@ -337,7 +362,7 @@
 	</nav>
 
 	<div id="webskittle">
-		<a href="/learn" class="actionButton">Try DNA Skittle Online</a>
+		<a href="/try" class="actionButton bigButton">Try DNA Skittle Online</a><a href="accounts/login" class="bigButton">Login</a>
 		<p>This is an alpha preview release.  We recommend using <a href="http://google.com/chrome" target="_blank">Google Chrome</a>.</p><br>
 		<p>A <a href="http://genomeskittle.org">desktop version of Skittle</a> is also available for PC.</p>
 	</div>

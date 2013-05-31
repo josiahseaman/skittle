@@ -1,6 +1,6 @@
 import json
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.decorators.cache import cache_control
 
@@ -11,7 +11,7 @@ from DNAStorage.StorageRequestHandler import GetChromosomeLength, GetSpecimen,Ge
 from Annotations.StorageRequestHandler import GetAnnotationsChunk,GetAnnotationsList
 
 
-def browse(request, genus="homo", species="sapiens", specimen="hg18", chromosome="chrY-sample"):
+def browse(request, genus="homo", species="sapiens", specimen="hg19", chromosome="chrY"):
     width = request.GET.get('width', 100)
     scale = request.GET.get('scale', 1)
     start = request.GET.get('start', 1)

@@ -9,6 +9,18 @@ from SkittleCore.forms import UserCreationForm
 def home(request):
     return render(request, 'home.html')
 
+def learn(request):
+    if request.user.is_authenticated():
+        request.user.NewUser = False
+        request.user.save()
+    return HttpResponseRedirect('/browse/homo/sapiens/hg19/chrY/?graphs=bn&start=1468365&scale=1&width=105&annotation=gencode#learn')
+
+def loggedInRedirect(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/discover/')
+    else:
+        return learn(request)
+
 def createUser(request):
     if request.method == "POST":
         form = UserCreationForm(request.POST)
@@ -16,7 +28,7 @@ def createUser(request):
             newUser = SkittleUser.objects.create_user(**form.cleaned_data)
             user = authenticate(username=request.POST['Email'],password=request.POST['password1'])
             login(request,user)
-            return HttpResponseRedirect('/discover/')
+            return HttpResponseRedirect('/learn/')
     else:
         form = UserCreationForm()
     return render(request, 'createUser.html',{'form' : form})

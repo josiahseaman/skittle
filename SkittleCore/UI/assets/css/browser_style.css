@@ -39,6 +39,10 @@
 #tools li:active {
 	background: rgba(0,0,0,0.08);
 }
+#canvasContainer {
+	background: #000;
+}
+
 #learn {
 	color:#fda;
 	background: rgba(0,0,0,0.6);
