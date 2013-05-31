@@ -313,7 +313,7 @@ def RunMigration16():
         chromosome.save()
 
 
-#####_____MIGRATION 16_____#####
+#####_____MIGRATION 17_____#####
 def RunMigration17():
     cur = setupDB()
 
@@ -328,6 +328,21 @@ def RunMigration17():
     cur.execute(part3)
     cur.execute(part4)
     cur.execute(part5)
+
+
+#####_____MIGRATION 18_____#####
+def RunMigration18():
+    cur = setupDB()
+
+    part1 = "ALTER TABLE `SkittleCore_skittleuser` ADD COLUMN `NewUser` TINYINT(1) NOT NULL AFTER `State_id`"
+
+    cur.execute(part1)
+
+    from SkittleCore.models import SkittleUser
+    users = SkittleUser.objects.all()
+    for user in users:
+        user.NewUser = True
+        user.save()
 
 
 def commitTrans():

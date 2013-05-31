@@ -166,6 +166,7 @@ class SkittleUser(AbstractBaseUser, PermissionsMixin):
     IsAdmin = models.BooleanField(verbose_name='Admin Status', default=False, help_text='Designates whether this user is an Admin/On Staff or not.',)
     IsActive = models.BooleanField(verbose_name='Active Status', default=True,)
     DateJoined = models.DateTimeField(verbose_name='Date joined', default=timezone.now)
+    NewUser = models.BooleanField(verbose_name='New user', default=True, help_text='Designates if this is the user\'s first visit to the site or not.')
 
     is_staff = IsAdmin
     is_active = IsActive
