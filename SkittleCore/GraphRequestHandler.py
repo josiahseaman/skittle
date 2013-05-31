@@ -62,8 +62,7 @@ def handleRequest(state, settings=None):
     if state.requestedGraph not in ['h', ]:
         png = tryGetGraphPNG(state)
         #If it doesn't: grab pixel calculations
-    if png is None and not isBeingProcessed(
-            state):#TODO: handle same state different "settings" being separate computation
+    if png is None and not isBeingProcessed(state):#TODO: handle same state different "settings" being separate computation
         #TODO: Handle beginProcess and finishProcess possible return of False
         beginProcess(state)
         pixels = calculatePixels(state, settings)
