@@ -345,6 +345,15 @@ def RunMigration18():
         user.save()
 
 
+#####_____MIGRATION 19_____#####
+def RunMigration19():
+    cur = setupDB()
+
+    part1 = "ALTER TABLE `SkittleCore_statepacket` ADD COLUMN `userId` integer NOT NULL UNIQUE AFTER `searchStop`"
+
+    cur.execute(part1)
+
+
 def commitTrans():
     from django.db import transaction
 

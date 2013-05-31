@@ -55,6 +55,7 @@ class basePacket(models.Model):
 class StatePacket(basePacket):
     # NOTE: We can store other state items that come up here.
     # Session management and stuff. This will be nice when the Social aspect comes up.
+    userId = models.IntegerField(unique=True)
 
     class Meta:
         abstract = False
