@@ -47,6 +47,8 @@ header li>a,header li>a:visited {
 header li>a:hover {
 	background: #222;
 	box-shadow: inset 0 0 16px #000,0 0 16px #000;
+	text-decoration: none;
+	cursor: pointer;
 }
 header p {
 	text-align: right;
@@ -70,6 +72,9 @@ header p {
 }
 .button:disabled {
 	opacity: 0.5;
+}
+.button.primary {
+	box-shadow: inset 0 0 6px #fda;
 }
 .success {
 	color:#8f5;

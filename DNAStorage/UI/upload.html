@@ -145,6 +145,7 @@
 	{% block scripts %}
 	<script src="{{ STATIC_URL }}js/jquery-ui-1.10.1.custom.min.js"></script>
 	<script src="{{ STATIC_URL }}js/taxonomy.json"></script>
+	<script src="taxonomy.json"></script>
 	<script type="text/javascript">
 
 	function test() {
@@ -170,11 +171,11 @@
 			<input type="radio" name="isPublic" value="True" checked>Public
 			<input type="radio" name="isPublic" value="">Private
 			<br>
-			<label for="specimenName">Specimen Name:</label><input type="text" name="specimenName" placeholder="(e.g. hg19)" class="primary"><br>
-			<label for="genomeName">Genome Name:</label><input type="text" name="genomeName" placeholder="(e.g. Human Genome)" class="primary"><br>
-			<label for="source">Source:</label><input type="text" name="source" value="{{ user.get_full_name }}"><br>
-			<label for="dateSequenced">Date Sequenced:</label><input type="text" name="dateSequenced" placeholder="mo. year"><br>
-			<label for="description">Description:</label><textarea name="description"></textarea><br>
+			<label for="specimenName">Specimen Name:</label><input type="text" id="specimenName" name="specimenName" placeholder="(e.g. hg19)" class="primary"><br>
+			<label for="genomeName">Genome Name:</label><input type="text" id="genomeName" name="genomeName" placeholder="(e.g. Human Genome)" class="primary"><br>
+			<label for="source">Source:</label><input type="text" id="source"  name="source" value="{{ user.get_full_name }}"><br>
+			<label for="dateSequenced">Date Sequenced:</label><input type="text" id="dateSequenced" name="dateSequenced" placeholder="mo. year"><br>
+			<label for="description">Description:</label><textarea id="description" name="description"></textarea><br>
 		</div>
 			<h4>Taxonomy:</h4>
 			<input type="hidden" id="Kingdom" name="Kingdom">
@@ -185,14 +186,16 @@
 			<div id="taxonomyBuilder" style="display:none;">
 				
 			</div>
-			<a href="#" class="button" id="nextButton">Next &gt;</a>
+			<a href="#" class="button primary" id="nextButton">Next &gt;</a>
 			</div>
 			<div id="page2">
 			<h3>Select Chromosome Files:</h3>
 			<input type="file" class="" multiple="multiple" id="fastafiles">
 			<br>
 			<div id="chromosomeList"></div>
-			<input type="submit" class="button" value="Upload">
+			<br>
+			<a href="#" id="prevButton" class="button">&lt; Back</a>
+			<input type="submit" class="button primary" value="Upload">
 			</div>
 		</form>
 		<div id="info">
@@ -200,6 +203,7 @@
 			<p>Please wait for your fasta files to finish uploading before closing the browser window. Once the upload is
 				complete the server will begin processing the files and preparing them for display. This could take 
 				a few minutes to several hours depending on the file size.</p>
+			<p>If you are working with a single chromosome organism you may upload different strains and assemblies as chromosomes.</p>
 		</div>
 	</div>
 	<div id="templates">
@@ -214,10 +218,16 @@
 	$("#nextButton").on("click",function(){
 		$('#page1').removeClass('active');
 		$('#page2').addClass('active');
+		$('input[type=submit]').val('Upload to '+$('#specimenName').val())
+	})
+	$("#prevButton").on("click",function(){
+		$('#page2').removeClass('active');
+		$('#page1').addClass('active');
 	})
 
-
-	var levels = ['Kingdom','Class','Genus','Species']
+	var levels = ['Kingdom','Class','Genus','Species'];
+	var specimens = {};
+	var specimenList = [];
 	$(function() {
 		$('#uncategorized').on('click',function(){
 			if ($(this).is(':checked')) {
@@ -238,16 +248,54 @@
 			$(this).parent().remove()
 		})
 
+		setupTypeaheads()
+
+		$("#specimenName").first().autocomplete({
+							source:specimenList, 
+							minLength:0, 
+							select:function(event, ui){ 
+								$(this).val(ui.item.label);
+								specimen = specimens[ui.item.label];
+								$('#genomeName').val(specimen.ExtendedName);
+								$('#source').val(specimen.Source);
+								$('#dateSequenced').val(specimen.DatePublished);
+								$('#description').val(specimen.Description);
+								$('#taxonomyBuilder').empty()
+								$('#taxonomyBuilder').append('<span id="level0" class="taxonomy">'+specimen.kingdom +'</span><span id="level1" class="taxonomy">'+specimen.class +'</span><span id="level2" class="taxonomy">'+specimen.genus +'</span><span id="level3" class="taxonomy">'+specimen.species +'</span>')
+								if ($('#uncategorized:checked').length>0) $('#uncategorized').trigger('click');
+							}
+						})
+
 	})
+	var setupTypeaheads = function() {
+		$.extend(taxonomy,currentTaxonomy)
+
+		$.each(currentTaxonomy, function(tempKingdom,v) {
+			$.each(v,function(tempClass,v){
+				$.each(v, function(tempGenus,v){
+					$.each(v, function(tempSpecies,v){
+						$.each(v, function(tempSpecimen,v){
+							v.kingdom = tempKingdom;
+							v.class = tempClass;
+							v.genus = tempGenus;
+							v.species = tempSpecies;
+							specimens[tempSpecimen] = v;
+							specimenList.push(tempSpecimen);
+						})
+					})
+				})
+			})
+		})
+	}
 	var getTypeaheadValues = function(level) {
-		var taxonomy = currentTaxonomy
+		var levelList = taxonomy
 		for (var i=0;i<level;i++) {
-			taxonomy = taxonomy[$('#taxonomyBuilder #level'+i).text()]
-			if (!taxonomy) return []
+			levelList = levelList[$('#taxonomyBuilder #level'+i).text()]
+			if (!levelList) return []
 		}
-		if (!taxonomy) return []
+		if (!levelList) return []
 		var list = []
-		$.each(taxonomy,function(i,v){
+		$.each(levelList,function(i,v){
 			list.push(i)
 		})
 		return list
@@ -263,18 +311,20 @@
 					$('#'+levels[level]).val($(this).val())
 					levelSpan
 						.insertAfter($(this))
-						.on('click',function(){
-							$('#taxonomyBuilder input').remove()
-							var level = $(this).prop('id').slice(-1)
-							addLevel(level)
-						})
 						.nextAll().remove()
 					$(this).remove()
 					level++
 					if (level < 4) addLevel(level);
 				}
 			})
+			.on('autocompleteselect', function(event, ui) { $(this).val(ui.item.label).trigger('blur'); }) // when you click on the list it should progress you to the next thing
 	}
+	$('#taxonomyBuilder').on('click','span.taxonomy',function(){
+							$('#taxonomyBuilder input').remove();
+							var level = $(this).prop('id').slice(-1);
+							addLevel(level);
+						})
+
 	var addLevelInput = function(level) {
 		var value = ($('#taxonomyBuilder #level'+level).length>0) ? $('#taxonomyBuilder #level'+level).text() : "";
 		var levelInput = $('<input type="text" id="level'+level+'" placeholder="' + levels[level] + '" value="'+value+'">')
