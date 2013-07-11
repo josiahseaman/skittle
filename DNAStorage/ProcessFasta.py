@@ -15,6 +15,7 @@ def saveDBObject(object):
     try:
         object.save()
     except:
+        print "Retrying DB query!"
         object.save()
 
 def parseChromosome(fileName):
@@ -208,6 +209,7 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
         print "Saving to user's profile."
         progress.Message = "Done entering sample! Saving to user's profile."
         saveDBObject(progress)
+        saveDBObject(fastaFile)
         fastaFile.User.add(progress.User.all()[0])
     saveDBObject(fastaFile)
 
