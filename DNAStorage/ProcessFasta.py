@@ -18,7 +18,7 @@ def parseChromosome(fileName):
             for sample in known:
                 if sample in part.lower().strip():
                     return part.lower().strip()
-        return part[-1].lower().strip()
+        return parts[-1].lower().strip()
     else:
         parts = parts[0]
         for sample in known:
@@ -37,6 +37,12 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
     fileName = re.sub('\.fasta', '', file)
     fileName = re.sub('\.fa', '', fileName)
 
+    if progress:
+        progress.Message = "Starting to parse taxonomic attributes..."
+        progress.IsWorking = True
+        progress.Success = False
+        progress.save()
+
     if not attributes:
         #Parse file name into system path
         taxonomic = fileName.split("_")
@@ -48,7 +54,7 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
         taxonomic.append(attributes.get('genus', "Uncategorized") or "Uncategorized")
         taxonomic.append(attributes.get('species', "Uncategorized") or "Uncategorized")
         taxonomic.append(attributes['specimen'])
-        taxonomic.append(parseChromosome(fileName))
+        taxonomic.append(attributes.get('chromosome', parseChromosome(fileName)) or parseChromosome(fileName))
 
     if len(taxonomic) != 6 and not attributes:
         raise IOError("Error! File " + fileName + " in to_import is not validly named!")
@@ -72,9 +78,10 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
             progress.save()
         return False
 
-    print "Entering this sample into the system..."
+    print "Setting up server storage..."
     if progress:
         progress.Success = False
+        progress.Message = "Settup up server storage..."
         progress.save()
 
     filePath = os.path.join(storageLocation)
@@ -87,6 +94,9 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
     if not os.path.isdir(pngFilePath):
         os.makedirs(pngFilePath)
 
+    print "Entering Specimen and attributes into the system..."
+    if progress:
+        progress.Message = "Entering Specimen and attributes into the system..."
     #Begin setting up the Specimen object for the database
     #specimen, created = Specimen.objects.get_or_create(Name=taxonomic[4], Species=taxonomic[3], Genus=taxonomic[2], Class=taxonomic[1], Kingdom=taxonomic[0])
     hasSpecimen = StorageRequestHandler.HasSpecimen(taxonomic[4])
@@ -108,9 +118,11 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
 
     specimen.save()
 
+    print "Entering this sample into the system..."
     if progress:
         #Mark that we are now starting processing
         progress.IsWorking = True
+        progress.Message = "Entering this sample into the system..."
         progress.save()
 
     #Begin setting up the FastaFile object for the database
@@ -182,9 +194,18 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
         fastaFile.Length = fCount + cCount - 1
 
     #Save fasta file to database then populate chunks with foreign keys and save
-    fastaFile.save()
+    print "Done entering sample!"
     if progress:
+        print "Saving to user's profile."
+        progress.Message = "Done entering sample! Saving to user's profile."
+        progress.save()
         fastaFile.User.add(progress.User.all()[0])
+    fastaFile.save()
+
+    print "Adding sample length to specimen."
+    if progress:
+        progress.Message = "Adding sample length to specimen."
+        progress.save()
     specimen.GenomeLength += fastaFile.Length
     specimen.save()
 
@@ -232,6 +253,11 @@ def ImportFasta(fileName, attributes, user):
             return False
 
         progress, created = ImportProgress.objects.get_or_create(Specimen=attributes['specimen'], FileName=fileName)
+        if not created:
+            if progress.IsWorking:
+                progress.Message = "Ignoring duplicate file upload..."
+                progress.save()
+                return False
         progress.User.add(user)
         progress.save()
 
