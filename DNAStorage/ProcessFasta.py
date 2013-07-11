@@ -229,7 +229,6 @@ def ImportFasta(fileName, attributes, user):
             return False
 
         progress, created = ImportProgress.objects.get_or_create(Specimen=attributes['specimen'], FileName=fileName)
-        progress.IsWorking = False
         progress.User.add(user)
         progress.save()
 
