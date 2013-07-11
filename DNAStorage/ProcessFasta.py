@@ -93,10 +93,6 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
 
     if not hasSpecimen:
         specimen = Specimen(Name=taxonomic[4], Species=taxonomic[3], Genus=taxonomic[2], Class=taxonomic[1], Kingdom=taxonomic[0])
-        if not attributes or attributes['isPublic']:
-            specimen.Public = True
-        else:
-            specimen.Public = False
     else:
         specimen = StorageRequestHandler.GetSpecimen(taxonomic[4])
         specimen.Kingdom = attributes.get('kingdom', specimen.Kingdom) or specimen.Kingdom
@@ -121,6 +117,12 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
     fastaFile = FastaFiles()
     fastaFile.Specimen = specimen
     fastaFile.Chromosome = taxonomic[5]
+
+    #Mark if this chromosome is public or not
+    if not attributes or attributes['isPublic']:
+        fastaFile.Public = True
+    else:
+        fastaFile.Public = False
 
     #Array of fasta chunks
     fastaChunks = []
