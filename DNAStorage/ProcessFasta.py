@@ -115,10 +115,11 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
         specimen = Specimen(Name=taxonomic[4], Species=taxonomic[3], Genus=taxonomic[2], Class=taxonomic[1], Kingdom=taxonomic[0])
     else:
         specimen = StorageRequestHandler.GetSpecimen(taxonomic[4])
-        specimen.Kingdom = attributes.get('kingdom', specimen.Kingdom) or specimen.Kingdom
-        specimen.Class = attributes.get('class', specimen.Class) or specimen.Class
-        specimen.Genus = attributes.get('genus', specimen.Genus) or specimen.Genus
-        specimen.Species = attributes.get('species', specimen.Species) or specimen.Species
+        if attributes:
+            specimen.Kingdom = attributes.get('kingdom', specimen.Kingdom) or specimen.Kingdom
+            specimen.Class = attributes.get('class', specimen.Class) or specimen.Class
+            specimen.Genus = attributes.get('genus', specimen.Genus) or specimen.Genus
+            specimen.Species = attributes.get('species', specimen.Species) or specimen.Species
 
     if attributes:
         specimen.ExtendedName = attributes.get('genomeName', specimen.ExtendedName) or specimen.ExtendedName
