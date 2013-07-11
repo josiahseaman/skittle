@@ -1,6 +1,5 @@
 {
 	{% for c in uploads.distinct %}
-	"{{ c.FileName }}":{"Specimen":"{{ c.Specimen }}","Message":"{{ c.Message }}","IsWorking":"{{ c.IsWorking }}","Success":"{{ c.Success }}","FastaFile":"{{ c.FastaFile }}"},
+	"{{ c.FileName }}":{"Specimen":"{{ c.Specimen }}","Chromosome":"{{ c.FastaFile.Chromosome }}","Message":"{{ c.Message }}","IsWorking":"{{ c.IsWorking }}","Success":"{{ c.Success }}","FastaFile":"{{ c.FastaFile }}"}{% if not forloop.last %},{% endif %}
 	{% endfor %}
-	"null":null
 }

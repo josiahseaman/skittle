@@ -61,38 +61,23 @@
 
     </script>
 {% endblock %}
-	{% block header %}
-	<h1 id="logo"><a href="/"><img src="{{STATIC_URL}}gfx/skittle-logo3.png"><span>DNA</span>Skittle</a></h1>
-	
-	<header>	
-		<div>
-			{% block usertools %}
-			<div id="usertools">
-				{% if user.is_authenticated %}
-				Welcome {% firstof user.FirstName user.LastName user %}<br />
-				<a href="/accounts/logout">Logout</a><br />
-				<a href="/discover/">My Genomes</a>
-				{% else %}
-				Welcome<br/>
-				<a href="{% url 'django.contrib.auth.views.login' %}" id="loginLink">Login</a>
+
+{% block header %}
+	<p class="taxonomy"><a href="/discover">{{ specimen.Kingdom }}</a> &gt; <a href="/discover">{{ specimen.Class }}</a> &gt; <a href="/discover">{{ specimen.Genus }}</a> &gt; <a href="/discover">{{ specimen.Species }}</a></p>
+	<h2>{% firstof specimen.ExtendedName "" %} ({{ specimen.Name }}) <span class="chromosomeName">&gt; {{ chromosome }}
+		
+	{% if chromosomeList|length > 1 %}
+	<div class="popover arrow-top-left" id="chromosomeList">
+		<ul>
+			{% for c in chromosomeList %}
+				{% if c != chromosome %}
+			<li><a href="../{{ c }}">{{ c }}</a></li>
 				{% endif %}
-			</div>
-			{% endblock %}
-			<p class="taxonomy"><a href="/discover">{{ specimen.Kingdom }}</a> &gt; <a href="/discover">{{ specimen.Class }}</a> &gt; <a href="/discover">{{ specimen.Genus }}</a> &gt; <a href="/discover">{{ specimen.Species }}</a></p>
-			<h2>{{ specimen.ExtendedName }} ({{ specimen.Name }}) <span class="chromosomeName">&gt; {{ chromosome }}
-				
-			<div class="popover arrow-top-left" id="chromosomeList">
-				<ul>
-					{% for c in chromosomeList %}
-						{% if c != chromosome %}
-					<li><a href="../{{ c }}">{{ c }}</a></li>
-						{% endif %}
-					{% endfor %}
-				</ul>
-			</div></span></h2>
-		</div>
-	</header>
-	{% endblock %}
+			{% endfor %}
+		</ul>
+	</div>{% endif %}</span></h2>
+{% endblock %}
+
 {% block content %}
 	<div id="canvasContainer">
 	    <canvas id="c" width="2000" height="1000"></canvas>

@@ -97,8 +97,8 @@ header a:hover {
 	margin: 0.5em 0;
 }
 .progressbar {
-	height:1em;
-	line-height: 1em;
+	min-height:1.2em;
+	line-height: 1.2em;
 	width: 0;
 }
 

@@ -10,6 +10,8 @@ from DNAStorage import StorageRequestHandler
 
 
 def index(request):
+    if request.GET.get('user'):
+        pass #only return uploads from specified user
     specimens = Specimen.objects.exclude(Name="businesscard")
     tree = StorageRequestHandler.GetTreeList(request.user)
     context = {'specimens': specimens, 'tree': tree}

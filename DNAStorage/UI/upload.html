@@ -32,6 +32,7 @@
 			margin-bottom: 0.2em;
 			font-weight: 300;
 			color:#fda;
+			word-wrap: break-word;
 		}
 		#uploadForm {
 			width:450px;
@@ -147,13 +148,9 @@
 	<script src="{{ STATIC_URL }}js/taxonomy.json"></script>
 	<script src="taxonomy.json"></script>
 	<script type="text/javascript">
-
-	function test() {
-		$.getJSON('#',function(data){
-			console.log(data)
-			updateStatus(data)
-		})
-	}
+	window.setInterval(function(){
+		$.getJSON('#',updateStatus)
+	},5000)
 	</script>
 	{% endblock %}
 {% block content %}
@@ -253,20 +250,21 @@
 		$("#specimenName").first().autocomplete({
 							source:specimenList, 
 							minLength:0, 
-							select:function(event, ui){ 
-								$(this).val(ui.item.label);
-								specimen = specimens[ui.item.label];
-								$('#genomeName').val(specimen.ExtendedName);
-								$('#source').val(specimen.Source);
-								$('#dateSequenced').val(specimen.DatePublished);
-								$('#description').val(specimen.Description);
-								$('#taxonomyBuilder').empty()
-								$('#taxonomyBuilder').append('<span id="level0" class="taxonomy">'+specimen.kingdom +'</span><span id="level1" class="taxonomy">'+specimen.class +'</span><span id="level2" class="taxonomy">'+specimen.genus +'</span><span id="level3" class="taxonomy">'+specimen.species +'</span>')
-								if ($('#uncategorized:checked').length>0) $('#uncategorized').trigger('click');
-							}
+							select:autoFillForm
 						})
 
 	})
+	var autoFillForm = function(event, ui) { 
+		$(this).val(ui.item.label);
+		specimen = specimens[ui.item.label];
+		$('#genomeName').val(specimen.ExtendedName);
+		$('#source').val(specimen.Source);
+		$('#dateSequenced').val(specimen.DatePublished);
+		$('#description').val(specimen.Description);
+		$('#taxonomyBuilder').empty()
+		$('#taxonomyBuilder').append('<span id="level0" class="taxonomy">'+specimen.kingdom +'</span><span id="level1" class="taxonomy">'+specimen.class +'</span><span id="level2" class="taxonomy">'+specimen.genus +'</span><span id="level3" class="taxonomy">'+specimen.species +'</span>')
+		if ($('#uncategorized:checked').length>0) $('#uncategorized').trigger('click');
+	}
 	var setupTypeaheads = function() {
 		$.extend(taxonomy,currentTaxonomy)
 
@@ -341,7 +339,7 @@
 
 	$('#uploadForm').on('submit',function(e){
 		e.preventDefault();
-		$('#page2 input[type="file"]').attr('disabled','disabled');
+		$('#page2 input[type="submit"] #page2 input[type="file"]').attr('disabled','disabled');
 
         ajaxFile($('#fastafiles')[0],0);
 	})
@@ -383,8 +381,8 @@
 	            if (this.status == 200 ) $('#chr-'+i+' .progressbar').html('upload complete');
 	            else $('#chr-'+i+' .progressbar').html('error').css('background','#a00');
 	            console.log(['xhr upload complete', e]);
-	            try {updateStatus($.parseJSON(this.response))}
-	            catch (e) { updateStatus() }
+	            // try {updateStatus($.parseJSON(this.response))}
+	            // catch (e) { updateStatus() }
 	        	ajaxFile(fileinput,++i);
 	        }
 	    };
@@ -401,7 +399,11 @@
 			$outputLocation = $('.chromosome[data-filename="'+i+'"] .progressbar');
 
 			if (v.IsWorking == "True") $outputLocation.html('processing...');
-			else if (v.Success == "True") $outputLocation.html('Ready for viewing!');
+			else if (v.Success == "True") {
+				$outputLocation.html('Ready for viewing!').css('background','#0a0');
+				$('.chromosome[data-filename="'+i+'"] h4')
+					.html('<a href="/browse' + $('#Genus').val() +"/" + $('#Species').val() + "/" + v.Specimen + "/" + v.Chromosome +'">' + i + "</a>")
+			}
 			else $outputLocation.html('processing error: '+v.Message).css('background','#a00');
 			
 		})

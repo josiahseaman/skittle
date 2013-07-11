@@ -223,6 +223,7 @@ def run():
 
 def ImportFasta(fileName, attributes, user):
     #Attributes(kingdom, class, genus, species, specimen, genomeName, source, dateSequenced, description)
+    
     workingDir = settings.SKITTLE_TREE_LOC + "DNAStorage"
     os.chdir(workingDir)
 

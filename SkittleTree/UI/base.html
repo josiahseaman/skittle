@@ -37,7 +37,6 @@
 	 })});
 <![endif]-->
 {% endblock %}
-	{% block header %}
 	<h1 id="logo"><a href="/"><img src="{{STATIC_URL}}gfx/skittle-logo3.png"><span>DNA</span>Skittle</a></h1>
 	
 	<header>
@@ -46,19 +45,20 @@
 				{% if user.is_authenticated %}
 				Welcome {% firstof user.FirstName user.LastName user %}<br />
 				<a href="/accounts/logout">Logout</a><br />
-				<a href="/discover/">My Genomes</a>
+				<a href="{% url 'index' %}?user={{ user|urlencode }}">My Genomes</a>
 				{% else %}
 				Welcome<br/>
 				<a href="{% url 'django.contrib.auth.views.login' %}" id="loginLink">Login</a>
 				{% endif %}
 			</div>
 			{% endblock %}
+			{% block header %}
 		<ul>
 			<li><a href="/discover">Select Genome</a></li><li><a href="/learn">Demo</a></li>
 		</ul>
+	{% endblock %}
 
 	</header>
-	{% endblock %}
 	{% block content %}
 	<div id="canvasContainer">
 	    <canvas id="c" width="2000" height="1000"></canvas>
