@@ -2,28 +2,29 @@
 
 {% block content %}
 <div id="login" class="popover active">
-{% if form.errors %}
-<p>Your username and password didn't match. Please try again.</p>
-{% endif %}
+
 <h2>Login</h2>
 <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
 {% csrf_token %}
-<table>
-<tr>
-    <td>{{ form.username.label_tag }}</td>
-    <td>{{ form.username }}</td>
-</tr>
-<tr>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
-</tr>
-</table>
 
-<input type="submit" value="login" class="button" />
+{% if form.errors %}
+<p class="msg-error">Your username and password didn't match. Please try again.</p>
+{% else %}
+<br><br>
+{% endif %}
+<div class="vertical-grid">
+{{ form.username.label_tag }} {{ form.username }}<br>
+{{ form.password.label_tag }} {{ form.password }}	
+<div style="text-align:right;font-size:0.8em">
+<a href="passwordreset">Reset Password</a>
+</div>
+<br><br>
+<label>&nbsp;</label>
+<input type="submit" class="button primary" value="Login" />
 <input type="hidden" name="next" value="/try" />
-
 <a href="/accounts/new" class="button">Create Account</a>
-<a href="passwordreset" class="button">Reset Password</a>
+</div>
+
 </form>
 </div>
 {% endblock %}

@@ -1,7 +1,12 @@
-{% extends "base.html" %}
-{% block pageTitle %}DNA Skittle{% endblock %}
-{% block styles %}
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
+<!DOCTYPE html>
+<html>
+<head>
+	<title>DNA Skittle</title>
+
+	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/base_layout.css">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/basic_style.css">
 	<style type="text/css">
 	body {
 		background: #080808;
@@ -272,21 +277,18 @@
 		margin-left: 1em;
 	}
 	</style>
-
-	{% endblock %}
-	{% block scripts %}
+<!--[if lt IE 9]>
+	<script src="dist/html5shiv.js"></script>
+    <script src="{{STATIC_URL}}js/excanvas.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+<![endif]-->
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 	<script type="text/javascript">
 
 
 	</script>
-	{% endblock %}
-
-	{% block requireChromeFrame %}{% endblock %}
-
-	{% block header %}{% endblock %}
-
-	{% block content %}
+</head>
+<body>
 
 	<div id="container">
 		<div id="content">
@@ -390,4 +392,21 @@
 	})
 	</script>
 
-{% endblock %}
+{% if PRODUCTION %}
+
+	<script type="text/javascript">
+
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-36361700-2']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+
+	</script>
+{% endif %}
+</body>
+</html>

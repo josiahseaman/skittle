@@ -76,6 +76,11 @@ header a:hover {
 	box-shadow: 0 0 16px #000;
 }
 
+
+h2 {
+	margin-bottom: 0.2em
+}
+
 .button {
 	display: inline-block;
 	padding: 0.5em;
@@ -125,30 +130,47 @@ header a:hover {
 	margin: 0;
 }
 
-
+.popover>h2:first-child {
+	margin-top:0em;
+}
 #feedbackForm {
 	display: none;
 	width: 258px;
 }
-#bug-report-form input[type=text],select,textarea {
+form input[type=text],form input[type=password], form select, form textarea {
 	display: block;
 	width:250px;
-	border-radius: 4px
+	padding: 0.2em;
 }
-#bug-report-form h4 {
+form textarea {
+	height:5em;
+}
+form h4 {
 	margin-bottom: 0;
 }
-#bug-report-form input[type=submit] {
+form input[type=submit] {
 	border-radius: 4px;
-	width:140px;
-	float:left;
+	min-width:100px;
+	/*float:left;*/
+}
+
+.vertical-grid input[type="text"],.vertical-grid input[type="password"] {
+	width:220px;
+}
+.vertical-grid label {
+	display: inline-block;
+	width:150px;
+	padding-right: 0.5em;
+	text-align: right;
+	clear:left;
 }
 
 #login {
-	width:400px;
-	height: 300px;
+	width:420px;
+	height: 320px;
 	left: 50%;
 	top:50%;
-	margin-top: -200px;
-	margin-left: -200px;
+	margin-top: -220px;
+	margin-left: -220px;
+	padding:20px;
 }

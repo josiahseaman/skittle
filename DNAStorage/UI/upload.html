@@ -3,8 +3,6 @@
 {% load nti_filters %}
 {% block pageTitle %}DNASkittle|Select a Genome{% endblock %}
 {% block styles %}
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/popover.css">
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/jquery-ui-1.10.1.custom.min.css">
 	<style type="text/css">
 		.container {
@@ -172,7 +170,7 @@
 			<label for="genomeName">Genome Name:</label><input type="text" id="genomeName" name="genomeName" placeholder="(e.g. Human Genome)" class="primary"><br>
 			<label for="source">Source:</label><input type="text" id="source"  name="source" value="{{ user.get_full_name }}"><br>
 			<label for="dateSequenced">Date Sequenced:</label><input type="text" id="dateSequenced" name="dateSequenced" placeholder="mo. year"><br>
-			<label for="description">Description:</label><textarea id="description" name="description"></textarea><br>
+			<label for="description" style="vertical-align:top">Description:</label><textarea id="description" name="description"></textarea><br>
 		</div>
 			<h4>Taxonomy:</h4>
 			<input type="hidden" id="Kingdom" name="Kingdom">
@@ -306,7 +304,6 @@
 			.blur(function() {
 				if ($(this).val().length>0) {
 					var levelSpan = $('<span id="level'+level+'" class="taxonomy">'+$(this).val()+'</span>');
-					$('#'+levels[level]).val($(this).val())
 					levelSpan
 						.insertAfter($(this))
 						.nextAll().remove()
@@ -340,7 +337,9 @@
 	$('#uploadForm').on('submit',function(e){
 		e.preventDefault();
 		$('#page2 input[type="submit"] #page2 input[type="file"]').attr('disabled','disabled');
-
+		for (i=0;i<4;i++) {
+			$('#'+levels[i]).val( $('#level'+i).html() )
+		}
         ajaxFile($('#fastafiles')[0],0);
 	})
 
