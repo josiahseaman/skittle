@@ -77,6 +77,49 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
         saveDBObject(progress)
         return False
 
+    print "Entering Specimen and attributes into the system..."
+    if progress:
+        progress.Message = "Entering Specimen and attributes into the system..."
+    #Begin setting up the Specimen object for the database
+    #specimen, created = Specimen.objects.get_or_create(Name=taxonomic[4], Species=taxonomic[3], Genus=taxonomic[2], Class=taxonomic[1], Kingdom=taxonomic[0])
+    hasSpecimen = StorageRequestHandler.HasSpecimen(taxonomic[4])
+
+
+    oldKingdom = ""
+    oldClass = ""
+    oldGenus = ""
+    oldSpecies = ""
+    pathChanged = False
+    if not hasSpecimen:
+        specimen = Specimen(Name=taxonomic[4], Species=taxonomic[3], Genus=taxonomic[2], Class=taxonomic[1], Kingdom=taxonomic[0])
+    else:
+        specimen = StorageRequestHandler.GetSpecimen(taxonomic[4])
+        if attributes:
+            oldKingdom = specimen.Kingdom
+            oldClass = specimen.Class
+            oldGenus = specimen.Genus
+            oldSpecies = specimen.Species
+
+            specimen.Kingdom = attributes.get('kingdom', specimen.Kingdom) or specimen.Kingdom
+            specimen.Class = attributes.get('class', specimen.Class) or specimen.Class
+            specimen.Genus = attributes.get('genus', specimen.Genus) or specimen.Genus
+            specimen.Species = attributes.get('species', specimen.Species) or specimen.Species
+            taxonomic[0] = specimen.Kingdom
+            taxonomic[1] = specimen.Class
+            taxonomic[2] = specimen.Genus
+            taxonomic[3] = specimen.Species
+
+            if (oldKingdom.lower() != specimen.Kingdom.lower()) or (oldClass.lower() != specimen.Class.lower()) or (oldGenus.lower() != specimen.Genus.lower()) or (oldSpecies.lower() != specimen.Species.lower()):
+                pathChanged = True
+
+    if attributes:
+        specimen.ExtendedName = attributes.get('genomeName', specimen.ExtendedName) or specimen.ExtendedName
+        specimen.Source = attributes.get('source', specimen.Source) or specimen.Source
+        specimen.Description = attributes.get('description', specimen.Description) or specimen.Description
+        specimen.DatePublished = attributes.get('dateSequenced', specimen.DatePublished) or specimen.DatePublished
+
+    saveDBObject(specimen)
+
     #Check to see if this specific file has already been split up and is stored in the system
     if StorageRequestHandler.HasFastaFile(taxonomic[4], taxonomic[5]):
         message = "This sample is already stored in the system!"
@@ -104,30 +147,27 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
     if not os.path.isdir(pngFilePath):
         os.makedirs(pngFilePath)
 
-    print "Entering Specimen and attributes into the system..."
-    if progress:
-        progress.Message = "Entering Specimen and attributes into the system..."
-    #Begin setting up the Specimen object for the database
-    #specimen, created = Specimen.objects.get_or_create(Name=taxonomic[4], Species=taxonomic[3], Genus=taxonomic[2], Class=taxonomic[1], Kingdom=taxonomic[0])
-    hasSpecimen = StorageRequestHandler.HasSpecimen(taxonomic[4])
+    if pathChanged:
+        oldFilePath = os.path.join(storageLocation)
+        oldPNGFilePath = os.path.join(storageLocation).replace("fasta", "png")
 
-    if not hasSpecimen:
-        specimen = Specimen(Name=taxonomic[4], Species=taxonomic[3], Genus=taxonomic[2], Class=taxonomic[1], Kingdom=taxonomic[0])
-    else:
-        specimen = StorageRequestHandler.GetSpecimen(taxonomic[4])
-        if attributes:
-            specimen.Kingdom = attributes.get('kingdom', specimen.Kingdom) or specimen.Kingdom
-            specimen.Class = attributes.get('class', specimen.Class) or specimen.Class
-            specimen.Genus = attributes.get('genus', specimen.Genus) or specimen.Genus
-            specimen.Species = attributes.get('species', specimen.Species) or specimen.Species
+        oldFilePath = os.path.join(oldFilePath, oldKingdom)
+        oldFilePath = os.path.join(oldFilePath, oldClass)
+        oldFilePath = os.path.join(oldFilePath, oldGenus)
+        oldFilePath = os.path.join(oldFilePath, oldSpecies)
+        oldFilePath = os.path.join(oldFilePath, specimen.Name)
 
-    if attributes:
-        specimen.ExtendedName = attributes.get('genomeName', specimen.ExtendedName) or specimen.ExtendedName
-        specimen.Source = attributes.get('source', specimen.Source) or specimen.Source
-        specimen.Description = attributes.get('description', specimen.Description) or specimen.Description
-        specimen.DatePublished = attributes.get('dateSequenced', specimen.DatePublished) or specimen.DatePublished
+        oldPNGFilePath = os.path.join(oldPNGFilePath, oldKingdom)
+        oldPNGFilePath = os.path.join(oldPNGFilePath, oldClass)
+        oldPNGFilePath = os.path.join(oldPNGFilePath, oldGenus)
+        oldPNGFilePath = os.path.join(oldPNGFilePath, oldSpecies)
+        oldPNGFilePath = os.path.join(oldPNGFilePath, specimen.Name)
 
-    saveDBObject(specimen)
+        #Move all chunks to new destination
+        newFilePath = os.path.dirname(filePath)
+        newPNGFilePath = os.path.dirname(pngFilePath)
+        shutil.move(oldFilePath, newFilePath)
+        shutil.move(oldPNGFilePath, newPNGFilePath)
 
     print "Entering this sample into the system..."
     if progress:
