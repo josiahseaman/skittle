@@ -3,10 +3,19 @@ import re
 import shutil
 
 from django.conf import settings
+from django.db import transaction
 
 from models import FastaFiles, FastaChunkFiles, Specimen, ImportProgress
 import StorageRequestHandler
 
+
+def saveDBObject(object):
+    transaction.enter_transaction_management()
+    transaction.commit()
+    try:
+        object.save()
+    except:
+        object.save()
 
 def parseChromosome(fileName):
     known = ["chromosome", "ch", "chr", "chro", "chrom"]
@@ -41,7 +50,7 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
         progress.Message = "Starting to parse taxonomic attributes..."
         progress.IsWorking = True
         progress.Success = False
-        progress.save()
+        saveDBObject(progress)
 
     if not attributes:
         #Parse file name into system path
@@ -64,7 +73,7 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
         progress.Message = message
         progress.IsWorking = False
         progress.Success = False
-        progress.save()
+        saveDBObject(progress)
         return False
 
     #Check to see if this specific file has already been split up and is stored in the system
@@ -75,14 +84,14 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
             progress.Message = message
             progress.IsWorking = False
             progress.Success = False
-            progress.save()
+            saveDBObject(progress)
         return False
 
     print "Setting up server storage..."
     if progress:
         progress.Success = False
         progress.Message = "Settup up server storage..."
-        progress.save()
+        saveDBObject(progress)
 
     filePath = os.path.join(storageLocation)
     pngFilePath = os.path.join(storageLocation).replace("fasta", "png")
@@ -116,14 +125,14 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
         specimen.Description = attributes.get('description', specimen.Description) or specimen.Description
         specimen.DatePublished = attributes.get('dateSequenced', specimen.DatePublished) or specimen.DatePublished
 
-    specimen.save()
+    saveDBObject(specimen)
 
     print "Entering this sample into the system..."
     if progress:
         #Mark that we are now starting processing
         progress.IsWorking = True
         progress.Message = "Entering this sample into the system..."
-        progress.save()
+        saveDBObject(progress)
 
     #Begin setting up the FastaFile object for the database
     fastaFile = FastaFiles()
@@ -198,20 +207,20 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
     if progress:
         print "Saving to user's profile."
         progress.Message = "Done entering sample! Saving to user's profile."
-        progress.save()
+        saveDBObject(progress)
         fastaFile.User.add(progress.User.all()[0])
-    fastaFile.save()
+    saveDBObject(fastaFile)
 
     print "Adding sample length to specimen."
     if progress:
         progress.Message = "Adding sample length to specimen."
-        progress.save()
+        saveDBObject(progress)
     specimen.GenomeLength += fastaFile.Length
-    specimen.save()
+    saveDBObject(specimen)
 
     for fa in fastaChunks:
         fa.FastaFile = fastaFile
-        fa.save()
+        saveDBObject(fa)
 
     message = "Done entering " + taxonomic[4] + " " + taxonomic[5] + " into the system!"
     print message
@@ -220,7 +229,7 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
         progress.IsWorking = False
         progress.Success = True
         progress.FastaFile = fastaFile
-        progress.save()
+        saveDBObject(progress)
         # TODO Notify the user that their file is completely imported
     return True
 
@@ -256,10 +265,10 @@ def ImportFasta(fileName, attributes, user):
         if not created:
             if progress.IsWorking:
                 progress.Message = "Ignoring duplicate file upload..."
-                progress.save()
+                saveDBObject(progress)
                 return False
         progress.User.add(user)
-        progress.save()
+        saveDBObject(progress)
 
         from multiprocessing import Process
         importer = Process(target=importFasta, args=(workingDir, fileName, attributes, progress))
