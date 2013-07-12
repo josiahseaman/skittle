@@ -97,3 +97,10 @@ To convert a list to C array) arr = (ctypes.c_int * len(yourlist))(*yourlist)
 
 ====================DATABASE EVOLUTIONS====================   
 ANY changes to a model file must be passed to Bryan for a custom evolution script to be created.
+
+====================NOTES TO SELF====================
+This is for dealing with multi-thread access to the database.
+We need a persistent connection, but django doesn't support this until the future 1.6 release.
+For a temporary fix, edit the django source:
+django/db/__init__.py comment out signals.request_finished.connect(close_connection)
+django/middleware/transaction.py remove the two transaction.is_dirty() and call commit() instead.
