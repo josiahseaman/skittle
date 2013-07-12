@@ -4,6 +4,7 @@ import os
 from django.conf import settings
 
 from models import *
+from django.db.models import Q
 from Utilities.SkittleUtils import GetRoundedIndex
 import ProcessFasta
 
@@ -173,11 +174,12 @@ def GetTreeList(user=None):
     return tree
 
 #Get list of chromosomes related to a specimen
-def GetRelatedChromosomes(specimen):
+def GetRelatedChromosomes(specimen, user):
+    fastaFiles =  FastaFiles.objects.filter(Q(Public=True) | Q(User=user))
     if type(specimen) is unicode: 
-        fastaFiles = FastaFiles.objects.filter(Specimen__Name__iexact=specimen)
+        fastaFiles = fastaFiles.filter(Specimen__Name__iexact=specimen)
     else:
-        fastaFiles = FastaFiles.objects.filter(Specimen=specimen)
+        fastaFiles = fastaFiles.filter(Specimen=specimen)
 
     chromosomes = []
 
@@ -238,3 +240,10 @@ def HandleUploadedFile(f, attributes, user):
     except:
         return "Error uploading file!"
     return ProcessFasta.ImportFasta(f.name, attributes, user)
+
+def IsUserForbidden(specimen, chromosome, user):
+    chromosome = GetRelatedFastaFile(GetSpecimen(specimen), chromosome)
+
+    if chromosome and (chromosome.Public or chromosome.User == user):
+        return False
+    return True

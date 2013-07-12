@@ -32,3 +32,7 @@ def toSI(value):
                 else:
                     value = str(int(value))
                 return value + ' ' + SIfractionPrefixes[i]
+
+@register.filter
+def keyvalue(dict, key):    
+    return dict[key]

@@ -401,7 +401,7 @@
 			else if (v.Success == "True") {
 				$outputLocation.html('Ready for viewing!').css('background','#0a0');
 				$('.chromosome[data-filename="'+i+'"] h4')
-					.html('<a href="/browse' + $('#Genus').val() +"/" + $('#Species').val() + "/" + v.Specimen + "/" + v.Chromosome +'">' + i + "</a>")
+					.html('<a href="/browse/' + $('#Genus').val() +"/" + $('#Species').val() + "/" + v.Specimen + "/" + v.Chromosome +'">' + i + "</a>")
 			}
 			else $outputLocation.html('processing error: '+v.Message).css('background','#a00');
 			

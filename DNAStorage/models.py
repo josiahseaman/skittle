@@ -15,6 +15,9 @@ class Specimen(models.Model):
     DatePublished = models.CharField(max_length=50, null=True, blank=True)
     Thumbnail = models.CharField(max_length=255, null=True, blank=True)
 
+    def __unicode__(self):
+        return self.Name
+
 
 class FastaFiles(models.Model):
     Specimen = models.ForeignKey(Specimen)
@@ -23,6 +26,8 @@ class FastaFiles(models.Model):
     Public = models.BooleanField()
     User = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True)
 
+    def __unicode__(self):
+        return self.Chromosome + " (" + self.Specimen.Name + ")"
 
 class FastaChunkFiles(models.Model):
     FastaFile = models.ForeignKey(FastaFiles)

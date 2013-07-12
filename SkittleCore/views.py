@@ -7,11 +7,14 @@ from django.views.decorators.cache import cache_control
 from SkittleCore import GraphRequestHandler
 from SkittleCore.models import RequestPacket
 from SkittleCore.Graphs.models import *
-from DNAStorage.StorageRequestHandler import GetChromosomeLength, GetSpecimen,GetRelatedChromosomes
+from DNAStorage.StorageRequestHandler import *
 from Annotations.StorageRequestHandler import GetAnnotationsChunk,GetAnnotationsList
 
 
 def browse(request, genus="homo", species="sapiens", specimen="hg19", chromosome="chrY"):
+    if IsUserForbidden(specimen, chromosome, request.user): #also checks existance
+        return redirect('index')
+
     width = request.GET.get('width', 100)
     scale = request.GET.get('scale', 1)
     start = request.GET.get('start', 1)
@@ -19,12 +22,15 @@ def browse(request, genus="homo", species="sapiens", specimen="hg19", chromosome
     graphs = request.GET.get('graphs', "n")
     colorPalette = request.GET.get('colorPalette', 'Classic')
     fileLength = GetChromosomeLength(specimen,chromosome) 
-    chromosomeList = GetRelatedChromosomes(specimen)
+    chromosomeList = GetRelatedChromosomes(specimen, request.user)
     context = {'availableGraphs':GraphRequestHandler.availableGraphs, 'availableAnnotations':GetAnnotationsList(specimen), "annotationStatus":json.dumps(GetAnnotationsList(specimen)), 'specimen':GetSpecimen(specimen),'chromosome':chromosome,'chromosomeList':chromosomeList ,'colorPalette':colorPalette,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength,}
     return render(request, 'browse.html',context)
 
 @cache_control(must_revalidate=False, max_age=3600)
 def graph(request, genus="homo", species="sapiens", specimen="hg18", chromosome="chrY-sample"):
+    if IsUserForbidden(specimen, chromosome, request.user): #also checks existance
+        return HttpResponse(status=403)
+
     state = createRequestPacket(request, specimen, chromosome)
     graphSettings = None
     if state.requestedGraph == 'h':

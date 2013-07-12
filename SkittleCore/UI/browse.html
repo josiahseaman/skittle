@@ -63,8 +63,13 @@
 {% endblock %}
 
 {% block header %}
-	<p class="taxonomy"><a href="/discover">{{ specimen.Kingdom }}</a> &gt; <a href="/discover">{{ specimen.Class }}</a> &gt; <a href="/discover">{{ specimen.Genus }}</a> &gt; <a href="/discover">{{ specimen.Species }}</a></p>
-	<h2>{% firstof specimen.ExtendedName "" %} ({{ specimen.Name }}) <span class="chromosomeName">&gt; {{ chromosome }}
+	<p class="taxonomy">
+		<a href="{% url 'index' %}?kingdom={{ specimen.Kingdom }}">{{ specimen.Kingdom }}</a> &gt; 
+		<a href="{% url 'index' %}?kingdom={{ specimen.Kingdom }}&amp;class={{ specimen.Class }}">{{ specimen.Class }}</a> &gt; 
+		<a href="{% url 'index' %}?kingdom={{ specimen.Kingdom }}&amp;class={{ specimen.Class }}&amp;genus={{ specimen.Genus }}">{{ specimen.Genus }}</a> &gt; 
+		<a href="{% url 'index' %}?kingdom={{ specimen.Kingdom }}&amp;class={{ specimen.Class }}&amp;genus={{ specimen.Genus }}&amp;species={{ specimen.Species }}">{{ specimen.Species }}</a></p>
+	<h2>{% firstof specimen.ExtendedName "" %} ({{ specimen.Name }}) 
+		<span class="chromosomeName">&gt; {{ chromosome }}
 		
 	{% if chromosomeList|length > 1 %}
 	<div class="popover arrow-top-left" id="chromosomeList">

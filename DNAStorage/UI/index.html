@@ -159,22 +159,19 @@
 		<nav class="breadcrumbs"><a href=#>Animals</a> > <a href=#>Vertibrates</a> > <a href=#>Mammals</a></nav>  -->
 
 		<div id="genomes">
-			{% for kingdomName, kingdom in tree.items %}
-			{% for className, class in kingdom.items %}
-			{% for genusName, genus in class.items %}
-			{% for speciesName, species in genus.items %}
-			{% for specimenName, specimen in species.items %}
-			<section data-target="preview-{{ specimenName }}">
+			{% if specimens|length > 0 %}
+			{% for specimen in specimens %}
+			<section data-target="preview-{{ specimen.Name }}">
 				<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="68" height="68">
-				<h2>{% firstof specimen.ExtendedName  genusName|add:" "|add:speciesName|add:" Genome" %}</h2>
+				<h2>{% firstof specimen.ExtendedName  specimen.Genus|add:" "|add:specimen.Species|add:" Genome" %}</h2>
 				<!-- <p class="source"><span>Source:</span>{{ specimen.Source }}</p> -->
-				<p class="info"><span class="seqNum">{% firstof specimen.DatePublished "" %} ({{ specimenName }})</span> Length: {{ specimen.GenomeLength|toSI }}bp</p>
+				<p class="info"><span class="seqNum">{{ specimen.Name }} {% if specimen.DatePublished %}({{ specimen.DatePublished}}){% endif %}</span> Length: {{ specimen.GenomeLength|toSI }}bp</p>
 			</section>
 			{% endfor %}
-			{% endfor %}
-			{% endfor %}
-			{% endfor %}
-			{% endfor %}
+			{% else %}
+			<p>There are no chromosomes matching your filter criteria.</p>
+			<p><a href="{% url 'index' %}">View full genome list</a></p>
+			{% endif %}
 		</div>
 	</div>
 
@@ -198,31 +195,23 @@
 				{% endfor %}
 			</ul>
 		</div>
-		{% for kingdomName, kingdom in tree.items %}
-		{% for className, class in kingdom.items %}
-		{% for genusName, genus in class.items %}
-		{% for speciesName, species in genus.items %}
-		{% for specimenName, specimen in species.items %}
-		<div class="previewSpecimen" id="preview-{{ specimenName }}">
+		{% for specimen in specimens %}
+		<div class="previewSpecimen" id="preview-{{ specimen.Name }}">
 			<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="150" height="150"><br>
-			<h3>{% firstof specimen.ExtendedName  genusName|add:" "|add:speciesName|add:" Genome" %} ({{specimenName}})</h3>
+			<h3>{% firstof specimen.ExtendedName  specimen.Genus|add:" "|add:specimen.Species|add:" Genome" %} ({{specimen.Name}})</h3>
 
 			<p>Source: {{ specimen.Source }}</p>
-			<p>Length: {{ specimen.GenomeLength|intcomma }} bp for {{ specimen.Chromosomes|length }} Chromosome{{ specimen.Chromosomes|length|pluralize }}</p>
+			<p>Length: {{ specimen.GenomeLength|intcomma }} bp indexed. Showing {{ tree|keyvalue:specimen.Kingdom|keyvalue:specimen.Class|keyvalue:specimen.Genus|keyvalue:specimen.Species|keyvalue:specimen.Name|keyvalue:"Chromosomes"|length }} Chromosome{{ specimen.Chromosomes|length|pluralize }}.</p>
 			<p>Description: {{ specimen.Description }}</p>
-			<h4>{% if kingdomName == 'Eubacteria' %}Derivatives:
+			<h4>{% if specimen.Kingdom == 'Eubacteria' %}Derivatives:
 				{% else %}Chromosomes:
 				{% endif %}</h4>
 			<ul class="chromosomeList">
-				{% for chromosome in specimen.Chromosomes %}
-				<li><a href="/browse/{{ genusName }}/{{ speciesName }}/{{ specimenName }}/{{ chromosome }}">{{ chromosome|capfirst }}</a></li>
+				{% for chromosome in tree|keyvalue:specimen.Kingdom|keyvalue:specimen.Class|keyvalue:specimen.Genus|keyvalue:specimen.Species|keyvalue:specimen.Name|keyvalue:"Chromosomes" %}
+				<li><a href="/browse/{{ specimen.Genus }}/{{ specimen.Species }}/{{ specimen.Name }}/{{ chromosome }}">{{ chromosome|capfirst }}</a></li>
 				{% endfor %}
 			</ul>
 		</div>
-		{% endfor %}
-		{% endfor %}
-		{% endfor %}
-		{% endfor %}
 		{% endfor %}
 	</div>
 

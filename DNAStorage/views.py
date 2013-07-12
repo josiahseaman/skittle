@@ -5,14 +5,29 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 from itertools import chain
 
+from django.db.models import Q
+
 from DNAStorage.models import Specimen, FastaFiles
 from DNAStorage import StorageRequestHandler
 
 
 def index(request):
+    chromosomes = FastaFiles.objects.filter(Q(Public=True) | Q(User=request.user))
+    specimenNames = chromosomes.values('Specimen__Name').distinct()
+    specimenNames = [n.values()[0] for n in specimenNames if n.values()[0] != "businesscard"]
+    specimens = Specimen.objects.filter(Name__in=specimenNames)
+
     if request.GET.get('user'):
-        pass #only return uploads from specified user
-    specimens = Specimen.objects.exclude(Name="businesscard")
+        specimens = specimens.filter(fastafiles__User__Email=request.GET.get('user')) #only return uploads from specified user
+    if request.GET.get('kingdom'):
+        specimens = specimens.filter(Kingdom__iexact=request.GET.get('kingdom'))
+    if request.GET.get('class'):
+        specimens = specimens.filter(Class__iexact=request.GET.get('class'))
+    if request.GET.get('genus'):
+        specimens = specimens.filter(Genus__iexact=request.GET.get('genus'))
+    if request.GET.get('species'):
+        specimens = specimens.filter(Species__iexact=request.GET.get('species'))
+
     tree = StorageRequestHandler.GetTreeList(request.user)
     context = {'specimens': specimens, 'tree': tree}
     return render(request, 'index.html', context)

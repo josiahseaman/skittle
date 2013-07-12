@@ -9,6 +9,8 @@ testFiles/
 static/*
 media/*
 DNAStorage/fasta/*
+DNAStorage/history/*
+DNAStorage/to_import/*
 DNAStorage/png/*
 bryan.todo
 marshall.todo
