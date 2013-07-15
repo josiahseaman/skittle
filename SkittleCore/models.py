@@ -146,15 +146,15 @@ class SkittleUserManager(BaseUserManager):
         user.save()
         return user
 
-    def create_superuser(self, email=None, password=None, firstname=None, lastname=None, **extra_fields):
-        if not email:
+    def create_superuser(self, Email=None, password=None, FirstName="Admin", LastName=None, **extra_fields):
+        if not Email:
             raise ValueError("Users must have an email address")
-        if not firstname:
+        if not FirstName:
             raise ValueError("Users must have a first name")
         if not password:
             raise ValueError("Users must set a password")
 
-        user = self.create_user(email, password, firstname, lastname)
+        user = self.create_user(Email, password, FirstName, LastName)
         user.IsAdmin = True
         user.is_superuser = True
         user.save()

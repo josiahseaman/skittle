@@ -119,6 +119,7 @@ STATICFILES_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     SKITTLE_TREE_LOC + 'SkittleTree/UI/assets/',
     SKITTLE_TREE_LOC + 'SkittleCore/UI/assets/',
+    SKITTLE_TREE_LOC + 'DNAStorage/UI/assets/',
 )
 
 # List of finder classes that know how to find static files in
@@ -171,6 +172,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
+    "django.core.context_processors.request",
     "SkittleTree.context_processors.global_vars",
 )
 

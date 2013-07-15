@@ -22,7 +22,8 @@ if (!window.location.getParameter ) { //for non Chrome browsers. See http://chuv
 	if (!this.queryStringParams)
 		this.queryStringParams = parseParams(); 
 
-	return this.queryStringParams[key];
+	if (key) return this.queryStringParams[key];
+	else return this.queryStringParams;
   };
 }
 var round = function(val,precision,direction) {

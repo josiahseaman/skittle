@@ -227,7 +227,6 @@
 		$('#uncategorized').on('click',function(){
 			if ($(this).is(':checked')) {
 				$('#taxonomyBuilder').hide()
-				$('#Kingdom,#Class,#Genus,#Species').val("")
 			}
 			else {
 				$('#taxonomyBuilder').show()
@@ -259,8 +258,9 @@
 		$('#source').val(specimen.Source);
 		$('#dateSequenced').val(specimen.DatePublished);
 		$('#description').val(specimen.Description);
-		$('#taxonomyBuilder').empty()
-		$('#taxonomyBuilder').append('<span id="level0" class="taxonomy">'+specimen.kingdom +'</span><span id="level1" class="taxonomy">'+specimen.class +'</span><span id="level2" class="taxonomy">'+specimen.genus +'</span><span id="level3" class="taxonomy">'+specimen.species +'</span>')
+		$('#Kingdom,#Class,#Genus,#Species').val("");
+		$('#taxonomyBuilder').empty();
+		$('#taxonomyBuilder').append('<span id="level0" class="taxonomy">'+specimen.kingdom +'</span><span id="level1" class="taxonomy">'+specimen.class +'</span><span id="level2" class="taxonomy">'+specimen.genus +'</span><span id="level3" class="taxonomy">'+specimen.species +'</span>');
 		if ($('#uncategorized:checked').length>0) $('#uncategorized').trigger('click');
 	}
 	var setupTypeaheads = function() {

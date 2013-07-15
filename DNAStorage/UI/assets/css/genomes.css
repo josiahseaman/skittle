@@ -1,0 +1,60 @@
+
+input {
+	font-size: 1.1em;
+}
+input[type="text"],textarea {
+	display:inline-block;
+	background: #333;
+	color:#fff;
+	border: 1px solid #444;
+	padding: 0.2em;
+	border-radius:4px;
+	width:180px;
+
+}
+
+#taxonomyBuilder .taxonomy {
+	color:#8f5;
+	position: relative;
+	cursor: pointer;
+	line-height: 2.2em;
+}
+#taxonomyBuilder .taxonomy::after {
+	content:" > ";
+	color:#aaa;
+}
+#taxonomyBuilder .taxonomy:nth-child(4)::after {
+	content:"";
+}
+#level0:hover::before {
+	content: "KINGDOM";
+	color:#999;
+	font-size: 0.7em;
+	font-weight: bold;
+	position: absolute;
+	top:0.5em;
+}
+#level1:hover::before {
+	content: "CLASS";
+	color:#999;
+	font-size: 0.7em;
+	font-weight: bold;
+	position: absolute;
+	top:0.5em;
+}
+#level2:hover::before {
+	content: "GENUS";
+	color:#999;
+	font-size: 0.7em;
+	font-weight: bold;
+	position: absolute;
+	top:0.5em;
+}
+#level3:hover::before {
+	content: "SPECIES";
+	color:#999;
+	font-size: 0.7em;
+	font-weight: bold;
+	position: absolute;
+	top:0.5em;
+}

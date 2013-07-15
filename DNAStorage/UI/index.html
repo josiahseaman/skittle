@@ -3,6 +3,8 @@
 {% load nti_filters %}
 {% block pageTitle %}DNASkittle|Select a Genome{% endblock %}
 {% block styles %}
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/jquery-ui-1.10.1.custom.min.css">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/genomes.css">
 	<style type="text/css">
 		#previewPane {
 			position: absolute;
@@ -26,7 +28,8 @@
 		}
 
 		p {
-			font-family: trebuchet,'trebuchet ms','myriad pro','helvetica neue',helvetica, ariel, sans-serif
+			font-family: trebuchet,'trebuchet ms','myriad pro','helvetica neue',helvetica, ariel, sans-serif;
+			margin: 0.7em 0;
 		}
 		h2 {
 			font-size: 2.3em;
@@ -141,11 +144,74 @@
 			color: #fff;
 			border:1px solid #fda;
 		}
+		#filter {
+			float: left;
+			margin-right: 0.5em;
+			font-size: 0.9em;
+		}
+		.loading {
+			opacity: 0.7;
+		}
 	</style>
 	{% endblock %}
 	{% block scripts %}
+	<script src="{{ STATIC_URL }}js/jquery-ui-1.10.1.custom.min.js"></script>
+	<script src="{{ STATIC_URL }}js/utility.js"></script>
+	<script src="{{ STATIC_URL }}js/taxonomy.js"></script>
+	<script src="{{ STATIC_URL }}js/taxonomy.json"></script>
+	<script src="taxonomy.json"></script>
 	<script type="text/javascript">
+		$(function(){
+			$.extend(taxonomy,currentTaxonomy)
 
+			$('#taxonomyBuilder').on('click','span.taxonomy',function(){
+									$('#taxonomyBuilder input').remove();
+									var level = $(this).prop('id').slice(-1);
+									addLevel(level);
+								})
+
+
+			$('#filter').on('click',function(){
+				if ($(this).attr('data-filter') == "on") {
+					$(this).attr('data-filter', "off")
+					$('#taxonomyBuilder').hide()
+					$('#Kingdom,#Class,#Genus,#Species').val("").trigger('change')
+				}
+				else {
+					$(this).attr('data-filter', "on")
+					$('#taxonomyBuilder').show()
+					if (!$('#taxonomyBuilder #level0').length) {
+						addLevel(0);
+					}
+					else {
+						$('#Class').val($('#level1').html())
+						$('#Genus').val($('#level2').html())
+						$('#Species').val($('#level3').html())
+						$('#Kingdom').val($('#level0').html()).trigger('change')
+					}
+				}
+			})
+			$('input[type=hidden].taxonomy').on('change', getFilteredList)
+
+		})
+		var getFilteredList = function() {
+			$('#genomes').addClass('loading');
+
+			var params = window.location.getParameter();
+			params['kingdom'] = $('#Kingdom').val()
+			params['class'] = $('#Class').val()
+			params['genus'] = $('#Genus').val()
+			params['species'] = $('#Species').val()
+			console.log(params)
+
+			// $('#genomes').load('?' + $.param(params) + " #genomes section")
+
+			$.get('#', params, function(data) {
+				$('#genomes').replaceWith($(data).find('#genomes'))
+				$('#previewPane').append($(data).find('.previewSpecimen')) //data.find #previewPane doesn't work??!?
+				$('#genomes').removeClass('loading');
+			})
+		}
 
 	</script>
 	{% endblock %}
@@ -154,9 +220,25 @@
 		<a href="upload" class="button primary" style="float:right;margin-top:2.3em;">Upload a genome</a>
 		<h2>Genome Library </h2>
 		<p>To get started, choose a genome from the list below and then select a chromosome.</p>
-<!--  		<input type="text" placeholder="search" id="searchbox">
-
-		<nav class="breadcrumbs"><a href=#>Animals</a> > <a href=#>Vertibrates</a> > <a href=#>Mammals</a></nav>  -->
+		<input type="hidden" id="Kingdom" name="Kingdom" class="taxonomy">
+		<input type="hidden" id="Class" name="Class" class="taxonomy">
+		<input type="hidden" id="Genus" name="Genus" class="taxonomy">
+		<input type="hidden" id="Species" name="Species" class="taxonomy">
+		<button id="filter" class="button" data-filter="{% if request.GET.kingdom %}on{% else %}off{% endif %}">Filter By Taxonomy:</button>
+		<div id="taxonomyBuilder">
+			{% if request.GET.kingdom %}<span id="level0" class="taxonomy">{{ request.GET.kingdom }}</span>
+			{% if request.GET.class %}<span id="level1" class="taxonomy">{{ request.GET.class }}</span>
+			{% if request.GET.genus %}<span id="level2" class="taxonomy">{{ request.GET.genus }}</span>
+			{% if request.GET.species %}<span id="level3" class="taxonomy">{{ request.GET.species }}</span>
+			{% else %}<script type="text/javascript">$(function(){addLevel(3)})</script>
+			{% endif %}
+			{% else %}<script type="text/javascript">$(function(){addLevel(2)})</script>
+			{% endif %}
+			{% else %}<script type="text/javascript">$(function(){addLevel(1)})</script>
+			{% endif %}
+			{% endif %}
+		</div>
+<!--  		<input type="text" placeholder="search" id="searchbox">  -->
 
 		<div id="genomes">
 			{% if specimens|length > 0 %}
@@ -176,25 +258,6 @@
 	</div>
 
 	<div id="previewPane">&nbsp;
-		<div class="previewSpecimen">
-			<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="150" height="150"><br>
-			<h3>Human Genome - hg19</h3>
-
-			<p>Source: blah blah</p>
-			<p>Length: 20349589 bp</p>
-			<p>Description: Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-			tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-			consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-			cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-			proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-			<h4>Chromosomes:</h4>
-			<ul class="chromosomeList">
-				{% for chromosome in chromosomes %}
-				<li><a href="/browse/{{ chromosome.Specimen.Genus }}/{{ chromosome.Specimen.Species }}/{{ chromosome.Specimen.Name }}/{{ chromosome.Chromosome }}">{{ chromosome.Specimen }}{{ chromosome.Chromosome|capfirst }}</a></li>
-				{% endfor %}
-			</ul>
-		</div>
 		{% for specimen in specimens %}
 		<div class="previewSpecimen" id="preview-{{ specimen.Name }}">
 			<img src="{{STATIC_URL}}gfx/skittle-logo2.png" width="150" height="150"><br>
@@ -222,7 +285,7 @@
 
 	$(document).ready(function() {
 
-		$('#genomes section').click(function(){
+		$('body').on('click','#genomes section',function(){
 			$('.previewSpecimen:visible').hide()
 			$(jQsafeID('#' + $(this).attr('data-target') ) ).show();
 		})
