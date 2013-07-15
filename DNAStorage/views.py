@@ -12,6 +12,7 @@ from DNAStorage import StorageRequestHandler
 
 
 def index(request):
+    print "index called as user " + str(request.user) + " who is authenticated:"+ str(request.user.is_authenticated())
     if request.user.is_authenticated(): chromosomes = FastaFiles.objects.filter(Q(Public=True) | Q(User=request.user))
     else: chromosomes = FastaFiles.objects.filter(Public=True)
     specimenNames = chromosomes.values('Specimen__Name').distinct()

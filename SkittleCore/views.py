@@ -12,6 +12,7 @@ from Annotations.StorageRequestHandler import GetAnnotationsChunk,GetAnnotations
 
 
 def browse(request, genus="homo", species="sapiens", specimen="hg19", chromosome="chrY"):
+    print "browse called as user " + str(request.user) + " who is authenticated:"+ str(request.user.is_authenticated())
     if IsUserForbidden(specimen, chromosome, request.user): #also checks existance
         return redirect('index')
 
