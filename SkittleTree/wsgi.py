@@ -22,8 +22,10 @@ HOSTNAME = socket.gethostname()
 
 if PRODUCTION and not HOSTNAME.startswith('nyx'):
     sys.path.append('/var/www/skittle')
+    os.environ['HTTPS'] = "on"
 elif HOSTNAME.startswith('nyx'):
     sys.path.append('/var/www/skittle-development')
+    os.environ['HTTPS'] = "on"
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SkittleTree.settings")
 
