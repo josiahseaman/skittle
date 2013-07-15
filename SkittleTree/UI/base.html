@@ -44,11 +44,11 @@
 			<div id="usertools">
 				{% if user.is_authenticated %}
 				Welcome {% firstof user.FirstName user.LastName user %}<br />
-				<a href="/accounts/logout">Logout</a><br />
+				<a href="{% url 'logout' %}">Logout</a><br />
 				<a href="{% url 'index' %}?user={{ user|urlencode }}">My Genomes</a>
 				{% else %}
 				Welcome<br/>
-				<a href="{% url 'django.contrib.auth.views.login' %}" id="loginLink">Login</a>
+				<a href="{% url 'login' %}" id="loginLink">Login</a>
 				{% endif %}
 			</div>
 			{% endblock %}
