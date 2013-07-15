@@ -196,3 +196,31 @@ var getNucleotideValues = function(findStart,findEnd) {
 var getRawSequence = function(start,end,callback) {
 	$.get('sequence.fa',{'queryStart':start,'queryStop':end},function(data){callback(data)})
 }
+
+var parseChromosomeFilename = function(fileName) {
+    var known = ["chromosome", "ch", "chr", "chro", "chrom"];
+    var parts = fileName.split(/[\-_\. ]/)
+    var result;
+    if (parts.length > 1) {
+    	$.each(parts, function(i,part){
+    		$.each(known, function(i,sample){
+    			if (part.toLowerCase().indexOf(sample)>=0) {
+    				result = part;
+    				return false;
+    			}
+    			if (result) return false;
+    		})
+    	})
+    	return result? result : parts[parts.length-1];
+    }
+    else {
+    	parts = parts[0]
+    	$.each(known, function(i,sample){
+    		if (parts.toLowerCase().indexOf(sample)>=0)
+    			var location = parts.toLowerCase().indexOf(sample);
+    			result = parts.slice(location);
+    			return false;
+    	})
+    	return result? result : parts;
+    }
+}

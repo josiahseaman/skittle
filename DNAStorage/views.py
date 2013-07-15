@@ -65,7 +65,8 @@ def Upload(request):
                             'source':request.POST.get('source',None),
                             'dateSequenced':request.POST.get('dateSequenced',None),
                             'description':request.POST.get('description',None),
-                            'isPublic':request.POST.get('isPublic',False)
+                            'isPublic':request.POST.get('isPublic',False),
+                            'chromosome':request.POST.get('chromosomeName',None)
                         }
             filePath = StorageRequestHandler.HandleUploadedFile(request.FILES['file'],genomeInfo,request.user)
         uploads = StorageRequestHandler.GetUserImports(request.user).distinct()

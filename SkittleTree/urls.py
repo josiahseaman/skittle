@@ -26,6 +26,6 @@ urlpatterns = patterns('',
    (r'^card/?$', RedirectView.as_view(url='/browse/businesscard/bcbanner/?graphs=abn&start=1&scale=1&width=296')),
    (r'^try/?$', 'SkittleTree.views.loggedInRedirect'),
    url(r'^accounts/login/?$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}, name='login'),
-   url(r'^accounts/logout/?$', 'django.contrib.auth.views.logout_then_login', name='logout'),
+   url(r'^accounts/logout/?$', 'django.contrib.auth.views.logout', name='logout'),
    (r'^accounts/new/?$', 'SkittleTree.views.createUser'),
 )

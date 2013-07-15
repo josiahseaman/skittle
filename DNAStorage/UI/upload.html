@@ -340,6 +340,10 @@
 		for (i=0;i<4;i++) {
 			$('#'+levels[i]).val( $('#level'+i).html() )
 		}
+		$('.chromosome h4').each(function(){
+			$(this).find('input').attr('type','hidden')
+			$(this).append($(this).find('input').val())
+		})
         ajaxFile($('#fastafiles')[0],0);
 	})
 
@@ -350,7 +354,7 @@
 					.clone()
 					.attr('id','chr-'+i)
 					.attr('data-filename',v.name)
-			t.find('h4').html(v.name)
+			t.find('h4').html('<input type="text" id="inputchr-'+i+'" name="inputchr-'+i+'" value="' + parseChromosomeFilename(v.name)+'" />')
 			$('#chromosomeList').append(t);
 		})
         // ajaxFile(this,0);
@@ -361,6 +365,7 @@
         var formData = new FormData(document.getElementById('uploadForm'));
 	    var file = fileinput.files[i];
 	    formData.append('file',file);
+	    formData.append('chromosomeName',$('#inputchr-'+i).val());
 
 	    var xhr = new XMLHttpRequest();
 	    xhr.addEventListener('progress', function(e) {

@@ -64,6 +64,7 @@
 
 {% block header %}
 	<p class="taxonomy">
+		<a href="{% url 'index' %}">Genome Library</a> &gt; 
 		<a href="{% url 'index' %}?kingdom={{ specimen.Kingdom }}">{{ specimen.Kingdom }}</a> &gt; 
 		<a href="{% url 'index' %}?kingdom={{ specimen.Kingdom }}&amp;class={{ specimen.Class }}">{{ specimen.Class }}</a> &gt; 
 		<a href="{% url 'index' %}?kingdom={{ specimen.Kingdom }}&amp;class={{ specimen.Class }}&amp;genus={{ specimen.Genus }}">{{ specimen.Genus }}</a> &gt; 
