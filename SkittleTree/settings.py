@@ -67,7 +67,6 @@ DATABASE_WAIT_TIMEOUT = 28800
 if PRODUCTION or HOSTNAME.startswith('nyx'):
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
