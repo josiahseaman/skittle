@@ -68,8 +68,6 @@ if PRODUCTION or HOSTNAME.startswith('nyx'):
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     ENABLE_SSL = True
-    SESSION_COOKIE_NAME = 'sessionid'
-    SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 
 # Local time zone for this installation. Choices can be found here:
