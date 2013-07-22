@@ -174,11 +174,13 @@
 			$('#filter').on('click',function(){
 				if ($(this).attr('data-filter') == "on") {
 					$(this).attr('data-filter', "off")
+					$(this).removeClass('primary')
 					$('#taxonomyBuilder').hide()
 					$('#Kingdom,#Class,#Genus,#Species').val("").trigger('change')
 				}
 				else {
 					$(this).attr('data-filter', "on")
+					$(this).addClass('primary')
 					$('#taxonomyBuilder').show()
 					if (!$('#taxonomyBuilder #level0').length) {
 						addLevel(0);
@@ -202,7 +204,11 @@
 			params['class'] = $('#Class').val()
 			params['genus'] = $('#Genus').val()
 			params['species'] = $('#Species').val()
-			console.log(params)
+			$.each(params,function(i,v){
+				console.log(i,v)
+				if (!(v && v.length>0)) delete params[i];
+			})
+			window.history.pushState(null,null,"?"+$.param(params))
 
 			// $('#genomes').load('?' + $.param(params) + " #genomes section")
 
@@ -224,7 +230,7 @@
 		<input type="hidden" id="Class" name="Class" class="taxonomy">
 		<input type="hidden" id="Genus" name="Genus" class="taxonomy">
 		<input type="hidden" id="Species" name="Species" class="taxonomy">
-		<button id="filter" class="button" data-filter="{% if request.GET.kingdom %}on{% else %}off{% endif %}">Filter By Taxonomy:</button>
+		<button id="filter" class="button{% if request.GET.kingdom %} primary{% endif %}" data-filter="{% if request.GET.kingdom %}on{% else %}off{% endif %}">Filter By Taxonomy:</button>
 		<div id="taxonomyBuilder">
 			{% if request.GET.kingdom %}<span id="level0" class="taxonomy">{{ request.GET.kingdom }}</span>
 			{% if request.GET.class %}<span id="level1" class="taxonomy">{{ request.GET.class }}</span>
