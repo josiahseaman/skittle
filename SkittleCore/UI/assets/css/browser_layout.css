@@ -1,3 +1,37 @@
+/* HEADER */
+header>div {
+	margin: 0;
+	padding-left: 0.5em;
+	height: 60px;
+}
+header h2 {
+	display:inline-block;
+	margin: 0;
+}
+h2 .chromosomeName {
+	position: relative;
+}
+header .taxonomy {
+	margin: 0 0 -0.3em 0;
+	padding-top: 0.35em;
+}
+#chromosomeList {
+	top:2.2em;
+	padding: 0;
+}
+#chromosomeList div {
+	position: relative;
+	z-index: 10;
+	max-height: 510px;
+	overflow: auto;
+}
+#chromosomeList a {
+	min-width:100px;
+	height: inherit;
+	line-height: 1.2em;
+	padding: 0.5em;
+}
+
 #graph-labels {
 	position: absolute;
 	display: block;

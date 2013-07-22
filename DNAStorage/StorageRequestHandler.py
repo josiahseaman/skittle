@@ -182,6 +182,8 @@ def GetRelatedChromosomes(specimen, user):
     else:
         fastaFiles = fastaFiles.filter(Specimen=specimen)
 
+    fastaFiles = fastaFiles.order_by('Chromosome')
+
     chromosomes = []
 
     for fasta in fastaFiles:

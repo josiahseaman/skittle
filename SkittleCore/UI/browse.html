@@ -5,40 +5,7 @@
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser_style.css">
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/simple-slider.css">
     <style type="text/css">
-	    header>div {
-	    	margin: 0;
-	    	padding-left: 0.5em;
-	    	height: 60px;
-			box-shadow: 0 0 16px #000;
-	    }
-    	header h2 {
-    		display:inline-block;
-    		margin: 0;
-    		color:#ccc;
-    		font-weight: 600;
-    	}
-    	h2 .chromosomeName {
-    		font-weight: 400;
-    		font-size: 0.8em;
-    		position: relative;
-    	}
-    	header .taxonomy {
-    		text-align: left;
-    		margin: 0 0 -0.3em 0;
-    		padding-top: 0.35em;
-    		color:#fda;
-    	}
-    	#chromosomeList {
-    		top:2.2em;
-    	}
-    	#chromosomeList a {
-    		box-shadow: none;
-    		text-align: left;
-    		min-width:100px;
-    		height: inherit;
-    		line-height: 1.2em;
-    		padding: 0.5em;
-    	}
+
     </style>
 {% endblock %}
 {% block scripts %}
@@ -73,7 +40,8 @@
 		<span class="chromosomeName">&gt; {{ chromosome }}
 		
 	{% if chromosomeList|length > 1 %}
-	<div class="popover arrow-top-left" id="chromosomeList">
+	<div class="popover arrow-top-left{% if chromosomeList|length > 10 %} longlist{% endif %}" id="chromosomeList">
+		<div>
 		<ul>
 			{% for c in chromosomeList %}
 				{% if c != chromosome %}
@@ -81,6 +49,7 @@
 				{% endif %}
 			{% endfor %}
 		</ul>
+		</div>
 	</div>{% endif %}</span></h2>
 {% endblock %}
 

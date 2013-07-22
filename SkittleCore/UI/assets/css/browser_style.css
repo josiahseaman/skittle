@@ -1,3 +1,27 @@
+/* HEADER */
+header>div {
+	box-shadow: 0 0 16px #000;
+}
+header h2 {
+	color:#ccc;
+	font-weight: 600;
+}
+h2 .chromosomeName {
+	font-weight: 400;
+	font-size: 0.8em;
+}
+header .taxonomy {
+	text-align: left;
+	color:#fda;
+}
+#chromosomeList a {
+	box-shadow: none;
+	text-align: left;
+}
+#chromosomeList.longlist a {
+	font-size: 0.8em;
+}
+
 #graph-labels {
 	color:#fff;
 	font-size: 0.8em;
