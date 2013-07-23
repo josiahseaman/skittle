@@ -176,10 +176,8 @@ var drawRasterGraph = function(graph,offset,chunks) {
     var newImageData = b.createImageData(state.width(),toSkixels(1000)) //create new image data with desired dimentions (width)
     var newData = newImageData.data;
 
-    var fadePercent = 1
-    if (annotationSelectedStart > 0) {
-        fadePercent = 0.35
-    }
+    var fadePercent = (annotationSelectedStart > 0) ? 0.45 : 1;
+    
     var chunkStartOffset = round(state.startTopOfScreen(1), state.chunkSizeBP(), "down");
     var startOffset = Math.round( (state.startTopOfScreen() - chunkStartOffset - 1)/state.scale() )*4;
     var selectedStart = Math.round( (annotationSelectedStart - chunkStartOffset - 1)/state.scale() )*4;
@@ -187,10 +185,18 @@ var drawRasterGraph = function(graph,offset,chunks) {
 
     for (var x = 0; x < newData.length; x += 4) { // read in data from original pixel by pixel
         var y = x + startOffset
-        newData[x] = data[y] || 0;
-        newData[x + 1] = data[y + 1] || 0;
-        newData[x + 2] = data[y + 2] || 0;
-        newData[x + 3] = (selectedEnd >= y && selectedStart <= y )? data[y + 3] : data[y + 3]*fadePercent;
+        if (!(annotationSelectedStart > 0) || selectedEnd >= y && selectedStart <= y ) {
+            newData[x] = data[y] || 0;
+            newData[x + 1] = data[y + 1] || 0;
+            newData[x + 2] = data[y + 2] || 0;
+            newData[x + 3] = data[y + 3] || 0;
+        } else {
+            newData[x] = Math.min(data[y] + 80, 255);
+            newData[x + 1] = Math.min(data[y + 1] + 80, 255);
+            newData[x + 2] = Math.min(data[y + 2] + 80, 255);
+            newData[x + 3] = data[y + 3]*fadePercent;
+        }
+
     }
     b.putImageData(newImageData, offset, 0);
 
