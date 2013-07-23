@@ -176,7 +176,7 @@ var drawRasterGraph = function(graph,offset,chunks) {
     var newImageData = b.createImageData(state.width(),toSkixels(1000)) //create new image data with desired dimentions (width)
     var newData = newImageData.data;
 
-    var fadePercent = (annotationSelectedStart > 0) ? 0.45 : 1;
+    var fadePercent = (annotationSelectedStart > 0) ? 0.5 : 1;
     
     var chunkStartOffset = round(state.startTopOfScreen(1), state.chunkSizeBP(), "down");
     var startOffset = Math.round( (state.startTopOfScreen() - chunkStartOffset - 1)/state.scale() )*4;
@@ -230,6 +230,11 @@ var drawAnnotation = function(file,statusIndex,offset) {
     var columnFilledTilRow = []
 
     var chunks = skixelsOnScreen*state.scale()/state.chunkSize + 1; 
+
+    if (chunks > 12) {
+        hideGraph(file);
+        return 0;
+    }
 
     for (var i = 0; i < chunks; i++) {
         annotationRequestor((Math.floor(state.start()/65536)+i)*65536+1)
