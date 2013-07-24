@@ -231,13 +231,14 @@
 		cc = document.getElementById('c') //visible canvas - scale will be 3*zoom
 		c = cc.getContext("2d");
 	    var bb = document.createElement('canvas'); //scratch canvas
-	    bb.height = 1000
-	    bb.width = 5000
+	    bb.height = 1024
+	    bb.width = 1024
 	    b = bb.getContext("2d");
 	    var aa = document.createElement('canvas');
-	    aa.height = 10000
-	    aa.width = 1050
+	    aa.height = 1024
+	    aa.width = 1024
 	    a = aa.getContext("2d");
+
 
 	    // if graphs are specified in the url set their visibility
 	    var initialGraphs = "{{ graphs }}".split('')
@@ -280,6 +281,10 @@
 	    cc.onmouseup = mouseUp;
 	    cc.onmousewheel = mouseWheel;
 	    $('#dials li').on('mousewheel',mouseWheelDials)
+
+	    cc.addEventListener("touchstart", processTouchEvent, false)
+	    cc.addEventListener("touchmove", processTouchEvent, false)
+	    cc.addEventListener("touchend", processTouchEvent, false)
 
 	contactForm();
 

@@ -69,6 +69,17 @@ function getMouseLocation(e) {
       mx = e.pageX - offsetX;
       my = e.pageY - offsetY
 }
+function processTouchEvent(e) {
+    if (e.touches.length <= 1) {
+    // console.log(e)
+        e.preventDefault();
+        switch (e.type) {
+            case "touchstart": mouseDown(e);break;
+            case "touchmove": mouseMove(e);break;
+            case "touchend": mouseUp(e);break;
+        }
+    }
+}
 
 function mouseDown(e) {
     getMouseLocation(e);
@@ -451,7 +462,7 @@ var getCurrentPageURL = function(fullURL) {
     for (var key in graphStatus) {
         if (graphStatus[key].visible == true) graphString += key;
     }
-    var baseURL = (window.location.origin) ? window.location.origin : window.location.protocol + window.location.host;
+    var baseURL = (window.location.origin) ? window.location.origin : window.location.protocol + "//" + window.location.host;
     var currentURL = window.location.pathname
     var params = {"graphs":graphString,"start":state.start(),"scale":state.scale(),"width":state.width()};
     params.annotation = []
