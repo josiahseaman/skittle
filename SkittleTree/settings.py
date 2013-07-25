@@ -68,6 +68,8 @@ if PRODUCTION or HOSTNAME.startswith('nyx'):
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     ENABLE_SSL = True
+    SESSION_SAVE_EVERY_REQUEST = True
+    SESSION_COOKIE_NAME = 'DNASkittle'
 
 
 # Local time zone for this installation. Choices can be found here:
