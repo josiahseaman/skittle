@@ -199,6 +199,7 @@
 				complete the server will begin processing the files and preparing them for display. This could take 
 				a few minutes to several hours depending on the file size.</p>
 			<p>If you are working with a single chromosome organism you may upload different strains and assemblies as chromosomes.</p>
+			<p>If you select the Private Avaliablity option, the chromosomes you upload will only be available to you when you log in. Otherwise they will be visible to all users of DNASkittle.  Please make sure you have the rights to the files you upload. If you have questions about uploading fasta files, please contact <a href="mailto:support@dnaskittle.com">support@dnaskittle.com</a></p>
 		</div>
 	</div>
 	<div id="templates">
@@ -348,7 +349,9 @@
 	})
 
 	$('#fastafiles').on('change', function(e) {
-		$('#chromosomeList').empty();
+		$('#chromosomeList .chromosome').each(function(){
+			if ($(this).find('input').length>0) $(this).remove()
+		});
 		$.each(this.files,function(i,v){
 			var t = $('#templates .chromosome')
 					.clone()
@@ -402,11 +405,11 @@
 			if (i == "null") return	false;
 			$outputLocation = $('.chromosome[data-filename="'+i+'"] .progressbar');
 
-			if (v.IsWorking == "True") $outputLocation.html('processing...');
+			if (v.IsWorking == "True") $outputLocation.html('processing...').css('background','#3c3');
 			else if (v.Success == "True") {
 				$outputLocation.html('Ready for viewing!').css('background','#0a0');
 				$('.chromosome[data-filename="'+i+'"] h4')
-					.html('<a href="/browse/' + $('#Genus').val() +"/" + $('#Species').val() + "/" + v.Specimen + "/" + v.Chromosome +'">' + i + "</a>")
+					.html('<a href="/browse/' + $('#Genus').val() +"/" + $('#Species').val() + "/" + v.Specimen + "/" + v.Chromosome +'">' + v.Chromosome + "</a>")
 			}
 			else $outputLocation.html('processing error: '+v.Message).css('background','#a00');
 			

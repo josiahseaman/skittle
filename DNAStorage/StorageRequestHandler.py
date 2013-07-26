@@ -153,6 +153,8 @@ def GetTreeList(user=None):
             elif user:
                 if user in chromosome.User.all():
                     chromosomeList.append(chromosome.Chromosome)
+            else:
+                chromosomeList.append(chromosome.Chromosome)
 
         if len(chromosomeList) > 0:
             #Gather all specimen details (including chromosomes) into list

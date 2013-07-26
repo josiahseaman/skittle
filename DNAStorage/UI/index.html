@@ -212,7 +212,7 @@
 
 			// $('#genomes').load('?' + $.param(params) + " #genomes section")
 
-			$.get('#', params, function(data) {
+			$.get('./', params, function(data) {
 				$('#genomes').replaceWith($(data).find('#genomes'))
 				$('#previewPane').append($(data).find('.previewSpecimen')) //data.find #previewPane doesn't work??!?
 				$('#genomes').removeClass('loading');

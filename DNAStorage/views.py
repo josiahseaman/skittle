@@ -12,7 +12,6 @@ from DNAStorage import StorageRequestHandler
 
 
 def index(request):
-    print "index called as user " + str(request.user) + " who is authenticated:"+ str(request.user.is_authenticated())
     if request.user.is_authenticated(): chromosomes = FastaFiles.objects.filter(Q(Public=True) | Q(User=request.user))
     else: chromosomes = FastaFiles.objects.filter(Public=True)
     specimenNames = chromosomes.values('Specimen__Name').distinct()
@@ -20,7 +19,7 @@ def index(request):
     specimens = Specimen.objects.filter(Name__in=specimenNames)
 
     if request.GET.get('user'):
-        specimens = specimens.filter(fastafiles__User__Email=request.GET.get('user')) #only return uploads from specified user
+        specimens = specimens.filter(fastafiles__User__Email=request.GET.get('user')).distinct() #only return uploads from specified user
     if request.GET.get('kingdom'):
         specimens = specimens.filter(Kingdom__iexact=request.GET.get('kingdom'))
     if request.GET.get('class'):
@@ -29,6 +28,7 @@ def index(request):
         specimens = specimens.filter(Genus__iexact=request.GET.get('genus'))
     if request.GET.get('species'):
         specimens = specimens.filter(Species__iexact=request.GET.get('species'))
+
 
     tree = StorageRequestHandler.GetTreeList(request.user)
     context = {'specimens': specimens, 'tree': tree}
