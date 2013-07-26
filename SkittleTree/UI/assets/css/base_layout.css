@@ -22,10 +22,10 @@ img {
 	margin-right: -38px;
 }
 #logo:after {
-	content: url('../gfx/alpha.png');
+	content: url('../gfx/beta.png');
 	position: absolute;
 	top:-10px;
-	left:230px;
+	left:221px;
 }
 header {
 	position: absolute;

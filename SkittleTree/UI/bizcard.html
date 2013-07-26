@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{% block pageTitle %}DNASkittle - Josiah Seaman{% endblock %}</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+	{% block styles %}
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/browser.css">
+	<style type="text/css">
+		body {
+			text-align: center;
+			color: #fda;
+		}
+		h2 {
+			font-weight: 300;
+			font-size: 2em;
+			color:#eee;
+			margin-bottom: 0.2em;
+			margin-top: 1.5em;
+		}
+		p,address {
+			margin-top: 0.5em;
+			font-size: 1.4em;
+		}
+	</style>
+	{% endblock %}
+
+<!--[if lt IE 9]>
+	<script src="dist/html5shiv.js"></script>
+<![endif]-->
+	{% block scripts %}
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script type="text/javascript">
+
+
+	</script>
+	{% endblock %}
+</head>
+<body>
+
+	<header><h1 id="logo"><a href="/"><img src="{{STATIC_URL}}gfx/skittle-logo3.png"><span>DNA</span>Skittle</a></h1></header>
+	<br>
+	<br>
+	<br>
+	<h2>Josiah Seaman</h2>
+	<address><a href="mailto:josiah@dnaskittle.com">josiah@dnaskittle.com</a></address>
+	<address><a href="http://josiah.newline.us">josiah.newline.us</a></address>
+	<h2>ISCB Presentation</h2>
+	<p>Tuesday, July 23 
+		<br>11:30-12:25
+		<br>Hall 9</p>
+	<h2>More Information</h2>
+
+	<p><a href="https://twitter.com/genome_skittle" target="blank"><img src="{{STATIC_URL}}gfx/twitter-bird-dark-bgs.png" height="36" width="36" style="margin-bottom:-6px"></a> &nbsp; <a href="https://plus.google.com/u/0/113106795968395476024/about" target="blank"><img src="{{STATIC_URL}}gfx/gplus-white-26.png" height="26" width="26"></a> &nbsp; <a href="https://github.com/josiahseaman/skittle" target="blank"><img src="{{STATIC_URL}}gfx/github-white.png" height="22"></a></p>
+
+
+
+{% if PRODUCTION %}
+
+	<script type="text/javascript">
+
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-36361700-2']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+
+	</script>
+{% endif %}
+</body>
+</html>
