@@ -3,7 +3,7 @@ import re
 import shutil
 
 from django.conf import settings
-from django.db import transaction
+from django.db import transaction, connection
 
 from models import FastaFiles, FastaChunkFiles, Specimen, ImportProgress
 import StorageRequestHandler
@@ -16,6 +16,7 @@ def saveDBObject(object):
         object.save()
     except:
         print "Retrying DB query!"
+        connection.close()
         object.save()
 
 def parseChromosome(fileName):
