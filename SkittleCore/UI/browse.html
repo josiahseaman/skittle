@@ -275,7 +275,7 @@
 
 	    document.onkeydown = keyListener; 
 	    
-	    cc.onselectstart = function () { return false; } //fixes a problem where double clicking causes text to get selected on the canvas
+	    cc.onselectstart = function (e) { e.preventDefault(); return false; } //fixes a problem where double clicking causes text to get selected on the canvas
 	    cc.onmousedown = mouseDown;
 	    cc.onmousemove = mouseMove;
 	    cc.onmouseup = mouseUp;
