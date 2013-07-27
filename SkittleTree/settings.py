@@ -62,6 +62,7 @@ else:
         }
     }
 
+
 DATABASE_WAIT_TIMEOUT = 28800
 
 if PRODUCTION or HOSTNAME.startswith('nyx'):
@@ -70,6 +71,8 @@ if PRODUCTION or HOSTNAME.startswith('nyx'):
     ENABLE_SSL = True
     SESSION_SAVE_EVERY_REQUEST = True
     SESSION_COOKIE_NAME = 'DNASkittle'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 # Local time zone for this installation. Choices can be found here:

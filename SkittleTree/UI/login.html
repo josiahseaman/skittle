@@ -16,7 +16,7 @@
 {{ form.username.label_tag }} {{ form.username }}<br>
 {{ form.password.label_tag }} {{ form.password }}	
 <div style="text-align:right;font-size:0.8em">
-<a href="passwordreset">Reset Password</a>
+<a href="{% url 'password_reset' %}">Reset Password</a>
 </div>
 <br><br>
 <label>&nbsp;</label>

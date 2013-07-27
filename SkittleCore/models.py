@@ -140,7 +140,7 @@ class SkittleUserManager(BaseUserManager):
             raise ValueError("Users must set a password")
 
         Email = SkittleUserManager.normalize_email(Email)
-        user = SkittleUser(Email=Email, FirstName=FirstName, LastName=LastName)
+        user = SkittleUser(email=Email, FirstName=FirstName, LastName=LastName)
 
         user.set_password(password1)
         user.save()
@@ -161,7 +161,7 @@ class SkittleUserManager(BaseUserManager):
         return user
 
 class SkittleUser(AbstractBaseUser, PermissionsMixin):
-    Email = models.EmailField(verbose_name='Email Address', max_length=255, unique=True, db_index=True, help_text='Your email address will be treated as a Username for this site.',)
+    email = models.EmailField(verbose_name='Email Address', max_length=255, unique=True, db_index=True, db_column="Email", help_text='Your email address will be treated as a Username for this site.',)
     FirstName = models.CharField(verbose_name='First Name', max_length=255,)
     LastName = models.CharField(verbose_name='Last Name', max_length=255, null=True, blank=True,)
     IsAdmin = models.BooleanField(verbose_name='Admin Status', default=False, help_text='Designates whether this user is an Admin/On Staff or not.',)
@@ -174,7 +174,7 @@ class SkittleUser(AbstractBaseUser, PermissionsMixin):
 
     objects = SkittleUserManager()
 
-    USERNAME_FIELD = 'Email'
+    USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     class Meta:
@@ -182,7 +182,7 @@ class SkittleUser(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = "Users"
 
     def get_absolute_url(self):
-        return "/users/%s/" % urlquote(self.Email)
+        return "/users/%s/" % urlquote(self.email)
 
     def get_full_name(self):
         full_name = '%s %s' % (self.FirstName, self.LastName)
@@ -192,7 +192,7 @@ class SkittleUser(AbstractBaseUser, PermissionsMixin):
         return self.FirstName
 
     def email_user(self, subject, message, from_email=None):
-        send_mail(subject, message, from_email, [self.Email])
+        send_mail(subject, message, from_email, [self.email])
 
     @property
     def is_staff(self):

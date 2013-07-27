@@ -12,7 +12,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = SkittleUser
-        fields = ('Email', 'FirstName', 'LastName')
+        fields = ('email', 'FirstName', 'LastName')
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -33,7 +33,7 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = SkittleUser
-        fields = ['Email', 'FirstName', 'LastName', 'password', 'IsActive', 'IsAdmin']
+        fields = ['email', 'FirstName', 'LastName', 'password', 'IsActive', 'IsAdmin']
 
     def clean_password(self):
         return self.initial["password"]
@@ -42,18 +42,18 @@ class SkittleUserAdmin(UserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
 
-    list_display = ('Email', 'IsAdmin')
+    list_display = ('email', 'IsAdmin')
     list_filter = ('IsAdmin',)
     fieldsets = (
-        (None, {'fields': ('Email', 'password')}),
+        (None, {'fields': ('email', 'password')}),
         ('Personal info', {'fields': ('FirstName', 'LastName',)}),
         ('Permissions', {'fields': ('IsAdmin',)}),
     )
     add_fieldsets = (
-        (None, {'classes': ('wide',), 'fields': ('Email', 'FirstName', 'LastName', 'password1', 'password2')}),
+        (None, {'classes': ('wide',), 'fields': ('email', 'FirstName', 'LastName', 'password1', 'password2')}),
     )
-    search_fields = ('Email', 'FirstName', 'LastName')
-    ordering = ('Email', 'FirstName', 'LastName')
+    search_fields = ('email', 'FirstName', 'LastName')
+    ordering = ('email', 'FirstName', 'LastName')
     filter_horizontal = ()
 
 admin.site.register(SkittleUser, SkittleUserAdmin)
