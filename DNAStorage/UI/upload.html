@@ -350,7 +350,7 @@
 
 	$('#fastafiles').on('change', function(e) {
 		$('#chromosomeList .chromosome').each(function(){
-			if ($(this).find('input').length>0) $(this).remove()
+			if ($(this).find('input[type="text"]').length>0) $(this).remove()
 		});
 		$.each(this.files,function(i,v){
 			var t = $('#templates .chromosome')
