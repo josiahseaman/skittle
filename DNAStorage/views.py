@@ -19,7 +19,7 @@ def index(request):
     specimens = Specimen.objects.filter(Name__in=specimenNames)
 
     if request.GET.get('user'):
-        specimens = specimens.filter(fastafiles__User__Email=request.GET.get('user')).distinct() #only return uploads from specified user
+        specimens = specimens.filter(fastafiles__User__email=request.GET.get('user')).distinct() #only return uploads from specified user
     if request.GET.get('kingdom'):
         specimens = specimens.filter(Kingdom__iexact=request.GET.get('kingdom'))
     if request.GET.get('class'):

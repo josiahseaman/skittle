@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from django.views.generic import RedirectView
+from django.views.generic import RedirectView, TemplateView
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -24,6 +24,7 @@ urlpatterns = patterns('',
    (r'^learn/?$', 'SkittleTree.views.learn'),
    # (r'^learn/?$', RedirectView.as_view(url='/browse/homo/sapiens/hg19/chrY/?graphs=bn&start=1468365&scale=1&width=105&annotation=gencode#learn')),
    (r'^card/?$', RedirectView.as_view(url='/browse/businesscard/bcbanner/?graphs=abn&start=1&scale=1&width=296')),
+   # (r'^card/?$', TemplateView.as_view(template_name='bizcard.html')),
    (r'^try/?$', 'SkittleTree.views.loggedInRedirect'),
    url(r'^accounts/login/?$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}, name='login'),
    url(r'^accounts/logout/?$', 'django.contrib.auth.views.logout_then_login', name='logout'),
