@@ -71,6 +71,13 @@ if PRODUCTION or HOSTNAME.startswith('nyx'):
     ENABLE_SSL = True
     SESSION_SAVE_EVERY_REQUEST = True
     SESSION_COOKIE_NAME = 'DNASkittle'
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_USE_TLS = True
+    EMAIL_PORT = 465
+    EMAIL_HOST_USER = 'admin@dnaskittle.com'
+    EMAIL_HOST_PASSWORD = "I<3$Connie"
+    EMAIL_SUBJECT_PREFIX = '[Skittle]'
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
