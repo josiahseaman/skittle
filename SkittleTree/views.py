@@ -28,9 +28,9 @@ def createUser(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             newUser = SkittleUser.objects.create_user(**form.cleaned_data)
-            print "created new user " + str(request.POST['Email']) + " who is authenticated:"+ str(request.user.is_authenticated())
+            print "created new user " + str(request.POST['email']) + " who is authenticated:"+ str(request.user.is_authenticated())
 
-            user = authenticate(username=request.POST['Email'],password=request.POST['password1'])
+            user = authenticate(username=request.POST['email'],password=request.POST['password1'])
             login(request,user)
             print "should have logged in new user " + str(user) + " who is authenticated:"+ str(request.user.is_authenticated())
             return HttpResponseRedirect('/learn/')
