@@ -10,14 +10,12 @@ def home(request):
     return render(request, 'home.html')
 
 def learn(request):
-    print "learn called as user " + str(request.user) + " who is authenticated:"+ str(request.user.is_authenticated())
     if request.user.is_authenticated():
         request.user.NewUser = False
         request.user.save()
     return HttpResponseRedirect('/browse/homo/sapiens/hg19/chrY/?graphs=bn&start=1468365&scale=1&width=105&annotation=gencode#learn')
 
 def loggedInRedirect(request):
-    print "loggedInRediect called as user " + str(request.user) + " who is authenticated:"+ str(request.user.is_authenticated())
     if request.user.is_authenticated() and not request.user.NewUser:
         return HttpResponseRedirect('/discover/')
     else:
@@ -28,11 +26,9 @@ def createUser(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             newUser = SkittleUser.objects.create_user(**form.cleaned_data)
-            print "created new user " + str(request.POST['email']) + " who is authenticated:"+ str(request.user.is_authenticated())
 
             user = authenticate(username=request.POST['email'],password=request.POST['password1'])
             login(request,user)
-            print "should have logged in new user " + str(user) + " who is authenticated:"+ str(request.user.is_authenticated())
             return HttpResponseRedirect('/learn/')
     else:
         form = UserCreationForm()
