@@ -74,7 +74,7 @@ if PRODUCTION or HOSTNAME.startswith('nyx'):
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = 'smtp.gmail.com'
     EMAIL_USE_TLS = True
-    EMAIL_PORT = 465
+    EMAIL_PORT = 587
     EMAIL_HOST_USER = 'admin@dnaskittle.com'
     EMAIL_HOST_PASSWORD = "I<3$Connie"
     EMAIL_SUBJECT_PREFIX = '[Skittle]'
