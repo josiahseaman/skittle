@@ -176,9 +176,11 @@ def GetTreeList(user=None):
     return tree
 
 #Get list of chromosomes related to a specimen
-def GetRelatedChromosomes(specimen, user):
-    if user.is_authenticated() : fastaFiles =  FastaFiles.objects.filter(Q(Public=True) | Q(User=user))
-    else: fastaFiles =  FastaFiles.objects.filter(Public=True)
+def GetRelatedChromosomes(specimen, user=None):
+    if user is not None and user.is_authenticated(): 
+        fastaFiles =  FastaFiles.objects.filter(Q(Public=True) | Q(User=user))
+    else: 
+        fastaFiles =  FastaFiles.objects.filter(Public=True)
     if type(specimen) is unicode: 
         fastaFiles = fastaFiles.filter(Specimen__Name__iexact=specimen)
     else:

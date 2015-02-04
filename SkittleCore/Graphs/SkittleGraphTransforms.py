@@ -172,7 +172,7 @@ def normalizeDictionary(listing, referencePoint=0):
         referencePoint = sum(listing.values())
     elif callable(referencePoint):
         referencePoint = referencePoint(listing.values())
-    if referencePoint != 0:
+    if referencePoint != 0 and referencePoint > 0.00000000001:
         for key, value in listing.items():
             listing[key] = value * 1.0 / referencePoint
     return listing
@@ -188,7 +188,8 @@ def countNucleotides(seq, oligomerSize=1):
         for c in seq:
             try:
                 counts[c] = 1 + counts[c]  # counts.get(c,0) #defaults to 0
-            except: pass
+            except:
+                pass
     else:
         for endIndex in range(oligomerSize, len(seq) + 1, 1):
             c = seq[endIndex - oligomerSize: endIndex]
@@ -203,35 +204,17 @@ def countNucleotides(seq, oligomerSize=1):
 def chunkUpList(seq, chunkSize, overlap=0):
     if hasDepth(seq):
         return map(lambda x: chunkUpList(x, chunkSize, overlap), seq)
+    if chunkSize == 0:
+        return seq
     height = int(math.ceil(len(seq) / float(chunkSize)))
     #    if height == 0: return []
     resultVector = [seq[chunk * chunkSize: (chunk + 1) * chunkSize + overlap] for chunk in range(height)]
     return resultVector
 
 
-'''Deprecated.  Nucleotide Display uses normalized counts now'''
-
-
-def colorCompress(pixels, scale):
-    if hasDepth(pixels):
-        return map(lambda x: colorCompress(x, scale), pixels)
-    compressed = []
-    for i in range(0, len(pixels) - scale, scale):
-        r = 0
-        g = 0
-        b = 0
-        for s in range(scale):
-            r += pixels[i + s][0]
-            g += pixels[i + s][1]
-            b += pixels[i + s][2]
-        compressed.append((r / scale, g / scale, b / scale))
-    return compressed
-
-
-'''Optimized function for Nucleotide to color mapping at scale 1'''
-
 
 def sequenceToColors(seq, colorPalette):
+    """Optimized function for Nucleotide to color mapping at scale 1"""
     if hasDepth(seq):
         return map(lambda x: sequenceToColors(x, colorPalette), seq)
     pixels = []
@@ -415,25 +398,3 @@ def sensitiveTestForSpecificFrequency(floatList, frequency=3, numberOfSamples=20
             score += (mask[x] * floatList[x]) #/ float(numberOfSamples)
     return score
 
-
-if __name__ == '__main__':
-    a = generateExhaustiveOligomerList(2)
-    print len(a), a
-    b = generateExhaustiveOligomerList(3)
-    print len(b), b
-    '''
-    a = [ 1, 2, 3]
-    b = [-1,-2,-3]
-    counts = countNucleotides('AAAACGCCGTN')
-    print counts
-    print normalizeDictionary(counts)
-    
-    print 'Correlation test case'
-    sample = [1,2,3,4,5,6,7,8,9,8,7,6,5,4,3,2,1]
-    print correlate(sample, 0, 3, len(sample)/2) 
-    for size in range(1, len(sample)):
-        print correlate(sample, 0, 0, size),
-    print
-    for start in range(len(sample)-4):
-        print correlate(sample, 0, start, 4),
-    '''
