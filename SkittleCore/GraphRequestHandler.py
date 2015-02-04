@@ -59,21 +59,23 @@ def handleRequest(state, settings=None):
     roundStartPosition(state)
     #Check to see if PNG exists
     png = None
-    if state.requestedGraph not in ['h', ]:
+    exempt = state.requestedGraph in ['h', 'd']
+    if not exempt:
         png = tryGetGraphPNG(state)
-        #If it doesn't: grab pixel calculations
-    if png is None and not isBeingProcessed(state):#TODO: handle same state different "settings" being separate computation
-        #TODO: Handle beginProcess and finishProcess possible return of False
-        beginProcess(state)
-        pixels = calculatePixels(state, settings)
-        png = convertToPng(state, pixels, isRasterGraph(state))
-        finishProcess(state)
-    elif isBeingProcessed(state):
-        sleepTime = 2
-        sleep(sleepTime) #This extra sleep command is here to prevent hammering the IsBeingProcessed database
-        while isBeingProcessed(state):
-            sleep(sleepTime)
-        return handleRequest(state)
+    if png is None:  #If it doesn't: grab pixel calculations
+        if exempt or not isBeingProcessed(state):
+            # TODO: Handle beginProcess and finishProcess possible return of False
+            if not exempt:
+                beginProcess(state)
+            pixels = calculatePixels(state, settings)
+            png = convertToPng(state, pixels, isRasterGraph(state))
+            print "Finished", finishProcess(state)
+        elif isBeingProcessed(state):
+            sleepTime = 2
+            sleep(sleepTime)  # This extra sleep command is here to prevent hammering the IsBeingProcessed database
+            while isBeingProcessed(state):
+                sleep(sleepTime)
+            return handleRequest(state)
     print 'Done'
     return png
 
@@ -103,7 +105,8 @@ def tryGetGraphPNG(state):
 
 def isBeingProcessed(request):
     #print "Checking if in process queue..."
-    specimen, chromosome, graph, start, scale, charsPerLine = request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.width
+    specimen, chromosome, graph, start, scale, charsPerLine = \
+        request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.width
 
     process = ProcessQueue.objects.filter(Specimen=specimen, Chromosome=chromosome, Graph=graph, Start=start,
                                           Scale=scale, CharsPerLine=charsPerLine)
@@ -137,7 +140,8 @@ def beginProcess(request):
 
 def finishProcess(request):
     if isBeingProcessed(request):
-        specimen, chromosome, graph, start, scale, charsPerLine = request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.width
+        specimen, chromosome, graph, start, scale, charsPerLine = \
+            request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.width
 
         ProcessQueue.objects.filter(Specimen=specimen, Chromosome=chromosome, Graph=graph, Start=start, Scale=scale,
                                     CharsPerLine=charsPerLine).delete()
@@ -173,7 +177,8 @@ def generateGraphListForServer():
 
 '''These are here for the purposes of invoking the registerGraph call at the beginning of every graph definition file'''
 graphNames = ['NucleotideBias', 'NucleotideDisplay', 'OligomerUsage', 'RawFrequencyMap',
-              'RepeatMap', 'RepeatOverview', 'SequenceHighlighter', 'SimilarityHeatMap', 'ThreeMerDetector', 'PhotoGallery']
+              'RepeatMap', 'RepeatOverview', 'SequenceHighlighter', 'SimilarityHeatMap', 
+              'ThreeMerDetector', 'PhotoGallery', 'RepeatDetail']
 for name in graphNames:
     filename = 'SkittleCore.Graphs.' + name
     __import__(filename)

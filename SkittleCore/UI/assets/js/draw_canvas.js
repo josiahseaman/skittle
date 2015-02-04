@@ -364,7 +364,6 @@ function widthPositionInRepeatMapGivenOffset(offset, bpPerLine) {
 
 graphStatus['m'].drawPixelPost = function() { 
     var offset = graphStatus['m'].skixelOffset
-
     var bpPerLine = state.bpPerLine()
     if ( bpPerLine >= 1 && bpPerLine < 26000 ) { //draw the red lines
         var widthPosition = widthPositionInRepeatMapGivenOffset(offset, bpPerLine);
@@ -377,6 +376,7 @@ graphStatus['m'].drawPixelPost = function() {
         c.lineWidth = 0.333333333
         c.stroke();
     }
+    //$.get('/data.png?graph=d&start='+offset+'&width='+bpPerLine)
 }
 
 var drawSimHeat = function(offset,chunks) {
