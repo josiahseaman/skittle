@@ -68,7 +68,7 @@ def handleRequest(state, settings=None):
             if not exempt:
                 beginProcess(state)
             pixels = calculatePixels(state, settings)
-            png = convertToPng(state, pixels, isRasterGraph(state))
+            png = convertToPng(state, pixels, not exempt)
             print "Finished", finishProcess(state)
         elif isBeingProcessed(state):
             sleepTime = 2
@@ -78,11 +78,6 @@ def handleRequest(state, settings=None):
             return handleRequest(state)
     print 'Done'
     return png
-
-
-def isRasterGraph(state):
-    graphDescription = getGraphDescription(state)
-    return graphDescription[3]
 
 
 def getGraphDescription(state):

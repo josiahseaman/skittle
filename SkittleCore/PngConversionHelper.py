@@ -17,7 +17,13 @@ def checkForGreyscale(state):
     return desc.isGrayScale
 
 
-def convertToPng(state, pixels, isRaster=False):
+def isRasterGraph(state):
+    graphDescription = SkittleCore.GraphRequestHandler.getGraphDescription(state)
+    return graphDescription[3]
+
+
+def convertToPng(state, pixels, save=True):
+    isRaster = isRasterGraph(state)
     targetWidth = 1024
     greyscale = checkForGreyscale(state)
     f = tempfile.mktemp()
@@ -27,9 +33,10 @@ def convertToPng(state, pixels, isRaster=False):
         p = multiplyGreyscale(pixels, 255)
         w = png.Writer(len(p[0]), len(p), greyscale=True)
     else:
-        if not isRaster:   #Nucleotide Bias
-            p = flattenImage(pixels, len(pixels[0]), True, 4)
-            w = png.Writer(len(p[0]) / 4, len(p), greyscale=False, alpha=True)
+        if not isRaster:
+            channels = 4 if state.requestedGraph == 'b' else 3  # Nucleotide Bias            
+            p = flattenImage(pixels, len(pixels[0]), True, channels)
+            w = png.Writer(len(p[0]) / channels, len(p), greyscale=False, alpha=channels==4)
         else: #raster, color graphs
             p = flattenImage(pixels, targetWidth)
             w = png.Writer(targetWidth, len(p))
@@ -37,7 +44,8 @@ def convertToPng(state, pixels, isRaster=False):
     f.close()
     f = open(f.name, 'rb') #return the binary contents of the file
     data = f.read()
-    StorePng(state, f)
+    if save: 
+        StorePng(state, f)
     return data
 
 
