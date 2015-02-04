@@ -147,9 +147,8 @@ def logRepeatMap(state, repeatMapState):
                 offsetSequence = scaledSequence[offset: offset + skixelsPerSample]
                 validComparison = len(offsetSequence) == len(original) and len(offsetSequence) and len(original)
                 if validComparison: #this line is necessary to avoid array index out of bounds or referencing an unsigned variable stretchIsSequenced
-                    stretchIsSequenced = not any(
-                        map(composedOfNs, [offsetSequence[0], offsetSequence[-1:][0], original[0], original[-1:][0]]))
-                        #map(composedOfNs, offsetSequence + original))
+                    stretchIsSequenced = not any(map(composedOfNs, offsetSequence))
+                    stretchIsSequenced = not any(map(composedOfNs, original)) and stretchIsSequenced
                 if validComparison and stretchIsSequenced: #this line is necessary to avoid array index out of bounds or referencing an unsigned variable stretchIsSequenced
                     targetChannels = zip(*offsetSequence)
                     resultSum = 0.0

@@ -346,24 +346,28 @@ graphStatus['b'].drawPixelPre = function() {
 }
 
 
+function widthPositionInRepeatMapGivenOffset(offset, bpPerLine) {
+    var cumulativeWidth = 0, megaColumn = 0, subColumn = 0;
+
+    while (cumulativeWidth < (bpPerLine - 12)) {
+        cumulativeWidth += Math.pow(2, megaColumn)
+        subColumn++
+        if (subColumn >= 12) {
+            subColumn = 0
+            megaColumn++
+        }
+    }
+    var widthPosition = offset + 11 + megaColumn * 12 + subColumn - (cumulativeWidth - bpPerLine + 12) / Math.pow(2, megaColumn)
+    widthPosition = round(widthPosition, (1 / 3))
+    return widthPosition;
+}
+
 graphStatus['m'].drawPixelPost = function() { 
     var offset = graphStatus['m'].skixelOffset
 
     var bpPerLine = state.bpPerLine()
     if ( bpPerLine >= 1 && bpPerLine < 26000 ) { //draw the red lines
-        var cumulativeWidth = 0, megaColumn=0, subColumn=0;
-
-        while (cumulativeWidth<(bpPerLine-12)) {
-            cumulativeWidth += Math.pow(2,megaColumn)
-            subColumn++
-            if(subColumn>=12) {
-                subColumn=0
-                megaColumn++
-            } 
-        }
-        var widthPosition = offset + 11 + megaColumn*12+subColumn -(cumulativeWidth-bpPerLine+12)/Math.pow(2,megaColumn)
-        widthPosition = round(widthPosition,(1/3))
-
+        var widthPosition = widthPositionInRepeatMapGivenOffset(offset, bpPerLine);
         c.beginPath();
         c.moveTo(widthPosition-0.18181818,0)
         c.lineTo(widthPosition-0.18181818,500)
