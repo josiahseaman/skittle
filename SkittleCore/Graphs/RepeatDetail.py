@@ -35,16 +35,14 @@ def calculateOutputPixels(state):
     #    chunks = chunkUpList(state.seq, state.nucleotidesPerLine() )
     
     # determine the offset in nucleotides
-    start_seq = state.seq[state.start : state.start + state.nucleotidesPerLine()]
-    second = state.start + state.width
+    # substract start of chunk position
+    start_seq = state.seq[state.relativeStart : state.relativeStart + state.nucleotidesPerLine()]
+    second = state.relativeStart + state.width * state.scale
     second_seq = state.seq[second : second + state.nucleotidesPerLine()]
+   
+    state.seq = [start_seq, second_seq]  # append two slices of the sequence
 
-
-    # append two slices of the sequence
-    state.seq = [start_seq, second_seq]
-    # colorize
-
-    if False: #state.scale > 1:
+    if state.scale > 1:
         chunks = chunkUpList(state.seq, state.scale)
         counts = countNucleotides(chunks)
         counts = normalizeDictionary(counts)

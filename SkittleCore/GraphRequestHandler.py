@@ -43,12 +43,14 @@ def calculatePixels(state, settings=None):
 
 
 def roundStartPosition(state):
+    oldStart = state.start 
     if (state.start - 1) % chunkSize == 0:
-        return
-    if (state.start) % chunkSize == 0:
+        pass
+    elif state.start % chunkSize == 0:
         state.start += 1
-        return
-    state.start = int(state.start / chunkSize) * chunkSize + 1
+    else:
+        state.start = int(state.start / chunkSize) * chunkSize + 1
+    state.relativeStart = oldStart - state.start
 
 
 '''The main entry point for the whole Python logic SkittleCore module and Graphs.'''
