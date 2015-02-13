@@ -36,14 +36,12 @@ def calculateOutputPixels(state, repeatMapState=RepeatMapState()):
     assert isinstance(state, RequestPacket)
     #    chunks = chunkUpList(state.seq, state.nucleotidesPerLine() )
     
-    # determine the offset in nucleotides
+    # determine the offset in nucleotides.  This is the inverse function of draw_canvas.js:graphStatus['m'].drawPixelPost = function() {}
     megaColumn = int(repeatMapState.offsetColumn / 12)  # can't use state.width because it gets max(12, width)
     subcolumn = repeatMapState.offsetColumn - megaColumn * 12
     state.scale = 2**megaColumn
-    offset = sum([12*(2**p) for p in range(megaColumn)]) + subcolumn * state.scale
+    offset = (12 + subcolumn) * state.scale  #ranges from 12 to 24
     end = state.relativeStart + state.scale * (repeatMapState.skixelsPerSample * 2)
-
-
 
 
     # state.relativeStart made by substracting start of chunk position

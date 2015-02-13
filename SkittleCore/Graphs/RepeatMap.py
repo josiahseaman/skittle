@@ -104,8 +104,8 @@ def logRepeatMap(state, repeatMapState):
     height = repeatMapState.height(state, state.seq)
     state.readAndAppendNextChunk()
     print "Done reading additional chunk.  Computing..."
-    for h in range(height): # per line
-        percentCompletion = int(float(h) / height * 1000)
+    for y in range(height): # per line
+        percentCompletion = int(float(y) / height * 1000)
         if percentCompletion % 100 == 0:
             print percentCompletion / 10, "% Complete"
 
@@ -113,7 +113,7 @@ def logRepeatMap(state, repeatMapState):
         freq.append([])
         oldScaledSequence = []
 
-        for powerOfX in range(repeatMapState.F_width):
+        for powerOfX in range(repeatMapState.F_width):  # mega columns
             scale = int(math.ceil(growthPower ** powerOfX))
             if scale * repeatMapState.skixelsPerSample >= 64000:#the maximum reach
                 break
@@ -142,13 +142,13 @@ def logRepeatMap(state, repeatMapState):
             startingOffset = repeatMapState.skixelsPerSample / growthPower
             if scale == 1:
                 startingOffset = 1
-            for offset in range(startingOffset, repeatMapState.skixelsPerSample): #range 12 - 24 but indexing starts at 0
+            for offset in range(startingOffset, repeatMapState.skixelsPerSample):  # range 12 - 24 but indexing starts at 0
                 offsetSequence = scaledSequence[offset: offset + repeatMapState.skixelsPerSample]
                 validComparison = len(offsetSequence) == len(original) and len(offsetSequence) and len(original)
-                if validComparison: #this line is necessary to avoid array index out of bounds or referencing an unsigned variable stretchIsSequenced
-                    stretchIsSequenced = not any(map(composedOfNs, offsetSequence))
-                    stretchIsSequenced = not any(map(composedOfNs, original)) and stretchIsSequenced
-                if validComparison and stretchIsSequenced: #this line is necessary to avoid array index out of bounds or referencing an unsigned variable stretchIsSequenced
+                if validComparison:  # this line is necessary to avoid array index out of bounds or referencing an unsigned variable regionIsSequenced
+                    regionIsSequenced = not any(map(composedOfNs, offsetSequence))
+                    regionIsSequenced = not any(map(composedOfNs, original)) and regionIsSequenced
+                if validComparison and regionIsSequenced:  # this line is necessary to avoid array index out of bounds or referencing an unsigned variable regionIsSequenced
                     targetChannels = zip(*offsetSequence)
                     resultSum = 0.0
                     for index, currentChannel in enumerate(rgbChannels):
@@ -160,7 +160,7 @@ def logRepeatMap(state, repeatMapState):
                 #                        print (scale, scale * offset)
                 else:
                     resultSum = -1.0
-                freq[h].append(.66666 * max(0.0, (.5 + resultSum)))
+                freq[y].append(.66666 * max(0.0, (.5 + resultSum)))
 
         start += state.nucleotidesPerLine()
     return freq
