@@ -2,6 +2,7 @@
 Created on Feb, 2015
 @author: Josiah
 '''
+import math
 from SkittleCore.Graphs.models import RepeatMapState
 from SkittleGraphTransforms import chunkUpList, normalizeDictionary, countListToColorSpace, sequenceToColors, countNucleotides
 from SkittleCore.models import RequestPacket
@@ -36,10 +37,18 @@ def calculateOutputPixels(state, repeatMapState=RepeatMapState()):
     #    chunks = chunkUpList(state.seq, state.nucleotidesPerLine() )
     
     # determine the offset in nucleotides
+    megaColumn = int(repeatMapState.offsetColumn / 12)  # can't use state.width because it gets max(12, width)
+    subcolumn = repeatMapState.offsetColumn - megaColumn * 12
+    state.scale = 2**megaColumn
+    offset = sum([12*(2**p) for p in range(megaColumn)]) + subcolumn * state.scale
+    end = state.relativeStart + state.scale * (repeatMapState.skixelsPerSample * 2)
+
+
+
+
     # state.relativeStart made by substracting start of chunk position
-    samples = repeatMapState.skixelsPerSample
+    samples = repeatMapState.skixelsPerSample * state.scale
     start_seq = state.seq[state.relativeStart : state.relativeStart + samples]
-    offset = repeatMapState.offsetColumn  # can't use state.width because it gets max(12, widt)
     second = state.relativeStart + offset
     second_seq = state.seq[second : second + samples]
    
