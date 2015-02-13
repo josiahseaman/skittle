@@ -24,7 +24,6 @@ registerGraph('m', "Repeat Map", __name__, False, False, 0.4, isGrayScale=True, 
 
 '''These are the functions that are specific to the use of RepeatMap and not generally applicable.  
 These functions use RepeatMapState to emulate an object with state.'''
-skixelsPerSample = 24
 
 
 def encodeWidth(nucleotideWidth):
@@ -116,9 +115,9 @@ def logRepeatMap(state, repeatMapState):
 
         for powerOfX in range(repeatMapState.F_width):
             scale = int(math.ceil(growthPower ** powerOfX))
-            if scale * skixelsPerSample >= 64000:#the maximum reach
+            if scale * repeatMapState.skixelsPerSample >= 64000:#the maximum reach
                 break
-            end = start + scale * (skixelsPerSample * 2)
+            end = start + scale * (repeatMapState.skixelsPerSample * 2)
 
             #created scaled sequences
             starterSequence = []
@@ -136,15 +135,15 @@ def logRepeatMap(state, repeatMapState):
 
             #            scaledSequence = colorizeSequence(sequenceCount(state.seq, start, scale, end))
 
-            original = scaledSequence[0:skixelsPerSample]
+            original = scaledSequence[0:repeatMapState.skixelsPerSample]
             rgbChannels = zip(*original)
 
             #iterate horizontally within a mega-column
-            startingOffset = skixelsPerSample / growthPower
+            startingOffset = repeatMapState.skixelsPerSample / growthPower
             if scale == 1:
                 startingOffset = 1
-            for offset in range(startingOffset, skixelsPerSample): #range 12 - 24 but indexing starts at 0
-                offsetSequence = scaledSequence[offset: offset + skixelsPerSample]
+            for offset in range(startingOffset, repeatMapState.skixelsPerSample): #range 12 - 24 but indexing starts at 0
+                offsetSequence = scaledSequence[offset: offset + repeatMapState.skixelsPerSample]
                 validComparison = len(offsetSequence) == len(original) and len(offsetSequence) and len(original)
                 if validComparison: #this line is necessary to avoid array index out of bounds or referencing an unsigned variable stretchIsSequenced
                     stretchIsSequenced = not any(map(composedOfNs, offsetSequence))
@@ -167,9 +166,9 @@ def logRepeatMap(state, repeatMapState):
     return freq
 
 
-def checkForCachedMap(state):
+def checkForCachedMap(state, repeatMapState):  # TODO: Possibly dead code
     tempState = copy.deepcopy(state)
-    tempState.width = skixelsPerSample
+    tempState.width = repeatMapState.skixelsPerSample
     tempState.scale = 1
     tempState.requestedGraph = 'm'
 
@@ -205,7 +204,7 @@ def conglomeratePNGs(tempState, nChunks):
 def getBaseRepeatMapData(state, repeatMapState=RepeatMapState()):
     #read in the one png at fixed width= skixelsPerSample
     tempState = state.copy() #only preserves specimen and chromosome
-    tempState.width = skixelsPerSample
+    tempState.width = repeatMapState.skixelsPerSample
     tempState.scale = 1
     tempState.requestedGraph = 'm'
 
@@ -216,9 +215,9 @@ def squishStoredMaps(state, repeatMapState=RepeatMapState()):
     fullData = getBaseRepeatMapData(state, repeatMapState)
     #averaging the lines
     newData = []
-    nLines = int(math.ceil(state.nucleotidesPerLine() / float(skixelsPerSample)))
-    for start in range(0, len(fullData) * skixelsPerSample, state.nucleotidesPerLine()):
-        startLine = int(math.floor(start / float(skixelsPerSample)))
+    nLines = int(math.ceil(state.nucleotidesPerLine() / float(repeatMapState.skixelsPerSample)))
+    for start in range(0, len(fullData) * repeatMapState.skixelsPerSample, state.nucleotidesPerLine()):
+        startLine = int(math.floor(start / float(repeatMapState.skixelsPerSample)))
         stopLine = startLine + nLines
         sample = zip(*fullData[startLine:stopLine])
         finalLine = [average(x) for x in sample]
@@ -230,7 +229,7 @@ def calculateOutputPixels(state, repeatMapState=RepeatMapState()):
     assert isinstance(repeatMapState, RepeatMapState)
     assert isinstance(state, RequestPacket)
 
-    if state.nucleotidesPerLine() != skixelsPerSample:
+    if state.nucleotidesPerLine() != repeatMapState.skixelsPerSample:
         return squishStoredMaps(state, repeatMapState)
 
     state.readFastaChunks()#    state.seq = generateRepeatDebugSequence(53, 400, 1)

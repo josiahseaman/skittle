@@ -1,8 +1,9 @@
 from collections import namedtuple
 import math
 from SkittleCore.GraphRequestHandler import registerGraph
-from SkittleCore.Graphs.RepeatMap import skixelsPerSample, decodeWidth, encodeWidth, getBaseRepeatMapData
+from SkittleCore.Graphs.RepeatMap import decodeWidth, encodeWidth, getBaseRepeatMapData
 from SkittleCore.Graphs.SkittleGraphTransforms import sequenceToColors
+from SkittleCore.Graphs.models import RepeatMapState
 from SkittleCore.models import RequestPacket, chunkSize
 
 __author__ = 'Josiah'
@@ -69,7 +70,7 @@ def findBestFrequency(repeatMapLine):
     return frequency
 
 
-def createSnippetEntries(repeatMap, state):
+def createSnippetEntries(repeatMap, state, repeatMapState=RepeatMapState()):
     creatingNewSnippet = False
     snippets = []
     startSnippetThreshold = 0.8
@@ -78,14 +79,14 @@ def createSnippetEntries(repeatMap, state):
     repeatMap = map(lambda line: line[:len(line) / 2], repeatMap) #only use the first half
     for lineIndex, line in enumerate(repeatMap):
         if not creatingNewSnippet and max(line) >= startSnippetThreshold:
-            start = lineIndex * skixelsPerSample
+            start = lineIndex * repeatMapState.skixelsPerSample
             if state.seq[start] == 'N':
                 continue
             creatingNewSnippet = True
             width = findBestFrequency(line)
         if creatingNewSnippet and max(line) < maintainThreshold:
             creatingNewSnippet = False
-            snippets.append(Snippet(start, (lineIndex + 1) * skixelsPerSample, width))
+            snippets.append(Snippet(start, (lineIndex + 1) * repeatMapState.skixelsPerSample, width))
     return snippets
 
 

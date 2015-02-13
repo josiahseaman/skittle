@@ -179,15 +179,17 @@ def normalizeDictionary(listing, referencePoint=0):
 
 
 def countNucleotides(seq, oligomerSize=1):
+    """Returns a list of dictionaries that show the counts per grouping (usually scale).
+        Doing this adds one layer of depth to seq"""
     if hasDepth(seq):
         return [countNucleotides(x, oligomerSize) for x in seq if x != '' and x != [] and x != {}]
     if not seq:
         return {}
-    counts = {'A': 0, 'C': 0, 'G': 0, 'T': 0, 'N': 0}
+    counts = {'A': 0, 'C': 0, 'G': 0, 'T': 0, 'N': 0}  # TODO: defaultDict
     if oligomerSize == 1:  # optimized for Nucleotide Display
         for c in seq:
             try:
-                counts[c] = 1 + counts[c]  # counts.get(c,0) #defaults to 0
+                counts[c] += 1  # counts.get(c,0) #defaults to 0
             except:
                 pass
     else:
@@ -197,8 +199,7 @@ def countNucleotides(seq, oligomerSize=1):
     return counts
 
 
-'''Returns a list of dictionaries that show the counts per grouping (usually scale).
-    Doing this adds one layer of depth to seq'''
+
 
 
 def chunkUpList(seq, chunkSize, overlap=0):
