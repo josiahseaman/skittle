@@ -2,6 +2,7 @@
 Created on Feb, 2015
 @author: Josiah
 '''
+from SkittleCore.Graphs.models import RepeatMapState
 from SkittleGraphTransforms import chunkUpList, normalizeDictionary, countListToColorSpace, sequenceToColors, countNucleotides
 from SkittleCore.models import RequestPacket
 from SkittleCore.GraphRequestHandler import registerGraph
@@ -29,16 +30,18 @@ each pixel of the RepeatMap is shown.''')
 #     return freq
 
 
-def calculateOutputPixels(state):
+def calculateOutputPixels(state, repeatMapState=RepeatMapState()):
     state.readFastaChunks()
     assert isinstance(state, RequestPacket)
     #    chunks = chunkUpList(state.seq, state.nucleotidesPerLine() )
     
     # determine the offset in nucleotides
-    # substract start of chunk position
-    start_seq = state.seq[state.relativeStart : state.relativeStart + state.nucleotidesPerLine()]
-    second = state.relativeStart + state.width * state.scale
-    second_seq = state.seq[second : second + state.nucleotidesPerLine()]
+    # state.relativeStart made by substracting start of chunk position
+    samples = repeatMapState.skixelsPerSample
+    start_seq = state.seq[state.relativeStart : state.relativeStart + samples]
+    offset = repeatMapState.offsetColumn  # can't use state.width because it gets max(12, widt)
+    second = state.relativeStart + offset
+    second_seq = state.seq[second : second + samples]
    
     state.seq = [start_seq, second_seq]  # append two slices of the sequence
 
@@ -47,8 +50,11 @@ def calculateOutputPixels(state):
         counts = countNucleotides(chunks)
         counts = normalizeDictionary(counts)
         pixels = countListToColorSpace(counts, state.colorPalette, state.scale)
+        #TODO: colors could be modified to highlight matches.  Any pixel that is not a match, average with 50% gray, that will make the matches stand out
     else:
         pixels = sequenceToColors(state.seq, state.colorPalette)
+        #TODO: zoomed out sequence could be followed by scale 1 colored sequence.  You'll need to manually wrap and interlace lines to get them on top of
+        #each other.  This wouldln't be literally contiguous sequence but it would communicate correctly.  Use alpha=1 pixel line to create separators. 
     return pixels
     
 

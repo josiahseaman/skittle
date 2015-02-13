@@ -38,6 +38,9 @@ def graph(request, genus="homo", species="sapiens", specimen="hg18", chromosome=
         graphSettings = createHighlighterState(request, genus, species, specimen, chromosome)
         state.searchStart = int(request.GET.get('searchStart', 1))
         state.searchStop = int(request.GET.get('searchStop', 1))
+    elif state.requestedGraph == 'd':
+        graphSettings = RepeatMapState()
+        graphSettings.offsetColumn = int(request.GET.get('width', 1))
 
     image_data = GraphRequestHandler.handleRequest(state, graphSettings)
     return HttpResponse(image_data, content_type="image/png")
