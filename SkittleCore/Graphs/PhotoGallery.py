@@ -62,7 +62,7 @@ def padForHorizontalLineSynchronization(referenceWidth, lineWidth, pixels, start
 
 def findBestFrequency(repeatMapLine):
     highestScore = max(repeatMapLine)
-    frequency = decodeWidth(repeatMapLine.index(highestScore))
+    frequency, scale = decodeWidth(repeatMapLine.index(highestScore))
     for index, score in enumerate(repeatMapLine):
         if score > (highestScore * 0.7):
             frequency = decodeWidth(index)

@@ -41,6 +41,7 @@ def graph(request, genus="homo", species="sapiens", specimen="hg18", chromosome=
     elif state.requestedGraph == 'd':
         graphSettings = RepeatMapState()
         graphSettings.offsetColumn = int(request.GET.get('width', 1))
+        graphSettings.duplicateFirstColumn = int(request.GET.get('duplicateFirstColumn', True))
 
     image_data = GraphRequestHandler.handleRequest(state, graphSettings)
     return HttpResponse(image_data, content_type="image/png")

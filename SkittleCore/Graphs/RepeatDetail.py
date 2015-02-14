@@ -3,6 +3,7 @@ Created on Feb, 2015
 @author: Josiah
 '''
 import math
+from SkittleCore.Graphs.RepeatMap import decodeWidth
 from SkittleCore.Graphs.models import RepeatMapState
 from SkittleGraphTransforms import chunkUpList, normalizeDictionary, countListToColorSpace, sequenceToColors, countNucleotides
 from SkittleCore.models import RequestPacket
@@ -31,25 +32,34 @@ each pixel of the RepeatMap is shown.''')
 #     return freq
 
 
+def determineOffset(repeatMapState, state):
+    # determine the offset in nucleotides.  This is the inverse function of draw_canvas.js:graphStatus['m'].drawPixelPost = function() {}
+    megaColumn = max(0, int((repeatMapState.offsetColumn-11) / 12))  # can't use state.width because it gets max(12, width)
+    subcolumn = repeatMapState.offsetColumn - megaColumn * 12
+    state.scale = 2 ** megaColumn
+    offset = (12 + subcolumn) * state.scale  # ranges from 12 to 24
+    if megaColumn == 0:
+        offset = repeatMapState.offsetColumn + 1
+    end = state.relativeStart + state.scale * (repeatMapState.skixelsPerSample * 2)
+    return offset
+
+
 def calculateOutputPixels(state, repeatMapState=RepeatMapState()):
     state.readFastaChunks()
     assert isinstance(state, RequestPacket)
     #    chunks = chunkUpList(state.seq, state.nucleotidesPerLine() )
+
+    if repeatMapState.duplicateFirstColumn:
+        offset, state.scale = decodeWidth(repeatMapState.offsetColumn)
+    else:
+        offset = determineOffset(repeatMapState, state)
     
-    # determine the offset in nucleotides.  This is the inverse function of draw_canvas.js:graphStatus['m'].drawPixelPost = function() {}
-    megaColumn = int(repeatMapState.offsetColumn / 12)  # can't use state.width because it gets max(12, width)
-    subcolumn = repeatMapState.offsetColumn - megaColumn * 12
-    state.scale = 2**megaColumn
-    offset = (12 + subcolumn) * state.scale  #ranges from 12 to 24
-    end = state.relativeStart + state.scale * (repeatMapState.skixelsPerSample * 2)
-
-
     # state.relativeStart made by substracting start of chunk position
     samples = repeatMapState.skixelsPerSample * state.scale
     start_seq = state.seq[state.relativeStart : state.relativeStart + samples]
     second = state.relativeStart + offset
     second_seq = state.seq[second : second + samples]
-   
+
     state.seq = [start_seq, second_seq]  # append two slices of the sequence
 
     if state.scale > 1:

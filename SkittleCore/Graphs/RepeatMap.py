@@ -42,7 +42,7 @@ def encodeWidth(nucleotideWidth):
     return int(round(widthPosition))
 
 
-def decodeWidth(columnIndex):
+def decodeWidth(columnIndex): 
     """Since RepeatMap using a log scale, this method helps figure out what width (nucleotides per line) a column of the
 RepeatMap is point at.  This task is complicated by the duplication of the scale 1 mega column for widths 1-24"""
     cumulativeWidth = 0
@@ -53,11 +53,12 @@ RepeatMap is point at.  This task is complicated by the duplication of the scale
             cumulativeWidth += scalesByMegaColumn[megaColumn]
             presentColumn += 1
             if presentColumn > columnIndex:
-                return cumulativeWidth
-    return 26000  # maximum value
+                return cumulativeWidth, scalesByMegaColumn[megaColumn]
+    return 26000, 4096  # maximum value
 
 
 def generateRepeatDebugSequence(maxFrequency, bpPerFrequency, startFrequency=1):
+    print("generateRepeatDebugSequence", maxFrequency, bpPerFrequency, startFrequency)
     seq = []
     alphabet = ['A', 'C', 'G', 'T']
     for tandemLength in range(startFrequency, maxFrequency + 1):
@@ -97,72 +98,78 @@ def addDictionaries(jim, larry):
     return newDict
 
 
+def validComparison(offsetSequence, originalSeq):
+    matchingLength = len(offsetSequence) == len(originalSeq) and len(offsetSequence) and len(originalSeq)
+    if matchingLength:  # this line is necessary to avoid array index out of bounds or referencing an unsigned variable regionIsSequenced
+        regionIsSequenced = not any(map(composedOfNs, offsetSequence))
+        regionIsSequenced = not any(map(composedOfNs, originalSeq)) and regionIsSequenced
+    # this line is necessary to avoid array index out of bounds or referencing an unsigned variable regionIsSequenced
+    return matchingLength and regionIsSequenced
+
+
+def logRepeatRow(repeatMapState, start, state):
+    growthPower = 2
+    row = []
+    oldScaledSequence = []
+    for megaColumn in range(repeatMapState.F_width):  # mega columns
+        scale = int(math.ceil(growthPower ** megaColumn))
+        if scale * repeatMapState.skixelsPerSample > 64000:  # the maximum reach should be less than 1 chunk
+            break
+        end = start + scale * repeatMapState.skixelsPerSample * 2
+
+        # created scaled sequences
+        starterSequence = []
+        if scale > 1:
+            for step in range(0, len(oldScaledSequence), growthPower):
+                starterSequence.append(
+                    reduce(lambda x, y: addDictionaries(x, y), oldScaledSequence[step:step + growthPower], {}))
+        necessaryStart = start + len(starterSequence) * scale
+        try:
+            scaledSequence = starterSequence + sequenceCount(state.seq, necessaryStart, scale, end)
+        except:
+            scaledSequence = starterSequence + [sequenceCount(state.seq, necessaryStart, scale, end)]
+        oldScaledSequence = scaledSequence
+        scaledSequence = colorizeSequence(scaledSequence, scale)
+
+        #            scaledSequence = colorizeSequence(sequenceCount(state.seq, start, scale, end))
+
+        original = scaledSequence[0:repeatMapState.skixelsPerSample]
+        rgbChannels = zip(*original)
+
+        #iterate horizontally within a mega-column
+        startingOffset = repeatMapState.skixelsPerSample / growthPower
+        if scale == 1:
+            startingOffset = 1  #TODO: change this to 0 so that there's always 12 pixels per column
+        for offset in range(startingOffset, repeatMapState.skixelsPerSample):  # range 12 - 24 but indexing starts at 0
+            offsetSequence = scaledSequence[offset: offset + repeatMapState.skixelsPerSample]
+            if validComparison(offsetSequence, original):
+                targetChannels = zip(*offsetSequence)
+                resultSum = 0.0
+                for index, currentChannel in enumerate(rgbChannels):
+                    correlation = pearsonCorrelation(currentChannel, targetChannels[index])
+                    if correlation is not None:
+                        resultSum += correlation
+                resultSum /= 3
+            #                    if resultSum > 0.9:
+            #                        print (scale, scale * offset)
+            else:
+                resultSum = -1.0
+            row.append(.66666 * max(0.0, (.5 + resultSum)))
+    return row
+
+
 def logRepeatMap(state, repeatMapState):
     freq = []
-    start = 0
-    growthPower = 2
     height = repeatMapState.height(state, state.seq)
     state.readAndAppendNextChunk()
     print "Done reading additional chunk.  Computing..."
-    for y in range(height): # per line
-        percentCompletion = int(float(y) / height * 1000)
+    for start in range(height*state.nucleotidesPerLine(), state.nucleotidesPerLine()): # per line
+        percentCompletion = int(float(start) / height * state.nucleotidesPerLine()* 1000)
         if percentCompletion % 100 == 0:
             print percentCompletion / 10, "% Complete"
 
-        #        skipToNextLine = False
-        freq.append([])
-        oldScaledSequence = []
-
-        for powerOfX in range(repeatMapState.F_width):  # mega columns
-            scale = int(math.ceil(growthPower ** powerOfX))
-            if scale * repeatMapState.skixelsPerSample >= 64000:#the maximum reach
-                break
-            end = start + scale * (repeatMapState.skixelsPerSample * 2)
-
-            #created scaled sequences
-            starterSequence = []
-            if scale > 1:
-                for step in range(0, len(oldScaledSequence), growthPower):
-                    starterSequence.append(
-                        reduce(lambda x, y: addDictionaries(x, y), oldScaledSequence[step:step + growthPower], {}))
-            necessaryStart = start + len(starterSequence) * scale
-            try:
-                scaledSequence = starterSequence + sequenceCount(state.seq, necessaryStart, scale, end)
-            except:
-                scaledSequence = starterSequence + [sequenceCount(state.seq, necessaryStart, scale, end)]
-            oldScaledSequence = scaledSequence
-            scaledSequence = colorizeSequence(scaledSequence, scale)
-
-            #            scaledSequence = colorizeSequence(sequenceCount(state.seq, start, scale, end))
-
-            original = scaledSequence[0:repeatMapState.skixelsPerSample]
-            rgbChannels = zip(*original)
-
-            #iterate horizontally within a mega-column
-            startingOffset = repeatMapState.skixelsPerSample / growthPower
-            if scale == 1:
-                startingOffset = 1
-            for offset in range(startingOffset, repeatMapState.skixelsPerSample):  # range 12 - 24 but indexing starts at 0
-                offsetSequence = scaledSequence[offset: offset + repeatMapState.skixelsPerSample]
-                validComparison = len(offsetSequence) == len(original) and len(offsetSequence) and len(original)
-                if validComparison:  # this line is necessary to avoid array index out of bounds or referencing an unsigned variable regionIsSequenced
-                    regionIsSequenced = not any(map(composedOfNs, offsetSequence))
-                    regionIsSequenced = not any(map(composedOfNs, original)) and regionIsSequenced
-                if validComparison and regionIsSequenced:  # this line is necessary to avoid array index out of bounds or referencing an unsigned variable regionIsSequenced
-                    targetChannels = zip(*offsetSequence)
-                    resultSum = 0.0
-                    for index, currentChannel in enumerate(rgbChannels):
-                        correlation = pearsonCorrelation(currentChannel, targetChannels[index])
-                        if correlation is not None:
-                            resultSum += correlation
-                    resultSum /= 3
-                #                    if resultSum > 0.9:
-                #                        print (scale, scale * offset)
-                else:
-                    resultSum = -1.0
-                freq[y].append(.66666 * max(0.0, (.5 + resultSum)))
-
-        start += state.nucleotidesPerLine()
+        row = logRepeatRow(repeatMapState, start, state)
+        freq.append(row)
     return freq
 
 
@@ -232,6 +239,7 @@ def calculateOutputPixels(state, repeatMapState=RepeatMapState()):
     if state.nucleotidesPerLine() != repeatMapState.skixelsPerSample:
         return squishStoredMaps(state, repeatMapState)
 
+    # state.seq = generateRepeatDebugSequence(25, 1000, 1)
     state.readFastaChunks()#    state.seq = generateRepeatDebugSequence(53, 400, 1)
     scores = logRepeatMap(state, repeatMapState)
     return scores
