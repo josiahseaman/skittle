@@ -376,6 +376,7 @@ graphStatus['m'].drawPixelPost = function() {
         c.lineWidth = 0.333333333
         c.stroke();
     }
+    skixelHighlighter()
     //$.get('/data.png?graph=d&start='+offset+'&width='+bpPerLine)
 }
 

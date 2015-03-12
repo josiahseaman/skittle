@@ -130,6 +130,16 @@ function mouseDown(e) {
     }
 
 }
+function skixelHighlighter() {
+    console.log(mx, my)
+    var c = document.getElementById("c");
+    var ctx = c.getContext("2d");
+    ctx.lineWidth = 0.33333
+    prevRect = ctx.rect(toSkixels(mx), toSkixels(my) -1, 1.16161, 1.16161); 
+    ctx.stroke();
+    isInvalidDisplay = true
+}
+
 function mouseMove(e) {
     getMouseLocation(e)
 

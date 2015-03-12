@@ -9,7 +9,7 @@ from SkittleGraphTransforms import chunkUpList, normalizeDictionary, countListTo
 from SkittleCore.models import RequestPacket
 from SkittleCore.GraphRequestHandler import registerGraph
 
-registerGraph('d', "RepeatMap Detail", __name__, False, True, helpText='''The exact sequence pair comparison that led to
+registerGraph('d', "RepeatMap Detail", __name__, False, True, widthTolerance=0, helpText='''The exact sequence pair comparison that led to
 each pixel of the RepeatMap is shown.''')
 # 
 # def countMatches(sequence, beginA, beginB, lineSize):

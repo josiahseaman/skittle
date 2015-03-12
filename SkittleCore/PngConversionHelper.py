@@ -22,7 +22,34 @@ def isRasterGraph(state):
     return graphDescription[3]
 
 
+def oldConvertToPng(state, pixels, isRaster=False):  # This is a hack to get RepeatMap working while I reserach
+    print("Serving old png")
+    targetWidth = 1024
+    greyscale = checkForGreyscale(state)
+    f = tempfile.mktemp()
+    # open up tempFile
+    f = open(f, 'wb')
+    if greyscale:
+        p = multiplyGreyscale(pixels, 255)
+        w = png.Writer(len(p[0]), len(p), greyscale=True)
+    else:
+        if not isRaster:  #Nucleotide Bias
+            p = flattenImage(pixels, len(pixels[0]), True, 4)
+            w = png.Writer(len(p[0]) / 4, len(p), greyscale=False, alpha=True)
+        else:  #raster, color graphs
+            p = flattenImage(pixels, targetWidth)
+            w = png.Writer(targetWidth, len(p))
+    w.write(f, p)
+    f.close()
+    f = open(f.name, 'rb')  #return the binary contents of the file
+    data = f.read()
+    StorePng(state, f)
+    return data
+
+
 def convertToPng(state, pixels, save=True):
+    if SkittleCore.GraphRequestHandler.getGraphDescription(state).symbol == 'm':
+        return oldConvertToPng(state, pixels)
     isRaster = isRasterGraph(state)
     targetWidth = 1024
     greyscale = checkForGreyscale(state)
@@ -46,6 +73,7 @@ def convertToPng(state, pixels, save=True):
     data = f.read()
     if save: 
         StorePng(state, f)
+    f.close()
     return data
 
 
