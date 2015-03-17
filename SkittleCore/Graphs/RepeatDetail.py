@@ -59,6 +59,8 @@ def magnify(pixels, multiplier):
 
 def calculateOutputPixels(state, repeatMapState=RepeatMapState()):
     state.readFastaChunks()
+    state.readAndAppendNextChunk()
+
     assert isinstance(state, RequestPacket)
     #    chunks = chunkUpList(state.seq, state.nucleotidesPerLine() )
 
