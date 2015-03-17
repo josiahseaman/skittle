@@ -83,15 +83,26 @@ function processTouchEvent(e) {
     }
 }
 
-function addRepeatDetail(graphX, graphY) {
+function addRepeatDetail(graphX, graphY) { 
     if(previousDetailX != graphX || previousDetailY != graphY) {
-        console.log("Click", graphX, graphY)
+        
         var selectionStart = state.start() + graphY * state.bpPerLine()
         var url = 'data.png?graph=d&duplicateFirstColumn=1&start=' + selectionStart + '&scale=1&width=' + graphX
-        var contents = '<img src="' + url + '">' 
-        $('#repeat_detail').html(contents)  // #load?
+        if(typeof detail_image === 'undefined') {//debounce layer: only if there's not already an image loading
+            detail_image = new Image();
+            detail_image.src = url;
+            detail_image.onload = function () {
+                $('#repeat_detail').empty().append(detail_image);
+                delete detail_image
+            };
+            detail_image.onerror = function () {
+                $('#repeat_detail').empty().html('<h2>That image is not available.</h2>');
+            }
+        }
         previousDetailX = graphX
         previousDetailY = graphY
+    } else {
+        console.log("No movement")
     }
 }
 
@@ -134,7 +145,10 @@ function mouseDown(e) {
     //}
     }
     else if (activeTool == "Select") {
-
+         var relativeX = toSkixels(mx) - graphStatus['m'].skixelOffset
+         if (graphStatus['m'].visible && relativeX >= 0 && relativeX < graphStatus['m'].skixelWidth) {
+                 //do nothing
+         } else{ 
             var x = Math.max(0, Math.min(state.width(), (toSkixels(mx) - graphStatus["n"].skixelOffset + 1)))
     
             var selectionStart = state.start() + (toSkixels(my - 25)) * state.bpPerLine() + x * state.scale()
@@ -144,15 +158,15 @@ function mouseDown(e) {
             showGraph('h');
             if (graphStatus['h'].visible) 
                 isInvalidDisplay = true
+         }
     }
-
 }
 
 function skixelHighlighter() {
     var c = document.getElementById("c");
     var ctx = c.getContext("2d");
     ctx.lineWidth = 0.33333
-    prevRect = ctx.rect(toSkixels(mx), toSkixels(my) -1, 1.16161, 1.16161); 
+    prevRect = ctx.rect(toSkixels(mx), toSkixels(my-1) - 3, 1.16161, 1.16161); 
     ctx.stroke();
 }
 
@@ -163,13 +177,10 @@ function mouseMove(e) {
 
     if (graphStatus['m'].visible){  //constantly redraw skixelHighlighter when mouse is moving over the graph
         var relativeX = toSkixels(mx) - graphStatus['m'].skixelOffset 
-        if (relativeX > 0 && relativeX < graphStatus['m'].skixelWidth) {
+        if (relativeX >= 0 && relativeX < graphStatus['m'].skixelWidth) {
             isInvalidDisplay = true
-        }
-        if (activeTool == "Select") {
-            if (relativeX > 0 && relativeX < graphStatus['m'].skixelWidth) {
-                //prevRect = ctx.rect(toSkixels(mx) - graphStatus['m'].skixelOffset, toSkixels(my) -1, 1.16161, 1.16161);  // original highlighter math needs to match the following: 
-                addRepeatDetail(relativeX, toSkixels(my - 25) - 1)
+            if (activeTool == "Select") {
+                addRepeatDetail(relativeX, toSkixels(my - 25) - 3)
             }
         }
     } 
