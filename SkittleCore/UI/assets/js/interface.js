@@ -137,7 +137,6 @@ function skixelHighlighter() {
     ctx.lineWidth = 0.33333
     prevRect = ctx.rect(toSkixels(mx), toSkixels(my) -1, 1.16161, 1.16161); 
     ctx.stroke();
-    isInvalidDisplay = true
 }
 
 function mouseMove(e) {
@@ -145,6 +144,9 @@ function mouseMove(e) {
 
     annotationMouseHandling()
 
+    if (graphStatus['m'].visible) //constantly redraw skixelHighlighter when mouse is moving
+        isInvalidDisplay = true
+    
     if(activeTool == "Move") {
         if (dragWidth){
             if (mx < 1) { //lose the drag if mouse goes over the edge
