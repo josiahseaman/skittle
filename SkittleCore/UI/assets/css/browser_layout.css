@@ -61,6 +61,14 @@ header .taxonomy {
 	padding: 4px 0 3px;
 	text-align: center;
 }
+#repeat_detail {
+	position: absolute;
+	bottom: 37px;
+	left:0px;
+	right:0;
+	padding: 0px;
+	padding-left: 170px;
+}
 #dials {
 	position: absolute;
 	bottom: 0;

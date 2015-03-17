@@ -44,6 +44,19 @@ def determineOffset(repeatMapState, state):
     return offset
 
 
+def magnify(pixels, multiplier):
+    """Multiplies all pixels by MxM grid"""
+    big_img = []
+    for row in pixels:
+        big_row = []
+        for p in row:
+            big_row += [p] * multiplier
+        for y in range(multiplier):
+            big_img.append(big_row)
+    
+    return big_img
+
+
 def calculateOutputPixels(state, repeatMapState=RepeatMapState()):
     state.readFastaChunks()
     assert isinstance(state, RequestPacket)
@@ -71,7 +84,9 @@ def calculateOutputPixels(state, repeatMapState=RepeatMapState()):
     else:
         pixels = sequenceToColors(state.seq, state.colorPalette)
         #TODO: zoomed out sequence could be followed by scale 1 colored sequence.  You'll need to manually wrap and interlace lines to get them on top of
-        #each other.  This wouldln't be literally contiguous sequence but it would communicate correctly.  Use alpha=1 pixel line to create separators. 
+        #each other.  This wouldln't be literally contiguous sequence but it would communicate correctly.  Use alpha=1 pixel line to create separators.
+        
+    pixels = magnify(pixels, 30)
     return pixels
     
 

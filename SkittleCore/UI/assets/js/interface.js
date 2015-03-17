@@ -1,3 +1,5 @@
+var previousDetailX = 0 
+var previousDetailY = 0
 
 var keyListener = function(e) {
     if($('input[type="text"]:focus').length == 0) { // if no text inputs are being used
@@ -81,6 +83,19 @@ function processTouchEvent(e) {
     }
 }
 
+function addRepeatDetail(graphX, graphY) {
+    if(previousDetailX != graphX || previousDetailY != graphY) {
+        console.log("Click", graphX, graphY)
+        var selectionStart = state.start() + graphY * state.bpPerLine()
+        var url = 'data.png?graph=d&duplicateFirstColumn=1&start=' + selectionStart + '&scale=1&width=' + graphX
+        var contents = '<img src="' + url + '">' 
+        $('#repeat_detail').html(contents)  // #load?
+        previousDetailX = graphX
+        previousDetailY = graphY
+    }
+}
+
+
 function mouseDown(e) {
     getMouseLocation(e);
 
@@ -92,7 +107,7 @@ function mouseDown(e) {
         
         //is mx in a gutter?
         $.each(graphStatus,function(i,v){
-            var rightEdgeOfGraph = toPixels(v.skixelOffset+v.skixelWidth);
+            var rightEdgeOfGraph = toPixels(v.skixelOffset + v.skixelWidth);
             if ( v.visible && mx > rightEdgeOfGraph && mx < rightEdgeOfGraph + toPixels(gutterWidth) ) {
                 dragWidth = true;
                 widthOffset = state.width();
@@ -119,19 +134,21 @@ function mouseDown(e) {
     //}
     }
     else if (activeTool == "Select") {
-        var x = Math.max(0,Math.min(state.width(),(toSkixels(mx)-graphStatus["n"].skixelOffset+1)))
 
-        var selectionStart = state.start() + (toSkixels(my-25))*state.bpPerLine() + x*state.scale()
-        var selectionEnd = selectionStart + state.bpPerLine() - 1;
-        getRawSequence(selectionStart,selectionEnd,addHighlighterSearch)
-        // console.log('selection start:' + selectionStart + " selection end:" + selectionEnd)
-        showGraph('h');
-        if (graphStatus['h'].visible) isInvalidDisplay = true
+            var x = Math.max(0, Math.min(state.width(), (toSkixels(mx) - graphStatus["n"].skixelOffset + 1)))
+    
+            var selectionStart = state.start() + (toSkixels(my - 25)) * state.bpPerLine() + x * state.scale()
+            var selectionEnd = selectionStart + state.bpPerLine() - 1;
+            getRawSequence(selectionStart, selectionEnd, addHighlighterSearch)
+            // console.log('selection start:' + selectionStart + " selection end:" + selectionEnd)
+            showGraph('h');
+            if (graphStatus['h'].visible) 
+                isInvalidDisplay = true
     }
 
 }
+
 function skixelHighlighter() {
-    console.log(mx, my)
     var c = document.getElementById("c");
     var ctx = c.getContext("2d");
     ctx.lineWidth = 0.33333
@@ -144,8 +161,18 @@ function mouseMove(e) {
 
     annotationMouseHandling()
 
-    if (graphStatus['m'].visible) //constantly redraw skixelHighlighter when mouse is moving
-        isInvalidDisplay = true
+    if (graphStatus['m'].visible){  //constantly redraw skixelHighlighter when mouse is moving over the graph
+        var relativeX = toSkixels(mx) - graphStatus['m'].skixelOffset 
+        if (relativeX > 0 && relativeX < graphStatus['m'].skixelWidth) {
+            isInvalidDisplay = true
+        }
+        if (activeTool == "Select") {
+            if (relativeX > 0 && relativeX < graphStatus['m'].skixelWidth) {
+                //prevRect = ctx.rect(toSkixels(mx) - graphStatus['m'].skixelOffset, toSkixels(my) -1, 1.16161, 1.16161);  // original highlighter math needs to match the following: 
+                addRepeatDetail(relativeX, toSkixels(my - 25) - 1)
+            }
+        }
+    } 
     
     if(activeTool == "Move") {
         if (dragWidth){
@@ -159,9 +186,9 @@ function mouseMove(e) {
         else {
             cc.style.cursor = 'default';
         }
-        $.each(graphStatus,function(i,v){
-            var rightEdgeOfGraph = toPixels(v.skixelOffset+v.skixelWidth);
-            if ( v.visible && mx > rightEdgeOfGraph && mx < rightEdgeOfGraph + toPixels(gutterWidth) ) {
+        $.each(graphStatus,function(index, graph){
+            var rightEdgeOfGraph = toPixels(graph.skixelOffset + graph.skixelWidth);
+            if ( graph.visible && mx > rightEdgeOfGraph && mx < rightEdgeOfGraph + toPixels(gutterWidth) ) {
                 cc.style.cursor = 'col-resize';
                 return false;
             }
@@ -179,10 +206,15 @@ function mouseMove(e) {
     else if (activeTool == "Select") {
         cc.style.cursor = 'crosshair'
     }
+    
 }
+
+
 function mouseUp(e) {
     isDrag = dragWidth = false;
 }
+
+
 function mouseWheel(e) {
     e.preventDefault();
 
