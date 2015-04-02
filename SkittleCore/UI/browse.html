@@ -249,26 +249,26 @@
 	    	showGraph(v)
 	    })
 
-	    if (graphStatus['h'].visible) {
-	    	var uGet = window.location.getParameter
-		    var urlHighlighterState = {}
-		    urlHighlighterState.similarityPercent = uGet('sim') || $('#similarityPercent').val()
-		    urlHighlighterState.revComplement = (typeof uGet('rev') != 'undefined') ? true : false;
-		    urlHighlighterState.sequences = []
-		    for (var i=0;i<50;++i) {
-		    	if (!uGet('s'+i)) break;
-		    	var sequence = {};
-		    	sequence.show = "true";
-		    	sequence.sequence = uGet('s'+i);
-		    	sequence.color = uGet('s'+i+'c') || getGoodDeterministicColor(sequence.sequence).slice(1);
-		    	urlHighlighterState.sequences.push(sequence);
-		    }
-		    if (uGet('searchStart')) {
-		    	var sequence = getRawSequence(uGet('searchStart'),uGet('searchStop'),addHighlighterSearch)
-		    }
-	    	loadHighlighterSettings(urlHighlighterState);
-	    	graphStatus['h'].settings = urlHighlighterState;
-	    }
+{#	    if (graphStatus['h'].visible) {#}
+{#	    	var uGet = window.location.getParameter#}
+{#		    var urlHighlighterState = {}#}
+{#		    urlHighlighterState.similarityPercent = uGet('sim') || $('#similarityPercent').val()#}
+{#		    urlHighlighterState.revComplement = (typeof uGet('rev') != 'undefined') ? true : false;#}
+{#		    urlHighlighterState.sequences = []#}
+{#		    for (var i=0;i<50;++i) {#}
+{#		    	if (!uGet('s'+i)) break;#}
+{#		    	var sequence = {};#}
+{#		    	sequence.show = "true";#}
+{#		    	sequence.sequence = uGet('s'+i);#}
+{#		    	sequence.color = uGet('s'+i+'c') || getGoodDeterministicColor(sequence.sequence).slice(1);#}
+{#		    	urlHighlighterState.sequences.push(sequence);#}
+{#		    }#}
+{#		    if (uGet('searchStart')) {#}
+{#		    	var sequence = getRawSequence(uGet('searchStart'),uGet('searchStop'),addHighlighterSearch)#}
+{#		    }#}
+{#	    	loadHighlighterSettings(urlHighlighterState);#}
+{#	    	graphStatus['h'].settings = urlHighlighterState;#}
+{#	    }#}
 
 
 	    init();

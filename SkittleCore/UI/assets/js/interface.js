@@ -125,8 +125,8 @@ function mouseDown(e) {
         var selectionEnd = selectionStart + state.bpPerLine() - 1;
         getRawSequence(selectionStart,selectionEnd,addHighlighterSearch)
         // console.log('selection start:' + selectionStart + " selection end:" + selectionEnd)
-        showGraph('h');
-        if (graphStatus['h'].visible) isInvalidDisplay = true
+        //showGraph('h');
+        //if (graphStatus['h'].visible) isInvalidDisplay = true
     }
 
 }

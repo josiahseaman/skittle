@@ -56,7 +56,7 @@ def annotation(request, genus="homo", species="sapiens", specimen="hg18", chromo
 def state(request):
     j = "graphStatus = " + json.dumps(GraphRequestHandler.generateGraphListForServer())
     # j += "annotationSources = " + simplejson.dumps(StorageRequestHandler.getAnnotations())
-    j += ";graphOrder = ['n','h','b','t','o','m','s'];"
+    j += ";graphOrder = ['n','b','t','o','m','s'];"
     return HttpResponse(j,content_type="application/json")
 
 

@@ -68,7 +68,7 @@ var graphURL = function(graph,chunkOffset) {
     var startChunk = state.chunkStart() + chunkOffset*state.chunkSizeBP();
     var graphPath = "data.png?graph=" + graph + "&start=" + startChunk + "&scale=" + state.scale();
     if (graphStatus[graph].rasterGraph != true) graphPath += "&width=" + expRound(state.width(),graphStatus[graph].widthTolerance)
-    if (graph == 'h' && graphStatus['h'].settings) graphPath += highlighterEncodeURL(graphStatus['h'].settings)
+    //if (graph == 'h' && graphStatus['h'].settings) graphPath += highlighterEncodeURL(graphStatus['h'].settings)
     if (graphStatus[graph].colorPaletteSensitive) graphPath += "&colorPalette="+colorPalette
     return graphPath
 

@@ -173,7 +173,7 @@ def generateGraphListForServer():
 
 '''These are here for the purposes of invoking the registerGraph call at the beginning of every graph definition file'''
 graphNames = ['NucleotideBias', 'NucleotideDisplay', 'OligomerUsage', 'RawFrequencyMap',
-              'RepeatMap', 'RepeatOverview', 'SequenceHighlighter', 'SimilarityHeatMap', 'ThreeMerDetector', 'PhotoGallery']
+              'RepeatMap', 'RepeatOverview', 'SimilarityHeatMap', 'ThreeMerDetector', 'PhotoGallery']
 for name in graphNames:
     filename = 'SkittleCore.Graphs.' + name
     __import__(filename)
