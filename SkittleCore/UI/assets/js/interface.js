@@ -123,7 +123,9 @@ function mouseDown(e) {
 
         var selectionStart = state.start() + (toSkixels(my-25))*state.bpPerLine() + x*state.scale()
         var selectionEnd = selectionStart + state.bpPerLine() - 1;
-        getRawSequence(selectionStart,selectionEnd,addHighlighterSearch)
+        getRawSequence(selectionStart,selectionEnd,function(data){
+            console.log(selectionStart, selectionEnd, data)
+        });  //addHighlighterSearch
         // console.log('selection start:' + selectionStart + " selection end:" + selectionEnd)
         //showGraph('h');
         //if (graphStatus['h'].visible) isInvalidDisplay = true
@@ -408,7 +410,7 @@ var addHighlighterSearch = function(seq){
     }
     newSeq.find('.sequenceColor').val(getGoodDeterministicColor(seq))
     newSeq.insertBefore('.addSeq')
-    graphStatus['h'].settings = hSettingsFromUI()
+    //graphStatus['h'].settings = hSettingsFromUI()
     settingsGraph('h');
     return false;
 }
@@ -470,7 +472,7 @@ var getCurrentPageURL = function(fullURL) {
         params.annotation.push(v.FileName)
     })
     currentURL += "?" + $.param(params,true);
-    if (graphStatus['h'].visible && graphStatus['h'].settings) currentURL += highlighterEncodeURL(graphStatus['h'].settings)
+    //if (graphStatus['h'].visible && graphStatus['h'].settings) currentURL += highlighterEncodeURL(graphStatus['h'].settings)
     if (colorPalette !="Classic") graphPath += "&colorPalette="+colorPalette
     return fullURL ? baseURL + currentURL : currentURL;
 }
