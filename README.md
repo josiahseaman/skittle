@@ -22,7 +22,7 @@ createSnpIndex -> Creates the SNP index database for reading 23andMe user info (
 ```
 
 
-GRAPH TYPES
+Graph Types
 ===========
 
 + a : Annotation Display
@@ -35,7 +35,7 @@ GRAPH TYPES
 + t : Threemer Detector
 
 
-APACHE COMPILE SETTINGS
+Apache Compile Settings
 =======================
 
 ```shell
@@ -53,7 +53,7 @@ sudo make-ssl-cert generate-default-snakeoil --force-overwrite
 Don't forget to edit the /etc/logrotate.d/apache2 file so it saves logs as 665 root www-data
 Also check file chain /var/log/apache2 to make sure that www-data can get in a rw
 
-PHP COMPILE SETTINGS
+PHP Compile Settings
 ====================
 
 ```shell
@@ -65,7 +65,7 @@ vi /etc/apache2/conf/extra/httpd-php5.conf
 
 Add to httpd.conf
 
-MOD_WSGI COMPILE SETTINGS
+MOD_WSGI Compile Settings
 =========================
 
 ```shell
@@ -78,7 +78,7 @@ make
 make install
 ```
 
-OTHER INSTALLS
+Other Installs
 ==============
 
 ```shell
@@ -91,7 +91,7 @@ Put mysql_pool into /usr/lib/python2.7
 http://www.lfd.uci.edu/~gohlke/pythonlibs/#mysql-python
 
 
-THREAD CONFIGURATIONS
+Thread Configurations
 =====================
 Apache httpd config under worker module:
 StartServers 2
@@ -107,7 +107,7 @@ threads=2
 Note, this is static and doesn't create more as requests come in. The two times each other is the total number of python interpreters spawned and the max number of python requests that can be handled.
 Static files and assets are NOT served off of this. They are served off of the Apache threads that are dynamically spawned from above.
 
-COMPILE C FUNCTIONS
+Compile C Functions
 ===================
 1) Create your .c file
 2) Convert it to an object file `gcc -c -fPIC yourFile.c -o yourFile.o`
@@ -121,11 +121,11 @@ NOTE: Python C Data Types: http://docs.python.org/2/library/ctypes.html#fundamen
 
 To convert a list to C array) arr = (ctypes.c_int * len(yourlist))(*yourlist)
 
-DATABASE EVOLUTIONS
-====================   
+Database Evolutions
+===================   
 ANY changes to a model file must be passed to Bryan for a custom evolution script to be created.
 
-NOTES TO SELF
+Notes to self
 =============
 This is for dealing with multi-thread access to the database.
 We need a persistent connection, but django doesn't support this until the future 1.6 release.
