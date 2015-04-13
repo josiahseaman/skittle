@@ -115,14 +115,18 @@ class RequestPacket(basePacket):
             return
         self.seq = ''
         self.length = len(self.seq)
-        partialSequences = [None] * numChunks
+
+        # accumulate the chunks into self.seq
         for index, chunkStart in enumerate(range(self.start, self.start + numChunks * chunkSize, chunkSize)):
             tempState = self.copy()
             tempState.start = chunkStart
-            partialSequences[index] = readFile(tempState)
-            if partialSequences[index] is None:
-                partialSequences[index] = ''
-        self.seq = ''.join(partialSequences)
+
+            chunk = readFile(tempState)
+            if chunk is None:
+                break
+            else:
+                self.seq += chunk
+
         if self.scale >= 10:
             print "Done reading files"
         self.length = len(self.seq)
