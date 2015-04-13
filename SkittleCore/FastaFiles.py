@@ -24,8 +24,12 @@ def readFile(state):
             print "opening file ", filePath, " for ", state.specimen, state.chromosome, str(state.start)
         if not filePath:
             return None
-        rawFile = open(filePath, 'r')
-        result = rawFile.read()
+
+        result = None
+
+        with open(filePath, 'r') as rawFile:
+            result = rawFile.read()
+
         return result
 
     #        print 'Opened File'
