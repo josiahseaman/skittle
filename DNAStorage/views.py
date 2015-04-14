@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.utils import simplejson
+import json
 from django import forms
 from django.contrib.auth.decorators import login_required
 from itertools import chain
@@ -76,5 +76,5 @@ def Upload(request):
 
 
 def taxonomy(request):
-    json = "currentTaxonomy = " + simplejson.dumps(StorageRequestHandler.GetTreeList())
-    return HttpResponse(json, content_type="application/json")
+    json_response = "currentTaxonomy = " + json.dumps(StorageRequestHandler.GetTreeList())
+    return HttpResponse(json_response, content_type="application/json")
