@@ -115,6 +115,7 @@ class RequestPacket(basePacket):
             return
         self.seq = ''
         self.length = len(self.seq)
+        partialSequences = []
 
         # accumulate the chunks into self.seq
         for index, chunkStart in enumerate(range(self.start, self.start + numChunks * chunkSize, chunkSize)):
@@ -125,7 +126,9 @@ class RequestPacket(basePacket):
             if chunk is None:
                 break
             else:
-                self.seq += chunk
+                partialSequences.append(chunk)
+
+        self.seq = "".join(partialSequences)
 
         if self.scale >= 10:
             print "Done reading files"
