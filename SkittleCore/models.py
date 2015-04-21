@@ -116,8 +116,6 @@ class RequestPacket(basePacket):
         self.seq = ''
         self.length = len(self.seq)
         partialSequences = []
-
-        # accumulate the chunks into self.seq
         for index, chunkStart in enumerate(range(self.start, self.start + numChunks * chunkSize, chunkSize)):
             tempState = self.copy()
             tempState.start = chunkStart
