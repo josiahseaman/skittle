@@ -101,6 +101,8 @@ def tryGetGraphPNG(state):
 
 
 def isBeingProcessed(request):
+    #Disabled ProcessQueue functionality because it was locking up on a second user request and failing to delete earlier entries on success.
+    return False  # functionality has been temporarily disabled
     #print "Checking if in process queue..."
     specimen, chromosome, graph, start, scale, charsPerLine = \
         request.specimen, request.chromosome, request.requestedGraph, request.start, request.scale, request.width
@@ -121,6 +123,7 @@ def isBeingProcessed(request):
 
 
 def beginProcess(request):
+    #Disabled ProcessQueue functionality because it was locking up on a second user request and failing to delete earlier entries on success.
     if not isBeingProcessed(request):
         process = ProcessQueue()
         process.Specimen = request.specimen
@@ -129,7 +132,8 @@ def beginProcess(request):
         process.Start = request.start
         process.Scale = request.scale
         process.CharsPerLine = request.width
-        process.save()
+        # process.save()  # functionality has been temporarily disabled
+
         return True
     else:
         return False
@@ -174,7 +178,7 @@ def generateGraphListForServer():
 
 '''These are here for the purposes of invoking the registerGraph call at the beginning of every graph definition file'''
 graphNames = ['NucleotideBias', 'NucleotideDisplay', 'OligomerUsage', 'RawFrequencyMap',
-              'RepeatMap', 'RepeatOverview', 'SequenceHighlighter', 'SimilarityHeatMap', 
+              'RepeatMap', 'RepeatOverview', 'SimilarityHeatMap', 
               'ThreeMerDetector', 'PhotoGallery', 'RepeatDetail']
 for name in graphNames:
     filename = 'SkittleCore.Graphs.' + name

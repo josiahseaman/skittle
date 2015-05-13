@@ -2,7 +2,12 @@ When starting the dev server, you can pass in the argument "clean" (./startDevSe
 
 To import all .fa and .fasta files in the "DNAStorage/to_import" folder, run "manage.py importfasta"
 
-====================MANAGEMENT COMMANDS====================
+Management Commands
+===================
+
+[![Join the chat at https://gitter.im/josiahseaman/skittle](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/josiahseaman/skittle?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+```shell
 python manage.py blah
 
 deletecache [graph_type graph_type ...] -e|--specimen=[specimen] -c|--chromosome=[chromosome] -s|--start=[start] -> Delete the cache of a certain graph type (Example: `python manage.py deletecache h --specimen=hg18 --chromosome=chrY-sample --start=65537`
@@ -16,18 +21,26 @@ listgraphs -> List all registered graphs on the server (just a list of symbols)
 importfasta -> Imports all the .fa or .fasta files that are correctly named in the DNAStorage/to_import folder
 
 createSnpIndex -> Creates the SNP index database for reading 23andMe user info (Only needs to run once in server life)
+```
 
-====================GRAPH TYPES====================
-a : Annotation Display
-b : Nucleotide Bias
-h : Sequence Highlighter (Raster)
-m : Repeat Map
-o : Oligomer Usage
-n : Nucleotide Display (Raster)
-s : Similarity Heatmap
-t : Threemer Detector
 
-====================APACHE COMPILE SETTINGS====================
+Graph Types
+===========
+
++ a : Annotation Display
++ b : Nucleotide Bias
++ h : Sequence Highlighter (Raster)
++ m : Repeat Map
++ o : Oligomer Usage
++ n : Nucleotide Display (Raster)
++ s : Similarity Heatmap
++ t : Threemer Detector
+
+
+Apache Compile Settings
+=======================
+
+```shell
 apt-get install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp
 
 apt-get install apache2-mpm-worker libapache2-mod-fcgid
@@ -37,18 +50,27 @@ apt-get install apache2-mpm-worker libapache2-mod-fcgid
 make && make install
 
 sudo make-ssl-cert generate-default-snakeoil --force-overwrite
+```
 
 Don't forget to edit the /etc/logrotate.d/apache2 file so it saves logs as 665 root www-data
 Also check file chain /var/log/apache2 to make sure that www-data can get in a rw
 
-====================PHP COMPILE SETTINGS====================
+PHP Compile Settings
+====================
+
+```shell
 ./configure --enable-bcmath --enable-calendar --enable-dba --enable-exif --enable-ftp --enable-mbstring --enable-shmop --enable-sigchild --enable-soap --enable-sockets --enable-sqlite-utf8 --enable-sysvmsg --enable-wddx --enable-zip --with-apxs2=/etc/apache2/bin/apxs --with-bz2 --with-config-file-path=/etc/apache2/conf --with-curl --with-gd --with-gettext --with-mcrypt --with-mysql --with-mysqli --with-openssl --with-pdo-mysql --with-pdo-pgsql --with-pgsql --with-xmlrpc --with-zlib
 make && make test && make install
 cp ./php-5.4.x/php.ini-development /etc/apache2/conf/php.ini
 vi /etc/apache2/conf/extra/httpd-php5.conf
+```
+
 Add to httpd.conf
 
-====================MOD_WSGI COMPILE SETTINGS====================
+MOD_WSGI Compile Settings
+=========================
+
+```shell
 wget http://modwsgi.googlecode.com/files/mod_wsgi-3.4.tar.gz
 tar zxvf mod_wsgi-3.4.tar.gz
 make clean
@@ -56,18 +78,23 @@ make distclean
 ./configure --with-apxs=/etc/apache2/bin/apxs
 make
 make install
+```
 
-====================OTHER INSTALLS====================
+Other Installs
+==============
+
+```shell
 pip install SQLAlchemy
 http://docs.sqlalchemy.org/en/rel_0_8/intro.html#installation
 mysql "show GLOBAL variables;" "set global wait_timeout = 28800;"
-Put mysql_pool into /usr/lib/python2.7
+```
 
+Put mysql_pool into /usr/lib/python2.7
 http://www.lfd.uci.edu/~gohlke/pythonlibs/#mysql-python
 
-#
 
-====================THREAD CONFIGURATIONS====================
+Thread Configurations
+=====================
 Apache httpd config under worker module:
 StartServers 2
 ServerLimit 16
@@ -82,7 +109,8 @@ threads=2
 Note, this is static and doesn't create more as requests come in. The two times each other is the total number of python interpreters spawned and the max number of python requests that can be handled.
 Static files and assets are NOT served off of this. They are served off of the Apache threads that are dynamically spawned from above.
 
-====================COMPILE C FUNCTIONS====================
+Compile C Functions
+===================
 1) Create your .c file
 2) Convert it to an object file `gcc -c -fPIC yourFile.c -o yourFile.o`
 3) Create Shared Library from object file `gcc -shared -Wl,-soname,libYourLib.so.1 -o libYourLib.so.1.0.1 yourFile.o`
@@ -95,10 +123,12 @@ NOTE: Python C Data Types: http://docs.python.org/2/library/ctypes.html#fundamen
 
 To convert a list to C array) arr = (ctypes.c_int * len(yourlist))(*yourlist)
 
-====================DATABASE EVOLUTIONS====================   
+Database Evolutions
+===================   
 ANY changes to a model file must be passed to Bryan for a custom evolution script to be created.
 
-====================NOTES TO SELF====================
+Notes to self
+=============
 This is for dealing with multi-thread access to the database.
 We need a persistent connection, but django doesn't support this until the future 1.6 release.
 For a temporary fix, edit the django source:
