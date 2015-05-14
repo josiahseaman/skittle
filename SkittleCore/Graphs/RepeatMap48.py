@@ -134,13 +134,15 @@ def append_mega_column_scores(row, original, scaledSequence, growthPower, repeat
 
 def logRepeatRow(repeatMapState, start, state, prevRows):
     growthPower = 2
+    end = repeatMapState.height(state, state.seq) * state.nucleotidesPerLine()
+    lastLine = start + state.nucleotidesPerLine() >= end
     row = []
     oldScaledSequence = []
     for megaColumn in range(repeatMapState.F_width):  # mega columns
         scale = int(math.ceil(growthPower ** megaColumn))
         if scale * repeatMapState.skixelsPerSample > 64000:  # the maximum reach should be less than 1 chunk
             break
-        if megaColumn > 2 and len(prevRows) % (scale/4) != 0:
+        if megaColumn > 2 and len(prevRows) % (scale/4) != 0 and not lastLine:  # don't pad the last line (it makes the boundary obvious)
             # column_start = len(row)
             row += [None] * (repeatMapState.skixelsPerSample / growthPower )
             # row += prevRows[-1][column_start: column_start + repeatMapState.skixelsPerSample / growthPower ]  # append slice from row above
@@ -192,12 +194,12 @@ def interpolate_the_gaps(freq, repeatMapState):
 
 def logRepeatMap(state, repeatMapState):
     freq = []
-    height = repeatMapState.height(state, state.seq)
     state.readAndAppendNextChunk()
     print "Done reading additional chunk.  Computing..."
-    for start in range(0, height*state.nucleotidesPerLine(), state.nucleotidesPerLine()): # per line
-        percentCompletion = int(float(start) / (height * state.nucleotidesPerLine())* 100)
-        if randint(0,100) == 0:
+    end = repeatMapState.height(state, state.seq) * state.nucleotidesPerLine()
+    for start in range(0, end, state.nucleotidesPerLine()): # per line
+        percentCompletion = int(float(start) / end * 100)
+        if randint(0,50) == 0:
             print percentCompletion, "% Complete"
 
         row = logRepeatRow(repeatMapState, start, state, freq)
@@ -247,7 +249,7 @@ def getBaseRepeatMapData(state, repeatMapState=RepeatMapState()):
     tempState = state.copy() #only preserves specimen and chromosome
     tempState.width = repeatMapState.skixelsPerSample
     tempState.scale = 1
-    tempState.requestedGraph = 'm'
+    tempState.requestedGraph = 'x'
 
     return conglomeratePNGs(tempState, state.scale)
 
