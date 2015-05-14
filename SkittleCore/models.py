@@ -80,17 +80,17 @@ class RequestPacket(basePacket):
     def getFastaFilePath(self):
         return StorageRequestHandler.GetFastaFilePath(self.specimen, self.chromosome, self.start)
 
-    '''Derived value height may need to be further reduced for functions that must scan ahead.'''
 
     def height(self):
+        '''Derived value height may need to be further reduced for functions that must scan ahead.'''
         return self.length / self.nucleotidesPerLine()
 
     def nucleotidesPerLine(self):
         return self.width * self.scale
 
-    '''This is a multifunctional 'make the file bigger' read logic for sequential chunks'''
 
     def readAndAppendNextChunk(self, addPadding=False):
+        '''This is a multifunctional 'make the file bigger' read logic for sequential chunks'''
         assert StorageRequestHandler.GetFastaFilePath(self.specimen, self.chromosome,
                                                       1) is not None, "Specimen and Chromosome is not in the database"
         startBackup = self.start
@@ -134,6 +134,7 @@ class RequestPacket(basePacket):
 
     class Meta(basePacket.Meta):
         managed = False
+
 
 class SkittleUserManager(BaseUserManager):
     def create_user(self, email=None, password1=None, FirstName=None, LastName=None, **extra_fields):

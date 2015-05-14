@@ -8,7 +8,7 @@ import copy
 from SkittleCore.Graphs.PixelLogic import interpolate
 
 from SkittleGraphTransforms import chunkUpList, countNucleotides, normalizeDictionary, countListToColorSpace, pearsonCorrelation, average, composedOfNs
-from models import RepeatMapState, AberrantRepeatMapState
+from models import RepeatMapState
 from SkittleCore.models import RequestPacket, chunkSize
 from SkittleCore.GraphRequestHandler import registerGraph, handleRequest
 from DNAStorage.StorageRequestHandler import GetPngFilePath, GetFastaFilePath
@@ -132,9 +132,8 @@ def append_mega_column_scores(row, original, scaledSequence, growthPower, repeat
         row.append(pixel_value)
 
 
-def logRepeatRow(repeatMapState, start, state, prevRows):
+def logRepeatRow(repeatMapState, start, end, state, prevRows):
     growthPower = 2
-    end = repeatMapState.height(state, state.seq) * state.nucleotidesPerLine()
     lastLine = start + state.nucleotidesPerLine() >= end
     row = []
     oldScaledSequence = []
@@ -143,8 +142,8 @@ def logRepeatRow(repeatMapState, start, state, prevRows):
         if scale * repeatMapState.skixelsPerSample > 64000:  # the maximum reach should be less than 1 chunk
             break
         if megaColumn > 2 and len(prevRows) % (scale/4) != 0 and not lastLine:  # don't pad the last line (it makes the boundary obvious)
-            # column_start = len(row)
             row += [None] * (repeatMapState.skixelsPerSample / growthPower )
+            # column_start = len(row)
             # row += prevRows[-1][column_start: column_start + repeatMapState.skixelsPerSample / growthPower ]  # append slice from row above
         else:
             end = start + scale * repeatMapState.skixelsPerSample * 2
@@ -188,23 +187,23 @@ def interpolate_the_gaps(freq, repeatMapState):
             if pixel is None:
                 above_index, above_value = find_value(freq, x, y, stepUp=True)
                 below_index, below_value = find_value(freq, x, y, stepUp=False)
-                freq[y][x] = interpolate(above_value, below_value, above_index, below_index, y)
+                for current_y in range(above_index + 1, below_index):
+                    freq[current_y][x] = interpolate(above_value, below_value, above_index, below_index, current_y)
     return freq
 
 
 def logRepeatMap(state, repeatMapState):
     freq = []
+    end = repeatMapState.height(state, state.seq) * state.nucleotidesPerLine() # REALLY important to check this before reading the second chunk
     state.readAndAppendNextChunk()
     print "Done reading additional chunk.  Computing..."
-    end = repeatMapState.height(state, state.seq) * state.nucleotidesPerLine()
     for start in range(0, end, state.nucleotidesPerLine()): # per line
         percentCompletion = int(float(start) / end * 100)
-        if randint(0,50) == 0:
+        if randint(0,200) == 0:
             print percentCompletion, "% Complete"
 
-        row = logRepeatRow(repeatMapState, start, state, freq)
+        row = logRepeatRow(repeatMapState, start, end, state, freq)
         freq.append(row)
-        print len(freq), " rows Complete"
     freq = interpolate_the_gaps(freq, repeatMapState)
     return freq
 
@@ -268,8 +267,8 @@ def squishStoredMaps(state, repeatMapState=RepeatMapState()):
     return newData
 
 
-def calculateOutputPixels(state, repeatMapState=AberrantRepeatMapState()):
-    assert isinstance(repeatMapState, AberrantRepeatMapState)
+def calculateOutputPixels(state, repeatMapState=RepeatMapState()):
+    assert isinstance(repeatMapState, RepeatMapState)
     assert isinstance(state, RequestPacket)
 
     if state.nucleotidesPerLine() != repeatMapState.skixelsPerSample:
