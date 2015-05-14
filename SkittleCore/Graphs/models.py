@@ -57,6 +57,9 @@ class RepeatMapState(ParentState):
     def numberOfColumns(self):
         return (self.F_width + 1) * self.skixelsPerSample
 
+class AberrantRepeatMapState(RepeatMapState):
+    skixelsPerSample = 24
+
 
 class NucleotideDisplayState(ParentState):
     visible = True

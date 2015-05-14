@@ -2,6 +2,7 @@
 Created on Dec 5, 2012
 @author: Josiah
 '''
+import collections
 from random import randint
 import SkittleCore.models as SkittleRequestPackets
 import math
@@ -145,15 +146,18 @@ def hasDepth(listLike):
         return False
 
 
-def interpolate(Atuple, Btuple, start, end, position):
+def interpolate(A, B, start, end, position):
     if start == end:
-        return Atuple
-    progress = (position - start) / (end - start)#progress goes from 0.0 p1  to 1.0 p2
+        return A
+    progress = (position - start) / float(end - start)#progress goes from 0.0 p1  to 1.0 p2
     inverse = 1.0 - progress;
-    x2 = Atuple[0] * inverse + Btuple[0] * progress;
-    y2 = Atuple[1] * inverse + Btuple[1] * progress;
-    z2 = Atuple[2] * inverse + Btuple[2] * progress;
-    return (x2, y2, z2)
+    if isinstance(A, collections.Iterable):
+        x2 = A[0] * inverse + B[0] * progress;
+        y2 = A[1] * inverse + B[1] * progress;
+        z2 = A[2] * inverse + B[2] * progress;
+        return (x2, y2, z2)
+    else:
+        return A * inverse + B * progress
 
 
 def __colorByCustomSpectrum(spectrumDict, position):

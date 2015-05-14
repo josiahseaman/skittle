@@ -5,16 +5,17 @@ Created on Nov 29, 2012
 import math
 from random import choice, randint
 import copy
+from SkittleCore.Graphs.PixelLogic import interpolate
 
 from SkittleGraphTransforms import chunkUpList, countNucleotides, normalizeDictionary, countListToColorSpace, pearsonCorrelation, average, composedOfNs
-from models import RepeatMapState
+from models import RepeatMapState, AberrantRepeatMapState
 from SkittleCore.models import RequestPacket, chunkSize
 from SkittleCore.GraphRequestHandler import registerGraph, handleRequest
 from DNAStorage.StorageRequestHandler import GetPngFilePath, GetFastaFilePath
 from SkittleCore.png import Reader
 
 
-registerGraph('m', "Repeat Map", __name__, False, False, 0.4, isGrayScale=True, helpText='''Repeat Map is used for identifying tandem repeats without
+registerGraph('x', "48 Repeat Map", __name__, False, False, 0.4, isGrayScale=True, helpText='''Repeat Map is used for identifying tandem repeats without
  the need for continually adjusting the width in Nucleotide Display.  
  It identifies periodicity of repeated sequences by checking all possible offsets scored by Pearson Correlation displayed in grayscale.  
  The x-axis of the graph represents periodicity, starting at offset 1 on the left and increasing geometrically to offset 6,144 on the right.  
@@ -102,12 +103,36 @@ def validComparison(offsetSequence, originalSeq):
     matchingLength = len(offsetSequence) == len(originalSeq) and len(offsetSequence) and len(originalSeq)
     if matchingLength:  # this line is necessary to avoid array index out of bounds or referencing an unsigned variable regionIsSequenced
         regionIsSequenced = not any(map(composedOfNs, offsetSequence))
-        regionIsSequenced = not any(map(composedOfNs, originalSeq)) and regionIsSequenced
+        return not any(map(composedOfNs, originalSeq)) and regionIsSequenced
     # this line is necessary to avoid array index out of bounds or referencing an unsigned variable regionIsSequenced
-    return matchingLength and regionIsSequenced
+    return matchingLength
 
 
-def logRepeatRow(repeatMapState, start, state):
+def append_mega_column_scores(row, original, scaledSequence, growthPower, repeatMapState, scale):
+    rgbChannels = zip(*original)
+    # iterate horizontally within a mega-column
+    startingOffset = repeatMapState.skixelsPerSample / growthPower
+    if scale == 1:
+        startingOffset = 1  #TODO: change this to 0 so that there's always 12 pixels per column
+    for offset in range(startingOffset, repeatMapState.skixelsPerSample):  # range 12 - 24 but indexing starts at 0
+        offsetSequence = scaledSequence[offset: offset + repeatMapState.skixelsPerSample]
+        if validComparison(offsetSequence, original):
+            targetChannels = zip(*offsetSequence)
+            resultSum = 0.0
+            for index, currentChannel in enumerate(rgbChannels):
+                correlation = pearsonCorrelation(currentChannel, targetChannels[index])
+                if correlation is not None:
+                    resultSum += correlation
+            resultSum /= 3
+        #                    if resultSum > 0.9:
+        #                        print (scale, scale * offset)
+        else:
+            resultSum = -1.0
+        pixel_value = .66666 * max(0.0, (.5 + resultSum))
+        row.append(pixel_value)
+
+
+def logRepeatRow(repeatMapState, start, state, prevRows):
     growthPower = 2
     row = []
     oldScaledSequence = []
@@ -115,47 +140,54 @@ def logRepeatRow(repeatMapState, start, state):
         scale = int(math.ceil(growthPower ** megaColumn))
         if scale * repeatMapState.skixelsPerSample > 64000:  # the maximum reach should be less than 1 chunk
             break
-        end = start + scale * repeatMapState.skixelsPerSample * 2
-
-        # created scaled sequences
-        starterSequence = []
-        if scale > 1:
-            for step in range(0, len(oldScaledSequence), growthPower):
-                starterSequence.append(
-                    reduce(lambda x, y: addDictionaries(x, y), oldScaledSequence[step:step + growthPower], {}))
-        necessaryStart = start + len(starterSequence) * scale
-        try:
-            scaledSequence = starterSequence + sequenceCount(state.seq, necessaryStart, scale, end)
-        except:
-            scaledSequence = starterSequence + [sequenceCount(state.seq, necessaryStart, scale, end)]
-        oldScaledSequence = scaledSequence
-        scaledSequence = colorizeSequence(scaledSequence, scale)
-
-        #            scaledSequence = colorizeSequence(sequenceCount(state.seq, start, scale, end))
-
-        original = scaledSequence[0:repeatMapState.skixelsPerSample]
-        rgbChannels = zip(*original)
-
-        #iterate horizontally within a mega-column
-        startingOffset = repeatMapState.skixelsPerSample / growthPower
-        if scale == 1:
-            startingOffset = 1  #TODO: change this to 0 so that there's always 12 pixels per column
-        for offset in range(startingOffset, repeatMapState.skixelsPerSample):  # range 12 - 24 but indexing starts at 0
-            offsetSequence = scaledSequence[offset: offset + repeatMapState.skixelsPerSample]
-            if validComparison(offsetSequence, original):
-                targetChannels = zip(*offsetSequence)
-                resultSum = 0.0
-                for index, currentChannel in enumerate(rgbChannels):
-                    correlation = pearsonCorrelation(currentChannel, targetChannels[index])
-                    if correlation is not None:
-                        resultSum += correlation
-                resultSum /= 3
-            #                    if resultSum > 0.9:
-            #                        print (scale, scale * offset)
-            else:
-                resultSum = -1.0
-            row.append(.66666 * max(0.0, (.5 + resultSum)))
+        if megaColumn > 2 and len(prevRows) % (scale/4) != 0:
+            # column_start = len(row)
+            row += [None] * (repeatMapState.skixelsPerSample / growthPower )
+            # row += prevRows[-1][column_start: column_start + repeatMapState.skixelsPerSample / growthPower ]  # append slice from row above
+        else:
+            end = start + scale * repeatMapState.skixelsPerSample * 2
+    
+            # created scaled sequences
+            starterSequence = []
+            if scale > 1:
+                for step in range(0, len(oldScaledSequence), growthPower):
+                    starterSequence.append(
+                        reduce(lambda x, y: addDictionaries(x, y), oldScaledSequence[step:step + growthPower], {}))
+            necessaryStart = start + len(starterSequence) * scale
+            try:
+                scaledSequence = starterSequence + sequenceCount(state.seq, necessaryStart, scale, end)
+            except:
+                scaledSequence = starterSequence + [sequenceCount(state.seq, necessaryStart, scale, end)]
+            oldScaledSequence = scaledSequence
+            scaledSequence = colorizeSequence(scaledSequence, scale)
+    
+            #            scaledSequence = colorizeSequence(sequenceCount(state.seq, start, scale, end))
+    
+            original = scaledSequence[0:repeatMapState.skixelsPerSample]
+            append_mega_column_scores(row, original, scaledSequence, growthPower, repeatMapState, scale)
     return row
+
+
+def find_value(freq, x, y, stepUp=True):
+    if stepUp:
+        for row in range(y, -1, -1):  #includes 0 index, but not -1
+            if freq[row][x] is not None:
+                return row, freq[row][x]
+    else:
+        for row in range(y, len(freq), 1):
+            if freq[row][x] is not None:
+                return row, freq[row][x]
+    return len(freq) * stepUp, 0
+
+
+def interpolate_the_gaps(freq, repeatMapState):
+    for y, row in enumerate(freq):
+        for x, pixel in enumerate(row):
+            if pixel is None:
+                above_index, above_value = find_value(freq, x, y, stepUp=True)
+                below_index, below_value = find_value(freq, x, y, stepUp=False)
+                freq[y][x] = interpolate(above_value, below_value, above_index, below_index, y)
+    return freq
 
 
 def logRepeatMap(state, repeatMapState):
@@ -164,12 +196,14 @@ def logRepeatMap(state, repeatMapState):
     state.readAndAppendNextChunk()
     print "Done reading additional chunk.  Computing..."
     for start in range(0, height*state.nucleotidesPerLine(), state.nucleotidesPerLine()): # per line
-        percentCompletion = int(float(start) / height * state.nucleotidesPerLine()* 100)
-        if randint(100) == 0:
+        percentCompletion = int(float(start) / (height * state.nucleotidesPerLine())* 100)
+        if randint(0,100) == 0:
             print percentCompletion, "% Complete"
 
-        row = logRepeatRow(repeatMapState, start, state)
+        row = logRepeatRow(repeatMapState, start, state, freq)
         freq.append(row)
+        print len(freq), " rows Complete"
+    freq = interpolate_the_gaps(freq, repeatMapState)
     return freq
 
 
@@ -232,8 +266,8 @@ def squishStoredMaps(state, repeatMapState=RepeatMapState()):
     return newData
 
 
-def calculateOutputPixels(state, repeatMapState=RepeatMapState()):
-    assert isinstance(repeatMapState, RepeatMapState)
+def calculateOutputPixels(state, repeatMapState=AberrantRepeatMapState()):
+    assert isinstance(repeatMapState, AberrantRepeatMapState)
     assert isinstance(state, RequestPacket)
 
     if state.nucleotidesPerLine() != repeatMapState.skixelsPerSample:
