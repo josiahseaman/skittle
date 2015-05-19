@@ -55,7 +55,7 @@ def precomputeRepeatMap(request):
         chunks = range(1, length + 1, 2 ** 16)
         for targetIndex in range(request[2], len(chunks), request[1]):
             start = chunks[targetIndex]
-            state = makeRequestPacket(specimen, chromosome, start)
+            state = makeRequestPacket(specimen, chromosome, start, graphSymbol='m')
 
             print "Computing: ", state.specimen, state.chromosome, state.start
             GraphRequestHandler.handleRequest(state)
@@ -64,14 +64,14 @@ def precomputeRepeatMap(request):
 
 def makeRequestPacket(specimen, chromosome, start, graphSymbol='m', scale=1):
     from SkittleCore import models
-    from SkittleCore.Graphs import RepeatMap
+    from SkittleCore.Graphs.models import RepeatMapState
 
     state = models.RequestPacket()
     state.specimen = specimen
     state.chromosome = chromosome
     state.start = start
     state.scale = scale
-    state.width = RepeatMap.skixelsPerSample
+    state.width = RepeatMapState.skixelsPerSample
     state.requestedGraph = graphSymbol
     return state
 
