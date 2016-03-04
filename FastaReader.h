@@ -21,7 +21,7 @@ class UiVariables;
 struct to_upper {
     int operator() ( int ch )
     {
-        return std::toupper ( ch );
+        return toupper ( ch );
     }
 };
 

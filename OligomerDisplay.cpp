@@ -176,7 +176,7 @@ void OligomerDisplay::changeWordLength(int w)
 {
     if(updateInt(wordLength, w ))
     {
-        F_width = (int)pow(4, wordLength);
+        F_width = (int)pow(4.0, int(wordLength));
         freq.clear();
         freq = vector< vector<double> >();
         for(int i = 0; i < 400; i++)

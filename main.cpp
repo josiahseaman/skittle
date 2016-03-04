@@ -15,7 +15,7 @@ bool checkForSkittleTemp()
 {
     //check for SkittleTemp.exe
     char buffer[1024];
-    FILE* fd = popen("dir /B SkittleTemp.exe", "r");
+    FILE* fd = _popen("dir /B SkittleTemp.exe", "r");
     if (fd == NULL) {
         return false;//error occured
     }

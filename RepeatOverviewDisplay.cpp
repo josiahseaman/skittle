@@ -302,8 +302,8 @@ pair<int,int> RepeatOverviewDisplay::getBestAlignment(int index)
     int max_score = 0;
     int qualifying = 0;
     int best_freq = 251;
-    unsigned char reference[reference_size];// = packSeq + index/4;
-    char bitmask[bitmask_size];
+    unsigned char* reference = new unsigned char[reference_size];// = packSeq + index/4;
+    char* bitmask = new char[bitmask_size];
     for(int i = 0; i < reference_size; ++i)
         reference[i] = packSeq[i+pack_index];//copy values
 
@@ -374,6 +374,9 @@ pair<int,int> RepeatOverviewDisplay::getBestAlignment(int index)
     }
     if(best_freq == 0) best_freq = 1;
     //max_score = scale;
+
+    delete[] reference;
+    delete[] bitmask;
     return pair<int,int>(max_score, best_freq);
 }
 

@@ -552,7 +552,7 @@ void MainWindow::helpDialog()
 
 void MainWindow::setGlobalTexture(bool checked)
 {
-    extern int global_usingTextures;
+    int global_usingTextures;
     global_usingTextures = !checked;
     if (checked)
         print("Using slow and robust drawing.");

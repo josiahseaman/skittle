@@ -6,7 +6,7 @@
 #include <OpenGL/glu.h>
 #else
 #ifndef QT_LINUXBASE
-#   include <GL/glu.h>
+#   include <gl/glu.h>
 #endif
 #endif
 
