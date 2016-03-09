@@ -12,7 +12,7 @@ import SkittleCore.Graphs.SNPdata
 
 
 def createSnpIndex():
-    indexFile = open(settings.SKITTLE_TREE_LOC + 'Annotations/snps.index.sorted.txt', 'r')
+    indexFile = open(settings.BASE_DIR + 'Annotations/snps.index.sorted.txt', 'r')
     index = 0
     for line in indexFile:
         tokens = line.split()
