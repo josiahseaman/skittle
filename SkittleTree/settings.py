@@ -47,9 +47,9 @@ if not WORKSPACE_PATH:
 if not DB_BASE_DIR:
     DB_BASE_DIR = os.path.join(WORKSPACE_PATH, "db")
 if not os.path.exists(WORKSPACE_PATH):
-    os.makedirs(WORKSPACE_PATH, exist_ok=True)
+    os.makedirs(WORKSPACE_PATH)
 if not os.path.exists(DB_BASE_DIR):
-    os.makedirs(DB_BASE_DIR, exist_ok=True)
+    os.makedirs(DB_BASE_DIR)
 
 if sys.platform == 'win32':
     OS_DIR = 'windows'
