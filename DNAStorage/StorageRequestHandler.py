@@ -27,8 +27,14 @@ def GetFastaFilePath(specimen, chromosome, start):
         if fastaFile[0].IsInRamDisk:
             fastaFilePath = None
         else:
-            fastaFilePath = settings.BASE_DIR + "DNAStorage/fasta/" + fastaFile[0].FastaFile.Specimen.Kingdom + "/" + fastaFile[0].FastaFile.Specimen.Class + "/" + fastaFile[0].FastaFile.Specimen.Genus + "/" + fastaFile[0].FastaFile.Specimen.Species + "/" + fastaFile[0].FastaFile.Specimen.Name + "/" + fastaFile[0].FastaFile.Chromosome + "/" + str(fastaFile[0].Start) + ".fasta"
-
+            fastaFilePath = os.path.join(settings.BASE_DIR, "DNAStorage", "fasta",
+                                         fastaFile[0].FastaFile.Specimen.Kingdom,
+                                         fastaFile[0].FastaFile.Specimen.Class,
+                                         fastaFile[0].FastaFile.Specimen.Genus,
+                                         fastaFile[0].FastaFile.Specimen.Species,
+                                         fastaFile[0].FastaFile.Specimen.Name,
+                                         fastaFile[0].FastaFile.Chromosome,
+                                         str(fastaFile[0].Start) + ".fasta")
         return fastaFilePath
     else:
         return None
@@ -69,7 +75,16 @@ def GetPngFilePath(request):
         if pngFile[0].IsInRamDisk:
             pngFilePath = None
         else:
-            pngFilePath = settings.BASE_DIR + "DNAStorage/png/" + pngFile[0].FastaFile.Specimen.Kingdom + "/" + pngFile[0].FastaFile.Specimen.Class + "/" + pngFile[0].FastaFile.Specimen.Genus + "/" + pngFile[0].FastaFile.Specimen.Species + "/" + pngFile[0].FastaFile.Specimen.Name + "/" + pngFile[0].FastaFile.Chromosome + "/" + generatePngName(graph, start, scale, charsPerLine)
+            png_name = generatePngName(graph, start, scale, charsPerLine)
+            pngFilePath = os.path.join(settings.BASE_DIR,
+                                       "DNAStorage","png",
+                                       pngFile[0].FastaFile.Specimen.Kingdom,
+                                       pngFile[0].FastaFile.Specimen.Class,
+                                       pngFile[0].FastaFile.Specimen.Genus,
+                                       pngFile[0].FastaFile.Specimen.Species,
+                                       pngFile[0].FastaFile.Specimen.Name,
+                                       pngFile[0].FastaFile.Chromosome,
+                                       png_name)
         return pngFilePath
     else:
         return None
@@ -89,8 +104,16 @@ def StorePng(request, fileObject):
         return None
 
     #Move temp file from temp storage into cache storage
-    pngFilePath = settings.BASE_DIR + "DNAStorage/png/" + fastaFile.Specimen.Kingdom + "/" + fastaFile.Specimen.Class + "/" + fastaFile.Specimen.Genus + "/" + fastaFile.Specimen.Species + "/" + fastaFile.Specimen.Name + "/" + fastaFile.Chromosome + "/" + generatePngName(
-        graph, start, scale, charsPerLine)
+    png_name = generatePngName(graph, start, scale, charsPerLine)
+    pngFilePath = os.path.join(settings.BASE_DIR,
+                               "DNAStorage","png",
+                               fastaFile.Specimen.Kingdom,
+                               fastaFile.Specimen.Class,
+                               fastaFile.Specimen.Genus,
+                               fastaFile.Specimen.Species,
+                               fastaFile.Specimen.Name,
+                               fastaFile.Chromosome,
+                               png_name)
     shutil.copyfile(fileObject.name, pngFilePath)
 
     #Log this file in the database
@@ -120,12 +143,12 @@ def DeleteCache(graph, specimen, chromosome, start):
 
     #Now remove PNG files
     #CD into the folder where this file is located as it should be the DNAStorage folder
-    workingDir = settings.BASE_DIR + "DNAStorage/png/"
+    workingDir = os.path.join(settings.BASE_DIR, "DNAStorage","png")
     if specimen:
         s = GetSpecimen(specimen)
-        workingDir += s.Kingdom + "/" + s.Class + "/" + s.Genus + "/" + s.Species + "/" + str(specimen).strip() + "/"
+        workingDir = os.path.join(workingDir, s.Kingdom, s.Class, s.Genus, s.Species, str(specimen).strip())
         if chromosome:
-            workingDir += str(chromosome).strip() + "/"
+            workingDir = os.path.join(workingDir, str(chromosome).strip())
 
     graphString = graph + "_"
     if specimen and chromosome and start:
@@ -241,7 +264,7 @@ def GetUserFastas(user):
 
 def HandleUploadedFile(f, attributes, user):
     try:
-        with open(settings.BASE_DIR + "DNAStorage/to_import/" + f.name, 'wb+') as destination:
+        with open(os.path.join(settings.BASE_DIR, "DNAStorage", "to_import", f.name), 'wb+') as destination:
             for chunk in f.chunks():
                 destination.write(chunk)
     except:
