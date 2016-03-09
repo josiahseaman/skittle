@@ -36,7 +36,14 @@ def ParseChromosomeName(validChromosomes, seqname):
 #Take a json annotation chunk and store it in the correct disk location and create a reference to it in the DB
 def StoreAnnotationChunk(gff, chromosome, chunk, start):
     fastaFile = GetRelatedFastaFile(gff.Specimen, chromosome)
-    annotationChunkFilePath = settings.BASE_DIR + "Annotations/chunks/" + fastaFile.Specimen.Kingdom + "/" + fastaFile.Specimen.Class + "/" + fastaFile.Specimen.Genus + "/" + fastaFile.Specimen.Species + "/" + fastaFile.Specimen.Name + "/" + fastaFile.Chromosome + "/"
+    annotationChunkFilePath = os.path.join(settings.BASE_DIR,
+                                           "Annotations","chunks",
+                                           fastaFile.Specimen.Kingdom,
+                                           fastaFile.Specimen.Class,
+                                           fastaFile.Specimen.Genus,
+                                           fastaFile.Specimen.Species,
+                                           fastaFile.Specimen.Name,
+                                           fastaFile.Chromosome)
     if not os.path.exists(annotationChunkFilePath):
         os.makedirs(annotationChunkFilePath)
 
@@ -97,8 +104,16 @@ def GetAnnotationsChunk(specimen, chromosome, start, annotations=None):
                 gff = annotation.GFF
                 fastaFile = GetRelatedFastaFile(gff.Specimen, chromosome)
 
-                annotationChunkFilePath = settings.BASE_DIR + "Annotations/chunks/" + fastaFile.Specimen.Kingdom + "/" + fastaFile.Specimen.Class + "/" + fastaFile.Specimen.Genus + "/" + fastaFile.Specimen.Species + "/" + fastaFile.Specimen.Name + "/" + fastaFile.Chromosome + "/" + generateAnnotationChunkName(
-                    gff, start)
+                annotation_chunk_name = generateAnnotationChunkName(gff, start)
+                annotationChunkFilePath = os.path.join(settings.BASE_DIR,
+                                                       "Annotations","chunks",
+                                                       fastaFile.Specimen.Kingdom,
+                                                       fastaFile.Specimen.Class,
+                                                       fastaFile.Specimen.Genus,
+                                                       fastaFile.Specimen.Species,
+                                                       fastaFile.Specimen.Name,
+                                                       fastaFile.Chromosome,
+                                                       annotation_chunk_name)
                 chunkFile = open(annotationChunkFilePath, 'r')
 
                 read = chunkFile.read()
