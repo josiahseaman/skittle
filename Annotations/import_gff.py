@@ -16,7 +16,7 @@ def ImportGFF(specimen, file):
 
     specimenObject = GetSpecimen(specimen)
 
-    gff, created = GFF.objects.get_or_create(Specimen=specimenObject, FileName=fileName, Public=True, User=None)
+    gff, created = GFF.objects.get_or_create(Specimen=specimenObject, FileName=fileName, Public=True)
     print gff.FileName
     #Get the specimen this annotation file is for
     gff.Specimen = GetSpecimen(specimen)
