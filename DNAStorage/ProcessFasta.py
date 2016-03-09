@@ -288,11 +288,11 @@ def run():
     for file in os.listdir("./to_import/"):
         if file.endswith(".fasta") or file.endswith(".fa"):
             try:
-                splitAndSort(file, workingDir + "/fasta", workingDir + "/to_import/")
-                shutil.move("to_import/" + file, "history/" + file)
+                splitAndSort(file, os.path.join(workingDir, "fasta"), os.path.join(workingDir, "to_import"))
+                shutil.move(os.path.join("to_import", file), os.path.join("history", file))
             except IOError as ex:
                 print ex
-                shutil.move("to_import/" + file, "rejected/" + file)
+                shutil.move(os.path.join("to_import", file), os.path.join("rejected", file))
 
 
 def ImportFasta(fileName, attributes, user):
@@ -321,15 +321,15 @@ def ImportFasta(fileName, attributes, user):
         return progress.id
     else:
         print "This is not a fasta file!"
-        shutil.move("to_import/" + fileName, "rejected/" + fileName)
+        shutil.move(os.path.join("to_import", fileName), os.path.join("rejected", fileName))
         return "This is not a fasta file... Import failed!"
 
 
 def importFasta(workingDir, fileName, attributes, progress):
     try:
-        splitAndSort(fileName, workingDir + "/fasta", workingDir + "/to_import/", attributes=attributes, progress=progress)
-        shutil.move("to_import/" + fileName, "history/" + fileName)
+        splitAndSort(fileName, os.path.join(workingDir, "fasta"), os.path.join(workingDir, "to_import"), attributes=attributes, progress=progress)
+        shutil.move(os.path.join("to_import", fileName), os.path.join("history", fileName))
     except IOError as ex:
         print ex
-        shutil.move("to_import/" + fileName, "rejected/" + fileName)
+        shutil.move(os.path.join("to_import", fileName), os.path.join("rejected", fileName))
         return ex.message
