@@ -280,7 +280,7 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
 #----------------------------------------------------------------------------------------
 def run():
     #CD into the folder where this file is located as it should be the DNAStorage folder
-    workingDir = settings.SKITTLE_TREE_LOC + "DNAStorage"
+    workingDir = settings.BASE_DIR + "DNAStorage"
     os.chdir(workingDir)
 
     #Look to see if there are any files in to_import
@@ -298,7 +298,7 @@ def run():
 def ImportFasta(fileName, attributes, user):
     #Attributes(kingdom, class, genus, species, specimen, genomeName, source, dateSequenced, description)
     
-    workingDir = settings.SKITTLE_TREE_LOC + "DNAStorage"
+    workingDir = settings.BASE_DIR + "DNAStorage"
     os.chdir(workingDir)
 
     if fileName.endswith(".fasta") or fileName.endswith(".fa"):
