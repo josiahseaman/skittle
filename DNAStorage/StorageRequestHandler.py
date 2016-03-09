@@ -27,7 +27,7 @@ def GetFastaFilePath(specimen, chromosome, start):
         if fastaFile[0].IsInRamDisk:
             fastaFilePath = None
         else:
-            fastaFilePath = settings.SKITTLE_TREE_LOC + "DNAStorage/fasta/" + fastaFile[0].FastaFile.Specimen.Kingdom + "/" + fastaFile[0].FastaFile.Specimen.Class + "/" + fastaFile[0].FastaFile.Specimen.Genus + "/" + fastaFile[0].FastaFile.Specimen.Species + "/" + fastaFile[0].FastaFile.Specimen.Name + "/" + fastaFile[0].FastaFile.Chromosome + "/" + str(fastaFile[0].Start) + ".fasta"
+            fastaFilePath = settings.BASE_DIR + "DNAStorage/fasta/" + fastaFile[0].FastaFile.Specimen.Kingdom + "/" + fastaFile[0].FastaFile.Specimen.Class + "/" + fastaFile[0].FastaFile.Specimen.Genus + "/" + fastaFile[0].FastaFile.Specimen.Species + "/" + fastaFile[0].FastaFile.Specimen.Name + "/" + fastaFile[0].FastaFile.Chromosome + "/" + str(fastaFile[0].Start) + ".fasta"
 
         return fastaFilePath
     else:
@@ -69,7 +69,7 @@ def GetPngFilePath(request):
         if pngFile[0].IsInRamDisk:
             pngFilePath = None
         else:
-            pngFilePath = settings.SKITTLE_TREE_LOC + "DNAStorage/png/" + pngFile[0].FastaFile.Specimen.Kingdom + "/" + pngFile[0].FastaFile.Specimen.Class + "/" + pngFile[0].FastaFile.Specimen.Genus + "/" + pngFile[0].FastaFile.Specimen.Species + "/" + pngFile[0].FastaFile.Specimen.Name + "/" + pngFile[0].FastaFile.Chromosome + "/" + generatePngName(graph, start, scale, charsPerLine)
+            pngFilePath = settings.BASE_DIR + "DNAStorage/png/" + pngFile[0].FastaFile.Specimen.Kingdom + "/" + pngFile[0].FastaFile.Specimen.Class + "/" + pngFile[0].FastaFile.Specimen.Genus + "/" + pngFile[0].FastaFile.Specimen.Species + "/" + pngFile[0].FastaFile.Specimen.Name + "/" + pngFile[0].FastaFile.Chromosome + "/" + generatePngName(graph, start, scale, charsPerLine)
         return pngFilePath
     else:
         return None
@@ -89,7 +89,7 @@ def StorePng(request, fileObject):
         return None
 
     #Move temp file from temp storage into cache storage
-    pngFilePath = settings.SKITTLE_TREE_LOC + "DNAStorage/png/" + fastaFile.Specimen.Kingdom + "/" + fastaFile.Specimen.Class + "/" + fastaFile.Specimen.Genus + "/" + fastaFile.Specimen.Species + "/" + fastaFile.Specimen.Name + "/" + fastaFile.Chromosome + "/" + generatePngName(
+    pngFilePath = settings.BASE_DIR + "DNAStorage/png/" + fastaFile.Specimen.Kingdom + "/" + fastaFile.Specimen.Class + "/" + fastaFile.Specimen.Genus + "/" + fastaFile.Specimen.Species + "/" + fastaFile.Specimen.Name + "/" + fastaFile.Chromosome + "/" + generatePngName(
         graph, start, scale, charsPerLine)
     shutil.copyfile(fileObject.name, pngFilePath)
 
@@ -120,7 +120,7 @@ def DeleteCache(graph, specimen, chromosome, start):
 
     #Now remove PNG files
     #CD into the folder where this file is located as it should be the DNAStorage folder
-    workingDir = settings.SKITTLE_TREE_LOC + "DNAStorage/png/"
+    workingDir = settings.BASE_DIR + "DNAStorage/png/"
     if specimen:
         s = GetSpecimen(specimen)
         workingDir += s.Kingdom + "/" + s.Class + "/" + s.Genus + "/" + s.Species + "/" + str(specimen).strip() + "/"
@@ -241,7 +241,7 @@ def GetUserFastas(user):
 
 def HandleUploadedFile(f, attributes, user):
     try:
-        with open(settings.SKITTLE_TREE_LOC + "DNAStorage/to_import/" + f.name, 'wb+') as destination:
+        with open(settings.BASE_DIR + "DNAStorage/to_import/" + f.name, 'wb+') as destination:
             for chunk in f.chunks():
                 destination.write(chunk)
     except:
