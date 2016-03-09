@@ -2,7 +2,7 @@
 import os
 import sys
 
-PRODUCTION = False
+PRODUCTION = True
 OVERRIDE_DEBUG = False
 if PRODUCTION:
     PRODUCTION_SETTINGS = True
