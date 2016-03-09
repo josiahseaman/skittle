@@ -15,27 +15,16 @@ framework.
 """
 import os
 import sys
-import socket
 
-PRODUCTION = False
-HOSTNAME = socket.gethostname()
+if getattr(sys, 'frozen', False):
+    BASE_DIR = os.path.dirname(sys.executable)
+else:
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-if PRODUCTION and not HOSTNAME.startswith('nyx'):
-    sys.path.append('/var/www/skittle')
-    os.environ['HTTPS'] = "on"
-elif HOSTNAME.startswith('nyx'):
-    sys.path.append('/var/www/skittle-development')
-    os.environ['HTTPS'] = "on"
+sys.path.append(BASE_DIR)
+os.chdir(BASE_DIR)
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SkittleTree.settings")
 
-# This application object is used by any WSGI server configured to use this
-# file. This includes Django's development server, if the WSGI_APPLICATION
-# setting points here.
 from django.core.wsgi import get_wsgi_application
-
 application = get_wsgi_application()
-
-# Apply WSGI middleware here.
-# from helloworld.wsgi import HelloWorldApplication
-# application = HelloWorldApplication(application)
