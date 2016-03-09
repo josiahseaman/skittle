@@ -34,6 +34,7 @@ def createUser(request):
         form = UserCreationForm()
     return render(request, 'createUser.html',{'form' : form})
 
+
 def feedbackSend(request):
     if request.is_ajax() or request.method == 'POST':
         feedback_type = request.POST.get('feedback_type', 'Comment')
@@ -54,8 +55,8 @@ def feedbackSend(request):
             email = EmailMessage(
                 subject,
                 message,
-                'feedbackform@dnaskittle.com',
-                ['admin@newlinetechnicalinnovations.com'],
+                'info@newline.us',
+                [],
                 # headers = {'Reply-To': contact_sender}
             )
             try:

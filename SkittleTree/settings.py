@@ -28,7 +28,6 @@ else:
 ADMINS = (
     ('Josiah Seaman', 'josiah@newlinetechnicalinnovations.com'),
     ('Bryan Hurst', 'bryan@newlinetechnicalinnovations.com'),
-    ('Marshall Smith', 'marshall@newlinetechnicalinnovations.com'),
 )
 
 MANAGERS = ADMINS
