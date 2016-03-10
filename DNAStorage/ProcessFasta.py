@@ -39,14 +39,14 @@ def parseChromosome(fileName):
         return parts
 
 #Take a fasta file, split it and sort it into the correct folders
-def splitAndSort(file, storageLocation, workingLocation, attributes=None, progress=None):
+def splitAndSort(inputChromosomeFilename, storageLocation, workingLocation, attributes=None, progress=None):
     bp = settings.CHUNK_SIZE
 
     #Take the file name and split it at each delim.
     #Then check to make sure that we have all 6 identifiers:
     #Kingdom, Class, Genus, Species, Specimen, Chromosome
-    fileName = re.sub('\.fasta', '', file)
-    fileName = re.sub('\.fa', '', fileName)
+    chromosomeName = re.sub('\.fasta', '', inputChromosomeFilename)
+    chromosomeName = re.sub('\.fa', '', chromosomeName)
 
     if progress:
         progress.Message = "Starting to parse taxonomic attributes..."
@@ -56,7 +56,7 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
 
     if not attributes:
         #Parse file name into system path
-        taxonomic = fileName.split("_")
+        taxonomic = chromosomeName.split("_")
     else:
         taxonomic = []
         #Attributes(kingdom, class, genus, species, specimen, genomeName, source, dateSequenced, description, isPublic)
@@ -65,10 +65,10 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
         taxonomic.append(attributes.get('genus', "Uncategorized") or "Uncategorized")
         taxonomic.append(attributes.get('species', "Uncategorized") or "Uncategorized")
         taxonomic.append(attributes['specimen'])
-        taxonomic.append(attributes.get('chromosome', parseChromosome(fileName)) or parseChromosome(fileName))
+        taxonomic.append(attributes.get('chromosome', parseChromosome(chromosomeName)) or parseChromosome(chromosomeName))
 
     if len(taxonomic) != 6 and not attributes:
-        raise IOError("Error! File " + fileName + " in to_import is not validly named!")
+        raise IOError("Error! File " + chromosomeName + " in to_import is not validly named!")
     if not taxonomic[4] or not taxonomic[5]:
         message = "Error! Specimen and/or Chromosome name not valid!"
         print message
@@ -84,7 +84,6 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
     #Begin setting up the Specimen object for the database
     #specimen, created = Specimen.objects.get_or_create(Name=taxonomic[4], Species=taxonomic[3], Genus=taxonomic[2], Class=taxonomic[1], Kingdom=taxonomic[0])
     hasSpecimen = StorageRequestHandler.HasSpecimen(taxonomic[4])
-
 
     oldKingdom = ""
     oldClass = ""
@@ -138,15 +137,15 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
         progress.Message = "Settup up server storage..."
         saveDBObject(progress)
 
-    filePath = os.path.join(storageLocation)
-    pngFilePath = os.path.join(storageLocation).replace("fasta", "png")
+    storagePath = storageLocation
+    pngStoragePath = storageLocation.replace("fasta", "png")
     for sub in taxonomic:
-        filePath = os.path.join(filePath, sub)
-        pngFilePath = os.path.join(pngFilePath, sub)
-    if not os.path.isdir(filePath):
-        os.makedirs(filePath)
-    if not os.path.isdir(pngFilePath):
-        os.makedirs(pngFilePath)
+        storagePath = os.path.join(storagePath, sub)
+        pngStoragePath = os.path.join(pngStoragePath, sub)
+    if not os.path.isdir(storagePath):
+        os.makedirs(storagePath)
+    if not os.path.isdir(pngStoragePath):
+        os.makedirs(pngStoragePath)
 
     if pathChanged:
         oldFilePath = os.path.join(storageLocation)
@@ -165,8 +164,8 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
         oldPNGFilePath = os.path.join(oldPNGFilePath, specimen.Name)
 
         #Move all chunks to new destination
-        newFilePath = os.path.dirname(filePath)
-        newPNGFilePath = os.path.dirname(pngFilePath)
+        newFilePath = os.path.dirname(storagePath)
+        newPNGFilePath = os.path.dirname(pngStoragePath)
         shutil.move(oldFilePath, newFilePath)
         shutil.move(oldPNGFilePath, newPNGFilePath)
 
@@ -192,13 +191,14 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
     fastaChunks = []
 
     #Remove first line if needed and depending on OS
+    inputChromosomePath = os.path.join(workingLocation, inputChromosomeFilename)
     if os.name == "posix":
         #FAST SED COMMAND ON LINUX
-        bashCommand = "sed -i -e '1{/>/d;}' " + (workingLocation + file)
+        bashCommand = "sed -i -e '1{/>/d;}' " + inputChromosomePath
         os.system(bashCommand)
     else: #SLOW WINDOWS VERSION
         skip = False
-        with open(workingLocation + file) as f:
+        with open(inputChromosomePath) as f:
             while True:
                 character = f.read(1)
                 if character:
@@ -210,11 +210,11 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
                 else:
                     break
         if skip:
-            lines = open(workingLocation + file).readlines()
-            open(workingLocation + file, 'w').writelines(lines[1:])
+            lines = open(inputChromosomePath).readlines()
+            open(inputChromosomePath, 'w').writelines(lines[1:])
 
     #Split the file every $bp
-    with open(workingLocation + file) as f:
+    with open(inputChromosomePath) as f:
         fCount = 1
         cCount = 0
         chunk = ""
@@ -225,7 +225,7 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
                     chunk += character
                     cCount += 1
                     if cCount == bp:
-                        writePath = os.path.join(filePath, str(fCount) + ".fasta")
+                        writePath = os.path.join(storagePath, str(fCount) + ".fasta")
                         write = open(writePath, 'wb')
                         write.write(chunk.upper())
                         #Add this chunk to the list of chunks
@@ -237,7 +237,7 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
                         cCount = 0
             else:
                 break
-        writePath = os.path.join(filePath, str(fCount) + ".fasta")
+        writePath = os.path.join(storagePath, str(fCount) + ".fasta")
         write = open(writePath, 'wb')
         write.write(chunk.upper())
         newChunk = FastaChunkFiles()
@@ -279,20 +279,20 @@ def splitAndSort(file, storageLocation, workingLocation, attributes=None, progre
 
 #----------------------------------------------------------------------------------------
 def run():
-    #CD into the folder where this file is located as it should be the DNAStorage folder
+    #CD into the folder where this wholeChromosome is located as it should be the DNAStorage folder
     workingDir = os.path.join(settings.BASE_DIR, "DNAStorage")
     os.chdir(workingDir)
 
     #Look to see if there are any files in to_import
     #If so, then process them.
-    for file in os.listdir("./to_import/"):
-        if file.endswith(".fasta") or file.endswith(".fa"):
+    for wholeChromosome in os.listdir("./to_import/"):
+        if wholeChromosome.endswith(".fasta") or wholeChromosome.endswith(".fa"):
             try:
-                splitAndSort(file, os.path.join(workingDir, "fasta"), os.path.join(workingDir, "to_import"))
-                shutil.move(os.path.join("to_import", file), os.path.join("history", file))
+                splitAndSort(wholeChromosome, os.path.join(workingDir, "fasta"), os.path.join(workingDir, "to_import"))
+                shutil.move(os.path.join("to_import", wholeChromosome), os.path.join("history", wholeChromosome))
             except IOError as ex:
                 print ex
-                shutil.move(os.path.join("to_import", file), os.path.join("rejected", file))
+                shutil.move(os.path.join("to_import", wholeChromosome), os.path.join("rejected", wholeChromosome))
 
 
 def ImportFasta(fileName, attributes, user):
