@@ -4,9 +4,12 @@ Created on Nov 29, 2012
 '''
 #import numpy
 import math
+import os
 from math import sqrt
 from numbers import Number
 import ctypes
+
+from django.conf import settings
 
 from models import ThreeMerDetectorState
 from PixelLogic import colorPalettes
@@ -14,8 +17,9 @@ from PixelLogic import colorPalettes
 
 try:
     skittleUtils = ctypes.CDLL(
-        'D:/bryan/Documents/Projects/SkittleTree/SkittleCore/Graphs/libSkittleGraphUtils.so.1.0.0')
+        os.path.join(settings.BASE_DIR, 'SkittleCore','Graphs','libSkittleGraphUtils.so.1.0.0'))
     usingCcode = True
+    print("Optimized C code for correlations found!")
 except:
     usingCcode = False
 
