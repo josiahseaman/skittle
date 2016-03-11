@@ -153,6 +153,14 @@ def composedOfNs(countDict):
         return countDict == colorMapping['N']
 
 
+def evenASingleN(countDict):
+    if isinstance(countDict, dict):
+        return countDict['N'] > 0
+    else:
+        colorMapping = colorPalettes['Classic']
+        return countDict == colorMapping['N']
+
+
 '''Generic normalization reduces any number to a floating point between 0.0 and 1.0'''
 
 
