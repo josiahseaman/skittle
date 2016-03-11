@@ -14,12 +14,13 @@ from django.conf import settings
 from models import ThreeMerDetectorState
 from PixelLogic import colorPalettes
 
-
+usingCcode = False
 try:
-    skittleUtils = ctypes.CDLL(
-        os.path.join(settings.BASE_DIR, 'SkittleCore','Graphs','libSkittleGraphUtils.so.1.0.0'))
-    usingCcode = True
-    print("Optimized C code for correlations found!")
+    if os.name == 'posix':
+        skittleUtils = ctypes.CDLL(
+            os.path.join(settings.BASE_DIR, 'SkittleCore','Graphs','libSkittleGraphUtils.so.1.0.0'))
+        usingCcode = True
+        print("Optimized C code for correlations found!")
 except:
     usingCcode = False
 
