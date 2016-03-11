@@ -5,6 +5,7 @@ Created on Nov 29, 2012
 #import numpy
 import math
 import os
+import sys
 from math import sqrt
 from numbers import Number
 import ctypes
@@ -16,11 +17,14 @@ from PixelLogic import colorPalettes
 
 usingCcode = False
 try:
-    if os.name == 'posix':
+    if sys.platform == 'win32':
+        skittleUtils = ctypes.CDLL(os.path.join(settings.BASE_DIR, 'SkittleCore', 'Graphs', 'libSkittleGraphUtils.dll'))
+        print("Optimized Windows C code for correlations found!")
+    else:
         skittleUtils = ctypes.CDLL(
             os.path.join(settings.BASE_DIR, 'SkittleCore','Graphs','libSkittleGraphUtils.so.1.0.0'))
-        usingCcode = True
-        print("Optimized C code for correlations found!")
+        print("Optimized Linux C code for correlations found!")
+    usingCcode = True
 except:
     usingCcode = False
 
