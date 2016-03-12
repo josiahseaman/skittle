@@ -177,7 +177,7 @@ def spectrum(floatingPoint):
     return __colorByCustomSpectrum(spectrumPoints, floatingPoint)
 
 
-def twoSidedSpectrumColoring(floatList, midpoint=0.0):
+def twoSidedSpectrumColoring(floatList, midpoint=0.0, noNegatives=False):
     if hasDepth(floatList):
         return map(lambda x: twoSidedSpectrumColoring(x, midpoint), floatList)
     pixels = []

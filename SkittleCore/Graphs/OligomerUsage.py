@@ -17,13 +17,7 @@ The brightness of the pixel indicates how often that oligomer occurred compared 
 def calculateOutputPixels(state, oligState=OligomerUsageState()):
     assert isinstance(state, RequestPacket)
     assert isinstance(oligState, OligomerUsageState)
-    state.readFastaChunks()
-
-    overlap = oligState.oligomerSize - 1
-    lines = chunkUpList(state.seq, state.nucleotidesPerLine(),
-                        overlap) #chunk sequence by display line #we can't do this simply by line because of the overhang of oligState.oligState
-
-    counts = countNucleotides(lines, oligState.oligomerSize)
+    counts = countOligomers(state, oligState)
 
     #NORMALIZATION
     values = []
@@ -40,4 +34,13 @@ def calculateOutputPixels(state, oligState=OligomerUsageState()):
     pixels = oligCountToColorSpace(counts, orderedWords)
 
     return pixels
+
+
+def countOligomers(state, oligState=OligomerUsageState()):
+    state.readFastaChunks()
+    overlap = oligState.oligomerSize - 1
+    lines = chunkUpList(state.seq, state.nucleotidesPerLine(),
+                        overlap)  # chunk sequence by display line #we can't do this simply by line because of the overhang of oligState.oligState
+    counts = countNucleotides(lines, oligState.oligomerSize)
+    return counts
 
