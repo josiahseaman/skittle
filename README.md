@@ -119,9 +119,9 @@ Compile C Functions
 6) yourLib.MyFunction()
 
 On Windows
-1) Open Developer Command Prompt from Visual Studio Tools
+1) Open Visual Studio x64 Win64 Command Prompt
 2) cd into SkittleCore\Graphs
-3) Run `cl /D_USRDLL /D_WINDLL SkittleGraphUtils.c SkittleGraphUtils.obj /link /DLL /OUT:>libSkittleGraphUtils.dll`
+3) Run `cl /LD SkittleGraphUtils.c`
 
 If the function returns a string do this) returnedString = ctypes.c_char_p(yourLib.MyFunction()); print returnedString.value
 NOTE: Python C Data Types: http://docs.python.org/2/library/ctypes.html#fundamental-data-types

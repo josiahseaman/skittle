@@ -18,7 +18,7 @@ from PixelLogic import colorPalettes
 usingCcode = False
 try:
     if sys.platform == 'win32':
-        skittleUtils = ctypes.CDLL(os.path.join(settings.BASE_DIR, 'SkittleCore', 'Graphs', 'libSkittleGraphUtils.dll'))
+        skittleUtils = ctypes.CDLL(os.path.join(settings.BASE_DIR, 'SkittleCore', 'Graphs', 'SkittleGraphUtils.dll'))
         print("Optimized Windows C code for correlations found!")
     else:
         skittleUtils = ctypes.CDLL(
