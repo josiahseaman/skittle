@@ -62,14 +62,7 @@ def calculateOutputPixels(state, heatMapState=SimilarityHeatMapState()):
             elif x + y < len(oligVectors):#account for second to last chunk
                 heatMap[y][x] = pearsonCorrelation(oligVectors[y], oligVectors[y + x])
 
-                #TODO: the mirroring probably needs changing given the new heatmap png layout
-                #    if heatMapState.useRowColumnCorrelation:
-                #        mirrorDiagonalMatrix(heatMap)#flip along diagonal symmetry
-                ##        prettyPrint(heatMap)
-                ##        print
-                #        heatMap = rowColumnCorrelation(heatMap)
     median = 0.0 #medianFromAllLines(heatMap)
-
     pixels = twoSidedSpectrumColoring(heatMap, median)
     return pixels
 
