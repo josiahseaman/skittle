@@ -60,6 +60,7 @@ else:
     EXTENSION = ''
     SCRIPT = ''
 
+SITE_ID = 1
 
 INSTALLED_APPS = (
     'django.contrib.auth',
