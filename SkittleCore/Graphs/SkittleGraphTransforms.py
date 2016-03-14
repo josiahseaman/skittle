@@ -4,18 +4,28 @@ Created on Nov 29, 2012
 '''
 #import numpy
 import math
+import os
+import sys
 from math import sqrt
 from numbers import Number
 import ctypes
 
+from django.conf import settings
+
 from models import ThreeMerDetectorState
 from PixelLogic import colorPalettes
 
-
 try:
-    skittleUtils = ctypes.CDLL(
-        'D:/bryan/Documents/Projects/SkittleTree/SkittleCore/Graphs/libSkittleGraphUtils.so.1.0.0')
-    usingCcode = True
+    if sys.platform == 'win32':
+        skittleUtils = ctypes.CDLL(os.path.join(settings.BASE_DIR, 'SkittleCore', 'Graphs', 'SkittleGraphUtils.dll'))
+        usingCcode = True
+        print("Optimized Windows C code for correlations found!")
+    elif 'linux' in sys.platform:
+        skittleUtils = ctypes.CDLL(os.path.join(settings.BASE_DIR, 'SkittleCore','Graphs','libSkittleGraphUtils.so.1.0.0'))
+        usingCcode = True
+        print("Optimized Linux C code for correlations found!")
+    else:
+        usingCcode = False
 except:
     usingCcode = False
 
@@ -144,6 +154,14 @@ def composedOfNs(countDict):
     if isinstance(countDict, dict):
         total = sum(countDict.values())
         return countDict['N'] == total
+    else:
+        colorMapping = colorPalettes['Classic']
+        return countDict == colorMapping['N']
+
+
+def evenASingleN(countDict):
+    if isinstance(countDict, dict):
+        return countDict['N'] > 0
     else:
         colorMapping = colorPalettes['Classic']
         return countDict == colorMapping['N']

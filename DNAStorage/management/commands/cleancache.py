@@ -24,7 +24,7 @@ class Command(BaseCommand):
         self.stdout.write("Checking for invalid png files!\n")
         ImageFiles.objects.all().update(IsInRamDisk=False)
         for imagefile in ImageFiles.objects.all():
-            fake_request = FakeRequest(specimen=imagefile.FastaFile.Specimen,
+            fake_request = FakeRequest(specimen=imagefile.FastaFile.Specimen.Name,
                                        chromosome=imagefile.FastaFile.Chromosome,
                                        requestedGraph=imagefile.GraphType,
                                        start=imagefile.Start,
