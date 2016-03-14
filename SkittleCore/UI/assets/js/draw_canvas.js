@@ -156,7 +156,8 @@ var drawGraphs = function() {
 
 var drawGraph = function(graph,offset,chunks) {
     switch (graph) {
-        case "s": return drawSimHeat(offset,chunks);
+        case "c":
+        case "s": return drawDiagonalGraph(offset, chunks, graph);
         default: 
             if (graphStatus[graph].rasterGraph == true) return drawRasterGraph(graph,offset,chunks);
             else return drawVerticalGraph(graph,offset,chunks);
@@ -379,14 +380,15 @@ graphStatus['m'].drawPixelPost = function() {
     }
 }
 
-var drawSimHeat = function(offset,chunks) {
+var drawDiagonalGraph = function (offset, chunks, graphType) {
+    graphType = graphType || 's';
     a.clearRect(0,0,350,10000)
     var displayWidth = 300
-    var stretchFactor = expRound(state.width(),graphStatus['s'].widthTolerance)/state.width()
+    var stretchFactor = expRound(state.width(),graphStatus[graphType].widthTolerance)/state.width()
     var lineHeight = Math.round(65536/state.width()) //Math.round((Math.round(state.width()/10)*10)/state.width()*Math.ceil(65536/state.width()));
     var displayWidth = Math.round(stretchFactor*displayWidth)
     for (var i=0;i<chunks;i++) {
-        var imageObj = imageRequestor("s",i)
+        var imageObj = imageRequestor(graphType,i)
         if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
         a.drawImage(imageObj,0,lineHeight*i,displayWidth,lineHeight) // render data on hidden canvas
         // a.beginPath();

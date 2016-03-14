@@ -42,6 +42,7 @@ def vectorizeCounts(oligCounts, orderedWords):
 
 
 def calculateOutputPixels(state, heatMapState=SimilarityHeatMapState()):
+    heatMapState.oligomerSize = 5
     state.readFastaChunks()
     width = 300
     while len(state.seq) < (
