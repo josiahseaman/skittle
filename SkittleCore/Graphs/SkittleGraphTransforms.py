@@ -15,16 +15,17 @@ from django.conf import settings
 from models import ThreeMerDetectorState
 from PixelLogic import colorPalettes
 
-usingCcode = False
 try:
     if sys.platform == 'win32':
         skittleUtils = ctypes.CDLL(os.path.join(settings.BASE_DIR, 'SkittleCore', 'Graphs', 'SkittleGraphUtils.dll'))
+        usingCcode = True
         print("Optimized Windows C code for correlations found!")
-    else:
-        skittleUtils = ctypes.CDLL(
-            os.path.join(settings.BASE_DIR, 'SkittleCore','Graphs','libSkittleGraphUtils.so.1.0.0'))
+    elif 'linux' in sys.platform:
+        skittleUtils = ctypes.CDLL(os.path.join(settings.BASE_DIR, 'SkittleCore','Graphs','libSkittleGraphUtils.so.1.0.0'))
+        usingCcode = True
         print("Optimized Linux C code for correlations found!")
-    usingCcode = True
+    else:
+        usingCcode = False
 except:
     usingCcode = False
 

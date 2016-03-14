@@ -121,7 +121,7 @@ Compile C Functions
 On Windows
 1) Open Visual Studio x64 Win64 Command Prompt
 2) cd into SkittleCore\Graphs
-3) Run `cl /LD SkittleGraphUtils.c`
+3) Run `cl /LD SkittleGraphUtils.c DRIVE:\path\to\base_python27\libs\python27.lib`
 
 If the function returns a string do this) returnedString = ctypes.c_char_p(yourLib.MyFunction()); print returnedString.value
 NOTE: Python C Data Types: http://docs.python.org/2/library/ctypes.html#fundamental-data-types
