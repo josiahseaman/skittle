@@ -286,13 +286,11 @@ def pythonCorrelate(x, y):
         diffprod += xdiff * ydiff
         xdiff2 += xdiff * xdiff
         ydiff2 += ydiff * ydiff
-    backup = math.sqrt(1 - (1 / n)) #if we have 0 instances of a color it will be / 0  div0
-    if (xdiff2 == 0.0):
-        xdiff2 = backup
-    if (ydiff2 == 0.0):
-        ydiff2 = backup
-    base = math.sqrt(xdiff2 * ydiff2)
-    return diffprod / base
+
+    if xdiff2 * ydiff2 == 0.0:
+        return 0.0
+
+    return diffprod / math.sqrt(xdiff2 * ydiff2)
 
 
 '''Pearson correlation coefficient between signals x and y.'''
