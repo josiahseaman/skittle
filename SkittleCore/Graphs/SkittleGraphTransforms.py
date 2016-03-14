@@ -28,6 +28,7 @@ try:
         usingCcode = False
 except:
     usingCcode = False
+# usingCcode = False  # Force python correlate
 
 
 def countDepth(listLike):

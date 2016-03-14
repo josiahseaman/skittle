@@ -43,6 +43,10 @@ __declspec(dllexport) double Correlate(double apples[], double oranges[], int ar
     denom_1 = sqrt(ASquared   - ((Asum   * Asum)  /N));
     denom_2 = sqrt(BSquared   - ((Bsum   * Bsum)  /N));
 
+    if (denom_1 * denom_2 == 0){
+        return 0.0;
+    }
+
     answer = numerator / (denom_1 * denom_2);
 
     return answer;
