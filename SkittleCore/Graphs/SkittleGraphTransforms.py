@@ -5,6 +5,7 @@ Created on Nov 29, 2012
 #import numpy
 import math
 import os
+import sys
 from math import sqrt
 from numbers import Number
 import ctypes
@@ -14,15 +15,20 @@ from django.conf import settings
 from models import ThreeMerDetectorState
 from PixelLogic import colorPalettes
 
-usingCcode = False
 try:
-    if os.name == 'posix':
-        skittleUtils = ctypes.CDLL(
-            os.path.join(settings.BASE_DIR, 'SkittleCore','Graphs','libSkittleGraphUtils.so.1.0.0'))
+    if sys.platform == 'win32':
+        skittleUtils = ctypes.CDLL(os.path.join(settings.BASE_DIR, 'SkittleCore', 'Graphs', 'libSkittleGraphUtils.dll'))
         usingCcode = True
-        print("Optimized C code for correlations found!")
+        print("Optimized Windows C code for correlations found!")
+    elif 'linux' in sys.platform:
+        skittleUtils = ctypes.CDLL(os.path.join(settings.BASE_DIR, 'SkittleCore','Graphs','libSkittleGraphUtils.so.1.0.0'))
+        usingCcode = True
+        print("Optimized Linux C code for correlations found!")
+    else:
+        usingCcode = False
 except:
     usingCcode = False
+# usingCcode = False  # Force python correlate
 
 
 def countDepth(listLike):
@@ -280,13 +286,11 @@ def pythonCorrelate(x, y):
         diffprod += xdiff * ydiff
         xdiff2 += xdiff * xdiff
         ydiff2 += ydiff * ydiff
-    backup = math.sqrt(1 - (1 / n)) #if we have 0 instances of a color it will be / 0  div0
-    if (xdiff2 == 0.0):
-        xdiff2 = backup
-    if (ydiff2 == 0.0):
-        ydiff2 = backup
-    base = math.sqrt(xdiff2 * ydiff2)
-    return diffprod / base
+
+    if xdiff2 * ydiff2 == 0.0:
+        return 0.0
+
+    return diffprod / math.sqrt(xdiff2 * ydiff2)
 
 
 '''Pearson correlation coefficient between signals x and y.'''

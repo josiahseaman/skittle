@@ -3,6 +3,7 @@ Functions related to PNG moved from GraphRequestHandler
 Created on Jan 17, 2013
 @author: Josiah
 '''
+import os
 import tempfile
 import copy
 
@@ -38,6 +39,8 @@ def convertToPng(state, pixels, isRaster=False):
     f = open(f.name, 'rb') #return the binary contents of the file
     data = f.read()
     StorePng(state, f)
+    f.close()
+    os.unlink(f.name)
     return data
 
 
