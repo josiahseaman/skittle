@@ -1,6 +1,6 @@
 #include <math.h>
 
-double Correlate(double apples[], double oranges[], int arraySize)
+__declspec(dllexport) double Correlate(double apples[], double oranges[], int arraySize)
 {
     double valueForN = 0.0;
     double N = arraySize;
