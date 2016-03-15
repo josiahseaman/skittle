@@ -5,13 +5,14 @@ Created on March 11, 2016
 '''
 import math
 
+from SkittleCore.Graphs.PixelLogic import twoSidedSpectrumColoring
 from SkittleGraphTransforms import reverseComplement, hasDepth, chunkUpList
 from SkittleCore.models import chunkSize
 from models import SimilarityHeatMapState
 from SkittleCore.GraphRequestHandler import registerGraph
 
 
-registerGraph('c', "Reverse Complement Map", __name__, False, False, 0.4, isGrayScale=True, helpText='''This graph is a heatmap that shows
+registerGraph('c', "Reverse Complement Map", __name__, False, False, 0.4, isGrayScale=False, helpText='''This graph is a heatmap that shows
 nearby reverse complementary sequences.  Look for short diagonal lines perpendicular to the main axis (upper left to
 bottom right).
 The structure of a heatmap is diagonally symmetrical.
@@ -64,24 +65,27 @@ def setOfObservedOligs(state, oligomerSize):
 
 
 def calculateOutputPixels(state, heatMapState=SimilarityHeatMapState()):
-    heatMapState.oligomerSize = 9
+    heatMapState.oligomerSize = 5
     state.readFastaChunks()
     width = 300
-    expectedMax = state.nucleotidesPerLine() / float(heatMapState.oligomerSize)
+    expectedMax = state.nucleotidesPerLine() / 2.0
     while len(state.seq) < (
             chunkSize * state.scale) + width * state.nucleotidesPerLine(): #all starting positions plus the maximum reach from the last line
         state.readAndAppendNextChunk(True)
     height = int(math.ceil((chunkSize * state.scale) / float(state.nucleotidesPerLine())))
 
     observedOligsPerLine = setOfObservedOligs(state, heatMapState.oligomerSize)
-    observedRevCompOligs = reverseComplementSet(observedOligsPerLine)
+    observedRevCompOligs = observedOligsPerLine#reverseComplementSet(observedOligsPerLine)
     heatMap = [[None for x in range(width)] for y in range(height)]
 
+    maxVal = 0.0
     for y in range(len(heatMap)):
         for x in range(0, len(heatMap[y])):
             if x == 0:
                 heatMap[y][x] = 0.25  # don't bother calculating self:self
             elif x + y < len(observedOligsPerLine):  # account for second to last chunk
-                heatMap[y][x] = len(observedOligsPerLine[y].intersection(observedRevCompOligs[y + x])) / expectedMax  # normalization
-
-    return heatMap
+                score = len(observedOligsPerLine[y].intersection(observedRevCompOligs[y + x]))
+                heatMap[y][x] = score #/ expectedMax  # normalization
+                maxVal = max(maxVal, score)
+    # return heatMap
+    return twoSidedSpectrumColoring(heatMap, maxVal / 2.0, minVal=0.0, maxVal=maxVal)

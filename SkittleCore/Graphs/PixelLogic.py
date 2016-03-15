@@ -148,7 +148,7 @@ def hasDepth(listLike):
 def interpolate(Atuple, Btuple, start, end, position):
     if start == end:
         return Atuple
-    progress = (position - start) / (end - start)#progress goes from 0.0 p1  to 1.0 p2
+    progress = (position - start) / float(end - start)  # progress goes from 0.0 p1  to 1.0 p2
     inverse = 1.0 - progress;
     x2 = Atuple[0] * inverse + Btuple[0] * progress;
     y2 = Atuple[1] * inverse + Btuple[1] * progress;
@@ -177,23 +177,22 @@ def spectrum(floatingPoint):
     return __colorByCustomSpectrum(spectrumPoints, floatingPoint)
 
 
-def twoSidedSpectrumColoring(floatList, midpoint=0.0, noNegatives=False):
+def twoSidedSpectrumColoring(floatList, midpoint=0.0, maxVal=1.0, minVal=-1.0):
     if hasDepth(floatList):
-        return map(lambda x: twoSidedSpectrumColoring(x, midpoint), floatList)
+        return map(lambda x: twoSidedSpectrumColoring(x, midpoint, maxVal, minVal), floatList)
     pixels = []
     purple, blue, black, red, white = (125, 0, 255), (0, 0, 255), (0, 0, 0), (255, 0, 0), (255, 255, 255)
-    maxVal = 1.0
-    highMid = 0.965 #(5*maxVal + midpoint) / 6
-    minVal = -1.0
-    lowMid = (minVal + midpoint) / 2
+    highMid = (5*maxVal + midpoint) / 6.0
+    lowMid = (minVal + midpoint) / 2.0
+    # print minVal, midpoint, maxVal
     for score in floatList:
         if score is None:
             pixels.append((0, 0, 0))
         elif score > highMid:
             pixels.append(interpolate(red, white, highMid, maxVal, score))
-        elif score <= highMid and score > midpoint:
+        elif highMid >= score > midpoint:
             pixels.append(interpolate(black, red, midpoint, highMid, score))
-        elif score <= midpoint and score > lowMid:
+        elif midpoint >= score > lowMid:
             pixels.append(interpolate(blue, black, lowMid, midpoint, score))
         elif score <= lowMid:
             pixels.append(interpolate(purple, blue, minVal, lowMid, score))
