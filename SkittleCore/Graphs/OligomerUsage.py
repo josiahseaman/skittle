@@ -39,8 +39,8 @@ def calculateOutputPixels(state, oligState=OligomerUsageState()):
 def countOligomers(state, oligState=OligomerUsageState()):
     state.readFastaChunks()
     overlap = oligState.oligomerSize - 1
-    lines = chunkUpList(state.seq, state.nucleotidesPerLine(),
-                        overlap)  # chunk sequence by display line #we can't do this simply by line because of the overhang of oligState.oligState
+    # chunk sequence by display line #we can't do this simply by line because of the overhang of oligState.oligState
+    lines = chunkUpList(state.seq, state.nucleotidesPerLine(), overlap)
     counts = countNucleotides(lines, oligState.oligomerSize)
     return counts
 
