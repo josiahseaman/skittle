@@ -134,7 +134,7 @@ function mouseDown(e) {
 }
 function mouseMove(e) {
     getMouseLocation(e)
-
+    drawGuides(e)
     annotationMouseHandling()
 
     if(activeTool == "Move") {
@@ -196,6 +196,29 @@ function mouseWheelDials(e) {
         }
     }
 }
+
+function drawGuides(e){
+    /**mx and my are already defined by getMouseLocation() */
+    isInvalidDisplay = true; //cleans up the old lines but causes it to disappear when not in use
+
+    var canvas = document.getElementById ("c");
+    var xy = canvas.leftTopScreen ();
+    var context = canvas.getContext ("2d");
+
+    context.strokeStyle = "rgb(255, 255, 200)";
+    var x = toSkixels(e.clientX - xy[0]);
+    var y = toSkixels(e.clientY - xy[1]);
+
+    context.beginPath();
+    context.moveTo(x, 1900);
+    context.lineTo(x, 0);
+
+    context.moveTo(0, y);
+    context.lineTo(1900, y);
+    context.stroke();
+}
+
+
 var annotationMouseHandling = function(isMouseDown) {
     if(activeAnnotation==0 && annotationStatus && (activeTool == "Move" || activeTool == "Select")) {
         var annotationFile,column,row

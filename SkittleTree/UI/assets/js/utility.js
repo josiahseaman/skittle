@@ -1,6 +1,24 @@
 Number.prototype.mod = function(n) {
 	return ((this%n)+n)%n;
 }
+
+Element.prototype.leftTopScreen = function () {
+	/**{#http://stackoverflow.com/a/4851569#}*/
+	var x = this.offsetLeft;
+	var y = this.offsetTop;
+
+	var element = this.offsetParent;
+
+	while (element !== null) {
+		x = parseInt (x) + parseInt (element.offsetLeft);
+		y = parseInt (y) + parseInt (element.offsetTop);
+
+		element = element.offsetParent;
+	}
+
+	return new Array (x, y);
+}
+
 if (!window.location.getParameter ) { //for non Chrome browsers. See http://chuvash.eu/2012/01/11/get-url-parameters-with-javascript/
   window.location.getParameter = function(key) {
 	function parseParams() {

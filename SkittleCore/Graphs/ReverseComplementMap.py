@@ -67,7 +67,7 @@ def calculateOutputPixels(state, heatMapState=SimilarityHeatMapState()):
     heatMapState.oligomerSize = 9
     state.readFastaChunks()
     width = 300
-    expectedMax = 8.0
+    expectedMax = state.nucleotidesPerLine() / float(heatMapState.oligomerSize)
     while len(state.seq) < (
             chunkSize * state.scale) + width * state.nucleotidesPerLine(): #all starting positions plus the maximum reach from the last line
         state.readAndAppendNextChunk(True)
