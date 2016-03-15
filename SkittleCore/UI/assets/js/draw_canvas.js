@@ -380,6 +380,17 @@ graphStatus['m'].drawPixelPost = function() {
     }
 }
 
+function drawCrosshairs(){
+    var rightEdgeOfGraph = this.skixelOffset + this.skixelWidth;
+    if(skixels_X > this.skixelOffset && skixels_X < rightEdgeOfGraph){
+        drawGuides(this)
+    }
+}
+
+graphStatus['c'].drawPixelPost = drawCrosshairs.bind(graphStatus['c']);
+graphStatus['s'].drawPixelPost = drawCrosshairs.bind(graphStatus['s']);
+
+
 var drawDiagonalGraph = function (offset, chunks, graphType) {
     graphType = graphType || 's';
     a.clearRect(0,0,350,10000)

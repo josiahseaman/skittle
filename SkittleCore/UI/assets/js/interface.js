@@ -47,7 +47,7 @@ var keyListener = function(e) {
 }
 
 // mouse stuffs
-var mx, my, edgeOffset, topOffset, startOffset; // mouse coordinates
+var mx, my, skixels_X, skixels_Y, topOffset, startOffset; // mouse coordinates
 
 function getMouseLocation(e) {
       var element = cc, offsetX = 0, offsetY = 0;
@@ -68,6 +68,8 @@ function getMouseLocation(e) {
 
       mx = e.pageX - offsetX;
       my = e.pageY - offsetY
+      skixels_X = toSkixels(mx)
+      skixels_Y = toSkixels(my)
 }
 function processTouchEvent(e) {
     if (e.touches.length <= 1) {
@@ -134,7 +136,7 @@ function mouseDown(e) {
 }
 function mouseMove(e) {
     getMouseLocation(e)
-    drawGuides(e)
+    //drawGuides(e)
     annotationMouseHandling()
 
     if(activeTool == "Move") {
@@ -197,24 +199,27 @@ function mouseWheelDials(e) {
     }
 }
 
-function drawGuides(e){
+function drawGuides(graphState){
     /**mx and my are already defined by getMouseLocation() */
     isInvalidDisplay = true; //cleans up the old lines but causes it to disappear when not in use
 
-    var canvas = document.getElementById ("c");
-    var xy = canvas.leftTopScreen ();
-    var context = canvas.getContext ("2d");
+    var context = document.getElementById ("c").getContext ("2d");
 
     context.strokeStyle = "rgb(255, 255, 200)";
-    var x = toSkixels(e.clientX - xy[0]);
-    var y = toSkixels(e.clientY - xy[1]);
-
     context.beginPath();
-    context.moveTo(x, 1900);
-    context.lineTo(x, 0);
 
-    context.moveTo(0, y);
-    context.lineTo(1900, y);
+    context.moveTo(skixels_X, 1900);
+    context.lineTo(skixels_X, 0);
+
+    context.moveTo(0, skixels_Y);
+    context.lineTo(1900, skixels_Y);
+
+    var bottom_intersection_y = skixels_X - graphState.skixelOffset
+    context.moveTo(0, bottom_intersection_y);
+    context.lineTo(1900, bottom_intersection_y);
+
+
+    context.lineWidth = .4;
     context.stroke();
 }
 
