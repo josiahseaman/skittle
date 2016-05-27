@@ -3,6 +3,7 @@ Created on Dec 21, 2012
 @author: Josiah
 '''
 import sys
+import time
 from collections import namedtuple
 from time import sleep
 from PngConversionHelper import convertToPng
@@ -35,10 +36,12 @@ def calculatePixels(state, settings=None):
 
     results = []
     print "Calling ", name
+    start = time.clock()
     if settings is not None:
         results = graphModule.calculateOutputPixels(state, settings)
     else:
         results = graphModule.calculateOutputPixels(state)
+    print "Finished", name, "in: ", time.clock() - start, " seconds"
     return results
 
 

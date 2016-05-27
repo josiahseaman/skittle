@@ -17,7 +17,7 @@ from PixelLogic import colorPalettes
 
 try:
     if sys.platform == 'win32':
-        skittleUtils = ctypes.CDLL(os.path.join(settings.BASE_DIR, 'SkittleCore', 'Graphs', 'SkittleGraphUtils.dll'))
+        skittleUtils = ctypes.CDLL(os.path.join(settings.BASE_DIR, 'SkittleCore', 'Graphs', 'libSkittleGraphUtils.dll'))
         usingCcode = True
         print("Optimized Windows C code for correlations found!")
     elif 'linux' in sys.platform:
@@ -28,6 +28,7 @@ try:
         usingCcode = False
 except:
     usingCcode = False
+# usingCcode = False  # Force python correlate
 
 
 def countDepth(listLike):
@@ -285,13 +286,11 @@ def pythonCorrelate(x, y):
         diffprod += xdiff * ydiff
         xdiff2 += xdiff * xdiff
         ydiff2 += ydiff * ydiff
-    backup = math.sqrt(1 - (1 / n)) #if we have 0 instances of a color it will be / 0  div0
-    if (xdiff2 == 0.0):
-        xdiff2 = backup
-    if (ydiff2 == 0.0):
-        ydiff2 = backup
-    base = math.sqrt(xdiff2 * ydiff2)
-    return diffprod / base
+
+    if xdiff2 * ydiff2 == 0.0:
+        return 0.0
+
+    return diffprod / math.sqrt(xdiff2 * ydiff2)
 
 
 '''Pearson correlation coefficient between signals x and y.'''

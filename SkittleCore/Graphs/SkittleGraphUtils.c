@@ -1,6 +1,6 @@
 #include <math.h>
 
-double Correlate(double apples[], double oranges[], int arraySize)
+__declspec(dllexport) double Correlate(double apples[], double oranges[], int arraySize)
 {
     double valueForN = 0.0;
     double N = arraySize;
@@ -42,6 +42,10 @@ double Correlate(double apples[], double oranges[], int arraySize)
     numerator = AB   - Bbar   * Asum   - Abar * Bsum     + Abar   * Bbar   * N;
     denom_1 = sqrt(ASquared   - ((Asum   * Asum)  /N));
     denom_2 = sqrt(BSquared   - ((Bsum   * Bsum)  /N));
+
+    if (denom_1 * denom_2 == 0){
+        return 0.0;
+    }
 
     answer = numerator / (denom_1 * denom_2);
 

@@ -112,7 +112,7 @@ Static files and assets are NOT served off of this. They are served off of the A
 Compile C Functions
 ===================
 1) Create your .c file
-2) Convert it to an object file `gcc -c -fPIC yourFile.c -o yourFile.o`
+2) Convert it to an object file `gcc -O3 -c -fPIC yourFile.c -o yourFile.o`
 3) Create Shared Library from object file `gcc -shared -Wl,-soname,libYourLib.so.1 -o libYourLib.so.1.0.1 yourFile.o`
 4) import ctypes
 5) yourLib = ctypes.CDLL('/path/to/libYourLib.so.1.0.1')
@@ -121,7 +121,7 @@ Compile C Functions
 On Windows
 1) Open Visual Studio x64 Win64 Command Prompt
 2) cd into SkittleCore\Graphs
-3) Run `cl /LD SkittleGraphUtils.c DRIVE:\path\to\base_python27\libs\python27.lib`
+3) Run `cl /Ox /LD SkittleGraphUtils.c /FelibSkittleGraphUtils`  # NOTE: Yes, there is no space after /fe and the file name.
 
 If the function returns a string do this) returnedString = ctypes.c_char_p(yourLib.MyFunction()); print returnedString.value
 NOTE: Python C Data Types: http://docs.python.org/2/library/ctypes.html#fundamental-data-types
