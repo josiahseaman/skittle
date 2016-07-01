@@ -133,10 +133,11 @@ def countListToColorSpace(countList, colorPalette, scale):
     '''basePercentage is the percentage share considered not statistically significant which approaches 20% as scale approaches infinity.
     This equation was determined by eyeing different graphs on a graphing calculator and looking for one with the desired properties.'''
     expectedValue = basePercentage / 100.0 #this should work out to be the number of hits that are expected given the scale
-    oldMax = max(countList.values())
+    noDivZero = 0.000000001
+    oldMax = max(noDivZero, *countList.values())
     for key in countList:
         countList[key] = max(0, countList[key] - expectedValue)
-    newMax = max(countList.values())
+    newMax = max(noDivZero, *countList.values())
     for character, Magnitude in countList.items():#per entry in dictionary
         multiplier = Magnitude / (1.0 - expectedValue)
         try:
@@ -146,8 +147,9 @@ def countListToColorSpace(countList, colorPalette, scale):
         colorContributions.append(map(lambda c: c * multiplier, currentColor))  # scales color amount by magnitude for each channel
     resultingColor = map(sum, zip(*colorContributions))
 
-    for i in range(len(resultingColor)):
-        resultingColor[i] = resultingColor[i] * oldMax / float(newMax)
+    if newMax != oldMax:  # only normalize if something changes and we're not bottoming out on 0 values
+        for i in range(len(resultingColor)):
+            resultingColor[i] = resultingColor[i] * oldMax / float(newMax)
     return tuple(resultingColor)
 
 
