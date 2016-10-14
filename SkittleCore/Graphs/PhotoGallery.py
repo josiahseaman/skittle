@@ -90,7 +90,7 @@ def createSnippetEntries(repeatMap, state):
 
 
 def snippetEntriesToPixels(maxWidth, snippets, state):
-    pixels = []
+    pixels = [] if snippets else [None]  # defaults to single blank pixel
     for snippet in snippets:
         padForHorizontalLineSynchronization(state.nucleotidesPerLine(), maxWidth, pixels, snippet.start)
         pixels += arrangePixels(state, snippet, maxWidth)
@@ -106,7 +106,7 @@ def calculateOutputPixels(state):
     snippets = createSnippetEntries(repeatMap, state)
 
     widths = map(lambda x: x.width, snippets)
-    maxWidth = max(widths)
+    maxWidth = 1 if len(widths) == 0 else max(widths)
     print "Max width is", maxWidth, "over", len(snippets), "snippets"
 
     pixels = snippetEntriesToPixels(maxWidth, snippets, state)
