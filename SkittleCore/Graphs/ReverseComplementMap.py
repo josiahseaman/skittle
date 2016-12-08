@@ -11,15 +11,13 @@ from models import SimilarityHeatMapState
 from SkittleCore.GraphRequestHandler import registerGraph
 
 
-registerGraph('c', "Reverse Complement Map", __name__, False, False, 0.4, isGrayScale=True, helpText='''This graph is a heatmap that shows
-nearby reverse complementary sequences.  Look for short diagonal lines perpendicular to the main axis (upper left to
-bottom right).
+registerGraph('c', "Reverse Complement Map", __name__, False, False, 0.4, stretchy=True, isGrayScale=True,
+              helpText='''This graph is a heatmap that shows nearby reverse complementary sequences.
+Look for short diagonal lines perpendicular to the main axis (upper left to bottom right).
 The structure of a heatmap is diagonally symmetrical.
-The diagonal red line is self compared with self.
-Each pixel represents a comparison between two other lines.
-To see which lines are involved in a comparison trace one line straight down to the diagonal and another line to the left.
-The Similarity Heatmap is useful to visualize the
-blocks of similar code found in the genome, such as large tandem repeats, and isochores at all scales. ''')
+The diagonal grey line is self compared with self.
+Each pixel represents a comparison between two other lines in the Nucleotide Display.
+The crosshairs show you which lines are involved in a comparison.''')
 
 
 def vectorizeCounts(oligCounts, orderedWords):

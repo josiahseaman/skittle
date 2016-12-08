@@ -235,7 +235,7 @@
 	    bb.width = 1024
 	    b = bb.getContext("2d");
 	    var aa = document.createElement('canvas');
-	    aa.height = 1024
+	    aa.height = 32768-1  // #156: Fix for diagonal graphs being cut off: use all 15 bit addressing
 	    aa.width = 1024
 	    a = aa.getContext("2d");
 

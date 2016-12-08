@@ -214,9 +214,13 @@ function drawGuides(graphState){
     context.moveTo(0, skixels_Y);
     context.lineTo(1900, skixels_Y);
 
-    var bottom_intersection_y = skixels_X - graphState.skixelOffset
+    var bottom_intersection_y = skixels_X - graphState.skixelOffset;
     context.moveTo(0, bottom_intersection_y);
     context.lineTo(1900, bottom_intersection_y);
+
+    var left_intersection_x = skixels_Y + graphState.skixelOffset;
+    context.moveTo(left_intersection_x, 0);
+    context.lineTo(left_intersection_x, 1900);
 
 
     context.lineWidth = .4;

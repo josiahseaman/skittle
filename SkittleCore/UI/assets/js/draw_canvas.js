@@ -396,21 +396,21 @@ var drawDiagonalGraph = function (offset, chunks, graphType) {
     a.clearRect(0,0,350,10000)
     var displayWidth = 300
     var stretchFactor = expRound(state.width(),graphStatus[graphType].widthTolerance)/state.width()
-    var lineHeight = Math.round(65536/state.width()) //Math.round((Math.round(state.width()/10)*10)/state.width()*Math.ceil(65536/state.width()));
+    var lineHeight = Math.ceil(65536/state.width()) // Fixed off by one causing doubling at the end
     var displayWidth = Math.round(stretchFactor*displayWidth)
     for (var i=0;i<chunks;i++) {
         var imageObj = imageRequestor(graphType,i)
         if(!imageObj.complete || imageObj.naturalWidth === 0) imageObj = imageUnrendered;
         a.drawImage(imageObj,0,lineHeight*i,displayWidth,lineHeight) // render data on hidden canvas
         // a.beginPath();
-        // a.moveTo(0,lineHeight*i+0.5)
-        // a.lineTo(300,lineHeight*i+0.5)
         // a.strokeStyle = "#0f0"
+        // a.moveTo(0,1022)
+        // a.lineTo(300,1022)
         // a.stroke();
     }
     var imageData = a.getImageData(0, 0, displayWidth, chunks*lineHeight);
     var data = imageData.data;
-    var newImageData = b.createImageData(displayWidth,displayWidth) //create new image data with desired dimentions (width)
+    var newImageData = b.createImageData(displayWidth,displayWidth) //create new image data with desired dimensions (width)
     var newData = newImageData.data;
 
     var lineLength = displayWidth*4;
@@ -437,6 +437,7 @@ var drawDiagonalGraph = function (offset, chunks, graphType) {
     }
 
     b.putImageData(newImageData, offset, 0);
+    // b.putImageData(imageData, offset, -linesFromLastChunk, 0, 0, displayWidth, lineHeight*chunks);
         // var vOffset = -Math.round(((state.start()-8*state.width())%65536)/(state.bpPerLine()));
         // b.putImageData(imageData, offset+320, vOffset);
     return displayWidth

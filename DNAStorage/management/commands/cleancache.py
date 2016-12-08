@@ -31,7 +31,7 @@ class Command(BaseCommand):
                                        scale=imagefile.Scale,
                                        width=imagefile.CharactersPerLine)
             if not os.path.isfile(GetPngFilePath(fake_request)):
-                self.stdout.write("Deleting %s %s %s %s!\n" % (fake_request.specimen, fake_request.chromosome, fake_request.graph, fake_request.start))
+                self.stdout.write("Deleting %s %s %s %s!\n" % (fake_request.specimen, fake_request.chromosome, fake_request.requestedGraph, fake_request.start))
                 imagefile.delete()
 
         self.stdout.write("Done cleaning ImageFiles!\n")
