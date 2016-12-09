@@ -1,6 +1,7 @@
 SkittleTree/production_settings.py
 conf/
 logs/
+ddvresults/
 SkittleToo.pro.user
 *.user
 *.autosave

@@ -123,11 +123,16 @@ function mouseDown(e) {
     else if (activeTool == "Select") {
         var x = Math.max(0,Math.min(state.width(),(toSkixels(mx)-graphStatus["n"].skixelOffset+1)))
 
-        var selectionStart = state.start() + (toSkixels(my-25))*state.bpPerLine() + x*state.scale()
+        var selectionStart = state.start() + (toSkixels(my-25))*state.bpPerLine() + x*state.scale();
         var selectionEnd = selectionStart + state.bpPerLine() - 1;
-        getRawSequence(selectionStart,selectionEnd,function(data){
-            console.log(selectionStart, selectionEnd, data)
-        });  //addHighlighterSearch
+        if(!isNaN(selectionEnd) && !isNaN(selectionStart)) {// default for NaN
+            getRawSequence(selectionStart, selectionEnd, function (data) {
+                console.log(selectionStart, selectionEnd, data)
+            });
+        }else{
+            console.error("Unable to calculate click coordinates", state.start(), state.bpPerLine(), state.scale())
+        }
+                //addHighlighterSearch
         // console.log('selection start:' + selectionStart + " selection end:" + selectionEnd)
         //showGraph('h');
         //if (graphStatus['h'].visible) isInvalidDisplay = true
