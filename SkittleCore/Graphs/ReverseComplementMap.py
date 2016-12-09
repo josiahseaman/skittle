@@ -5,13 +5,13 @@ Created on March 11, 2016
 '''
 import math
 
-from SkittleGraphTransforms import reverseComplement, hasDepth, chunkUpList
+from SkittleGraphTransforms import reverseComplement, hasDepth, chunkUpList, normalize
 from SkittleCore.models import chunkSize
 from models import SimilarityHeatMapState
 from SkittleCore.GraphRequestHandler import registerGraph
 
 
-registerGraph('c', "Reverse Complement Map", __name__, False, False, 0.4, stretchy=True, isGrayScale=True,
+registerGraph('c', "Reverse Complement Map", __name__, False, False, 0.1, stretchy=True, isGrayScale=True,
               helpText='''This graph is a heatmap that shows nearby reverse complementary sequences.
 Look for short diagonal lines perpendicular to the main axis (upper left to bottom right).
 The structure of a heatmap is diagonally symmetrical.
@@ -80,6 +80,15 @@ def calculateOutputPixels(state, heatMapState=SimilarityHeatMapState()):
             if x == 0:
                 heatMap[y][x] = 0.25  # don't bother calculating self:self
             elif x + y < len(observedOligsPerLine):  # account for second to last chunk
-                heatMap[y][x] = len(observedOligsPerLine[y].intersection(observedRevCompOligs[y + x])) / expectedMax  # normalization
+                nHits = len(observedOligsPerLine[y].intersection(observedRevCompOligs[y + x]))
+                heatMap[y][x] = nHits
+                expectedMax = max(expectedMax, nHits)
+
+    #Normalizing grey scale based on log of the highest result
+    expectedMax = math.log(expectedMax)
+    for y, row in enumerate(heatMap):
+        for x, point in enumerate(row):
+            if x != 0 and point > 0:
+                heatMap[y][x] = 0.25 + normalize(math.log(point+1), 0.6931, expectedMax) * 0.75
 
     return heatMap
