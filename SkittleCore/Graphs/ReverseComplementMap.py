@@ -7,7 +7,7 @@ import math
 
 from SkittleGraphTransforms import reverseComplement, hasDepth, chunkUpList, normalize
 from SkittleCore.models import chunkSize
-from models import SimilarityHeatMapState
+from models import ReverseComplementState
 from SkittleCore.GraphRequestHandler import registerGraph
 
 
@@ -39,6 +39,14 @@ def reverseComplementSet(observedOligsPerLine):
     return lines
 
 
+def observedOligs(seq, oligomerSize):
+    oligs = set()
+    for endIndex in range(oligomerSize, len(seq) + 1, 1):
+        window = seq[endIndex - oligomerSize: endIndex]
+        oligs.add(window)
+    return oligs
+
+
 def setOfObservedOligs(state, oligomerSize):
     # TODO: refactor and remove duplication from OligomerUsage.countOligomers()
     """
@@ -52,26 +60,34 @@ def setOfObservedOligs(state, oligomerSize):
 
     oligsByLine = []
     for seq in lines:
-        oligs = set()
-        for endIndex in range(oligomerSize, len(seq) + 1, 1):
-            window = seq[endIndex - oligomerSize: endIndex]
-            oligs.add(window)
-        oligsByLine.append(oligs)
+        oligsByLine.append(observedOligs(seq, oligomerSize))
 
     return oligsByLine
 
 
-def calculateOutputPixels(state, heatMapState=SimilarityHeatMapState()):
-    heatMapState.oligomerSize = 9
+def matches_on_one_line(state, secondStart, oligomerSize, stateDetail=ReverseComplementState()):
+    stateDetail.oligomerSize = oligomerSize
+    state.readFastaChunks()  # TODO: something more efficient for one line
+    sample_size = state.nucleotidesPerLine() + stateDetail.oligomerSize - 1
+    secondStart -= state.chunkStart()
+    seq_A = state.seq[state.relativeStart(): state.relativeStart() + sample_size]
+    oligs_A = observedOligs(seq_A, stateDetail.oligomerSize)
+    seq_B = state.seq[secondStart: secondStart + sample_size]
+    oligs_B = reverseComplementSet([observedOligs(seq_B, stateDetail.oligomerSize)])[0]
+    matches = oligs_A.intersection(oligs_B)
+    return list(matches)
+
+
+def calculateOutputPixels(state, stateDetail=ReverseComplementState()):
     state.readFastaChunks()
-    width = 300
-    expectedMax = state.nucleotidesPerLine() / float(heatMapState.oligomerSize)
+    width = 300  # number of line downstream that will be compared.  The last line only shows up a the corner of the screen
+    expectedMax = 1
     while len(state.seq) < (
             chunkSize * state.scale) + width * state.nucleotidesPerLine(): #all starting positions plus the maximum reach from the last line
         state.readAndAppendNextChunk(True)
     height = int(math.ceil((chunkSize * state.scale) / float(state.nucleotidesPerLine())))
 
-    observedOligsPerLine = setOfObservedOligs(state, heatMapState.oligomerSize)
+    observedOligsPerLine = setOfObservedOligs(state, stateDetail.oligomerSize)
     observedRevCompOligs = reverseComplementSet(observedOligsPerLine)
     heatMap = [[None for x in range(width)] for y in range(height)]
 

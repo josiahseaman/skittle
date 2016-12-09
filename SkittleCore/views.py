@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.views.decorators.cache import cache_control
 
 from SkittleCore import GraphRequestHandler
+from SkittleCore.Graphs import ReverseComplementMap
 from SkittleCore.models import RequestPacket
 from SkittleCore.Graphs.models import *
 from DNAStorage.StorageRequestHandler import *
@@ -25,11 +26,11 @@ def browse(request, genus="homo", species="sapiens", specimen="hg19", chromosome
     fileLength = GetChromosomeLength(specimen,chromosome) 
     chromosomeList = GetRelatedChromosomes(specimen, request.user)
     context = {'availableGraphs':GraphRequestHandler.availableGraphs, 'availableAnnotations':GetAnnotationsList(specimen), "annotationStatus":json.dumps(GetAnnotationsList(specimen)), 'specimen':GetSpecimen(specimen),'chromosome':chromosome,'chromosomeList':chromosomeList ,'colorPalette':colorPalette,'width':width, "scale":scale,"start":start,"zoom":zoom,"graphs":graphs,"fileLength":fileLength,}
-    return render(request, 'browse.html',context)
+    return render(request, 'browse.html', context)
 
 @cache_control(must_revalidate=False, max_age=3600)
 def graph(request, genus="homo", species="sapiens", specimen="hg18", chromosome="chrY-sample"):
-    if IsUserForbidden(specimen, chromosome, request.user): #also checks existance
+    if IsUserForbidden(specimen, chromosome, request.user): #also checks existence
         return HttpResponse(status=403)
 
     state = createRequestPacket(request, specimen, chromosome)
@@ -51,6 +52,17 @@ def annotation(request, genus="homo", species="sapiens", specimen="hg18", chromo
     else:
         j = json.dumps(GetAnnotationsList(specimen))
     return HttpResponse(j, content_type="application/json")
+
+
+def rev_comp_matches(request, specimen, chromosome):
+    if IsUserForbidden(specimen, chromosome, request.user):  # also checks existence
+        return HttpResponse(status=403)
+
+    state = createRequestPacket(request, specimen, chromosome)
+    secondStart = int(request.GET.get('secondStart', 1))
+    oligomerSize = int(request.GET.get('oligomerSize', 9))
+    match_list = ReverseComplementMap.matches_on_one_line(state, secondStart, oligomerSize)
+    return HttpResponse(json.dumps(match_list), content_type="application/json")
 
 
 def state(request):

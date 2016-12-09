@@ -16,11 +16,10 @@ import DNAStorage.StorageRequestHandler as StorageRequestHandler
 
 chunkSize = settings.CHUNK_SIZE
 
-'''
-This is the single global state packet that defines a view state in Skittle.  
-This state packet is equivalent to an URL or a request from the Skittle website.
-'''
 class basePacket(models.Model):
+    """ This is the single global state packet that defines a view state in Skittle.
+    This state packet is equivalent to an URL or a request from the Skittle website.
+    """
     specimen = models.CharField(max_length=200, default='hg18')
     chromosome = models.CharField(max_length=200, default='chrY-sample')
     '''It is debatable whether or not the sequence should be stored in the state
@@ -80,17 +79,27 @@ class RequestPacket(basePacket):
     def getFastaFilePath(self):
         return StorageRequestHandler.GetFastaFilePath(self.specimen, self.chromosome, self.start)
 
-    '''Derived value height may need to be further reduced for functions that must scan ahead.'''
 
     def height(self):
+        """Derived value height may need to be further reduced for functions that must scan ahead."""
         return self.length / self.nucleotidesPerLine()
 
     def nucleotidesPerLine(self):
         return self.width * self.scale
 
-    '''This is a multifunctional 'make the file bigger' read logic for sequential chunks'''
+    def chunkStart(self):
+        if (self.start - 1) % chunkSize == 0:
+            return
+        if (self.start) % chunkSize == 0:
+            self.start += 1
+            return
+        return int(self.start / chunkSize) * chunkSize + 1
+
+    def relativeStart(self):
+        return self.start - self.chunkStart()
 
     def readAndAppendNextChunk(self, addPadding=False):
+        """This is a multifunctional 'make the file bigger' read logic for sequential chunks"""
         assert StorageRequestHandler.GetFastaFilePath(self.specimen, self.chromosome,
                                                       1) is not None, "Specimen and Chromosome is not in the database"
         startBackup = self.start

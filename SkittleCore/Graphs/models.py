@@ -74,6 +74,10 @@ class SimilarityHeatMapState(OligomerUsageState):
     useRowColumnCorrelation = False
 
 
+class ReverseComplementState(SimilarityHeatMapState):
+    oligomerSize = 9
+
+
 class ThreeMerDetectorState(ParentState):
     barWidth = 40    #used for display size calculations
     samples = 20

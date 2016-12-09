@@ -45,26 +45,17 @@ def calculatePixels(state, settings=None):
     return results
 
 
-def roundStartPosition(state):
-    if (state.start - 1) % chunkSize == 0:
-        return
-    if (state.start) % chunkSize == 0:
-        state.start += 1
-        return
-    state.start = int(state.start / chunkSize) * chunkSize + 1
-
-
 '''The main entry point for the whole Python logic SkittleCore module and Graphs.'''
 
 
 def handleRequest(state, settings=None):
     assert isinstance(state, RequestPacket)
-    roundStartPosition(state)
-    #Check to see if PNG exists
+    state.start = state.chunkStart()
+    # Check to see if PNG exists
     png = None
     if state.requestedGraph not in ['h', ]:
         png = tryGetGraphPNG(state)
-        #If it doesn't: grab pixel calculations
+        # If it doesn't: grab pixel calculations
     if png is None and not isBeingProcessed(state):#TODO: handle same state different "settings" being separate computation
         #TODO: Handle beginProcess and finishProcess possible return of False
         beginProcess(state)
