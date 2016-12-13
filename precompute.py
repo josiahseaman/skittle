@@ -83,7 +83,7 @@ def startThreemer(specimen, nProcessors):
 
 
 def startRepeatMap(specimen, nProcessors):
-#    ProcessorRequest = namedtuple('ProcessorRequest', ['specimen', 'nProcessors', 'PID'])
+    # ProcessorRequest = namedtuple('ProcessorRequest', ['specimen', 'nProcessors', 'PID'])
     requests = [(specimen, nProcessors, PID) for PID in range(nProcessors)]
     processors = Pool(nProcessors)
     processors.map(precomputeRepeatMap, requests)
@@ -114,10 +114,10 @@ def precomputeAnyGraph(request):
             print "Done computing ", state.specimen, state.chromosome, state.start
 
 
-def allGraphs(specimen, nProcessors):
+def allGraphs(specimen, nProcessors, graphSymbols=('n', 'm', 'r', 'o', 'b', 'h', 't'), scales=(1,)):
     processors = Pool(nProcessors)
-    for graphSymbol in ['n', 'm', 'r', 'o', 'b', 'h', 't']:
-        for scale in [1, 16]:#scales we'd like to test
+    for graphSymbol in graphSymbols:
+        for scale in scales:  # scales we'd like to test
             requests = [(nProcessors, PID, specimen, graphSymbol, scale) for PID in range(nProcessors)]
             processors.map(benchmarkHere, requests)
 
@@ -126,7 +126,7 @@ if __name__ == "__main__":
     if len(sys.argv) >= 3:
         nProcessors = int(sys.argv[2])
     else:
-        nProcessors = 3
+        nProcessors = 6
     specimen = sys.argv[1]
     print "Specimen: ", specimen, "Processors: ", str(nProcessors)
 

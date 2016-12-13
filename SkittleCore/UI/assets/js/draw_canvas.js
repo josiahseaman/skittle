@@ -43,7 +43,7 @@ var init = function() {
     },50)
 }
 
-var imageRequestor = function(graph,chunkOffset) {
+var imageRequestor = function(graph, chunkOffset) {
     if (chunkOffset > fileLength) return false;
 
     imageObj[graph] = imageObj[graph] || []

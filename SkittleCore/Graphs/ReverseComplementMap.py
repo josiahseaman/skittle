@@ -81,30 +81,29 @@ def matches_on_one_line(state, secondStart, oligomerSize, stateDetail=ReverseCom
 def calculateOutputPixels(state, stateDetail=ReverseComplementState()):
     state.readFastaChunks()
     width = 300  # number of line downstream that will be compared.  The last line only shows up a the corner of the screen
-    expectedMax = 1
-    while len(state.seq) < (
-            chunkSize * state.scale) + width * state.nucleotidesPerLine(): #all starting positions plus the maximum reach from the last line
+    observedMax = 1 # state.nucleotidesPerLine() / float(stateDetail.oligomerSize)
+    while len(state.seq) < (  # all starting positions plus the maximum reach from the last line
+            chunkSize * state.scale) + width * state.nucleotidesPerLine():
         state.readAndAppendNextChunk(True)
     height = int(math.ceil((chunkSize * state.scale) / float(state.nucleotidesPerLine())))
 
     observedOligsPerLine = setOfObservedOligs(state, stateDetail.oligomerSize)
     observedRevCompOligs = reverseComplementSet(observedOligsPerLine)
-    heatMap = [[None for x in range(width)] for y in range(height)]
+    heatMap = [[0.0 for x in range(width)] for y in range(height)]
 
     for y in range(len(heatMap)):
         for x in range(0, len(heatMap[y])):
             if x == 0:
                 heatMap[y][x] = 0.25  # don't bother calculating self:self
             elif x + y < len(observedOligsPerLine):  # account for second to last chunk
-                nHits = len(observedOligsPerLine[y].intersection(observedRevCompOligs[y + x]))
-                heatMap[y][x] = nHits
-                expectedMax = max(expectedMax, nHits)
+                matches = len(observedOligsPerLine[y].intersection(observedRevCompOligs[y + x]))
+                heatMap[y][x] = matches #/ observedMax
+                observedMax = max(observedMax, matches)
 
-    #Normalizing grey scale based on log of the highest result
-    expectedMax = math.log(expectedMax)
-    for y, row in enumerate(heatMap):
-        for x, point in enumerate(row):
-            if x != 0 and point > 0:
-                heatMap[y][x] = 0.25 + normalize(math.log(point+1), 0.6931, expectedMax) * 0.75
+    observedMax = math.log(observedMax)
+    for y in range(len(heatMap)):
+        for x in range(0, len(heatMap[y])):
+            if x != 0 and heatMap[y][x]:
+                heatMap[y][x] = math.log(heatMap[y][x]) / observedMax  # normalization
 
     return heatMap

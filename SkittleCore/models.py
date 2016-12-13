@@ -88,11 +88,6 @@ class RequestPacket(basePacket):
         return self.width * self.scale
 
     def chunkStart(self):
-        if (self.start - 1) % chunkSize == 0:
-            return
-        if (self.start) % chunkSize == 0:
-            self.start += 1
-            return
         return int(self.start / chunkSize) * chunkSize + 1
 
     def relativeStart(self):
