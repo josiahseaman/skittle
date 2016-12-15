@@ -5,13 +5,15 @@ Created on March 11, 2016
 '''
 import math
 
+from django.conf import settings
+
 from SkittleGraphTransforms import reverseComplement, hasDepth, chunkUpList, normalize
 from SkittleCore.models import chunkSize
 from models import ReverseComplementState
 from SkittleCore.GraphRequestHandler import registerGraph
 
 
-registerGraph('c', "Reverse Complement Map", __name__, False, False, 0.1, stretchy=True, isGrayScale=True,
+registerGraph('c', "Reverse Complement Map", __name__, False, False, 0.0, stretchy=False, isGrayScale=True,
               helpText='''This graph is a heatmap that shows nearby reverse complementary sequences.
 Look for short diagonal lines perpendicular to the main axis (upper left to bottom right).
 The structure of a heatmap is diagonally symmetrical.
@@ -53,7 +55,6 @@ def setOfObservedOligs(state, oligomerSize):
     :return: list of set of strings
     :rtype: list
     """
-    state.readFastaChunks()
     overlap = oligomerSize - 1
     # chunk sequence by display line #we can't do this simply by line because of the overhang of oligState.oligState
     lines = chunkUpList(state.seq, state.nucleotidesPerLine(), overlap)
@@ -81,7 +82,11 @@ def matches_on_one_line(state, secondStart, oligomerSize, stateDetail=ReverseCom
 def calculateOutputPixels(state, stateDetail=ReverseComplementState()):
     state.readFastaChunks()
     width = 300  # number of line downstream that will be compared.  The last line only shows up a the corner of the screen
-    observedMax = 1 # state.nucleotidesPerLine() / float(stateDetail.oligomerSize)
+    maxLength = 6500 * 2  # debugging variable
+    observedMax = max(state.nucleotidesPerLine() / 6.0, 5.0)  # defined by observation of histograms
+    # if settings.DEBUG:
+    #     state.seq = state.seq[:maxLength]
+    # else:
     while len(state.seq) < (  # all starting positions plus the maximum reach from the last line
             chunkSize * state.scale) + width * state.nucleotidesPerLine():
         state.readAndAppendNextChunk(True)
@@ -90,20 +95,27 @@ def calculateOutputPixels(state, stateDetail=ReverseComplementState()):
     observedOligsPerLine = setOfObservedOligs(state, stateDetail.oligomerSize)
     observedRevCompOligs = reverseComplementSet(observedOligsPerLine)
     heatMap = [[0.0 for x in range(width)] for y in range(height)]
+    # histogram = [0 for x in range(state.nucleotidesPerLine())]
 
-    for y in range(len(heatMap)):
-        for x in range(0, len(heatMap[y])):
+    for y in range(min(len(observedOligsPerLine), len(heatMap))):
+        for x in range(0, min(len(observedOligsPerLine) - y - 1, width)):
             if x == 0:
                 heatMap[y][x] = 0.25  # don't bother calculating self:self
             elif x + y < len(observedOligsPerLine):  # account for second to last chunk
                 matches = len(observedOligsPerLine[y].intersection(observedRevCompOligs[y + x]))
-                heatMap[y][x] = matches #/ observedMax
-                observedMax = max(observedMax, matches)
+                if matches:
+                    heatMap[y][x] = matches / observedMax
+                # observedMax = max(observedMax, matches)
+                # histogram[matches] += 1
 
-    observedMax = math.log(observedMax)
-    for y in range(len(heatMap)):
-        for x in range(0, len(heatMap[y])):
-            if x != 0 and heatMap[y][x]:
-                heatMap[y][x] = math.log(heatMap[y][x]) / observedMax  # normalization
+    # observedMax = observedMax / 2.0  # math.log(observedMax)
+    # for y in range(len(heatMap)):
+    #     for x in range(0, len(heatMap[y])):
+    #         if x != 0 and heatMap[y][x]:
+    #             heatMap[y][x] = heatMap[y][x] / observedMax  # normalization  math.log(
+
+    # with open('_'.join(['hist_olig9', str(state.chunkStart()), str(state.nucleotidesPerLine())]) + '.csv', 'w') as his_file:
+    #     for i, count in enumerate(histogram):
+    #         his_file.write('%i,%i\n' % (i, count))
 
     return heatMap

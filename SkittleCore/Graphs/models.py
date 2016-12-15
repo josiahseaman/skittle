@@ -1,6 +1,5 @@
 import math
 
-# Create your models here.
 
 class ParentState():
     pass
