@@ -85,7 +85,7 @@ function processTouchEvent(e) {
 
 function mouseDown(e) {
     getMouseLocation(e);
-
+    tagMapMouseHandling(e)
     clearSelectedAnnotation();
     annotationMouseHandling("Mouse Down");
 
@@ -213,23 +213,38 @@ function drawGuides(graphState){
     context.strokeStyle = "rgb(255, 255, 200)";
     context.beginPath();
 
-    context.moveTo(skixels_X, 1900);
-    context.lineTo(skixels_X, 0);
+    context.moveTo(skixels_X-.5, 1900);
+    context.lineTo(skixels_X-.5, 0);
 
-    context.moveTo(0, skixels_Y);
-    context.lineTo(1900, skixels_Y);
+    context.moveTo(0, skixels_Y-.5);
+    context.lineTo(1900, skixels_Y-.5);
 
-    var bottom_intersection_y = skixels_X - graphState.skixelOffset;
+    var bottom_intersection_y = skixels_X - graphState.skixelOffset-.5;
     context.moveTo(0, bottom_intersection_y);
     context.lineTo(1900, bottom_intersection_y);
 
-    var left_intersection_x = skixels_Y + graphState.skixelOffset;
+    var left_intersection_x = skixels_Y + graphState.skixelOffset-.5;
     context.moveTo(left_intersection_x, 0);
     context.lineTo(left_intersection_x, 1900);
 
 
-    context.lineWidth = .4;
+    context.lineWidth = .1;
     context.stroke();
+}
+
+function tagMapMouseHandling(event){
+    var self = graphStatus['c'];
+    var relative_X = skixels_X - self.skixelOffset - 9;
+    var relative_Y = skixels_Y - 9;
+    if(relative_X >= 0 && relative_X < self.skixelWidth){ // && activeTool == "Select"){
+        var clickStart = state.start() + (relative_Y * state.bpPerLine());
+        var second = clickStart + (relative_X - relative_Y)* state.bpPerLine(); // if in the lower half, this term is negative
+        $.getJSON('rev_comp_matches.json',
+            {start:clickStart, secondStart: second, scale: 1, width: state.bpPerLine(), oligomerSize:9, graph:'c'},
+            function (data) {
+                console.log(data);
+        });
+    }
 }
 
 

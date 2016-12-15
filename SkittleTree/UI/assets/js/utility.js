@@ -51,7 +51,7 @@ var round = function(val,precision,direction) {
 	return Math.round(val/precision)*precision;
 }
 var toSkixels = function(pixels) {
-    return Math.round(pixels/(3*zoom));
+    return Math.round((pixels / ( 3 * zoom)) + 0.5);
 }
 var toPixels = function(skixels) {
     return Math.round(skixels*3*zoom);

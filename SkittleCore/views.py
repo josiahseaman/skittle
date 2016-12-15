@@ -55,7 +55,7 @@ def annotation(request, genus="homo", species="sapiens", specimen="hg18", chromo
     return HttpResponse(j, content_type="application/json")
 
 
-def rev_comp_matches(request, specimen, chromosome):
+def rev_comp_matches(request, genus, species, specimen, chromosome):
     if IsUserForbidden(specimen, chromosome, request.user):  # also checks existence
         return HttpResponse(status=403)
 
