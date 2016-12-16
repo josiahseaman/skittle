@@ -5,6 +5,7 @@ Created on March 2, 2013
 from SkittleCore.GraphRequestHandler import registerGraph
 from SkittleCore.models import RequestPacket
 from SkittleGraphTransforms import oldRepeatMap
+from SkittleCore.PngConversionHelper import multiplyGreyscale
 from models import ThreeMerDetectorState
 
 
@@ -19,6 +20,7 @@ def calculateOutputPixels(state, threeMerState=ThreeMerDetectorState()):
 
     state.readFastaChunks()#read in next chunk
     scores = oldRepeatMap(state, threeMerState)
+    scores = multiplyGreyscale(scores)
 
     return scores
         

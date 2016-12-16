@@ -12,7 +12,7 @@ from SkittleCore.models import RequestPacket, chunkSize
 from SkittleCore.GraphRequestHandler import registerGraph, handleRequest
 from DNAStorage.StorageRequestHandler import GetPngFilePath, GetFastaFilePath
 from SkittleCore.png import Reader
-
+from SkittleCore.PngConversionHelper import multiplyGreyscale
 
 registerGraph('m', "Repeat Map", __name__, False, False, 0.4, isGrayScale=True, helpText='''Repeat Map is used for identifying tandem repeats without
  the need for continually adjusting the width in Nucleotide Display.  
@@ -164,7 +164,7 @@ def logRepeatMap(state, repeatMapState):
                 freq[h].append(.66666 * max(0.0, (.5 + resultSum)))
 
         start += state.nucleotidesPerLine()
-    return freq
+    return multiplyGreyscale(freq)
 
 
 def checkForCachedMap(state):
@@ -223,6 +223,7 @@ def squishStoredMaps(state, repeatMapState=RepeatMapState()):
         sample = zip(*fullData[startLine:stopLine])
         finalLine = [average(x) for x in sample]
         newData.append(finalLine)
+    multiplyGreyscale(newData)
     return newData
 
 
@@ -233,10 +234,6 @@ def calculateOutputPixels(state, repeatMapState=RepeatMapState()):
     if state.nucleotidesPerLine() != skixelsPerSample:
         return squishStoredMaps(state, repeatMapState)
 
-    state.readFastaChunks()#    state.seq = generateRepeatDebugSequence(53, 400, 1)
+    state.readFastaChunks()  # state.seq = generateRepeatDebugSequence(53, 400, 1)
     scores = logRepeatMap(state, repeatMapState)
     return scores
-    
-    
-    
-    

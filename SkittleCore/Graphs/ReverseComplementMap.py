@@ -66,9 +66,25 @@ def setOfObservedOligs(state, oligomerSize):
     return oligsByLine
 
 
-def matches_on_one_line(state, secondStart, oligomerSize, stateDetail=ReverseComplementState()):
+def matches_on_one_line(state, secondStart, oligomerSize):
+    state.readFastaChunks()
+    if secondStart - state.chunkStart() > chunkSize:
+        state.readAndAppendNextChunk()
+    matches = olig_matches_core(state, secondStart, oligomerSize)
+    adv = set()
+    if matches:
+        for x in range(oligomerSize + 1, oligomerSize + 1):
+            temp = matches_on_one_line(state, secondStart, x)
+            if temp:
+                adv = temp
+            else:
+                break
+    return list(adv) + list(matches)
+
+
+def olig_matches_core(state, secondStart, oligomerSize):
+    stateDetail = ReverseComplementState()
     stateDetail.oligomerSize = oligomerSize
-    state.readFastaChunks()  # TODO: something more efficient for one line
     sample_size = state.nucleotidesPerLine() + stateDetail.oligomerSize - 1
     secondStart -= state.chunkStart()
     seq_A = state.seq[state.relativeStart(): state.relativeStart() + sample_size]
@@ -76,7 +92,7 @@ def matches_on_one_line(state, secondStart, oligomerSize, stateDetail=ReverseCom
     seq_B = state.seq[secondStart: secondStart + sample_size]
     oligs_B = reverseComplementSet([observedOligs(seq_B, stateDetail.oligomerSize)])[0]
     matches = oligs_A.intersection(oligs_B)
-    return list(matches)
+    return matches
 
 
 def calculateOutputPixels(state, stateDetail=ReverseComplementState()):
@@ -94,17 +110,17 @@ def calculateOutputPixels(state, stateDetail=ReverseComplementState()):
 
     observedOligsPerLine = setOfObservedOligs(state, stateDetail.oligomerSize)
     observedRevCompOligs = reverseComplementSet(observedOligsPerLine)
-    heatMap = [[0.0 for x in range(width)] for y in range(height)]
+    heatMap = [[0 for x in range(width)] for y in range(height)]
     # histogram = [0 for x in range(state.nucleotidesPerLine())]
 
     for y in range(min(len(observedOligsPerLine), len(heatMap))):
         for x in range(0, min(len(observedOligsPerLine) - y - 1, width)):
             if x == 0:
-                heatMap[y][x] = 0.25  # don't bother calculating self:self
+                heatMap[y][x] = int(0.25 * 255)  # don't bother calculating self:self
             elif x + y < len(observedOligsPerLine):  # account for second to last chunk
                 matches = len(observedOligsPerLine[y].intersection(observedRevCompOligs[y + x]))
                 if matches:
-                    heatMap[y][x] = matches / observedMax
+                    heatMap[y][x] = int(min(matches / observedMax * 255, 255))
                 # observedMax = max(observedMax, matches)
                 # histogram[matches] += 1
 

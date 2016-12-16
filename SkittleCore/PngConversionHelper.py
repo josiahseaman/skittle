@@ -22,10 +22,11 @@ def convertToPng(state, pixels, isRaster=False):
     targetWidth = 1024
     greyscale = checkForGreyscale(state)
     f = tempfile.mktemp()
-    #open up tempFile
+    # open up tempFile
     f = open(f, 'wb')
     if greyscale:
-        p = multiplyGreyscale(pixels, 255)
+        p = pixels
+        # p = multiplyGreyscale(pixels, 255)
         w = png.Writer(len(p[0]), len(p), greyscale=True)
     else:
         if not isRaster:   #Nucleotide Bias
@@ -78,11 +79,10 @@ def flattenImage(pixels, targetWidth, isColored=True, nChannels=3):
     return p
 
 
-def multiplyGreyscale(p, greyMax=255):
-    saveData = copy.deepcopy(p)
-    for index, line in enumerate(saveData):
-        saveData[index] = map(lambda x: int(min(255, max(x, 0) * greyMax)), line)
-    return saveData
+def multiplyGreyscale(pixelLines, greyMax=255):
+    for index, line in enumerate(pixelLines):
+        pixelLines[index] = map(lambda x: int(min(255, max(x, 0) * greyMax)), line)
+    return pixelLines
 
 
 def squishImage(pixels):
