@@ -69,8 +69,8 @@ def rev_comp_matches(request, genus, species, specimen, chromosome):
 def state(request):
     j = "graphStatus = " + json.dumps(GraphRequestHandler.generateGraphListForServer())
     # j += "annotationSources = " + simplejson.dumps(StorageRequestHandler.getAnnotations())
-    j += ";graphOrder = ['n','b','t','o','m','s'];"
-    return HttpResponse(j,content_type="application/json")
+    j += ";graphOrder = ['n','b','t','o','m','v','c','s'];"
+    return HttpResponse(j, content_type="application/json")
 
 
 def sequence(request, genus="homo", species="sapiens", specimen="hg18", chromosome="chrY-sample"):

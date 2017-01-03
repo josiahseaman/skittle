@@ -92,7 +92,7 @@ def colorizeSequence(counts, scale):
 
 def addDictionaries(jim, larry):
     assert isinstance(jim, dict) and isinstance(larry, dict)
-    newDict = jim #so that keys that are in jim but not larry are still copied
+    newDict = jim # so that keys that are in jim but not larry are still copied
     for key in larry.keys():
         newDict[key] = jim.get(key, 0) + larry[key]
     return newDict
@@ -116,11 +116,11 @@ def logRepeatMap(state, repeatMapState):
 
         for powerOfX in range(repeatMapState.F_width):
             scale = int(math.ceil(growthPower ** powerOfX))
-            if scale * skixelsPerSample >= 64000:#the maximum reach
+            if scale * skixelsPerSample >= 64000:# the maximum reach
                 break
             end = start + scale * (skixelsPerSample * 2)
 
-            #created scaled sequences
+            # created scaled sequences
             starterSequence = []
             if scale > 1:
                 for step in range(0, len(oldScaledSequence), growthPower):
@@ -139,17 +139,17 @@ def logRepeatMap(state, repeatMapState):
             original = scaledSequence[0:skixelsPerSample]
             rgbChannels = zip(*original)
 
-            #iterate horizontally within a mega-column
+            # iterate horizontally within a mega-column
             startingOffset = skixelsPerSample / growthPower
             if scale == 1:
                 startingOffset = 1
             for offset in range(startingOffset, skixelsPerSample): #range 12 - 24 but indexing starts at 0
                 offsetSequence = scaledSequence[offset: offset + skixelsPerSample]
                 validComparison = len(offsetSequence) == len(original) and len(offsetSequence) and len(original)
-                if validComparison: #this line is necessary to avoid array index out of bounds or referencing an unsigned variable stretchIsSequenced
+                if validComparison: # this line is necessary to avoid array index out of bounds or referencing an unsigned variable stretchIsSequenced
                     stretchIsSequenced = not any(map(composedOfNs, offsetSequence))
                     stretchIsSequenced = not any(map(composedOfNs, original)) and stretchIsSequenced
-                if validComparison and stretchIsSequenced: #this line is necessary to avoid array index out of bounds or referencing an unsigned variable stretchIsSequenced
+                if validComparison and stretchIsSequenced: # this line is necessary to avoid array index out of bounds or referencing an unsigned variable stretchIsSequenced
                     targetChannels = zip(*offsetSequence)
                     resultSum = 0.0
                     for index, currentChannel in enumerate(rgbChannels):
@@ -184,9 +184,9 @@ def conglomeratePNGs(tempState, nChunks):
         if not pngPath:
             if GetFastaFilePath(tempState.specimen, tempState.chromosome, tempState.start) is not None:
                 handleRequest(tempState)
-                    #disregard the png data returned here since I'd rather read the file consistently
+                    # disregard the png data returned here since I'd rather read the file consistently
                 pngPath = GetPngFilePath(tempState)
-            else: #ran out of chunks
+            else: # ran out of chunks
                 return fullData
         if not pngPath:
             msg = ' '.join(["The request did not create a valid PNG:", tempState.specimen, tempState.chromosome, str(
@@ -203,8 +203,8 @@ def conglomeratePNGs(tempState, nChunks):
 
 
 def getBaseRepeatMapData(state, repeatMapState=RepeatMapState()):
-    #read in the one png at fixed width= skixelsPerSample
-    tempState = state.copy() #only preserves specimen and chromosome
+    # read in the one png at fixed width= skixelsPerSample
+    tempState = state.copy() # only preserves specimen and chromosome
     tempState.width = skixelsPerSample
     tempState.scale = 1
     tempState.requestedGraph = 'm'
@@ -214,7 +214,7 @@ def getBaseRepeatMapData(state, repeatMapState=RepeatMapState()):
 
 def squishStoredMaps(state, repeatMapState=RepeatMapState()):
     fullData = getBaseRepeatMapData(state, repeatMapState)
-    #averaging the lines
+    # averaging the lines
     newData = []
     nLines = int(math.ceil(state.nucleotidesPerLine() / float(skixelsPerSample)))
     for start in range(0, len(fullData) * skixelsPerSample, state.nucleotidesPerLine()):

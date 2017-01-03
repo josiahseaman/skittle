@@ -25,19 +25,23 @@ def convertToPng(state, pixels, isRaster=False):
     # open up tempFile
     f = open(f, 'wb')
     if greyscale:
-        p = pixels
-        # p = multiplyGreyscale(pixels, 255)
-        w = png.Writer(len(p[0]), len(p), greyscale=True)
+        if not isRaster:
+            p = pixels
+            # p = multiplyGreyscale(pixels, 255)
+            w = png.Writer(len(p[0]), len(p), greyscale=True)
+        else:  # grey scale raster e.g. Tag Vision
+            p = flattenImage(pixels, targetWidth, isColored=False)
+            w = png.Writer(targetWidth, len(p), greyscale=True, alpha=False)
     else:
-        if not isRaster:   #Nucleotide Bias
+        if not isRaster:  # Nucleotide Bias
             p = flattenImage(pixels, len(pixels[0]), True, 4)
             w = png.Writer(len(p[0]) / 4, len(p), greyscale=False, alpha=True)
-        else: #raster, color graphs
+        else:  # raster, color graphs
             p = flattenImage(pixels, targetWidth)
             w = png.Writer(targetWidth, len(p))
     w.write(f, p)
     f.close()
-    f = open(f.name, 'rb') #return the binary contents of the file
+    f = open(f.name, 'rb')  # return the binary contents of the file
     data = f.read()
     StorePng(state, f)
     f.close()
@@ -54,6 +58,8 @@ def capRange(color):
 
 def flattenImage(pixels, targetWidth, isColored=True, nChannels=3):
     pixels = squishImage(pixels)
+    if not isColored:
+        return [pixels[start: start + targetWidth] for start in range(0, len(pixels), targetWidth)]
 
     p = []
     newline = []
@@ -72,10 +78,9 @@ def flattenImage(pixels, targetWidth, isColored=True, nChannels=3):
             p.append(newline)
             newline = []
     if newline and newline[0] != []:
-    #        print newline, len(newline)
         while len(newline) < targetWidth * nChannels:
-            newline.append(0) #pad with zeros for a partial line at the end of the chromosome
-        p.append(newline) #append a partial line if there is one
+            newline.append(0)  # pad with zeros for a partial line at the end of the chromosome
+        p.append(newline)  # append a partial line if there is one
     return p
 
 

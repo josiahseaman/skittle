@@ -5,9 +5,7 @@ Created on March 11, 2016
 '''
 import math
 
-from django.conf import settings
-
-from SkittleGraphTransforms import reverseComplement, hasDepth, chunkUpList, normalize
+from SkittleGraphTransforms import reverseComplement, hasDepth, chunkUpList
 from SkittleCore.models import chunkSize
 from models import ReverseComplementState
 from SkittleCore.GraphRequestHandler import registerGraph
