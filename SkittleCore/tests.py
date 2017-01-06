@@ -1,6 +1,8 @@
+from __future__ import print_function
 from django.test import TestCase
 import FastaFiles
 from models import RequestPacket
+
 
 
 class TestServerLaunch(TestCase):
@@ -19,10 +21,10 @@ import os
 class FastaTest(TestCase):
     def test(self):
         state = RequestPacket()
-        print os.getcwd()
-        print state.getFastaFilePath()
+        print (os.getcwd())
+        print (state.getFastaFilePath())
         f = FastaFiles.readFile(state)
-        print f
+        print (f)
 
 
 import GraphRequestHandler
@@ -30,8 +32,8 @@ import GraphRequestHandler
 
 class GraphImport(TestCase):
     def test(self):
-        print "Available Graph Descriptions: "
+        print ("Available Graph Descriptions: ")
         desc = GraphRequestHandler.generateGraphListForServer()
-        print desc
-        for i in desc.iteritems():
-            print i 
+        print (desc)
+        for i in desc.items():
+            print (i)

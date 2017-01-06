@@ -2,6 +2,7 @@
 Created on Dec 21, 2012
 @author: Josiah
 '''
+from __future__ import print_function
 # from SkittleCore.models import RequestPacket
 import DNAStorage.StorageRequestHandler as StorageRequestHandler
 
@@ -21,7 +22,7 @@ def readFile(state):
     try:
         filePath = StorageRequestHandler.GetFastaFilePath(state.specimen, state.chromosome, state.start)
         if state.scale < 100000:  # TODO: this is set really high right now for testing. Originally 10
-            print "opening file ", filePath, " for ", state.specimen, state.chromosome, str(state.start)
+            print("opening file ", filePath, " for ", state.specimen, state.chromosome, str(state.start))
         if not filePath:
             return None
 
@@ -41,5 +42,5 @@ def readFile(state):
     #        return seq #FastaFile(seq)
 
     except IOError:
-        print "Couldn't open file.  Maybe it doesn't exist."
+        print("Couldn't open file.  Maybe it doesn't exist.")
         return None

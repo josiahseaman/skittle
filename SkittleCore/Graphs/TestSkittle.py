@@ -3,7 +3,7 @@ Created on Dec 7, 2012
 
 @author: Josiah
 '''
-
+from __future__ import print_function
 
 def handleFloatList(floatList):
     if not isinstance(floatList, dict) and len(floatList) > 0 and hasattr(floatList[0], "__iter__"):
@@ -13,7 +13,7 @@ def handleFloatList(floatList):
 
 def countNucleotides(seq):
     if len(seq) > 0 and not isinstance(seq, (str, dict)) and hasattr(seq[0], "__getitem__"):
-        print 'recursing'
+        print('recursing')
         return map(lambda x: countNucleotides(x), seq)
     counts = {}
     for c in seq:
@@ -22,7 +22,7 @@ def countNucleotides(seq):
 
 
 def test(a='a'):
-    print 'method ', a
+    print('method ', a)
 
 
 '''Recursive check for an element that matches the target'''
@@ -39,7 +39,7 @@ def recursiveContains(elements, target):
 
 def toplevelContains(elements, target):
     hits = recursiveContains(elements, target)
-    print hits
+    print(hits)
     return any(hits)
 
 
@@ -47,7 +47,7 @@ if __name__ == '__main__':
     a = [1, 2, 3]
     b = [1, ['2he', ['hello', 4, 5], 6], 7]
     hits = toplevelContains(b, 'h')
-    print hits
+    print(hits)
 
     '''
     a = [ 1, 2, 3]

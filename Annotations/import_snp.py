@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 """
 Created on Mar 7, 2013
 
@@ -23,7 +25,7 @@ def createSnpIndex():
                                                             Chromosome=tokens[2], Start=tokens[3])
         #        print entry
         if index % 1000 == 0:
-            print index / 1047958.0 * 100
+            print(index / 1047958.0 * 100)
         index += 1
 
 

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import json
 
 from django.shortcuts import render, redirect
@@ -14,7 +15,7 @@ from Annotations.StorageRequestHandler import GetAnnotationsChunk,GetAnnotations
 
 def browse(request, genus="homo", species="sapiens", specimen="hg19", chromosome="chrY"):
     if str(request.user) != 'AnonymousUser':
-        print "browse called as user " + str(request.user) + " who is authenticated:"+ str(request.user.is_authenticated())
+        print("browse called as user " + str(request.user) + " who is authenticated:" + str(request.user.is_authenticated()))
     if IsUserForbidden(specimen, chromosome, request.user): #also checks existance
         return redirect('index')
 
@@ -106,7 +107,7 @@ def createHighlighterState(request, genus, species, specimen, chromosome):
     for i in range(50):
         searchSequence1 = request.GET.get('s' + str(i), None)
         if searchSequence1 is not None:
-            print searchSequence1
+            print(searchSequence1)
             tmp = SequenceEntry()
             tmp.seq = searchSequence1.upper()
             color = request.GET.get('s' + str(i) + 'c', None)
@@ -114,7 +115,7 @@ def createHighlighterState(request, genus, species, specimen, chromosome):
                 tmp.color = parseHexColor(color)
 
             graphSettings.targetSequenceEntries.append(tmp)
-    print map(lambda x: x.seq, graphSettings.targetSequenceEntries)
+    print([x.seq for x in graphSettings.targetSequenceEntries])
     return graphSettings
 
 

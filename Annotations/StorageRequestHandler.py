@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import re
 import json
@@ -77,7 +78,7 @@ def GetAnnotationsList(specimen):
 
 
 def GetAnnotationsChunk(specimen, chromosome, start, annotations=None):
-    print "Requested chunk", specimen, chromosome, start, annotations
+    print("Requested chunk", specimen, chromosome, start, annotations)
     annotationJsonChunk = []
     if annotations:
         #Go through each given gff file

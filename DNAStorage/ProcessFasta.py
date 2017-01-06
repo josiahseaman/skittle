@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import re
 import shutil
@@ -15,7 +16,7 @@ def saveDBObject(object):
     try:
         object.save()
     except:
-        print "Retrying DB query!"
+        print("Retrying DB query!")
         connection.close()
         object.save()
 
@@ -71,14 +72,14 @@ def splitAndSort(inputChromosomeFilename, storageLocation, workingLocation, attr
         raise IOError("Error! File " + chromosomeName + " in to_import is not validly named!")
     if not taxonomic[4] or not taxonomic[5]:
         message = "Error! Specimen and/or Chromosome name not valid!"
-        print message
+        print(message)
         progress.Message = message
         progress.IsWorking = False
         progress.Success = False
         saveDBObject(progress)
         return False
 
-    print "Entering Specimen and attributes into the system..."
+    print("Entering Specimen and attributes into the system...")
     if progress:
         progress.Message = "Entering Specimen and attributes into the system..."
     #Begin setting up the Specimen object for the database
@@ -123,7 +124,7 @@ def splitAndSort(inputChromosomeFilename, storageLocation, workingLocation, attr
     #Check to see if this specific file has already been split up and is stored in the system
     if StorageRequestHandler.HasFastaFile(taxonomic[4], taxonomic[5]):
         message = "This sample is already stored in the system!"
-        print message
+        print(message)
         if progress:
             progress.Message = message
             progress.IsWorking = False
@@ -131,7 +132,7 @@ def splitAndSort(inputChromosomeFilename, storageLocation, workingLocation, attr
             saveDBObject(progress)
         return False
 
-    print "Setting up server storage..."
+    print("Setting up server storage...")
     if progress:
         progress.Success = False
         progress.Message = "Settup up server storage..."
@@ -169,7 +170,7 @@ def splitAndSort(inputChromosomeFilename, storageLocation, workingLocation, attr
         shutil.move(oldFilePath, newFilePath)
         shutil.move(oldPNGFilePath, newPNGFilePath)
 
-    print "Entering this sample into the system..."
+    print("Entering this sample into the system...")
     if progress:
         #Mark that we are now starting processing
         progress.IsWorking = True
@@ -246,16 +247,16 @@ def splitAndSort(inputChromosomeFilename, storageLocation, workingLocation, attr
         fastaFile.Length = fCount + cCount - 1
 
     #Save fasta file to database then populate chunks with foreign keys and save
-    print "Done entering sample!"
+    print("Done entering sample!")
     if progress:
-        print "Saving to user's profile."
+        print("Saving to user's profile.")
         progress.Message = "Done entering sample! Saving to user's profile."
         saveDBObject(progress)
         saveDBObject(fastaFile)
         fastaFile.User.add(progress.User.all()[0])
     saveDBObject(fastaFile)
 
-    print "Adding sample length to specimen."
+    print("Adding sample length to specimen.")
     if progress:
         progress.Message = "Adding sample length to specimen."
         saveDBObject(progress)
@@ -267,7 +268,7 @@ def splitAndSort(inputChromosomeFilename, storageLocation, workingLocation, attr
         saveDBObject(fa)
 
     message = "Done entering " + taxonomic[4] + " " + taxonomic[5] + " into the system!"
-    print message
+    print(message)
     if progress:
         progress.Message = message
         progress.IsWorking = False
@@ -291,7 +292,7 @@ def run():
                 splitAndSort(wholeChromosome, os.path.join(workingDir, "fasta"), os.path.join(workingDir, "to_import"))
                 shutil.move(os.path.join("to_import", wholeChromosome), os.path.join("history", wholeChromosome))
             except IOError as ex:
-                print ex
+                print(ex)
                 shutil.move(os.path.join("to_import", wholeChromosome), os.path.join("rejected", wholeChromosome))
 
 
@@ -320,7 +321,7 @@ def ImportFasta(fileName, attributes, user):
 
         return progress.id
     else:
-        print "This is not a fasta file!"
+        print("This is not a fasta file!")
         shutil.move(os.path.join("to_import", fileName), os.path.join("rejected", fileName))
         return "This is not a fasta file... Import failed!"
 
@@ -330,6 +331,6 @@ def importFasta(workingDir, fileName, attributes, progress):
         splitAndSort(fileName, os.path.join(workingDir, "fasta"), os.path.join(workingDir, "to_import"), attributes=attributes, progress=progress)
         shutil.move(os.path.join("to_import", fileName), os.path.join("history", fileName))
     except IOError as ex:
-        print ex
+        print(ex)
         shutil.move(os.path.join("to_import", fileName), os.path.join("rejected", fileName))
         return ex.message

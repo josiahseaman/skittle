@@ -3,6 +3,7 @@ Functions related to PNG moved from GraphRequestHandler
 Created on Jan 17, 2013
 @author: Josiah
 '''
+from functools import reduce
 import os
 import tempfile
 import copy

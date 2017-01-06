@@ -1,3 +1,4 @@
+from __future__ import print_function
 from collections import namedtuple
 import math
 from SkittleCore.GraphRequestHandler import registerGraph
@@ -107,7 +108,7 @@ def calculateOutputPixels(state):
 
     widths = map(lambda x: x.width, snippets)
     maxWidth = 1 if len(widths) == 0 else max(widths)
-    print "Max width is", maxWidth, "over", len(snippets), "snippets"
+    print("Max width is", maxWidth, "over", len(snippets), "snippets")
 
     pixels = snippetEntriesToPixels(maxWidth, snippets, state)
 

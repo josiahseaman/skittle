@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 import math
 
@@ -17,7 +18,7 @@ def ImportGFF(specimen, file):
     specimenObject = GetSpecimen(specimen)
 
     gff, created = GFF.objects.get_or_create(Specimen=specimenObject, FileName=fileName, Public=True)
-    print gff.FileName
+    print(gff.FileName)
     #Get the specimen this annotation file is for
     gff.Specimen = GetSpecimen(specimen)
     #Set default version type
@@ -50,7 +51,7 @@ def ImportGFF(specimen, file):
     #Then store as needed into an Annotation object which will be pushed onto the annotations stack
     #TODO: Bust out version reading into methods
     if gff.GFFVersion == 2:
-        print "BEGINNING READING OF VERSION 2 FILE...\n"
+        print("BEGINNING READING OF VERSION 2 FILE...\n")
         annotationFile = open(file, 'r')
         counter = 0
         for line in annotationFile.readlines():
@@ -104,24 +105,24 @@ def ImportGFF(specimen, file):
                 if counter % 10000 == 0:
                     sys.stdout.write('.')
 
-                    #print "RESULTS: ", annotation.Specimen, annotation.Source, annotation.Feature, annotation.Start, annotation.End, annotation.Score, annotation.Strand, annotation.Frame, annotation.Attribute
+                    #print("RESULTS: ", annotation.Specimen, annotation.Source, annotation.Feature, annotation.Start, annotation.End, annotation.Score, annotation.Strand, annotation.Frame, annotation.Attribute)
 
-        print "DONE READING FILE!"
+        print("DONE READING FILE!")
     else:
-        print "THIS GFF VERSION IS NOT SUPPORTED: Version", gff.GFFVersion
+        print("THIS GFF VERSION IS NOT SUPPORTED: Version", gff.GFFVersion)
 
-    print "BEGINNING SORTING LIST..."
+    print("BEGINNING SORTING LIST...")
     #Sort the list of annotations read in by their start value (this could probably be optimized by using an always ordered list and inserting in order above)
     #annotations = sorted(annotations, key = lambda annotation: annotation.Start)
     for sublist in annotations:
         annotations[sublist] = sorted(annotations[sublist], key=lambda annotation: int(annotation.Start))
-    print "DONE SORTING!"
+    print("DONE SORTING!")
 
     chunkAndStoreAnnotations(gff, annotations)
 
 #Take a sorted list of annotations and chunk it into json chunks
 def chunkAndStoreAnnotations(gff, annotations):
-    print "START CHUNKING..."
+    print("START CHUNKING...")
     for chromosome in annotations:
         if chromosome is None:
             continue
@@ -131,7 +132,7 @@ def chunkAndStoreAnnotations(gff, annotations):
         chunk = {gff.FileName: {}}
         active = []
 
-        print chromosome
+        print(chromosome)
         index = 0
         while index < len(annotations[chromosome]):
             if int(annotations[chromosome][index].Start) <= chunkEnd:
@@ -164,7 +165,7 @@ def chunkAndStoreAnnotations(gff, annotations):
         StoreAnnotationChunk(gff, chromosome, chunk, chunkStart)
         parseActiveList(gff, chromosome, annotations, -1, active, chunk, chunkStart, chunkEnd)
 
-    print "DONE CHUNKING!"
+    print("DONE CHUNKING!")
 
 
 def parseActiveList(gff, chromosome, annotations, index, active, chunk, chunkStart, chunkEnd):

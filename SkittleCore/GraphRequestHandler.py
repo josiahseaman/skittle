@@ -2,6 +2,7 @@
 Created on Dec 21, 2012
 @author: Josiah
 '''
+from __future__ import print_function
 import sys
 import time
 from collections import namedtuple
@@ -35,13 +36,13 @@ def calculatePixels(state, settings=None):
     name, graphModule = graphData[1], graphData[2]
 
     results = []
-    print "Calling ", name
+    print("Calling ", name)
     start = time.clock()
     if settings is not None:
         results = graphModule.calculateOutputPixels(state, settings)
     else:
         results = graphModule.calculateOutputPixels(state)
-    print "Finished", name, "in: ", time.clock() - start, " seconds"
+    print("Finished", name, "in: ", time.clock() - start, " seconds")
     return results
 
 
@@ -68,7 +69,7 @@ def handleRequest(state, settings=None):
         while isBeingProcessed(state):
             sleep(sleepTime)
         return handleRequest(state)
-    print 'Done'
+    print('Done')
     return png
 
 
@@ -78,18 +79,18 @@ def isRasterGraph(state):
 
 
 def getGraphDescription(state):
-    targetGraphTuple = filter(lambda x: state.requestedGraph == x[0], availableGraphs)
+    targetGraphTuple = [x for x in availableGraphs if state.requestedGraph == x[0]]  # TODO store this is a dictionary instead
     if targetGraphTuple:
-        return targetGraphTuple[0] #return the first match
+        return targetGraphTuple[0]  # return the first match
     else:
-        return filter(lambda x: 'n' == x[0], availableGraphs)[0]
+        return [x for x in availableGraphs if 'n' == x[0]] [0]
 
 
 def tryGetGraphPNG(state):
     fileName = StorageRequestHandler.GetPngFilePath(state)
     try:
         data = open(fileName, 'rb').read()
-        print "Found cached file: ", fileName
+        print("Found cached file: ", fileName)
         return data
     except:
         return None

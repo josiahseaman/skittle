@@ -2,6 +2,7 @@
 Created on Dec 5, 2012
 @author: Josiah
 '''
+from __future__ import print_function
 from random import randint
 import SkittleCore.models as SkittleRequestPackets
 import math
@@ -70,7 +71,7 @@ def getColor(state, character):
     defaultColor = (0, 0, 0)
     a = colorPalettes.get(state.colorPalette, None)
     if a is None:
-        print "Palette not found"
+        print("Palette not found")
         return defaultColor
     b = a.get(character, defaultColor)
     return b

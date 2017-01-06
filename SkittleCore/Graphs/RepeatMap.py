@@ -1,7 +1,10 @@
+from __future__ import print_function
+
 '''
 Created on Nov 29, 2012
 @author: Josiah Seaman
 '''
+from functools import reduce
 import math
 from random import choice
 import copy
@@ -104,11 +107,11 @@ def logRepeatMap(state, repeatMapState):
     growthPower = 2
     height = repeatMapState.height(state, state.seq)
     state.readAndAppendNextChunk()
-    print "Done reading additional chunk.  Computing..."
-    for h in range(height): # per line
+    print("Done reading additional chunk.  Computing...")
+    for h in range(height):  # per line
         percentCompletion = int(float(h) / height * 1000)
         if percentCompletion % 100 == 0:
-            print percentCompletion / 10, "% Complete"
+            print(percentCompletion / 10, "% Complete")
 
         #        skipToNextLine = False
         freq.append([])
@@ -116,7 +119,7 @@ def logRepeatMap(state, repeatMapState):
 
         for powerOfX in range(repeatMapState.F_width):
             scale = int(math.ceil(growthPower ** powerOfX))
-            if scale * skixelsPerSample >= 64000:# the maximum reach
+            if scale * skixelsPerSample >= 64000:  # the maximum reach
                 break
             end = start + scale * (skixelsPerSample * 2)
 

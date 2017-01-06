@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import os
 import sys
 from multiprocessing import Pool
@@ -34,12 +35,12 @@ def outputThreemerNormalization(request):
                 state = makeRequestPacket(specimen, chromosome, start)
                 state.width = width
                 state.requestedGraph = 't'
-                print "Computing: ", state.specimen, state.chromosome, state.start, state.width
+                print("Computing: ", state.specimen, state.chromosome, state.start, state.width)
                 #                state.readAndAppendNextChunk()
                 #                GraphRequestHandler.handleRequest(state)
                 answerTuple = ThreeMerDetector.calculateOutputPixels(state)
                 lockAndWriteFile(state.start, answerTuple)
-                print "Done computing ", state.specimen, state.chromosome, state.start, state.width
+                print("Done computing ", state.specimen, state.chromosome, state.start, state.width)
 
 
 def precomputeRepeatMap(request):
@@ -57,9 +58,9 @@ def precomputeRepeatMap(request):
             start = chunks[targetIndex]
             state = makeRequestPacket(specimen, chromosome, start)
 
-            print "Computing: ", state.specimen, state.chromosome, state.start
+            print("Computing: ", state.specimen, state.chromosome, state.start)
             GraphRequestHandler.handleRequest(state)
-            print "Done computing ", state.specimen, state.chromosome, state.start
+            print("Done computing ", state.specimen, state.chromosome, state.start)
 
 
 def makeRequestPacket(specimen, chromosome, start, graphSymbol='m', scale=1):
@@ -109,9 +110,9 @@ def precomputeAnyGraph(request):
             start = chunks[targetIndex]
             state = makeRequestPacket(specimen, chromosome, start, request[3], request[4])
 
-            print "Computing: ", state.specimen, state.chromosome, state.start
+            print("Computing: ", state.specimen, state.chromosome, state.start)
             GraphRequestHandler.handleRequest(state)
-            print "Done computing ", state.specimen, state.chromosome, state.start
+            print("Done computing ", state.specimen, state.chromosome, state.start)
 
 
 def allGraphs(specimen, nProcessors, graphSymbols=('n', 'm', 'r', 'o', 'b', 'h', 't'), scales=(1,)):
@@ -128,7 +129,7 @@ if __name__ == "__main__":
     else:
         nProcessors = 6
     specimen = sys.argv[1]
-    print "Specimen: ", specimen, "Processors: ", str(nProcessors)
+    print("Specimen: ", specimen, "Processors: ", str(nProcessors))
 
 
     #    startThreemer(specimen, nProcessors)

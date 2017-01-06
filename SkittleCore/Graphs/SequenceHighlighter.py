@@ -1,6 +1,6 @@
 '''Created on Dec 6, 2012
 @author: Josiah'''
-
+from __future__ import print_function
 import copy
 
 from SkittleCore.models import chunkSize
@@ -40,10 +40,10 @@ def measureSequenceMatches(state, highlighterState, sequenceEntry):
 def ensureEqualLengths2D(results, defaultValue=0.0):
     if not results:
         return results
-    targetLength = reduce(max, map(lambda x: len(x), results))#find the longest length
+    targetLength = max([len(x) for x in results])  # find the longest length
     for seq in results:
-        for i in range(targetLength - len(seq)):#the difference in lengths
-            seq.append(defaultValue) #append defaults
+        for i in range(targetLength - len(seq)):  # the difference in lengths
+            seq.append(defaultValue)  # append defaults
     return results
 
 
@@ -92,9 +92,9 @@ def calculateOutputPixels(state, highlighterState=HighlighterState()):
     #TODO: temporary workaround of settings  
     targetSequenceEntries = highlighterState.getTargetSequenceEntries()
     if state.searchStop != 1:
-        print "WARNING: SearchStop is still being defined"
+        print("WARNING: SearchStop is still being defined")
 
-    print "Searching for", len(targetSequenceEntries), "unique entries"
+    print("Searching for", len(targetSequenceEntries), "unique entries")
     if highlighterState.searchReverseComplement:
         startingSize = len(targetSequenceEntries)
         for i in range(startingSize):

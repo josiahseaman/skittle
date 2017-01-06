@@ -3,6 +3,7 @@ Created on Nov 30, 2012
 
 @author: Josiah
 '''
+from __future__ import print_function
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
@@ -133,7 +134,7 @@ class RequestPacket(basePacket):
         self.seq = "".join(partialSequences)
 
         if self.scale >= 10:
-            print "Done reading files"
+            print("Done reading files")
         self.length = len(self.seq)
 
     class Meta(basePacket.Meta):

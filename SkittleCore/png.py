@@ -53,6 +53,8 @@
 # //depot/prj/bangaio/master/code/png.py#67
 
 
+from __future__ import print_function
+
 """
 Pure Python PNG Reader/Writer
 
@@ -164,6 +166,7 @@ And now, my famous members
 
 # http://www.python.org/doc/2.2.3/whatsnew/node5.html
 from __future__ import generators
+from functools import reduce
 
 __version__ = "$URL$ $Rev$"
 
@@ -1429,7 +1432,7 @@ class Reader:
                                  % (type, length))
             checksum = self.file.read(4)
             if len(checksum) != 4:
-                raise ValueError('Chunk %s too short for checksum.', tag)
+                raise ValueError('Chunk %s too short for checksum.' % type)
             if seek and type != seek:
                 continue
             verify = zlib.crc32(strtobytes(type))
@@ -1894,7 +1897,7 @@ class Reader:
             while True:
                 try:
                     type, data = self.chunk()
-                except ValueError, e:
+                except ValueError as e:
                     raise ChunkError(e.args[0])
                 if type == 'IEND':
                     # http://www.w3.org/TR/PNG/#11IEND
@@ -2387,7 +2390,7 @@ def topngbytes(name, rows, x, y, **k):
 
     import os
 
-    print name
+    print(name)
     f = BytesIO()
     w = Writer(x, y, **k)
     w.write(f, rows)
@@ -2564,7 +2567,7 @@ class Test(unittest.TestCase):
             candi = candidate.replace('n', 'i')
             if candi not in _pngsuite:
                 continue
-            print 'adam7 read', candidate
+            print('adam7 read', candidate)
             straight = Reader(bytes=_pngsuite[candidate])
             adam7 = Reader(bytes=_pngsuite[candi])
             # Just compare the pixels.  Ignore x,y (because they're
@@ -3957,5 +3960,5 @@ def _main(argv):
 if __name__ == '__main__':
     try:
         _main(sys.argv)
-    except Error, e:
-        print >> sys.stderr, e
+    except Error as e:
+        print(e, file=sys.stderr)

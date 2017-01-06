@@ -3,6 +3,7 @@ Created on Dec 14, 2012
 
 @author: Josiah
 '''
+from __future__ import print_function
 import math
 
 from SkittleGraphTransforms import pearsonCorrelation
@@ -27,14 +28,13 @@ The patterns in Similarity Heatmap correlate strongly with those generated from 
 
 def prettyPrint(heatMap):
     for line in heatMap:
-        print
+        print()
         for e in line:
             if isinstance(e, float):
-                print round(e, 2), ', ',
+                print(round(e, 2), ', ', end='')
             else:
-                print e, ', ',
-    print #newline
-
+                print(e, ', ')
+    print()
 
 def medianFromAllLines(heatMap):
     normalizationList = []
