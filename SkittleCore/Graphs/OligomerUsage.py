@@ -3,6 +3,7 @@ Created on Dec 12, 2012
 
 @author: Josiah
 '''
+from SkittleCore.PngConversionHelper import multiplyGreyscale
 from SkittleCore.models import RequestPacket
 from models import OligomerUsageState
 from SkittleGraphTransforms import chunkUpList, countNucleotides, \
@@ -19,21 +20,21 @@ def calculateOutputPixels(state, oligState=OligomerUsageState()):
     assert isinstance(oligState, OligomerUsageState)
     counts = countOligomers(state, oligState)
 
-    #NORMALIZATION
+    # NORMALIZATION
     values = []
     for line in counts:
-        for key, value in line.iteritems():
+        for key, value in line.items():
             if key[0] != 'N':
                 values.append(value)
 
     wholeScreenMaximum = max(values)
     counts = normalizeDictionary(counts, wholeScreenMaximum)
 
-    #TODO: create a sparse display for the oligomer display
+    # TODO: create a sparse display for the oligomer display
     orderedWords = generateExhaustiveOligomerList(oligState.oligomerSize)
     pixels = oligCountToColorSpace(counts, orderedWords)
 
-    return pixels
+    return multiplyGreyscale(pixels)
 
 
 def countOligomers(state, oligState=OligomerUsageState()):

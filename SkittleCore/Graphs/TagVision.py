@@ -7,7 +7,7 @@ from collections import defaultdict
 import math
 
 from SkittleCore.Graphs.ReverseComplementMap import setOfObservedOligs, reverseComplementSet
-from SkittleCore.Graphs.SkittleGraphTransforms import normalize
+from SkittleCore.Graphs.SkittleGraphTransforms import normalize, reverseComplement
 from models import ReverseComplementState
 from SkittleCore.models import chunkSize
 from SkittleCore.GraphRequestHandler import registerGraph
@@ -27,13 +27,16 @@ def calculateOutputPixels(state, stateDetail=ReverseComplementState()):
         state.readAndAppendNextChunk(True)
     height = int(math.ceil((chunkSize * state.scale) / float(state.nucleotidesPerLine())))
 
-    observedOligsPerLine = setOfObservedOligs(state, stateDetail.oligomerSize)
-    observedRevCompOligs = reverseComplementSet(observedOligsPerLine)  # TODO setOfObservedOligs(rev_comp(state.seq))
+    observedOligsPerLine = setOfObservedOligs(state.seq, state.nucleotidesPerLine(), stateDetail.oligomerSize)
+    observedRevCompOligs = reverseComplementSet(observedOligsPerLine)
+    # observedRevCompOligs = reversed(setOfObservedOligs(reverseComplement(state.seq), state.nucleotidesPerLine(), stateDetail.oligomerSize))
 
     for y in range(min(len(observedOligsPerLine), height)):
         for x in range(0, min(len(observedOligsPerLine) - y - 1, width)):
             if not x == 0 and x + y < len(observedOligsPerLine):  # account for second to last chunk
                 matches = observedOligsPerLine[y].intersection(observedRevCompOligs[y + x])
+                otherStrand = {reverseComplement(word) for word in matches}
+                matches.update(otherStrand)  # merge with its own Reverse Complement
                 if matches:
                     for olig in matches:
                         tag_candidates[olig] += 1

@@ -4,6 +4,7 @@ Created on March 11, 2016
 @author: Josiah
 '''
 import math
+from collections import defaultdict
 
 from SkittleGraphTransforms import reverseComplement, hasDepth, chunkUpList
 from SkittleCore.models import chunkSize
@@ -47,7 +48,7 @@ def observedOligs(seq, oligomerSize):
     return oligs
 
 
-def setOfObservedOligs(state, oligomerSize):
+def setOfObservedOligs(seq, lineSize, oligomerSize):
     # TODO: refactor and remove duplication from OligomerUsage.countOligomers()
     """
     :return: list of set of strings
@@ -55,11 +56,11 @@ def setOfObservedOligs(state, oligomerSize):
     """
     overlap = oligomerSize - 1
     # chunk sequence by display line #we can't do this simply by line because of the overhang of oligState.oligState
-    lines = chunkUpList(state.seq, state.nucleotidesPerLine(), overlap)
+    lines = chunkUpList(seq, lineSize, overlap)
 
     oligsByLine = []
-    for seq in lines:
-        oligsByLine.append(observedOligs(seq, oligomerSize))
+    for line in lines:
+        oligsByLine.append(observedOligs(line, oligomerSize))
 
     return oligsByLine
 
@@ -96,40 +97,30 @@ def olig_matches_core(state, secondStart, oligomerSize):
 def calculateOutputPixels(state, stateDetail=ReverseComplementState()):
     state.readFastaChunks()
     width = 300  # number of line downstream that will be compared.  The last line only shows up a the corner of the screen
-    maxLength = 6500 * 2  # debugging variable
     observedMax = max(state.nucleotidesPerLine() / 6.0, 5.0)  # defined by observation of histograms
-    # if settings.DEBUG:
-    #     state.seq = state.seq[:maxLength]
-    # else:
+    tag_candidates = defaultdict(lambda: 0)
     while len(state.seq) < (  # all starting positions plus the maximum reach from the last line
             chunkSize * state.scale) + width * state.nucleotidesPerLine():
         state.readAndAppendNextChunk(True)
     height = int(math.ceil((chunkSize * state.scale) / float(state.nucleotidesPerLine())))
 
-    observedOligsPerLine = setOfObservedOligs(state, stateDetail.oligomerSize)
+    observedOligsPerLine = setOfObservedOligs(state.seq, state.nucleotidesPerLine(), stateDetail.oligomerSize)
     observedRevCompOligs = reverseComplementSet(observedOligsPerLine)
     heatMap = [[0 for x in range(width)] for y in range(height)]
-    # histogram = [0 for x in range(state.nucleotidesPerLine())]
 
     for y in range(min(len(observedOligsPerLine), len(heatMap))):
         for x in range(0, min(len(observedOligsPerLine) - y - 1, width)):
             if x == 0:
                 heatMap[y][x] = int(0.25 * 255)  # don't bother calculating self:self
             elif x + y < len(observedOligsPerLine):  # account for second to last chunk
-                matches = len(observedOligsPerLine[y].intersection(observedRevCompOligs[y + x]))
+                matches = observedOligsPerLine[y].intersection(observedRevCompOligs[y + x])
                 if matches:
-                    heatMap[y][x] = int(min(matches / observedMax * 255, 255))
-                # observedMax = max(observedMax, matches)
-                # histogram[matches] += 1
+                    heatMap[y][x] = int(min(len(matches) / observedMax * 255, 255))
+                    matches.update({reverseComplement(word) for word in matches})  # merge with its own Reverse Complement
+                    for olig in matches:
+                        tag_candidates[olig] += 1
 
-    # observedMax = observedMax / 2.0  # math.log(observedMax)
-    # for y in range(len(heatMap)):
-    #     for x in range(0, len(heatMap[y])):
-    #         if x != 0 and heatMap[y][x]:
-    #             heatMap[y][x] = heatMap[y][x] / observedMax  # normalization  math.log(
-
-    # with open('_'.join(['hist_olig9', str(state.chunkStart()), str(state.nucleotidesPerLine())]) + '.csv', 'w') as his_file:
-    #     for i, count in enumerate(histogram):
-    #         his_file.write('%i,%i\n' % (i, count))
+    # with open('candidates_olig%i_start%i_width%i.csv' % (stateDetail.oligomerSize, state.chunkStart(), state.nucleotidesPerLine()), 'w') as tag_file:
+    #     tag_file.write('\n'.join(["%s,%i" % (o, c) for o, c in tag_candidates.items()]))
 
     return heatMap
