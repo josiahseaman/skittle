@@ -232,6 +232,10 @@ function drawGuides(graphState){
     context.stroke();
 }
 
+function createNewHierarchySpan(start, stop){
+
+}
+
 function tagMapMouseHandling(event){
     var self = graphStatus['c'];
     var relative_X = skixels_X - self.skixelOffset - 9;
@@ -243,6 +247,9 @@ function tagMapMouseHandling(event){
             {start:clickStart, secondStart: second, scale: 1, width: state.bpPerLine(), oligomerSize:9, graph:'c'},
             function (data) {
                 console.log(data);
+                if(data.length){
+                    createNewHierarchySpan(clickStart, second);
+                }
         });
     }
 }

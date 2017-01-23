@@ -3884,7 +3884,7 @@ def _main(argv):
         names = list(_pngsuite)
         names.sort()
         for name in names:
-            print name
+            print(name)
         return
 
     # Run regression tests

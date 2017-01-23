@@ -44,7 +44,6 @@ def hasDepth(listLike):
     try:
         if len(listLike) > 0 and not isinstance(listLike, (str, dict, tuple, type(u"unicode string"))) and hasattr(
                 listLike[0], "__getitem__"):
-        #            print 'recursing length: ', len(listLike)
             return True
         else:
             return False
@@ -84,17 +83,15 @@ def generateExhaustiveOligomerList(oligomerSize, startingSet=[]):
     if len(startingSet[0]) < oligomerSize:
         newSet = []
         for olig in startingSet:
-            for n in letters: #a new olig gets added four times for each element in the list
+            for n in letters:  # a new olig gets added four times for each element in the list
                 newSet.append(olig + n)
         return generateExhaustiveOligomerList(oligomerSize, newSet)
     else:
         return startingSet
 
 
-'''Used to color the oligomer Counts in grey scale.  Each dictionary represents one line'''
-
-
 def oligCountToColorSpace(counts, orderedWords):
+    """Used to color the oligomer Counts in grey scale.  Each dictionary represents one line"""
     if hasDepth(counts):
         return map(lambda x: oligCountToColorSpace(x, orderedWords), counts)
     pixels = []
@@ -106,23 +103,20 @@ def oligCountToColorSpace(counts, orderedWords):
     return pixels
 
 
-'''Returns the reverse complementary sequence.  This is the sequence as it would be read on the
-side of the DNA strand (double helix).'''
-
-
 def reverseComplement(originalSequence):
+    """Returns the reverse complementary sequence.  This is the sequence as it would be read on the
+    side of the DNA strand (double helix)."""
     complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'N': 'N'}
     size = len(originalSequence)
     rc = ''
-    for x in range(size - 1, -1, -1):#stops at 0
+    for x in range(size - 1, -1, -1):  # stops at 0
         rc += complement.get(originalSequence[x], 'N')
     return rc
 
 
-'''Final step for Nucleotide Display that transforms normalized counts into a list of colors'''
-
 
 def countListToColorSpace(countList, colorPalette, scale):
+    """Final step for Nucleotide Display that transforms normalized counts into a list of colors"""
     if hasDepth(countList):#this recurses until we're left with a single dictionary
         return [countListToColorSpace(x, colorPalette, scale) for x in countList if x != []]
     if not isinstance(countList, dict):
@@ -170,20 +164,17 @@ def evenASingleN(countDict):
         return countDict == colorMapping['N']
 
 
-'''Generic normalization reduces any number to a floating point between 0.0 and 1.0'''
-
 
 def normalize(value, minimum, maximum):
+    """Generic normalization reduces any number to a floating point between 0.0 and 1.0"""
     value = min(maximum, max(minimum, value))
     return (value - minimum) / float(maximum - minimum)
 
 
-'''ReferencePoint is the number that all elements are divided by.  This defaults to the sum of dictionary 
-elements if not defined.  ReferencePoint can also be an evaluation function that returns a single number
-when given the values of 'listing' as an argument.'''
-
-
 def normalizeDictionary(listing, referencePoint=0):
+    """ReferencePoint is the number that all elements are divided by.  This defaults to the sum of dictionary
+    elements if not defined.  ReferencePoint can also be an evaluation function that returns a single number
+    when given the values of 'listing' as an argument."""
     if hasDepth(listing):#this recurses until we're left with a single dictionary
         return map(lambda x: normalizeDictionary(x, referencePoint), listing)
 
@@ -200,6 +191,8 @@ def normalizeDictionary(listing, referencePoint=0):
 
 
 def countNucleotides(seq, oligomerSize=1):
+    """Returns a list of dictionaries that show the counts per grouping (usually scale).
+    Doing this adds one layer of depth to seq"""
     if hasDepth(seq):
         return [countNucleotides(x, oligomerSize) for x in seq if x != '' and x != [] and x != {}]
     if not seq:
@@ -218,10 +211,6 @@ def countNucleotides(seq, oligomerSize=1):
     return counts
 
 
-'''Returns a list of dictionaries that show the counts per grouping (usually scale).
-    Doing this adds one layer of depth to seq'''
-
-
 def chunkUpList(seq, chunkSize, overlap=0):
     if hasDepth(seq):
         return map(lambda x: chunkUpList(x, chunkSize, overlap), seq)
@@ -231,7 +220,6 @@ def chunkUpList(seq, chunkSize, overlap=0):
     #    if height == 0: return []
     resultVector = [seq[chunk * chunkSize: (chunk + 1) * chunkSize + overlap] for chunk in range(height)]
     return resultVector
-
 
 
 def sequenceToColors(seq, colorPalette):
