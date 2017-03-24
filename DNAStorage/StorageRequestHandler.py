@@ -2,6 +2,7 @@ import shutil
 import os
 
 from django.conf import settings
+from math import floor
 
 from models import *
 from django.db.models import Q
@@ -22,8 +23,9 @@ def HasFastaFile(specimen, chromosome):
 
 def GetFastaFilePath(specimen, chromosome, start):
     """Searches to see if the given fasta file is stored in the system. If so, it returns the system path to the requested chunk"""
+    roundedStart = int(floor(start / settings.CHUNK_SIZE) * settings.CHUNK_SIZE) + 1
     fastaFile = FastaChunkFiles.objects.filter(FastaFile__Specimen__Name__iexact=specimen, FastaFile__Chromosome__iexact=chromosome,
-                                               Start=start)[:1]
+                                               Start=roundedStart)[:1]
     if fastaFile:
         # Check if fasta file is stored in ram disk
         if fastaFile[0].IsInRamDisk:

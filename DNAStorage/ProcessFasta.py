@@ -225,23 +225,14 @@ def splitAndSort(inputChromosomeFilename, storageLocation, workingLocation, attr
                     chunk += character
                     cCount += 1
                     if cCount == bp:
-                        writePath = os.path.join(storagePath, str(fCount) + ".fasta")
-                        write = open(writePath, 'wb')
-                        write.write(chunk.upper())
-                        #Add this chunk to the list of chunks
-                        newChunk = FastaChunkFiles()
-                        newChunk.Start = fCount
+                        newChunk = writeFastaStorageFile(chunk, fCount, storagePath)
                         fastaChunks.append(newChunk)
                         chunk = ""
                         fCount += cCount
                         cCount = 0
             else:
                 break
-        writePath = os.path.join(storagePath, str(fCount) + ".fasta")
-        write = open(writePath, 'wb')
-        write.write(chunk.upper())
-        newChunk = FastaChunkFiles()
-        newChunk.Start = fCount
+        newChunk = writeFastaStorageFile(chunk, fCount, storagePath)
         fastaChunks.append(newChunk)
         fastaFile.Length = fCount + cCount - 1
 
@@ -276,6 +267,17 @@ def splitAndSort(inputChromosomeFilename, storageLocation, workingLocation, attr
         saveDBObject(progress)
         # TODO Notify the user that their file is completely imported
     return True
+
+
+def writeFastaStorageFile(chunk, fCount, storagePath):
+    writePath = os.path.join(storagePath, str(fCount) + ".fasta")
+    write = open(writePath, 'wb')
+    write.write(chunk.upper())
+    # Add this chunk to the list of chunks
+    newChunk = FastaChunkFiles()
+    newChunk.Start = fCount
+    return newChunk
+
 
 #----------------------------------------------------------------------------------------
 def run():

@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.utils.http import urlquote
 from django.core.mail import send_mail
 
-from FastaFiles import readFile
+from FastaFiles import readFileOrNone
 import DNAStorage.StorageRequestHandler as StorageRequestHandler
 
 
@@ -95,15 +95,17 @@ class RequestPacket(basePacket):
                                                       1) is not None, "Specimen and Chromosome is not in the database"
         startBackup = self.start
         if not self.seq:
-            self.seq = '' #ensure that seq is at least a string object
-        self.start = self.start + len(self.seq) # jump to the end of the current sequence  (+ chunkSize)
+            self.seq = ''  # ensure that seq is at least a string object
+        self.start += len(self.seq)  # jump to the end of the current sequence  (+ chunkSize)
 
-        #print "Requesting",self.specimen, self.chromosome, self.start
-        sequence = readFile(self)# see if there's a file that begins where you end, this will stop on a partial file
+        # print "Requesting",self.specimen, self.chromosome, self.start
+        sequence = readFileOrNone(self)  # see if there's a file that begins where you end, this will stop on a partial file
         if sequence is not None:
-            self.seq = self.seq + sequence #append two sequences together
+            self.seq = self.seq + sequence  # append two sequences together
         elif addPadding:
-            self.seq = self.seq + ('N' * chunkSize)
+            self.seq += 'N' * chunkSize
+        else:
+            print "Searched for", self.start, "but file was not found"
         self.start = startBackup
         self.length = len(self.seq)
         return self
@@ -111,7 +113,7 @@ class RequestPacket(basePacket):
     def readFastaChunks(self):
         numChunks = self.scale or 1
         if self.seq is not None and len(self.seq) >= (
-                (numChunks - 1) * chunkSize) + 1: #at least on character in the last chunk
+                (numChunks - 1) * chunkSize) + 1:  # at least on character in the last chunk
             return
         self.seq = ''
         self.length = len(self.seq)
@@ -120,9 +122,12 @@ class RequestPacket(basePacket):
             tempState = self.copy()
             tempState.start = chunkStart
 
-            chunk = readFile(tempState)
+            chunk = readFileOrNone(tempState)
             if chunk is None:
-                break
+                if partialSequences:  # We've read in at least some chunks
+                    break
+                else:  # We don't have anything
+                    raise IOError("File not Found: " + str(chunkStart))
             else:
                 partialSequences.append(chunk)
 
@@ -134,6 +139,7 @@ class RequestPacket(basePacket):
 
     class Meta(basePacket.Meta):
         managed = False
+
 
 class SkittleUserManager(BaseUserManager):
     def create_user(self, email=None, password1=None, FirstName=None, LastName=None, **extra_fields):

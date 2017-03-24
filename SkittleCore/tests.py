@@ -21,7 +21,7 @@ class FastaTest(TestCase):
         state = RequestPacket()
         print os.getcwd()
         print state.getFastaFilePath()
-        f = FastaFiles.readFile(state)
+        f = FastaFiles.readFileOrNone(state)
         print f
 
 
