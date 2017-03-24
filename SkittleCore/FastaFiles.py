@@ -17,8 +17,8 @@ class FastaFile(str):
         return super.__str__(self, *args, **kwargs)[:1000]
 
 
-def readFile(state):
-#    assert isinstance(state, RequestPacket)
+def readFileOrNone(state):
+    # assert isinstance(state, RequestPacket)
     try:
         filePath = StorageRequestHandler.GetFastaFilePath(state.specimen, state.chromosome, state.start)
         if state.scale < 100000:  # TODO: this is set really high right now for testing. Originally 10
@@ -26,20 +26,9 @@ def readFile(state):
         if not filePath:
             return None
 
-        result = None
-
         with open(filePath, 'r') as rawFile:
             result = rawFile.read()
-
-        return result
-
-    #        print 'Opened File'
-    #
-    #        for line in rawFile: # 1MB chunks at a time
-    #            collection.append( line )
-    #
-    #        seq = ''.join(collection)
-    #        return seq #FastaFile(seq)
+            return result
 
     except IOError:
         print("Couldn't open file.  Maybe it doesn't exist.")
