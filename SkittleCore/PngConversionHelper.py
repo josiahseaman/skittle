@@ -22,7 +22,7 @@ def convertToPng(state, pixels, isRaster=False):
     targetWidth = 1024
     greyscale = checkForGreyscale(state)
     f = tempfile.mktemp()
-    #open up tempFile
+    # open up tempFile
     f = open(f, 'wb')
     if greyscale:
         p = multiplyGreyscale(pixels, 255)
