@@ -46,7 +46,7 @@ def graph(request, genus="homo", species="sapiens", specimen="hg18", chromosome=
         image_data = GraphRequestHandler.handleRequest(state, graphSettings)
         return HttpResponse(image_data, content_type="image/png")
     except IOError as e:
-        print e
+        print(e)
         return HttpResponse(open('SkittleTree/UI/assets/gfx/bad_image.png', 'rb').read(), content_type="image/png")
 
 

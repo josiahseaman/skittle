@@ -110,7 +110,7 @@ class RequestPacket(basePacket):
         elif addPadding:
             self.seq += 'N' * chunkSize
         else:
-            print "Searched for", self.start, "but file was not found"
+            print("Searched for", self.start, "but file was not found")
         self.start = startBackup
         self.length = len(self.seq)
         return self
