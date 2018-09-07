@@ -215,7 +215,7 @@ def GetRelatedChromosomes(specimen, user=None):
         fastaFiles = FastaFiles.objects.filter(Q(Public=True) | Q(User=user))
     else: 
         fastaFiles = FastaFiles.objects.filter(Public=True)
-    if type(specimen) is unicode: 
+    if isinstance(specimen, basestring):
         fastaFiles = fastaFiles.filter(Specimen__Name__iexact=specimen)
     else:
         fastaFiles = fastaFiles.filter(Specimen=specimen)
