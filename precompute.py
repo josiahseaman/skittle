@@ -25,7 +25,7 @@ def outputThreemerNormalization(request):
     specimen = request[0]
     chromosomes = ['chr2']
     for chromosome in chromosomes:
-        chunks = [getChunkStart(x) for x in range(7077889, 11610965, 2 ** 16)] #range(16518287, 20987087, 2**16)
+        chunks = [getChunkStart(x) for x in range(7077889, 11610965, 2 ** 16)]  # range(16518287, 20987087, 2**16)
         for targetIndex in range(len(chunks)):
             start = chunks[targetIndex]
             widths = range(10, 500, 20)
@@ -100,12 +100,12 @@ def precomputeAnyGraph(request):
 
     specimen = request[2]
 
-    #    chromosomes = StorageRequestHandler.GetRelatedChromosomes(specimen)
-    for chromosome in ['chrY']: #chromosomes:
+    chromosomes = StorageRequestHandler.GetRelatedChromosomes(specimen)
+    for chromosome in chromosomes:
         length = StorageRequestHandler.GetChromosomeLength(specimen, chromosome)
-        chunks = [1] #range(1, length+1, 2**16)[-7:]
+        chunks = range(1, length+1, 2**16)[-7:]
         for targetIndex in range(request[1], len(chunks),
-                                 request[0]):#this loop divies up the jobs by PID according to modulo nProcessors
+                                 request[0]):  # this loop divies up the jobs by PID according to modulo nProcessors
             start = chunks[targetIndex]
             state = makeRequestPacket(specimen, chromosome, start, request[3], request[4])
 
@@ -117,7 +117,7 @@ def precomputeAnyGraph(request):
 def allGraphs(specimen, nProcessors):
     processors = Pool(nProcessors)
     for graphSymbol in ['n', 'm', 'r', 'o', 'b', 'h', 't']:
-        for scale in [1, 16]:#scales we'd like to test
+        for scale in [1, 16]:  # scales we'd like to test
             requests = [(nProcessors, PID, specimen, graphSymbol, scale) for PID in range(nProcessors)]
             processors.map(benchmarkHere, requests)
 
