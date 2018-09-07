@@ -130,24 +130,6 @@ if __name__ == "__main__":
     specimen = sys.argv[1]
     print "Specimen: ", specimen, "Processors: ", str(nProcessors)
 
-
-    #    startThreemer(specimen, nProcessors)
-    startRepeatMap(specimen, nProcessors)
-#    allGraphs(specimen, nProcessors)
-    
-    
-    
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-    
+    # startThreemer(specimen, nProcessors)
+    # startRepeatMap(specimen, nProcessors)
+    allGraphs(specimen, nProcessors)
