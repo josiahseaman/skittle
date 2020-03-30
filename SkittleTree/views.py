@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-from django.core.mail import EmailMessage
+from django.core.mail import send_mail
+from django.conf import settings
 from django.contrib.auth import login, authenticate
 
 from SkittleCore.models import SkittleUser
@@ -52,15 +53,11 @@ def feedbackSend(request):
             if current_view:
                 message += "url: " + current_view + ' \n'
             message += '\nMessage:\n' + content
-            email = EmailMessage(
-                subject,
-                message,
-                'info@newline.us',
-                [],
-                # headers = {'Reply-To': contact_sender}
-            )
+            receivers = ["info@newline.us", ]
+            if contact_sender and sender_email:
+                receivers.append(sender_email)
             try:
-                email.send(fail_silently=False)
+                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, receivers, fail_silently=False)
                 return HttpResponse("Success")
             except Exception as e:
                 return HttpResponse("Something went wrong: " + str(e))
