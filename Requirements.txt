@@ -1,4 +1,4 @@
-Django==1.6
+Django==2.2.24
 argparse==1.2.1
 psycopg2==2.6.1
 wheel==0.24.0
