@@ -25,7 +25,8 @@ DEBUG = False
 
 # If not a subdomain, you need the www version and bare version ['www.mydomain.com', 'mydomain.com']
 # If on a subdomain, you just need the one entry ['subdomain.mydomain.com', ]
-ALLOWED_HOSTS = ['CHANGE_ME', ]
+# Clients sometimes send the FQDN form with a trailing dot ('mydomain.com.'); include those too.
+ALLOWED_HOSTS = ['CHANGE_ME', 'CHANGE_ME.', ]
 
 
 DATABASES = {

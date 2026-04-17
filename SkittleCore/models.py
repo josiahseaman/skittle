@@ -176,12 +176,9 @@ class SkittleUser(AbstractBaseUser, PermissionsMixin):
     FirstName = models.CharField(verbose_name='First Name', max_length=255,)
     LastName = models.CharField(verbose_name='Last Name', max_length=255, null=True, blank=True,)
     IsAdmin = models.BooleanField(verbose_name='Admin Status', default=False, help_text='Designates whether this user is an Admin/On Staff or not.',)
-    IsActive = models.BooleanField(verbose_name='Active Status', default=True,)
+    is_active = models.BooleanField(verbose_name='Active Status', default=True, db_column='IsActive')
     DateJoined = models.DateTimeField(verbose_name='Date joined', default=timezone.now)
     NewUser = models.BooleanField(verbose_name='New user', default=True, help_text='Designates if this is the user\'s first visit to the site or not.')
-
-    is_staff = IsAdmin
-    is_active = IsActive
 
     objects = SkittleUserManager()
 
@@ -209,10 +206,6 @@ class SkittleUser(AbstractBaseUser, PermissionsMixin):
     def is_staff(self):
         "Is the user a member of the admin team?"
         return self.IsAdmin
-
-    @property
-    def is_active(self):
-        return self.IsActive
 
     State = models.OneToOneField(StatePacket, null=True)
 

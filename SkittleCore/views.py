@@ -68,8 +68,14 @@ def sequence(request, genus="homo", species="sapiens", specimen="hg18", chromoso
     state = createRequestPacket(request, specimen, chromosome)
     import SequenceLogic
 
-    searchStart = int(request.GET.get('queryStart', 10000))
-    searchStop = int(request.GET.get('queryStop', 10010))
+    try:
+        searchStart = int(request.GET.get('queryStart', 10000))
+    except (ValueError, TypeError):
+        searchStart = 10000
+    try:
+        searchStop = int(request.GET.get('queryStop', 10010))
+    except (ValueError, TypeError):
+        searchStop = 10010
     seq = SequenceLogic.getSearchSequenceFromRequestPacket(state, searchStart, searchStop)
     return HttpResponse(seq)
 
